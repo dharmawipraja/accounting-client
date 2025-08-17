@@ -15,6 +15,8 @@ import { Route as UsersIndexRouteImport } from './routes/users/index'
 import { Route as LedgersIndexRouteImport } from './routes/ledgers/index'
 import { Route as UsersNewRouteImport } from './routes/users/new'
 import { Route as LedgersNewRouteImport } from './routes/ledgers/new'
+import { Route as LedgersKasMasukRouteImport } from './routes/ledgers/kas-masuk'
+import { Route as LedgersKasKeluarRouteImport } from './routes/ledgers/kas-keluar'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as UsersIdIndexRouteImport } from './routes/users/$id/index'
 import { Route as LedgersIdIndexRouteImport } from './routes/ledgers/$id/index'
@@ -55,6 +57,16 @@ const UsersNewRoute = UsersNewRouteImport.update({
 const LedgersNewRoute = LedgersNewRouteImport.update({
   id: '/ledgers/new',
   path: '/ledgers/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LedgersKasMasukRoute = LedgersKasMasukRouteImport.update({
+  id: '/ledgers/kas-masuk',
+  path: '/ledgers/kas-masuk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LedgersKasKeluarRoute = LedgersKasKeluarRouteImport.update({
+  id: '/ledgers/kas-keluar',
+  path: '/ledgers/kas-keluar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -117,6 +129,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/auth/login': typeof AuthLoginRoute
+  '/ledgers/kas-keluar': typeof LedgersKasKeluarRoute
+  '/ledgers/kas-masuk': typeof LedgersKasMasukRoute
   '/ledgers/new': typeof LedgersNewRoute
   '/users/new': typeof UsersNewRoute
   '/ledgers': typeof LedgersIndexRoute
@@ -136,6 +150,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/auth/login': typeof AuthLoginRoute
+  '/ledgers/kas-keluar': typeof LedgersKasKeluarRoute
+  '/ledgers/kas-masuk': typeof LedgersKasMasukRoute
   '/ledgers/new': typeof LedgersNewRoute
   '/users/new': typeof UsersNewRoute
   '/ledgers': typeof LedgersIndexRoute
@@ -156,6 +172,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/auth/login': typeof AuthLoginRoute
+  '/ledgers/kas-keluar': typeof LedgersKasKeluarRoute
+  '/ledgers/kas-masuk': typeof LedgersKasMasukRoute
   '/ledgers/new': typeof LedgersNewRoute
   '/users/new': typeof UsersNewRoute
   '/ledgers/': typeof LedgersIndexRoute
@@ -177,6 +195,8 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/auth/login'
+    | '/ledgers/kas-keluar'
+    | '/ledgers/kas-masuk'
     | '/ledgers/new'
     | '/users/new'
     | '/ledgers'
@@ -196,6 +216,8 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/auth/login'
+    | '/ledgers/kas-keluar'
+    | '/ledgers/kas-masuk'
     | '/ledgers/new'
     | '/users/new'
     | '/ledgers'
@@ -215,6 +237,8 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/auth/login'
+    | '/ledgers/kas-keluar'
+    | '/ledgers/kas-masuk'
     | '/ledgers/new'
     | '/users/new'
     | '/ledgers/'
@@ -235,6 +259,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   AuthLoginRoute: typeof AuthLoginRoute
+  LedgersKasKeluarRoute: typeof LedgersKasKeluarRoute
+  LedgersKasMasukRoute: typeof LedgersKasMasukRoute
   LedgersNewRoute: typeof LedgersNewRoute
   UsersNewRoute: typeof UsersNewRoute
   LedgersIndexRoute: typeof LedgersIndexRoute
@@ -293,6 +319,20 @@ declare module '@tanstack/react-router' {
       path: '/ledgers/new'
       fullPath: '/ledgers/new'
       preLoaderRoute: typeof LedgersNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ledgers/kas-masuk': {
+      id: '/ledgers/kas-masuk'
+      path: '/ledgers/kas-masuk'
+      fullPath: '/ledgers/kas-masuk'
+      preLoaderRoute: typeof LedgersKasMasukRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ledgers/kas-keluar': {
+      id: '/ledgers/kas-keluar'
+      path: '/ledgers/kas-keluar'
+      fullPath: '/ledgers/kas-keluar'
+      preLoaderRoute: typeof LedgersKasKeluarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/login': {
@@ -379,6 +419,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   AuthLoginRoute: AuthLoginRoute,
+  LedgersKasKeluarRoute: LedgersKasKeluarRoute,
+  LedgersKasMasukRoute: LedgersKasMasukRoute,
   LedgersNewRoute: LedgersNewRoute,
   UsersNewRoute: UsersNewRoute,
   LedgersIndexRoute: LedgersIndexRoute,

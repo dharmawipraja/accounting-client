@@ -6,7 +6,7 @@ import { canManageLedgers } from '@/utils/rolePermissions'
 import { createFileRoute } from '@tanstack/react-router'
 import { useSelector } from 'react-redux'
 
-function LedgerNewPage() {
+function LedgerKasKeluarPage() {
   const user = useSelector((state: RootState) => state.auth.user)
 
   const canManage = user ? canManageLedgers(user.role) : false
@@ -30,12 +30,12 @@ function LedgerNewPage() {
     <div className="min-h-screen bg-background">
       <Header />
       <main>
-        <BulkLedgerForm ledgerType="KAS_MASUK" />
+        <BulkLedgerForm ledgerType="KAS_KELUAR" />
       </main>
     </div>
   )
 }
 
-export const Route = createFileRoute('/ledgers/new')({
-  component: LedgerNewPage,
+export const Route = createFileRoute('/ledgers/kas-keluar')({
+  component: LedgerKasKeluarPage,
 })

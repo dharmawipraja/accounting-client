@@ -2,34 +2,35 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { LEDGER_TYPE_LABELS } from '@/constants'
 import { useCreateBulkLedgersMutation } from '@/hooks/useLedgersQuery'
 import type { CreateBulkLedgersPayload } from '@/types/payloads'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from '@tanstack/react-router'
 import {
-  AlertTriangle,
-  ArrowLeft,
-  Calculator,
-  CheckCircle,
-  Plus,
-  Save,
-  Trash2,
+    AlertTriangle,
+    ArrowLeft,
+    Calculator,
+    CheckCircle,
+    Plus,
+    Save,
+    Trash2,
 } from 'lucide-react'
 import { useMemo } from 'react'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
@@ -43,7 +44,6 @@ const ledgerEntrySchema = z.object({
     .string()
     .min(3, 'Description must be at least 3 characters')
     .max(500, 'Description must not exceed 500 characters'),
-  ledgerType: z.enum(['KAS_MASUK', 'KAS_KELUAR']),
   transactionType: z.enum(['DEBIT', 'CREDIT']),
   accountDetailId: z.string().min(1, 'Account detail is required'),
   accountGeneralId: z.string().min(1, 'Account general is required'),
@@ -64,17 +64,16 @@ const bulkLedgerFormSchema = z.object({
 
 type BulkLedgerFormData = z.infer<typeof bulkLedgerFormSchema>
 
-const ledgerTypeOptions = [
-  { value: 'KAS_MASUK', label: 'Cash In' },
-  { value: 'KAS_KELUAR', label: 'Cash Out' },
-] as const
+interface BulkLedgerFormProps {
+  ledgerType: 'KAS_MASUK' | 'KAS_KELUAR'
+}
 
 const transactionTypeOptions = [
   { value: 'DEBIT', label: 'Debit' },
   { value: 'CREDIT', label: 'Credit' },
 ] as const
 
-export function BulkLedgerForm() {
+export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
   const router = useRouter()
   const createBulkMutation = useCreateBulkLedgersMutation()
 
@@ -86,7 +85,6 @@ export function BulkLedgerForm() {
           ledgerDate: new Date().toISOString().split('T')[0],
           referenceNumber: '',
           description: '',
-          ledgerType: 'KAS_MASUK',
           transactionType: 'DEBIT',
           accountDetailId: '',
           accountGeneralId: '',
@@ -96,7 +94,6 @@ export function BulkLedgerForm() {
           ledgerDate: new Date().toISOString().split('T')[0],
           referenceNumber: '',
           description: '',
-          ledgerType: 'KAS_KELUAR',
           transactionType: 'CREDIT',
           accountDetailId: '',
           accountGeneralId: '',
@@ -161,7 +158,7 @@ export function BulkLedgerForm() {
         ledgers: data.entries.map((entry) => ({
           ledgerDate: entry.ledgerDate,
           description: entry.description,
-          ledgerType: entry.ledgerType,
+          ledgerType: ledgerType, // Use the prop instead of form field
           transactionType: entry.transactionType,
           accountDetailId: entry.accountDetailId,
           accountGeneralId: entry.accountGeneralId,
@@ -187,7 +184,6 @@ export function BulkLedgerForm() {
       ledgerDate: new Date().toISOString().split('T')[0],
       referenceNumber: '',
       description: '',
-      ledgerType: 'KAS_MASUK',
       transactionType: 'DEBIT',
       accountDetailId: '',
       accountGeneralId: '',
@@ -221,10 +217,11 @@ export function BulkLedgerForm() {
           Back to Ledgers
         </Button>
         <h1 className="text-3xl font-bold tracking-tight">
-          Create Ledger Entries
+          Create {LEDGER_TYPE_LABELS[ledgerType]} Entries
         </h1>
         <p className="text-gray-600">
-          Add multiple ledger entries with double-entry validation
+          Add multiple {LEDGER_TYPE_LABELS[ledgerType].toLowerCase()} entries
+          with double-entry validation
         </p>
       </div>
 
@@ -353,37 +350,6 @@ export function BulkLedgerForm() {
                           <FormControl>
                             <Input placeholder="REF-001" {...field} />
                           </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name={`entries.${index}.ledgerType`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Ledger Type</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select type" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {ledgerTypeOptions.map((option) => (
-                                <SelectItem
-                                  key={option.value}
-                                  value={option.value}
-                                >
-                                  {option.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}

@@ -2,35 +2,42 @@ import Header from '@/components/Header'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from '@/components/ui/card'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
 import { Input } from '@/components/ui/input'
 import { LoadingState } from '@/components/ui/loading-state'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/ui/select'
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from '@/components/ui/table'
+import { LEDGER_TYPE_LABELS, ROUTES } from '@/constants'
 import { useAuth } from '@/hooks/useAuth'
 import {
-  useDeleteLedgerMutation,
-  useLedgersQuery,
+    useDeleteLedgerMutation,
+    useLedgersQuery,
 } from '@/hooks/useLedgersQuery'
 import type { LedgerQueryParams } from '@/types/ledgers'
 import { formatCurrency } from '@/utils'
@@ -38,15 +45,16 @@ import { formatDate } from '@/utils/date'
 import { canManageLedgers } from '@/utils/rolePermissions'
 import { useRouter } from '@tanstack/react-router'
 import {
-  Calendar,
-  DollarSign,
-  Edit,
-  Eye,
-  FileSpreadsheet,
-  Filter,
-  Plus,
-  Search,
-  Trash2,
+    Calendar,
+    ChevronDown,
+    DollarSign,
+    Edit,
+    Eye,
+    FileSpreadsheet,
+    Filter,
+    Plus,
+    Search,
+    Trash2,
 } from 'lucide-react'
 import React, { useMemo, useState } from 'react'
 // import { toast } from 'sonner'
@@ -207,13 +215,33 @@ export const LedgersListPage: React.FC = () => {
                 Manage your ledger entries and transactions
               </p>
             </div>
-            <Button
-              onClick={() => router.navigate({ to: '/ledgers/new' })}
-              className="w-full sm:w-auto"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Create Ledger Entry
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="w-full sm:w-auto">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Ledger Entry
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() =>
+                    router.navigate({ to: ROUTES.LEDGERS_KAS_MASUK })
+                  }
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  {LEDGER_TYPE_LABELS.KAS_MASUK}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() =>
+                    router.navigate({ to: ROUTES.LEDGERS_KAS_KELUAR })
+                  }
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  {LEDGER_TYPE_LABELS.KAS_KELUAR}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Filters */}

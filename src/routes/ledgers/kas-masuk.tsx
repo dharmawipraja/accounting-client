@@ -6,7 +6,7 @@ import { canManageLedgers } from '@/utils/rolePermissions'
 import { createFileRoute } from '@tanstack/react-router'
 import { useSelector } from 'react-redux'
 
-function LedgerNewPage() {
+function LedgerKasMasukPage() {
   const user = useSelector((state: RootState) => state.auth.user)
 
   const canManage = user ? canManageLedgers(user.role) : false
@@ -36,6 +36,6 @@ function LedgerNewPage() {
   )
 }
 
-export const Route = createFileRoute('/ledgers/new')({
-  component: LedgerNewPage,
+export const Route = createFileRoute('/ledgers/kas-masuk')({
+  component: LedgerKasMasukPage,
 })

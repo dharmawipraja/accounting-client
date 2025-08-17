@@ -79,6 +79,11 @@ export const LEDGER_TYPES = {
   KAS_KELUAR: 'KAS_KELUAR',
 } as const
 
+export const LEDGER_TYPE_LABELS = {
+  [LEDGER_TYPES.KAS_MASUK]: 'Kas Masuk',
+  [LEDGER_TYPES.KAS_KELUAR]: 'Kas Keluar',
+} as const
+
 export const POSTING_STATUS = {
   PENDING: 'PENDING',
   POSTED: 'POSTED',
@@ -108,6 +113,8 @@ export const ROUTES = {
   ACCOUNTS_GENERAL: '/accounts/general',
   ACCOUNTS_DETAIL: '/accounts/detail',
   LEDGERS: '/ledgers',
+  LEDGERS_KAS_MASUK: '/ledgers/kas-masuk',
+  LEDGERS_KAS_KELUAR: '/ledgers/kas-keluar',
 } as const
 
 // Form Validation
