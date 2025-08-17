@@ -53,8 +53,8 @@ const accountGeneralFormSchema = z.object({
   accountCategory: z.enum(['ASSET', 'HUTANG', 'MODAL', 'PENDAPATAN', 'BIAYA']),
   reportType: z.enum(['NERACA', 'LABA_RUGI']),
   transactionType: z.enum(['DEBIT', 'CREDIT']),
-  amountCredit: z.coerce.number().min(0, 'Credit amount must be positive'),
-  amountDebit: z.coerce.number().min(0, 'Debit amount must be positive'),
+  amountCredit: z.number().min(0, 'Credit amount must be positive'),
+  amountDebit: z.number().min(0, 'Debit amount must be positive'),
 })
 
 type AccountGeneralFormData = z.infer<typeof accountGeneralFormSchema>

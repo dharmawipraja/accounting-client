@@ -69,10 +69,7 @@ export function EditAccountDetailPage() {
             type="notFound"
             title="Account Not Found"
             message="The requested account could not be found."
-            action={{
-              label: 'Go Back to Accounts',
-              onClick: () => navigate({ to: '/accounts/detail' }),
-            }}
+            onRetry={() => navigate({ to: '/accounts/detail' })}
           />
         </div>
       </div>
@@ -82,7 +79,7 @@ export function EditAccountDetailPage() {
   return (
     <div>
       <Header />
-      <AccountDetailForm mode="edit" account={account} />
+      <AccountDetailForm mode="edit" account={account.data} />
     </div>
   )
 }

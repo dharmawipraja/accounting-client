@@ -152,3 +152,13 @@ export const canManageAccounts = (userRole?: UserRole): boolean => {
     userRole === 'ADMIN' || userRole === 'MANAJER' || userRole === 'AKUNTAN'
   )
 }
+
+/**
+ * Check if user can manage ledgers (view, create, edit, delete)
+ */
+export const canManageLedgers = (userRole?: UserRole): boolean => {
+  if (!userRole) return false
+  return (
+    userRole === 'ADMIN' || userRole === 'MANAJER' || userRole === 'AKUNTAN'
+  )
+}

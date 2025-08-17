@@ -2,6 +2,7 @@ import { useAuth } from '@/hooks/useAuth'
 import {
   canAccessUserManagement,
   canManageAccounts,
+  canManageLedgers,
 } from '@/utils/rolePermissions'
 import { Link } from '@tanstack/react-router'
 
@@ -14,6 +15,7 @@ export default function Header() {
 
   const canViewUsers = user?.role ? canAccessUserManagement(user.role) : false
   const canViewAccounts = user?.role ? canManageAccounts(user.role) : false
+  const canViewLedgers = user?.role ? canManageLedgers(user.role) : false
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -59,6 +61,15 @@ export default function Header() {
                   Detail Accounts
                 </Link>
               </>
+            )}
+            {canViewLedgers && (
+              <Link
+                to="/ledgers"
+                className="hover:text-primary transition-colors"
+                activeProps={{ className: 'text-primary font-medium' }}
+              >
+                Ledgers
+              </Link>
             )}
           </div>
         </nav>

@@ -12,12 +12,16 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
+import { Route as LedgersIndexRouteImport } from './routes/ledgers/index'
 import { Route as UsersNewRouteImport } from './routes/users/new'
+import { Route as LedgersNewRouteImport } from './routes/ledgers/new'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as UsersIdIndexRouteImport } from './routes/users/$id/index'
+import { Route as LedgersIdIndexRouteImport } from './routes/ledgers/$id/index'
 import { Route as AccountsGeneralIndexRouteImport } from './routes/accounts/general/index'
 import { Route as AccountsDetailIndexRouteImport } from './routes/accounts/detail/index'
 import { Route as UsersIdEditRouteImport } from './routes/users/$id/edit'
+import { Route as LedgersIdEditRouteImport } from './routes/ledgers/$id/edit'
 import { Route as AccountsGeneralNewRouteImport } from './routes/accounts/general/new'
 import { Route as AccountsDetailNewRouteImport } from './routes/accounts/detail/new'
 import { Route as AccountsGeneralIdEditRouteImport } from './routes/accounts/general/$id/edit'
@@ -38,9 +42,19 @@ const UsersIndexRoute = UsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LedgersIndexRoute = LedgersIndexRouteImport.update({
+  id: '/ledgers/',
+  path: '/ledgers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UsersNewRoute = UsersNewRouteImport.update({
   id: '/users/new',
   path: '/users/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LedgersNewRoute = LedgersNewRouteImport.update({
+  id: '/ledgers/new',
+  path: '/ledgers/new',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -51,6 +65,11 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
 const UsersIdIndexRoute = UsersIdIndexRouteImport.update({
   id: '/users/$id/',
   path: '/users/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LedgersIdIndexRoute = LedgersIdIndexRouteImport.update({
+  id: '/ledgers/$id/',
+  path: '/ledgers/$id/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountsGeneralIndexRoute = AccountsGeneralIndexRouteImport.update({
@@ -66,6 +85,11 @@ const AccountsDetailIndexRoute = AccountsDetailIndexRouteImport.update({
 const UsersIdEditRoute = UsersIdEditRouteImport.update({
   id: '/users/$id/edit',
   path: '/users/$id/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LedgersIdEditRoute = LedgersIdEditRouteImport.update({
+  id: '/ledgers/$id/edit',
+  path: '/ledgers/$id/edit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountsGeneralNewRoute = AccountsGeneralNewRouteImport.update({
@@ -93,13 +117,17 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/auth/login': typeof AuthLoginRoute
+  '/ledgers/new': typeof LedgersNewRoute
   '/users/new': typeof UsersNewRoute
+  '/ledgers': typeof LedgersIndexRoute
   '/users': typeof UsersIndexRoute
   '/accounts/detail/new': typeof AccountsDetailNewRoute
   '/accounts/general/new': typeof AccountsGeneralNewRoute
+  '/ledgers/$id/edit': typeof LedgersIdEditRoute
   '/users/$id/edit': typeof UsersIdEditRoute
   '/accounts/detail': typeof AccountsDetailIndexRoute
   '/accounts/general': typeof AccountsGeneralIndexRoute
+  '/ledgers/$id': typeof LedgersIdIndexRoute
   '/users/$id': typeof UsersIdIndexRoute
   '/accounts/detail/$id/edit': typeof AccountsDetailIdEditRoute
   '/accounts/general/$id/edit': typeof AccountsGeneralIdEditRoute
@@ -108,13 +136,17 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/auth/login': typeof AuthLoginRoute
+  '/ledgers/new': typeof LedgersNewRoute
   '/users/new': typeof UsersNewRoute
+  '/ledgers': typeof LedgersIndexRoute
   '/users': typeof UsersIndexRoute
   '/accounts/detail/new': typeof AccountsDetailNewRoute
   '/accounts/general/new': typeof AccountsGeneralNewRoute
+  '/ledgers/$id/edit': typeof LedgersIdEditRoute
   '/users/$id/edit': typeof UsersIdEditRoute
   '/accounts/detail': typeof AccountsDetailIndexRoute
   '/accounts/general': typeof AccountsGeneralIndexRoute
+  '/ledgers/$id': typeof LedgersIdIndexRoute
   '/users/$id': typeof UsersIdIndexRoute
   '/accounts/detail/$id/edit': typeof AccountsDetailIdEditRoute
   '/accounts/general/$id/edit': typeof AccountsGeneralIdEditRoute
@@ -124,13 +156,17 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/auth/login': typeof AuthLoginRoute
+  '/ledgers/new': typeof LedgersNewRoute
   '/users/new': typeof UsersNewRoute
+  '/ledgers/': typeof LedgersIndexRoute
   '/users/': typeof UsersIndexRoute
   '/accounts/detail/new': typeof AccountsDetailNewRoute
   '/accounts/general/new': typeof AccountsGeneralNewRoute
+  '/ledgers/$id/edit': typeof LedgersIdEditRoute
   '/users/$id/edit': typeof UsersIdEditRoute
   '/accounts/detail/': typeof AccountsDetailIndexRoute
   '/accounts/general/': typeof AccountsGeneralIndexRoute
+  '/ledgers/$id/': typeof LedgersIdIndexRoute
   '/users/$id/': typeof UsersIdIndexRoute
   '/accounts/detail/$id/edit': typeof AccountsDetailIdEditRoute
   '/accounts/general/$id/edit': typeof AccountsGeneralIdEditRoute
@@ -141,13 +177,17 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/auth/login'
+    | '/ledgers/new'
     | '/users/new'
+    | '/ledgers'
     | '/users'
     | '/accounts/detail/new'
     | '/accounts/general/new'
+    | '/ledgers/$id/edit'
     | '/users/$id/edit'
     | '/accounts/detail'
     | '/accounts/general'
+    | '/ledgers/$id'
     | '/users/$id'
     | '/accounts/detail/$id/edit'
     | '/accounts/general/$id/edit'
@@ -156,13 +196,17 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/auth/login'
+    | '/ledgers/new'
     | '/users/new'
+    | '/ledgers'
     | '/users'
     | '/accounts/detail/new'
     | '/accounts/general/new'
+    | '/ledgers/$id/edit'
     | '/users/$id/edit'
     | '/accounts/detail'
     | '/accounts/general'
+    | '/ledgers/$id'
     | '/users/$id'
     | '/accounts/detail/$id/edit'
     | '/accounts/general/$id/edit'
@@ -171,13 +215,17 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/auth/login'
+    | '/ledgers/new'
     | '/users/new'
+    | '/ledgers/'
     | '/users/'
     | '/accounts/detail/new'
     | '/accounts/general/new'
+    | '/ledgers/$id/edit'
     | '/users/$id/edit'
     | '/accounts/detail/'
     | '/accounts/general/'
+    | '/ledgers/$id/'
     | '/users/$id/'
     | '/accounts/detail/$id/edit'
     | '/accounts/general/$id/edit'
@@ -187,13 +235,17 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   AuthLoginRoute: typeof AuthLoginRoute
+  LedgersNewRoute: typeof LedgersNewRoute
   UsersNewRoute: typeof UsersNewRoute
+  LedgersIndexRoute: typeof LedgersIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
   AccountsDetailNewRoute: typeof AccountsDetailNewRoute
   AccountsGeneralNewRoute: typeof AccountsGeneralNewRoute
+  LedgersIdEditRoute: typeof LedgersIdEditRoute
   UsersIdEditRoute: typeof UsersIdEditRoute
   AccountsDetailIndexRoute: typeof AccountsDetailIndexRoute
   AccountsGeneralIndexRoute: typeof AccountsGeneralIndexRoute
+  LedgersIdIndexRoute: typeof LedgersIdIndexRoute
   UsersIdIndexRoute: typeof UsersIdIndexRoute
   AccountsDetailIdEditRoute: typeof AccountsDetailIdEditRoute
   AccountsGeneralIdEditRoute: typeof AccountsGeneralIdEditRoute
@@ -222,11 +274,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ledgers/': {
+      id: '/ledgers/'
+      path: '/ledgers'
+      fullPath: '/ledgers'
+      preLoaderRoute: typeof LedgersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/users/new': {
       id: '/users/new'
       path: '/users/new'
       fullPath: '/users/new'
       preLoaderRoute: typeof UsersNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ledgers/new': {
+      id: '/ledgers/new'
+      path: '/ledgers/new'
+      fullPath: '/ledgers/new'
+      preLoaderRoute: typeof LedgersNewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/login': {
@@ -241,6 +307,13 @@ declare module '@tanstack/react-router' {
       path: '/users/$id'
       fullPath: '/users/$id'
       preLoaderRoute: typeof UsersIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ledgers/$id/': {
+      id: '/ledgers/$id/'
+      path: '/ledgers/$id'
+      fullPath: '/ledgers/$id'
+      preLoaderRoute: typeof LedgersIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/accounts/general/': {
@@ -262,6 +335,13 @@ declare module '@tanstack/react-router' {
       path: '/users/$id/edit'
       fullPath: '/users/$id/edit'
       preLoaderRoute: typeof UsersIdEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ledgers/$id/edit': {
+      id: '/ledgers/$id/edit'
+      path: '/ledgers/$id/edit'
+      fullPath: '/ledgers/$id/edit'
+      preLoaderRoute: typeof LedgersIdEditRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/accounts/general/new': {
@@ -299,13 +379,17 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   AuthLoginRoute: AuthLoginRoute,
+  LedgersNewRoute: LedgersNewRoute,
   UsersNewRoute: UsersNewRoute,
+  LedgersIndexRoute: LedgersIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
   AccountsDetailNewRoute: AccountsDetailNewRoute,
   AccountsGeneralNewRoute: AccountsGeneralNewRoute,
+  LedgersIdEditRoute: LedgersIdEditRoute,
   UsersIdEditRoute: UsersIdEditRoute,
   AccountsDetailIndexRoute: AccountsDetailIndexRoute,
   AccountsGeneralIndexRoute: AccountsGeneralIndexRoute,
+  LedgersIdIndexRoute: LedgersIdIndexRoute,
   UsersIdIndexRoute: UsersIdIndexRoute,
   AccountsDetailIdEditRoute: AccountsDetailIdEditRoute,
   AccountsGeneralIdEditRoute: AccountsGeneralIdEditRoute,
