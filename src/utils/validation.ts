@@ -1,3 +1,4 @@
+import { isEmpty, isNaN, trim } from 'lodash';
 import { VALIDATION_RULES } from '../constants';
 
 /**
@@ -33,7 +34,7 @@ export function validatePassword(password: string): string | null {
  */
 export function validateName(name: string): string | null {
   if (!name) return 'Name is required';
-  if (name.trim().length < VALIDATION_RULES.NAME.MIN_LENGTH) {
+  if (trim(name).length < VALIDATION_RULES.NAME.MIN_LENGTH) {
     return `Name must be at least ${VALIDATION_RULES.NAME.MIN_LENGTH} characters`;
   }
   if (name.length > VALIDATION_RULES.NAME.MAX_LENGTH) {
@@ -64,7 +65,7 @@ export function validateAccountNumber(accountNumber: string): string | null {
  */
 export function validateAccountName(accountName: string): string | null {
   if (!accountName) return 'Account name is required';
-  if (accountName.trim().length < VALIDATION_RULES.ACCOUNT_NAME.MIN_LENGTH) {
+  if (trim(accountName).length < VALIDATION_RULES.ACCOUNT_NAME.MIN_LENGTH) {
     return `Account name must be at least ${VALIDATION_RULES.ACCOUNT_NAME.MIN_LENGTH} characters`;
   }
   if (accountName.length > VALIDATION_RULES.ACCOUNT_NAME.MAX_LENGTH) {
@@ -78,7 +79,7 @@ export function validateAccountName(accountName: string): string | null {
  */
 export function validateDescription(description: string): string | null {
   if (!description) return 'Description is required';
-  if (description.trim().length < VALIDATION_RULES.DESCRIPTION.MIN_LENGTH) {
+  if (trim(description).length < VALIDATION_RULES.DESCRIPTION.MIN_LENGTH) {
     return `Description must be at least ${VALIDATION_RULES.DESCRIPTION.MIN_LENGTH} characters`;
   }
   if (description.length > VALIDATION_RULES.DESCRIPTION.MAX_LENGTH) {
@@ -118,7 +119,7 @@ export function validateEmail(email: string): string | null {
  * Validate required field
  */
 export function validateRequired(value: any, fieldName: string): string | null {
-  if (value === null || value === undefined || value === '') {
+  if (isEmpty(value) || value === '') {
     return `${fieldName} is required`;
   }
   return null;

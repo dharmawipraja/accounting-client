@@ -1,3 +1,4 @@
+import { filter, includes, map, some } from 'lodash';
 import { AUTH_CONFIG, ROLE_HIERARCHY, ROLE_PERMISSIONS, USER_ROLES } from '../constants';
 import type { UserRole } from '../types';
 import { safeJsonParse } from './index';
@@ -103,28 +104,28 @@ export function hasRole(userRole: UserRole, requiredRole: UserRole): boolean {
  * Check if user has any of the required roles
  */
 export function hasAnyRole(userRole: UserRole, requiredRoles: UserRole[]): boolean {
-  return requiredRoles.some(role => hasRole(userRole, role));
+  return some(requiredRoles, role => hasRole(userRole, role));
 }
 
 /**
  * Check if user can manage users
  */
 export function canManageUsers(userRole: UserRole): boolean {
-  return (ROLE_PERMISSIONS.USERS_MANAGEMENT as readonly UserRole[]).includes(userRole);
+  return includes(ROLE_PERMISSIONS.USERS_MANAGEMENT as readonly UserRole[], userRole);
 }
 
 /**
  * Check if user can manage accounts
  */
 export function canManageAccounts(userRole: UserRole): boolean {
-  return (ROLE_PERMISSIONS.ACCOUNTS_MANAGEMENT as readonly UserRole[]).includes(userRole);
+  return includes(ROLE_PERMISSIONS.ACCOUNTS_MANAGEMENT as readonly UserRole[], userRole);
 }
 
 /**
  * Check if user can manage ledgers
  */
 export function canManageLedgers(userRole: UserRole): boolean {
-  return (ROLE_PERMISSIONS.LEDGERS_MANAGEMENT as readonly UserRole[]).includes(userRole);
+  return includes(ROLE_PERMISSIONS.LEDGERS_MANAGEMENT as readonly UserRole[], userRole);
 }
 
 /**
@@ -149,7 +150,8 @@ export function getRoleDisplayName(role: UserRole): string {
 export function getAvailableRoles(currentUserRole: UserRole): UserRole[] {
   const currentLevel = ROLE_HIERARCHY[currentUserRole] || 0;
   
-  return Object.entries(ROLE_HIERARCHY)
-    .filter(([, level]) => level <= currentLevel)
-    .map(([role]) => role as UserRole);
+  return map(
+    filter(Object.entries(ROLE_HIERARCHY), ([, level]) => level <= currentLevel),
+    ([role]) => role as UserRole
+  );
 }
