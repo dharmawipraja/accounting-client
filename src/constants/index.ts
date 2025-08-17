@@ -139,6 +139,35 @@ export const VALIDATION_RULES = {
   },
 } as const
 
+// Account Category Labels
+export const ACCOUNT_CATEGORY_LABELS = {
+  [ACCOUNT_CATEGORIES.ASSET]: 'Asset',
+  [ACCOUNT_CATEGORIES.HUTANG]: 'Hutang',
+  [ACCOUNT_CATEGORIES.MODAL]: 'Modal',
+  [ACCOUNT_CATEGORIES.PENDAPATAN]: 'Pendapatan',
+  [ACCOUNT_CATEGORIES.BIAYA]: 'Biaya',
+} as const
+
+export const REPORT_TYPE_LABELS = {
+  [REPORT_TYPES.NERACA]: 'Neraca',
+  [REPORT_TYPES.LABA_RUGI]: 'Laba Rugi',
+} as const
+
+export const TRANSACTION_TYPE_LABELS = {
+  [TRANSACTION_TYPES.DEBIT]: 'Debit',
+  [TRANSACTION_TYPES.CREDIT]: 'Credit',
+} as const
+
+export const ACCOUNT_TYPES = {
+  GENERAL: 'GENERAL',
+  DETAIL: 'DETAIL',
+} as const
+
+export const ACCOUNT_TYPE_LABELS = {
+  [ACCOUNT_TYPES.GENERAL]: 'General',
+  [ACCOUNT_TYPES.DETAIL]: 'Detail',
+} as const
+
 // UI Constants
 export const UI_CONFIG = {
   NOTIFICATION_DURATION: 5000,

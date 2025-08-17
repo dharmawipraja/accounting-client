@@ -15,7 +15,13 @@ import { Route as UsersIndexRouteImport } from './routes/users/index'
 import { Route as UsersNewRouteImport } from './routes/users/new'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as UsersIdIndexRouteImport } from './routes/users/$id/index'
+import { Route as AccountsGeneralIndexRouteImport } from './routes/accounts/general/index'
+import { Route as AccountsDetailIndexRouteImport } from './routes/accounts/detail/index'
 import { Route as UsersIdEditRouteImport } from './routes/users/$id/edit'
+import { Route as AccountsGeneralNewRouteImport } from './routes/accounts/general/new'
+import { Route as AccountsDetailNewRouteImport } from './routes/accounts/detail/new'
+import { Route as AccountsGeneralIdEditRouteImport } from './routes/accounts/general/$id/edit'
+import { Route as AccountsDetailIdEditRouteImport } from './routes/accounts/detail/$id/edit'
 
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
@@ -47,9 +53,39 @@ const UsersIdIndexRoute = UsersIdIndexRouteImport.update({
   path: '/users/$id/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountsGeneralIndexRoute = AccountsGeneralIndexRouteImport.update({
+  id: '/accounts/general/',
+  path: '/accounts/general/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountsDetailIndexRoute = AccountsDetailIndexRouteImport.update({
+  id: '/accounts/detail/',
+  path: '/accounts/detail/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UsersIdEditRoute = UsersIdEditRouteImport.update({
   id: '/users/$id/edit',
   path: '/users/$id/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountsGeneralNewRoute = AccountsGeneralNewRouteImport.update({
+  id: '/accounts/general/new',
+  path: '/accounts/general/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountsDetailNewRoute = AccountsDetailNewRouteImport.update({
+  id: '/accounts/detail/new',
+  path: '/accounts/detail/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountsGeneralIdEditRoute = AccountsGeneralIdEditRouteImport.update({
+  id: '/accounts/general/$id/edit',
+  path: '/accounts/general/$id/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountsDetailIdEditRoute = AccountsDetailIdEditRouteImport.update({
+  id: '/accounts/detail/$id/edit',
+  path: '/accounts/detail/$id/edit',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -59,8 +95,14 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/users/new': typeof UsersNewRoute
   '/users': typeof UsersIndexRoute
+  '/accounts/detail/new': typeof AccountsDetailNewRoute
+  '/accounts/general/new': typeof AccountsGeneralNewRoute
   '/users/$id/edit': typeof UsersIdEditRoute
+  '/accounts/detail': typeof AccountsDetailIndexRoute
+  '/accounts/general': typeof AccountsGeneralIndexRoute
   '/users/$id': typeof UsersIdIndexRoute
+  '/accounts/detail/$id/edit': typeof AccountsDetailIdEditRoute
+  '/accounts/general/$id/edit': typeof AccountsGeneralIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -68,8 +110,14 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginRoute
   '/users/new': typeof UsersNewRoute
   '/users': typeof UsersIndexRoute
+  '/accounts/detail/new': typeof AccountsDetailNewRoute
+  '/accounts/general/new': typeof AccountsGeneralNewRoute
   '/users/$id/edit': typeof UsersIdEditRoute
+  '/accounts/detail': typeof AccountsDetailIndexRoute
+  '/accounts/general': typeof AccountsGeneralIndexRoute
   '/users/$id': typeof UsersIdIndexRoute
+  '/accounts/detail/$id/edit': typeof AccountsDetailIdEditRoute
+  '/accounts/general/$id/edit': typeof AccountsGeneralIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -78,8 +126,14 @@ export interface FileRoutesById {
   '/auth/login': typeof AuthLoginRoute
   '/users/new': typeof UsersNewRoute
   '/users/': typeof UsersIndexRoute
+  '/accounts/detail/new': typeof AccountsDetailNewRoute
+  '/accounts/general/new': typeof AccountsGeneralNewRoute
   '/users/$id/edit': typeof UsersIdEditRoute
+  '/accounts/detail/': typeof AccountsDetailIndexRoute
+  '/accounts/general/': typeof AccountsGeneralIndexRoute
   '/users/$id/': typeof UsersIdIndexRoute
+  '/accounts/detail/$id/edit': typeof AccountsDetailIdEditRoute
+  '/accounts/general/$id/edit': typeof AccountsGeneralIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -89,8 +143,14 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/users/new'
     | '/users'
+    | '/accounts/detail/new'
+    | '/accounts/general/new'
     | '/users/$id/edit'
+    | '/accounts/detail'
+    | '/accounts/general'
     | '/users/$id'
+    | '/accounts/detail/$id/edit'
+    | '/accounts/general/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -98,8 +158,14 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/users/new'
     | '/users'
+    | '/accounts/detail/new'
+    | '/accounts/general/new'
     | '/users/$id/edit'
+    | '/accounts/detail'
+    | '/accounts/general'
     | '/users/$id'
+    | '/accounts/detail/$id/edit'
+    | '/accounts/general/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -107,8 +173,14 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/users/new'
     | '/users/'
+    | '/accounts/detail/new'
+    | '/accounts/general/new'
     | '/users/$id/edit'
+    | '/accounts/detail/'
+    | '/accounts/general/'
     | '/users/$id/'
+    | '/accounts/detail/$id/edit'
+    | '/accounts/general/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -117,8 +189,14 @@ export interface RootRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
   UsersNewRoute: typeof UsersNewRoute
   UsersIndexRoute: typeof UsersIndexRoute
+  AccountsDetailNewRoute: typeof AccountsDetailNewRoute
+  AccountsGeneralNewRoute: typeof AccountsGeneralNewRoute
   UsersIdEditRoute: typeof UsersIdEditRoute
+  AccountsDetailIndexRoute: typeof AccountsDetailIndexRoute
+  AccountsGeneralIndexRoute: typeof AccountsGeneralIndexRoute
   UsersIdIndexRoute: typeof UsersIdIndexRoute
+  AccountsDetailIdEditRoute: typeof AccountsDetailIdEditRoute
+  AccountsGeneralIdEditRoute: typeof AccountsGeneralIdEditRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -165,11 +243,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsersIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/accounts/general/': {
+      id: '/accounts/general/'
+      path: '/accounts/general'
+      fullPath: '/accounts/general'
+      preLoaderRoute: typeof AccountsGeneralIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/detail/': {
+      id: '/accounts/detail/'
+      path: '/accounts/detail'
+      fullPath: '/accounts/detail'
+      preLoaderRoute: typeof AccountsDetailIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/users/$id/edit': {
       id: '/users/$id/edit'
       path: '/users/$id/edit'
       fullPath: '/users/$id/edit'
       preLoaderRoute: typeof UsersIdEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/general/new': {
+      id: '/accounts/general/new'
+      path: '/accounts/general/new'
+      fullPath: '/accounts/general/new'
+      preLoaderRoute: typeof AccountsGeneralNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/detail/new': {
+      id: '/accounts/detail/new'
+      path: '/accounts/detail/new'
+      fullPath: '/accounts/detail/new'
+      preLoaderRoute: typeof AccountsDetailNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/general/$id/edit': {
+      id: '/accounts/general/$id/edit'
+      path: '/accounts/general/$id/edit'
+      fullPath: '/accounts/general/$id/edit'
+      preLoaderRoute: typeof AccountsGeneralIdEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/detail/$id/edit': {
+      id: '/accounts/detail/$id/edit'
+      path: '/accounts/detail/$id/edit'
+      fullPath: '/accounts/detail/$id/edit'
+      preLoaderRoute: typeof AccountsDetailIdEditRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -181,8 +301,14 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   UsersNewRoute: UsersNewRoute,
   UsersIndexRoute: UsersIndexRoute,
+  AccountsDetailNewRoute: AccountsDetailNewRoute,
+  AccountsGeneralNewRoute: AccountsGeneralNewRoute,
   UsersIdEditRoute: UsersIdEditRoute,
+  AccountsDetailIndexRoute: AccountsDetailIndexRoute,
+  AccountsGeneralIndexRoute: AccountsGeneralIndexRoute,
   UsersIdIndexRoute: UsersIdIndexRoute,
+  AccountsDetailIdEditRoute: AccountsDetailIdEditRoute,
+  AccountsGeneralIdEditRoute: AccountsGeneralIdEditRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

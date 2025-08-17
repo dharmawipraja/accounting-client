@@ -142,3 +142,13 @@ export const getRoleBadgeVariant = (
       return 'outline'
   }
 }
+
+/**
+ * Check if user can manage accounts (view, create, edit, delete)
+ */
+export const canManageAccounts = (userRole?: UserRole): boolean => {
+  if (!userRole) return false
+  return (
+    userRole === 'ADMIN' || userRole === 'MANAJER' || userRole === 'AKUNTAN'
+  )
+}
