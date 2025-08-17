@@ -16,9 +16,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useAuth } from '@/hooks/useAuth';
 import type { UserRole } from '@/types';
 import type { User } from '@/types/api';
 import type { CreateUserPayload, UpdateUserPayload } from '@/types/payloads';
+import { getAllowedRolesToAssign, getRoleLabel } from '@/utils/rolePermissions';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -42,6 +44,7 @@ interface UserFormProps {
 
 export function UserForm({ user, onSubmit, onCancel, loading = false }: UserFormProps) {
   const isEditing = !!user;
+  const { user: currentUser } = useAuth();
 
   const form = useForm<UserFormData>({
     resolver: zodResolver(userFormSchema),
@@ -69,14 +72,13 @@ export function UserForm({ user, onSubmit, onCancel, loading = false }: UserForm
     }
   };
 
-  const roleOptions: { value: UserRole; label: string }[] = [
-    { value: 'NASABAH', label: 'Customer' },
-    { value: 'KASIR', label: 'Cashier' },
-    { value: 'KOLEKTOR', label: 'Collector' },
-    { value: 'AKUNTAN', label: 'Accountant' },
-    { value: 'MANAJER', label: 'Manager' },
-    { value: 'ADMIN', label: 'Admin' },
-  ];
+  // Get allowed roles based on current user's role
+  const allowedRoles = currentUser?.role ? getAllowedRolesToAssign(currentUser.role) : [];
+  
+  const roleOptions: { value: UserRole; label: string }[] = allowedRoles.map(role => ({
+    value: role,
+    label: getRoleLabel(role),
+  }));
 
   return (
     <Card>

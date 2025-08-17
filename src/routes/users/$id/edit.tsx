@@ -7,8 +7,14 @@ export const Route = createFileRoute('/users/$id/edit')({
 });
 
 function EditUserComponent() {
+  const { id } = Route.useParams();
+  
   return (
-    <ProtectedRoute>
+    <ProtectedRoute 
+      requiredRoles={['ADMIN', 'MANAJER']} 
+      allowOwnAccess={true}
+      targetUserId={id}
+    >
       <EditUserPage />
     </ProtectedRoute>
   );

@@ -28,15 +28,18 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useAuth } from '@/hooks/useAuth';
 import { useUsers } from '@/hooks/useUsers';
 import type { User } from '@/types/api';
 import type { UserQueryParams } from '@/types/query';
+import { canDeleteUser, canManageSpecificUser, getRoleBadgeVariant, getRoleLabel } from '@/utils/rolePermissions';
 import { useNavigate } from '@tanstack/react-router';
 import { Edit, MoreHorizontal, Plus, Search, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export function UserListPage() {
   const navigate = useNavigate();
+  const { user: currentUser } = useAuth();
   const { getUsers, deleteUser } = useUsers();
   
   const [users, setUsers] = useState<User[]>([]);
@@ -98,44 +101,6 @@ export function UserListPage() {
         return 'secondary';
       default:
         return 'outline';
-    }
-  };
-
-  const getRoleBadgeVariant = (role: string) => {
-    switch (role) {
-      case 'ADMIN':
-        return 'destructive';
-      case 'MANAJER':
-        return 'default';
-      case 'AKUNTAN':
-        return 'secondary';
-      case 'KASIR':
-        return 'outline';
-      case 'KOLEKTOR':
-        return 'outline';
-      case 'NASABAH':
-        return 'outline';
-      default:
-        return 'outline';
-    }
-  };
-
-  const getRoleLabel = (role: string) => {
-    switch (role) {
-      case 'ADMIN':
-        return 'Admin';
-      case 'MANAJER':
-        return 'Manager';
-      case 'AKUNTAN':
-        return 'Accountant';
-      case 'KASIR':
-        return 'Cashier';
-      case 'KOLEKTOR':
-        return 'Collector';
-      case 'NASABAH':
-        return 'User';
-      default:
-        return role;
     }
   };
 
@@ -238,43 +203,57 @@ export function UserListPage() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => navigate({ to: `/users/${user.id}/edit` })}
-                            >
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit
-                            </DropdownMenuItem>
+                            {canManageSpecificUser(
+                              currentUser?.role || 'NASABAH',
+                              currentUser?.id || '',
+                              user.id,
+                              user.role
+                            ) && (
+                              <DropdownMenuItem
+                                onClick={() => navigate({ to: `/users/${user.id}/edit` })}
+                              >
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem
                               onClick={() => navigate({ to: `/users/${user.id}` })}
                             >
                               View Details
                             </DropdownMenuItem>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  Delete
-                                </DropdownMenuItem>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete
-                                    the user account for {user.name}.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDelete(user.id)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
+                            {canDeleteUser(
+                              currentUser?.role || 'NASABAH',
+                              currentUser?.id || '',
+                              user.id,
+                              user.role
+                            ) && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                    <Trash2 className="mr-2 h-4 w-4" />
                                     Delete
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
+                                  </DropdownMenuItem>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      This action cannot be undone. This will permanently delete
+                                      the user account for {user.name}.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDelete(user.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>

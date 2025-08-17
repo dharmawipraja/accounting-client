@@ -7,8 +7,14 @@ export const Route = createFileRoute('/users/$id/')({
 });
 
 function UserDetailComponent() {
+  const { id } = Route.useParams();
+  
   return (
-    <ProtectedRoute>
+    <ProtectedRoute 
+      requiredRoles={['ADMIN', 'MANAJER']} 
+      allowOwnAccess={true}
+      targetUserId={id}
+    >
       <UserDetailPage />
     </ProtectedRoute>
   );

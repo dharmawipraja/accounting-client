@@ -8,7 +8,7 @@ export const Route = createFileRoute('/users/')({
 
 function UsersComponent() {
   return (
-    <ProtectedRoute>
+    <ProtectedRoute requiredRoles={['ADMIN', 'MANAJER']}>
       <UserListPage />
     </ProtectedRoute>
   );
