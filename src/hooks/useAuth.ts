@@ -77,7 +77,15 @@ export const useAuth = () => {
       
       if (response.success && auth.token) {
         dispatch(loginSuccess({
-          user: response.data,
+          user: {
+            id: response.data.id,
+            username: response.data.username,
+            name: response.data.name,
+            role: response.data.role,
+            status: response.data.status,
+            createdAt: response.data.createdAt,
+            updatedAt: response.data.updatedAt,
+          },
           token: auth.token,
         }));
       }

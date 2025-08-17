@@ -1,13 +1,53 @@
-import { Link } from '@tanstack/react-router'
+import { useAuth } from '@/hooks/useAuth';
+import { Link } from '@tanstack/react-router';
 
 export default function Header() {
+  const { isAuthenticated, user, logout } = useAuth();
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
-    <header className="p-2 flex gap-2 bg-white text-black justify-between">
-      <nav className="flex flex-row">
-        <div className="px-2 font-bold">
-          <Link to="/">Home</Link>
+    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center justify-between">
+        <nav className="flex items-center space-x-6">
+          <div className="font-bold text-lg">
+            <Link to="/" className="hover:text-primary">
+              PRSM Accounting
+            </Link>
+          </div>
+          
+          <div className="flex items-center space-x-4 text-sm">
+            <Link 
+              to="/dashboard" 
+              className="hover:text-primary transition-colors"
+              activeProps={{ className: 'text-primary font-medium' }}
+            >
+              Dashboard
+            </Link>
+            <Link 
+              to="/users" 
+              className="hover:text-primary transition-colors"
+              activeProps={{ className: 'text-primary font-medium' }}
+            >
+              Users
+            </Link>
+          </div>
+        </nav>
+
+        <div className="flex items-center space-x-4">
+          <span className="text-sm text-muted-foreground">
+            Welcome, {user?.name}
+          </span>
+          <button 
+            onClick={logout}
+            className="text-sm hover:text-primary transition-colors"
+          >
+            Logout
+          </button>
         </div>
-      </nav>
+      </div>
     </header>
   )
 }

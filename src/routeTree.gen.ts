@@ -11,7 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UsersIndexRouteImport } from './routes/users/index'
+import { Route as UsersNewRouteImport } from './routes/users/new'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as UsersIdIndexRouteImport } from './routes/users/$id/index'
+import { Route as UsersIdEditRouteImport } from './routes/users/$id/edit'
 
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
@@ -23,9 +27,29 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsersIndexRoute = UsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsersNewRoute = UsersNewRouteImport.update({
+  id: '/users/new',
+  path: '/users/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/auth/login',
   path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsersIdIndexRoute = UsersIdIndexRouteImport.update({
+  id: '/users/$id/',
+  path: '/users/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsersIdEditRoute = UsersIdEditRouteImport.update({
+  id: '/users/$id/edit',
+  path: '/users/$id/edit',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -33,30 +57,68 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/auth/login': typeof AuthLoginRoute
+  '/users/new': typeof UsersNewRoute
+  '/users': typeof UsersIndexRoute
+  '/users/$id/edit': typeof UsersIdEditRoute
+  '/users/$id': typeof UsersIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/auth/login': typeof AuthLoginRoute
+  '/users/new': typeof UsersNewRoute
+  '/users': typeof UsersIndexRoute
+  '/users/$id/edit': typeof UsersIdEditRoute
+  '/users/$id': typeof UsersIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/auth/login': typeof AuthLoginRoute
+  '/users/new': typeof UsersNewRoute
+  '/users/': typeof UsersIndexRoute
+  '/users/$id/edit': typeof UsersIdEditRoute
+  '/users/$id/': typeof UsersIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/auth/login'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/auth/login'
+    | '/users/new'
+    | '/users'
+    | '/users/$id/edit'
+    | '/users/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/auth/login'
-  id: '__root__' | '/' | '/dashboard' | '/auth/login'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/auth/login'
+    | '/users/new'
+    | '/users'
+    | '/users/$id/edit'
+    | '/users/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/auth/login'
+    | '/users/new'
+    | '/users/'
+    | '/users/$id/edit'
+    | '/users/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   AuthLoginRoute: typeof AuthLoginRoute
+  UsersNewRoute: typeof UsersNewRoute
+  UsersIndexRoute: typeof UsersIndexRoute
+  UsersIdEditRoute: typeof UsersIdEditRoute
+  UsersIdIndexRoute: typeof UsersIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,11 +137,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/users/': {
+      id: '/users/'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof UsersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/users/new': {
+      id: '/users/new'
+      path: '/users/new'
+      fullPath: '/users/new'
+      preLoaderRoute: typeof UsersNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/login': {
       id: '/auth/login'
       path: '/auth/login'
       fullPath: '/auth/login'
       preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/users/$id/': {
+      id: '/users/$id/'
+      path: '/users/$id'
+      fullPath: '/users/$id'
+      preLoaderRoute: typeof UsersIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/users/$id/edit': {
+      id: '/users/$id/edit'
+      path: '/users/$id/edit'
+      fullPath: '/users/$id/edit'
+      preLoaderRoute: typeof UsersIdEditRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -89,6 +179,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   AuthLoginRoute: AuthLoginRoute,
+  UsersNewRoute: UsersNewRoute,
+  UsersIndexRoute: UsersIndexRoute,
+  UsersIdEditRoute: UsersIdEditRoute,
+  UsersIdIndexRoute: UsersIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

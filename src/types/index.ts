@@ -1,17 +1,19 @@
 // Auth types
 export interface AuthState {
-  user: {
-    id: string;
-    username: string;
-    name: string;
-    role: "ADMIN" | "MANAJER" | "AKUNTAN" | "KASIR" | "KOLEKTOR" | "NASABAH";
-    status?: "ACTIVE" | "INACTIVE";
-    createdAt?: string;
-    updatedAt?: string;
-  } | null;
+  user: AuthUser | null;
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+}
+
+export interface AuthUser {
+  id: string;
+  username: string;
+  name: string;
+  role: UserRole;
+  status?: "ACTIVE" | "INACTIVE";
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // UI State types
@@ -48,6 +50,9 @@ export interface RouteProtection {
   allowedRoles?: UserRole[];
   redirectTo?: string;
 }
+
+// Note: User management types are now defined in api.ts and payloads.ts to match PLANNING.md spec
+// This ensures consistency with the API specification
 
 // Generic types
 export type Status = 'idle' | 'loading' | 'success' | 'error';

@@ -110,100 +110,163 @@ src/
 
 #### 👥 User Management (Admin/Manager)
 
-- [x] User list with pagination and filtering
-- [x] Create new user form
-- [x] Edit user information
-- [x] Delete user (with confirmation)
-- [x] User role assignment
-- [x] User status management (Active/Inactive)
+- [ ] User list with pagination and filtering
+- [ ] Create new user form
+- [ ] Edit user information
+- [ ] Delete user (with confirmation)
+- [ ] User role assignment
+- [ ] User status management (Active/Inactive)
 
 #### 📊 Account Management (Admin/Manager/Accountant)
 
-- [x] General Accounts CRUD operations
-- [x] Detail Accounts CRUD operations
-- [x] Account categorization (ASSET, HUTANG, MODAL, etc.)
-- [x] Account numbering system
-- [x] Account hierarchy display
-- [x] Search and filter functionality
+- [ ] General Accounts CRUD operations
+- [ ] Detail Accounts CRUD operations
+- [ ] Account categorization (ASSET, HUTANG, MODAL, etc.)
+- [ ] Account numbering system
+- [ ] Account hierarchy display
+- [ ] Search and filter functionality
 
 #### 📋 Ledger Management (Admin/Manager/Accountant)
 
-- [x] Ledger entry creation (bulk operations)
-- [x] Ledger entry listing with advanced filtering
-- [x] Ledger entry editing
-- [x] Transaction type handling (DEBIT/CREDIT)
-- [x] Reference number tracking
-- [x] Posting status management
+- [ ] Ledger entry creation (bulk operations)
+- [ ] Ledger entry listing with advanced filtering
+- [ ] Ledger entry editing
+- [ ] Transaction type handling (DEBIT/CREDIT)
+- [ ] Reference number tracking
+- [ ] Posting status management
 
 #### 📈 Dashboard & Reports
 
-- [x] Financial overview dashboard
-- [x] Balance sheet generation
-- [x] Profit & Loss statement
-- [x] Account balance summaries
-- [x] Transaction history charts
-- [x] Export functionality (PDF/Excel)
+- [x] Financial overview dashboard (basic)
+- [ ] Balance sheet generation
+- [ ] Profit & Loss statement
+- [ ] Account balance summaries
+- [ ] Transaction history charts
+- [ ] Export functionality (PDF/Excel)
 
 ### 📋 Development Todo List
 
+#### ✅ **COMPLETED: Phase 1 & 2 - Project Setup & Core Infrastructure**
+
+**Project Foundation:**
+
+- ✅ Vite + React + TypeScript setup with latest versions
+- ✅ Complete folder structure following best practices
+- ✅ ESLint, Prettier, and TypeScript configuration
+- ✅ Environment variables configuration
+- ✅ Path alias setup (`@/` imports)
+- ✅ Git setup with proper .gitignore
+
+**Dependencies & Configuration:**
+
+- ✅ Redux Toolkit for state management
+- ✅ TanStack Router for file-based routing
+- ✅ Tailwind CSS + shadcn/ui for styling
+- ✅ React Hook Form + Zod for form validation
+- ✅ Axios for HTTP client with interceptors
+- ✅ Lodash for utility functions
+- ✅ Date-fns for date handling
+- ✅ Sonner for toast notifications
+
+**Authentication System:**
+
+- ✅ JWT token storage and management
+- ✅ Redux auth slice with proper state management
+- ✅ Login page with form validation
+- ✅ Protected route wrapper
+- ✅ Logout functionality
+- ✅ Role-based access control setup
+- ✅ Token interceptors for API calls
+
+**UI Foundation:**
+
+- ✅ Modern shadcn/ui components (Button, Input, Card, Label, Form)
+- ✅ Responsive design with Tailwind CSS
+- ✅ Toast notification system
+- ✅ Professional login page with validation
+- ✅ Dashboard page with card-based layout
+- ✅ Protected routing system
+
+**API Integration:**
+
+- ✅ Base API service with Axios
+- ✅ Request/response interceptors
+- ✅ Error handling and retry logic
+- ✅ Authentication service endpoints
+- ✅ TypeScript types for all API responses
+
 #### Phase 1: Project Setup & Authentication
 
-- [ ] **Project Initialization**
+- [x] **Project Initialization**
+  - [x] Create Vite + React + TypeScript project
+  - [x] Configure ESLint, Prettier, and Git hooks
+  - [x] Set up folder structure
+  - [x] Install and configure dependencies
 
-  - [ ] Create Vite + React + TypeScript project
-  - [ ] Configure ESLint, Prettier, and Git hooks
-  - [ ] Set up folder structure
-  - [ ] Install and configure dependencies
+- [x] **Environment Configuration**
+  - [x] Create environment variables for API base URL
+  - [x] Configure different environments (dev, staging, prod)
+  - [x] Set up proxy for development
 
-- [ ] **Environment Configuration**
-
-  - [ ] Create environment variables for API base URL
-  - [ ] Configure different environments (dev, staging, prod)
-  - [ ] Set up proxy for development
-
-- [ ] **Authentication System**
-  - [ ] Implement JWT token storage (localStorage/sessionStorage)
-  - [ ] Create authentication context/slice
-  - [ ] Build login page with form validation
-  - [ ] Implement automatic token refresh logic
-  - [ ] Create protected route wrapper
-  - [ ] Build logout functionality
+- [x] **Authentication System**
+  - [x] Implement JWT token storage (localStorage/sessionStorage)
+  - [x] Create authentication context/slice
+  - [x] Build login page with form validation
+  - [x] Implement automatic token refresh logic
+  - [x] Create protected route wrapper
+  - [x] Build logout functionality
 
 #### Phase 2: Core Infrastructure
 
-- [ ] **State Management**
+- [x] **State Management**
+  - [x] Configure Redux Toolkit store
+  - [x] Set up RTK Query for API calls
+  - [x] Create authentication slice
+  - [x] Create UI state slice (loading, notifications)
 
-  - [ ] Configure Redux Toolkit store
-  - [ ] Set up RTK Query for API calls
-  - [ ] Create authentication slice
-  - [ ] Create UI state slice (loading, notifications)
+- [x] **API Integration**
+  - [x] Create base API service with axios
+  - [x] Implement request/response interceptors
+  - [x] Create RTK Query endpoints for all API routes
+  - [x] Add error handling and retry logic
+  - [x] Implement caching strategies
 
-- [ ] **API Integration**
+- [x] **UI Foundation**
+  - [x] Choose and configure UI framework (Shadcn/UI + Tailwind CSS)
+  - [x] Create layout components (Header, Sidebar, Footer)
+  - [x] Implement responsive design
+  - [x] Create common components (Button, Input, Modal, etc.)
+  - [x] Set up routing with role-based access
 
-  - [ ] Create base API service with axios
-  - [ ] Implement request/response interceptors
-  - [ ] Create RTK Query endpoints for all API routes
-  - [ ] Add error handling and retry logic
-  - [ ] Implement caching strategies
+---
 
-- [ ] **UI Foundation**
-  - [ ] Choose and configure UI framework (Ant Design/MUI)
-  - [ ] Create layout components (Header, Sidebar, Footer)
-  - [ ] Implement responsive design
-  - [ ] Create common components (Button, Input, Modal, etc.)
-  - [ ] Set up routing with role-based access
+## 🎯 **CURRENT STATUS: Phase 1 & 2 COMPLETE!**
+
+**✅ What's Working Now:**
+
+- Modern React + TypeScript + Vite setup
+- Complete authentication flow (login/logout)
+- Protected routing with role-based access
+- Professional UI with shadcn/ui components
+- Redux state management
+- API integration ready
+- Toast notifications
+- Responsive design
+- Path alias imports (`@/`)
+
+**🚀 Ready to Start:** Phase 3 - User Management Module
+
+---
 
 #### Phase 3: User Management Module
 
 - [ ] **User List Page**
-
   - [ ] Create user table with pagination
   - [ ] Implement search and filtering
   - [ ] Add sorting functionality
   - [ ] Create role-based action buttons
 
 - [ ] **User Forms**
-
   - [ ] Build create user form with validation
   - [ ] Build edit user form
   - [ ] Implement role selection component
@@ -218,7 +281,6 @@ src/
 #### Phase 4: Account Management Module
 
 - [ ] **General Accounts**
-
   - [ ] Create general accounts list page
   - [ ] Build account creation form
   - [ ] Implement account editing
@@ -226,7 +288,6 @@ src/
   - [ ] Create account category filters
 
 - [ ] **Detail Accounts**
-
   - [ ] Create detail accounts list page
   - [ ] Build detail account forms
   - [ ] Implement hierarchy display
@@ -242,14 +303,12 @@ src/
 #### Phase 5: Ledger Management Module
 
 - [ ] **Ledger Entry List**
-
   - [ ] Create ledger entries table
   - [ ] Implement advanced filtering (date range, account, type)
   - [ ] Add sorting and pagination
   - [ ] Create status indicators
 
 - [ ] **Ledger Operations**
-
   - [ ] Build bulk ledger entry form
   - [ ] Implement double-entry validation
   - [ ] Create ledger entry editing
@@ -265,7 +324,6 @@ src/
 #### Phase 6: Dashboard & Reports
 
 - [ ] **Dashboard**
-
   - [ ] Create overview dashboard
   - [ ] Implement financial KPI cards
   - [ ] Add recent transactions widget
@@ -273,7 +331,6 @@ src/
   - [ ] Add quick action buttons
 
 - [ ] **Reports**
-
   - [ ] Build balance sheet report
   - [ ] Create profit & loss statement
   - [ ] Implement trial balance
@@ -289,14 +346,12 @@ src/
 #### Phase 7: Advanced Features
 
 - [ ] **Search & Filtering**
-
   - [ ] Implement global search
   - [ ] Create advanced filter components
   - [ ] Add saved filter presets
   - [ ] Implement date range pickers
 
 - [ ] **Notifications**
-
   - [ ] Create notification system
   - [ ] Implement real-time updates
   - [ ] Add email notifications
@@ -311,7 +366,6 @@ src/
 #### Phase 8: Testing & Quality
 
 - [ ] **Testing**
-
   - [ ] Set up Vitest for unit testing
   - [ ] Write component tests
   - [ ] Add integration tests
@@ -360,114 +414,114 @@ src/
 
 // Base response wrapper
 interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
+  success: boolean
+  data: T
+  message?: string
 }
 
 interface PaginatedResponse<T> {
-  success: boolean;
-  data: T[];
+  success: boolean
+  data: T[]
   pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    pages: number;
-  };
-  message?: string;
+    page: number
+    limit: number
+    total: number
+    pages: number
+  }
+  message?: string
 }
 
 // User types
 interface User {
-  id: string;
-  username: string;
-  name: string;
-  role: "ADMIN" | "MANAJER" | "AKUNTAN" | "KASIR" | "KOLEKTOR" | "NASABAH";
-  status: "ACTIVE" | "INACTIVE";
-  createdAt: string;
-  updatedAt: string;
+  id: string
+  username: string
+  name: string
+  role: 'ADMIN' | 'MANAJER' | 'AKUNTAN' | 'KASIR' | 'KOLEKTOR' | 'NASABAH'
+  status: 'ACTIVE' | 'INACTIVE'
+  createdAt: string
+  updatedAt: string
 }
 
 // Authentication response
 interface AuthResponse {
-  token: string;
+  token: string
   user: {
-    id: string;
-    username: string;
-    name: string;
-    role: "ADMIN" | "MANAJER" | "AKUNTAN" | "KASIR" | "KOLEKTOR" | "NASABAH";
-  };
-  expiresIn: string; // default: "24h"
+    id: string
+    username: string
+    name: string
+    role: 'ADMIN' | 'MANAJER' | 'AKUNTAN' | 'KASIR' | 'KOLEKTOR' | 'NASABAH'
+  }
+  expiresIn: string // default: "24h"
 }
 
 // Account types
 interface AccountGeneral {
-  id: string;
-  accountNumber: string;
-  accountName: string;
-  accountType: "GENERAL";
-  accountCategory: "ASSET" | "HUTANG" | "MODAL" | "PENDAPATAN" | "BIAYA";
-  reportType: "NERACA" | "LABA_RUGI";
-  transactionType: "DEBIT" | "CREDIT";
-  amountCredit: number;
-  amountDebit: number;
-  createdBy: string;
-  updatedBy: string;
-  deletedAt?: string | null;
-  createdAt: string;
-  updatedAt: string;
+  id: string
+  accountNumber: string
+  accountName: string
+  accountType: 'GENERAL'
+  accountCategory: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
+  reportType: 'NERACA' | 'LABA_RUGI'
+  transactionType: 'DEBIT' | 'CREDIT'
+  amountCredit: number
+  amountDebit: number
+  createdBy: string
+  updatedBy: string
+  deletedAt?: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 interface AccountDetail {
-  id: string;
-  accountNumber: string;
-  accountName: string;
-  accountType: "DETAIL";
-  accountCategory: "ASSET" | "HUTANG" | "MODAL" | "PENDAPATAN" | "BIAYA";
-  reportType: "NERACA" | "LABA_RUGI";
-  transactionType: "DEBIT" | "CREDIT";
-  amountCredit: number;
-  amountDebit: number;
-  accountGeneralId: string;
-  createdBy: string;
-  updatedBy: string;
-  deletedAt?: string | null;
-  createdAt: string;
-  updatedAt: string;
+  id: string
+  accountNumber: string
+  accountName: string
+  accountType: 'DETAIL'
+  accountCategory: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
+  reportType: 'NERACA' | 'LABA_RUGI'
+  transactionType: 'DEBIT' | 'CREDIT'
+  amountCredit: number
+  amountDebit: number
+  accountGeneralId: string
+  createdBy: string
+  updatedBy: string
+  deletedAt?: string | null
+  createdAt: string
+  updatedAt: string
   accountGeneral?: {
-    id: string;
-    accountNumber: string;
-    accountName: string;
-  };
+    id: string
+    accountNumber: string
+    accountName: string
+  }
 }
 
 // Ledger types
 interface Ledger {
-  id: string;
-  referenceNumber: string;
-  amount: number;
-  description: string;
-  ledgerType: "KAS_MASUK" | "KAS_KELUAR";
-  transactionType: "DEBIT" | "CREDIT";
-  postingStatus: "PENDING" | "POSTED";
-  ledgerDate: string;
-  postingAt?: string | null;
-  accountDetailId: string;
-  accountGeneralId: string;
-  createdBy: string;
-  updatedBy: string;
-  createdAt: string;
-  updatedAt: string;
+  id: string
+  referenceNumber: string
+  amount: number
+  description: string
+  ledgerType: 'KAS_MASUK' | 'KAS_KELUAR'
+  transactionType: 'DEBIT' | 'CREDIT'
+  postingStatus: 'PENDING' | 'POSTED'
+  ledgerDate: string
+  postingAt?: string | null
+  accountDetailId: string
+  accountGeneralId: string
+  createdBy: string
+  updatedBy: string
+  createdAt: string
+  updatedAt: string
   accountDetail?: {
-    id: string;
-    accountNumber: string;
-    accountName: string;
-  };
+    id: string
+    accountNumber: string
+    accountName: string
+  }
   accountGeneral?: {
-    id: string;
-    accountNumber: string;
-    accountName: string;
-  };
+    id: string
+    accountNumber: string
+    accountName: string
+  }
 }
 
 // ===============================
@@ -476,97 +530,97 @@ interface Ledger {
 
 // Authentication payloads
 interface LoginPayload {
-  username: string; // min: 3 chars, alphanumeric + underscore/hyphen
-  password: string; // min: 6 chars
+  username: string // min: 3 chars, alphanumeric + underscore/hyphen
+  password: string // min: 6 chars
 }
 
 // User management payloads
 interface CreateUserPayload {
-  username: string; // min: 3 chars, max: 50, alphanumeric + underscore/hyphen
-  password: string; // min: 6 chars
-  name: string; // min: 2 chars, max: 100
-  role?: "ADMIN" | "MANAJER" | "AKUNTAN" | "KASIR" | "KOLEKTOR" | "NASABAH"; // default: 'NASABAH'
-  status?: "ACTIVE" | "INACTIVE"; // default: 'ACTIVE'
+  username: string // min: 3 chars, max: 50, alphanumeric + underscore/hyphen
+  password: string // min: 6 chars
+  name: string // min: 2 chars, max: 100
+  role?: 'ADMIN' | 'MANAJER' | 'AKUNTAN' | 'KASIR' | 'KOLEKTOR' | 'NASABAH' // default: 'NASABAH'
+  status?: 'ACTIVE' | 'INACTIVE' // default: 'ACTIVE'
 }
 
 interface UpdateUserPayload {
-  username?: string; // min: 3 chars, max: 50, alphanumeric + underscore/hyphen
-  password?: string; // min: 6 chars
-  name?: string; // min: 2 chars, max: 100
-  role?: "ADMIN" | "MANAJER" | "AKUNTAN" | "KASIR" | "KOLEKTOR" | "NASABAH";
-  status?: "ACTIVE" | "INACTIVE";
+  username?: string // min: 3 chars, max: 50, alphanumeric + underscore/hyphen
+  password?: string // min: 6 chars
+  name?: string // min: 2 chars, max: 100
+  role?: 'ADMIN' | 'MANAJER' | 'AKUNTAN' | 'KASIR' | 'KOLEKTOR' | 'NASABAH'
+  status?: 'ACTIVE' | 'INACTIVE'
 }
 
 interface ChangePasswordPayload {
-  currentPassword: string;
-  newPassword: string; // min: 6 chars
-  confirmPassword: string; // must match newPassword
+  currentPassword: string
+  newPassword: string // min: 6 chars
+  confirmPassword: string // must match newPassword
 }
 
 // Account management payloads
 interface CreateAccountGeneralPayload {
-  accountNumber: string; // min: 1, max: 20, numbers and hyphens only
-  accountName: string; // min: 3 chars, max: 100
-  accountCategory: "ASSET" | "HUTANG" | "MODAL" | "PENDAPATAN" | "BIAYA";
-  reportType: "NERACA" | "LABA_RUGI";
-  transactionType: "DEBIT" | "CREDIT";
-  amountCredit?: number; // default: 0, positive decimal
-  amountDebit?: number; // default: 0, positive decimal
+  accountNumber: string // min: 1, max: 20, numbers and hyphens only
+  accountName: string // min: 3 chars, max: 100
+  accountCategory: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
+  reportType: 'NERACA' | 'LABA_RUGI'
+  transactionType: 'DEBIT' | 'CREDIT'
+  amountCredit?: number // default: 0, positive decimal
+  amountDebit?: number // default: 0, positive decimal
 }
 
 interface UpdateAccountGeneralPayload {
-  accountName: string; // min: 3 chars, max: 100
-  accountCategory: "ASSET" | "HUTANG" | "MODAL" | "PENDAPATAN" | "BIAYA";
-  reportType: "NERACA" | "LABA_RUGI";
-  transactionType: "DEBIT" | "CREDIT";
-  amountCredit: number; // positive decimal
-  amountDebit: number; // positive decimal
+  accountName: string // min: 3 chars, max: 100
+  accountCategory: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
+  reportType: 'NERACA' | 'LABA_RUGI'
+  transactionType: 'DEBIT' | 'CREDIT'
+  amountCredit: number // positive decimal
+  amountDebit: number // positive decimal
 }
 
 interface CreateAccountDetailPayload {
-  accountNumber: string; // min: 1, max: 20, numbers and hyphens only
-  accountName: string; // min: 3 chars, max: 100
-  accountGeneralId: string; // UUID
-  accountCategory: "ASSET" | "HUTANG" | "MODAL" | "PENDAPATAN" | "BIAYA";
-  reportType: "NERACA" | "LABA_RUGI";
-  transactionType: "DEBIT" | "CREDIT";
-  amountCredit?: number; // default: 0, positive decimal
-  amountDebit?: number; // default: 0, positive decimal
+  accountNumber: string // min: 1, max: 20, numbers and hyphens only
+  accountName: string // min: 3 chars, max: 100
+  accountGeneralId: string // UUID
+  accountCategory: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
+  reportType: 'NERACA' | 'LABA_RUGI'
+  transactionType: 'DEBIT' | 'CREDIT'
+  amountCredit?: number // default: 0, positive decimal
+  amountDebit?: number // default: 0, positive decimal
 }
 
 interface UpdateAccountDetailPayload {
-  accountName: string; // min: 3 chars, max: 100
-  accountCategory: "ASSET" | "HUTANG" | "MODAL" | "PENDAPATAN" | "BIAYA";
-  reportType: "NERACA" | "LABA_RUGI";
-  transactionType: "DEBIT" | "CREDIT";
-  amountCredit: number; // positive decimal
-  amountDebit: number; // positive decimal
+  accountName: string // min: 3 chars, max: 100
+  accountCategory: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
+  reportType: 'NERACA' | 'LABA_RUGI'
+  transactionType: 'DEBIT' | 'CREDIT'
+  amountCredit: number // positive decimal
+  amountDebit: number // positive decimal
 }
 
 // Ledger management payloads
 interface LedgerItem {
-  amount: number; // positive decimal
-  description: string; // min: 3 chars, max: 500
-  accountDetailId: string; // UUID
-  accountGeneralId: string; // UUID
-  ledgerType: "KAS_MASUK" | "KAS_KELUAR";
-  transactionType: "DEBIT" | "CREDIT";
-  ledgerDate: string; // ISO date string
+  amount: number // positive decimal
+  description: string // min: 3 chars, max: 500
+  accountDetailId: string // UUID
+  accountGeneralId: string // UUID
+  ledgerType: 'KAS_MASUK' | 'KAS_KELUAR'
+  transactionType: 'DEBIT' | 'CREDIT'
+  ledgerDate: string // ISO date string
 }
 
 interface CreateBulkLedgersPayload {
-  ledgers: LedgerItem[]; // min: 1 item, max: 100 items
+  ledgers: LedgerItem[] // min: 1 item, max: 100 items
 }
 
 interface UpdateLedgerPayload {
-  amount?: number; // positive decimal
-  description?: string; // min: 3 chars, max: 500
-  accountDetailId?: string; // UUID
-  accountGeneralId?: string; // UUID
-  ledgerType?: "KAS_MASUK" | "KAS_KELUAR";
-  transactionType?: "DEBIT" | "CREDIT";
-  ledgerDate?: string; // ISO date string
-  postingStatus?: "PENDING" | "POSTED";
+  amount?: number // positive decimal
+  description?: string // min: 3 chars, max: 500
+  accountDetailId?: string // UUID
+  accountGeneralId?: string // UUID
+  ledgerType?: 'KAS_MASUK' | 'KAS_KELUAR'
+  transactionType?: 'DEBIT' | 'CREDIT'
+  ledgerDate?: string // ISO date string
+  postingStatus?: 'PENDING' | 'POSTED'
 }
 
 // ===============================
@@ -575,45 +629,45 @@ interface UpdateLedgerPayload {
 
 // Common pagination params
 interface PaginationParams {
-  page?: number; // default: 1, min: 1
-  limit?: number; // default: 10, min: 1, max: 100
+  page?: number // default: 1, min: 1
+  limit?: number // default: 10, min: 1, max: 100
 }
 
 // User query params
 interface UserQueryParams extends PaginationParams {
-  search?: string; // searches username and name
-  role?: "ADMIN" | "MANAJER" | "AKUNTAN" | "KASIR" | "KOLEKTOR" | "NASABAH";
-  status?: "ACTIVE" | "INACTIVE";
-  createdFrom?: string; // ISO date string
-  createdTo?: string; // ISO date string
-  includeInactive?: boolean; // default: false
+  search?: string // searches username and name
+  role?: 'ADMIN' | 'MANAJER' | 'AKUNTAN' | 'KASIR' | 'KOLEKTOR' | 'NASABAH'
+  status?: 'ACTIVE' | 'INACTIVE'
+  createdFrom?: string // ISO date string
+  createdTo?: string // ISO date string
+  includeInactive?: boolean // default: false
 }
 
 // Account query params
 interface AccountQueryParams extends PaginationParams {
-  search?: string; // searches account number and name
-  accountCategory?: "ASSET" | "HUTANG" | "MODAL" | "PENDAPATAN" | "BIAYA";
-  reportType?: "NERACA" | "LABA_RUGI";
-  includeDeleted?: boolean; // default: false
+  search?: string // searches account number and name
+  accountCategory?: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
+  reportType?: 'NERACA' | 'LABA_RUGI'
+  includeDeleted?: boolean // default: false
 }
 
 // Account detail specific query params
 interface AccountDetailQueryParams extends AccountQueryParams {
-  accountGeneralId?: string; // filter by parent general account
-  includeLedgers?: boolean; // default: false
+  accountGeneralId?: string // filter by parent general account
+  includeLedgers?: boolean // default: false
 }
 
 // Ledger query params
 interface LedgerQueryParams extends PaginationParams {
-  search?: string; // searches description and reference number
-  accountDetailId?: string;
-  accountGeneralId?: string;
-  ledgerType?: "KAS_MASUK" | "KAS_KELUAR";
-  postingStatus?: "PENDING" | "POSTED";
-  dateFrom?: string; // ISO date string
-  dateTo?: string; // ISO date string
-  amountMin?: number;
-  amountMax?: number;
+  search?: string // searches description and reference number
+  accountDetailId?: string
+  accountGeneralId?: string
+  ledgerType?: 'KAS_MASUK' | 'KAS_KELUAR'
+  postingStatus?: 'PENDING' | 'POSTED'
+  dateFrom?: string // ISO date string
+  dateTo?: string // ISO date string
+  amountMin?: number
+  amountMax?: number
 }
 ```
 
@@ -658,12 +712,12 @@ interface LedgerQueryParams extends PaginationParams {
 ```typescript
 // Request Body
 {
-  username: string; // min: 3 chars, alphanumeric + underscore/hyphen
-  password: string; // min: 6 chars
+  username: string // min: 3 chars, alphanumeric + underscore/hyphen
+  password: string // min: 6 chars
 }
 
 // Response
-ApiResponse<AuthResponse>;
+ApiResponse<AuthResponse>
 ```
 
 **POST /auth/logout** (requires auth)
@@ -671,7 +725,7 @@ ApiResponse<AuthResponse>;
 ```typescript
 // Request Body: None (just auth header)
 // Response
-ApiResponse<{ message: string }>;
+ApiResponse<{ message: string }>
 ```
 
 **GET /auth/profile** (requires auth)
@@ -680,14 +734,14 @@ ApiResponse<{ message: string }>;
 // Request Body: None
 // Response
 ApiResponse<{
-  id: string;
-  username: string;
-  name: string;
-  role: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-}>;
+  id: string
+  username: string
+  name: string
+  role: string
+  status: string
+  createdAt: string
+  updatedAt: string
+}>
 ```
 
 #### User Management Endpoints (Admin/Manager only)
@@ -696,20 +750,20 @@ ApiResponse<{
 
 ```typescript
 // Request Body
-CreateUserPayload;
+CreateUserPayload
 
 // Response
-ApiResponse<User>;
+ApiResponse<User>
 ```
 
 **GET /users**
 
 ```typescript
 // Query Parameters
-UserQueryParams;
+UserQueryParams
 
 // Response
-PaginatedResponse<User>;
+PaginatedResponse<User>
 ```
 
 **GET /users/:id**
@@ -717,11 +771,11 @@ PaginatedResponse<User>;
 ```typescript
 // Path Parameters
 {
-  id: string;
+  id: string
 }
 
 // Response
-ApiResponse<User>;
+ApiResponse<User>
 ```
 
 **PUT /users/:id**
@@ -729,14 +783,14 @@ ApiResponse<User>;
 ```typescript
 // Path Parameters
 {
-  id: string;
+  id: string
 }
 
 // Request Body
-UpdateUserPayload;
+UpdateUserPayload
 
 // Response
-ApiResponse<User>;
+ApiResponse<User>
 ```
 
 **DELETE /users/:id**
@@ -744,21 +798,21 @@ ApiResponse<User>;
 ```typescript
 // Path Parameters
 {
-  id: string;
+  id: string
 }
 
 // Response
-ApiResponse<User>;
+ApiResponse<User>
 ```
 
 **POST /users/change-password** (any authenticated user)
 
 ```typescript
 // Request Body
-ChangePasswordPayload;
+ChangePasswordPayload
 
 // Response
-ApiResponse<{ message: string }>;
+ApiResponse<{ message: string }>
 ```
 
 #### Account General Endpoints (Admin/Manager/Accountant only)
@@ -767,20 +821,20 @@ ApiResponse<{ message: string }>;
 
 ```typescript
 // Request Body
-CreateAccountGeneralPayload;
+CreateAccountGeneralPayload
 
 // Response (201)
-ApiResponse<AccountGeneral>;
+ApiResponse<AccountGeneral>
 ```
 
 **GET /accounts/general**
 
 ```typescript
 // Query Parameters
-AccountQueryParams;
+AccountQueryParams
 
 // Response
-PaginatedResponse<AccountGeneral>;
+PaginatedResponse<AccountGeneral>
 ```
 
 **GET /accounts/general/:id**
@@ -801,14 +855,14 @@ ApiResponse<AccountGeneral>
 ```typescript
 // Path Parameters
 {
-  id: string;
+  id: string
 }
 
 // Request Body
-UpdateAccountGeneralPayload;
+UpdateAccountGeneralPayload
 
 // Response
-ApiResponse<AccountGeneral>;
+ApiResponse<AccountGeneral>
 ```
 
 **DELETE /accounts/general/:id** (soft delete)
@@ -816,11 +870,11 @@ ApiResponse<AccountGeneral>;
 ```typescript
 // Path Parameters
 {
-  id: string;
+  id: string
 }
 
 // Response
-ApiResponse<AccountGeneral>;
+ApiResponse<AccountGeneral>
 ```
 
 #### Account Detail Endpoints (Admin/Manager/Accountant only)
@@ -829,20 +883,20 @@ ApiResponse<AccountGeneral>;
 
 ```typescript
 // Request Body
-CreateAccountDetailPayload;
+CreateAccountDetailPayload
 
 // Response (201)
-ApiResponse<AccountDetail>;
+ApiResponse<AccountDetail>
 ```
 
 **GET /accounts/detail**
 
 ```typescript
 // Query Parameters
-AccountDetailQueryParams;
+AccountDetailQueryParams
 
 // Response
-PaginatedResponse<AccountDetail>;
+PaginatedResponse<AccountDetail>
 ```
 
 **GET /accounts/detail/:id**
@@ -866,14 +920,14 @@ ApiResponse<AccountDetail>
 ```typescript
 // Path Parameters
 {
-  id: string;
+  id: string
 }
 
 // Request Body
-UpdateAccountDetailPayload;
+UpdateAccountDetailPayload
 
 // Response
-ApiResponse<AccountDetail>;
+ApiResponse<AccountDetail>
 ```
 
 **DELETE /accounts/detail/:id** (soft delete)
@@ -881,11 +935,11 @@ ApiResponse<AccountDetail>;
 ```typescript
 // Path Parameters
 {
-  id: string;
+  id: string
 }
 
 // Response
-ApiResponse<AccountDetail>;
+ApiResponse<AccountDetail>
 ```
 
 #### Ledger Endpoints (Admin/Manager/Accountant only)
@@ -894,24 +948,24 @@ ApiResponse<AccountDetail>;
 
 ```typescript
 // Request Body
-CreateBulkLedgersPayload;
+CreateBulkLedgersPayload
 
 // Response (201)
 ApiResponse<{
-  referenceNumber: string;
-  totalEntries: number;
-  ledgers: Ledger[];
-}>;
+  referenceNumber: string
+  totalEntries: number
+  ledgers: Ledger[]
+}>
 ```
 
 **GET /ledgers**
 
 ```typescript
 // Query Parameters
-LedgerQueryParams;
+LedgerQueryParams
 
 // Response
-PaginatedResponse<Ledger>;
+PaginatedResponse<Ledger>
 ```
 
 **GET /ledgers/:id**
@@ -919,11 +973,11 @@ PaginatedResponse<Ledger>;
 ```typescript
 // Path Parameters
 {
-  id: string;
+  id: string
 }
 
 // Response
-ApiResponse<Ledger>;
+ApiResponse<Ledger>
 ```
 
 **PUT /ledgers/:id**
@@ -931,14 +985,14 @@ ApiResponse<Ledger>;
 ```typescript
 // Path Parameters
 {
-  id: string;
+  id: string
 }
 
 // Request Body
-UpdateLedgerPayload;
+UpdateLedgerPayload
 
 // Response
-ApiResponse<Ledger>;
+ApiResponse<Ledger>
 ```
 
 **DELETE /ledgers/:id** (only pending entries)
@@ -946,11 +1000,11 @@ ApiResponse<Ledger>;
 ```typescript
 // Path Parameters
 {
-  id: string;
+  id: string
 }
 
 // Response
-ApiResponse<Ledger>;
+ApiResponse<Ledger>
 ```
 
 #### Health Check Endpoints (No auth required)
@@ -986,7 +1040,7 @@ ApiResponse<Ledger>;
 // Request: None
 // Response
 {
-  status: "healthy" | "degraded" | "unhealthy";
+  status: 'healthy' | 'degraded' | 'unhealthy'
   // Additional readiness data
 }
 ```
@@ -997,7 +1051,7 @@ ApiResponse<Ledger>;
 // Request: None
 // Response
 {
-  status: "healthy" | "degraded" | "unhealthy";
+  status: 'healthy' | 'degraded' | 'unhealthy'
 }
 ```
 

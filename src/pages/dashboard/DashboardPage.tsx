@@ -1,3 +1,4 @@
+import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { APP_CONFIG } from '@/constants';
@@ -6,40 +7,17 @@ import { getRoleDisplayName } from '@/utils/auth';
 import React from 'react';
 
 export const DashboardPage: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   if (!user) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">
-                {APP_CONFIG.NAME}
-              </h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">
-                Welcome, {user.name}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={logout}
-              >
-                Logout
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Dashboard</CardTitle>
