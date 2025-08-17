@@ -1,27 +1,14 @@
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { UserForm } from '@/components/users/UserForm';
-import { useUsers } from '@/hooks/useUsers';
-import type { CreateUserPayload, UpdateUserPayload } from '@/types/payloads';
 import { useNavigate } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
-import { useState } from 'react';
 
 export function CreateUserPage() {
   const navigate = useNavigate();
-  const { createUser } = useUsers();
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (data: CreateUserPayload | UpdateUserPayload) => {
-    setLoading(true);
-    try {
-      await createUser(data as CreateUserPayload);
-      navigate({ to: '/users' });
-    } catch (error) {
-      console.error('Failed to create user:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleSuccess = () => {
+    navigate({ to: '/users' });
   };
 
   const handleCancel = () => {
@@ -53,9 +40,8 @@ export function CreateUserPage() {
           </div>
 
           <UserForm
-            onSubmit={handleSubmit}
+            onSuccess={handleSuccess}
             onCancel={handleCancel}
-            loading={loading}
           />
         </div>
       </main>

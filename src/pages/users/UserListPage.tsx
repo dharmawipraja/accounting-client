@@ -19,7 +19,11 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { EmptyState } from '@/components/ui/empty-state';
+import { ErrorState } from '@/components/ui/error-state';
 import { Input } from '@/components/ui/input';
+import { TableSkeleton } from '@/components/ui/loading-state';
+import { SubmitOverlay } from '@/components/ui/submit-overlay';
 import {
     Table,
     TableBody,
@@ -29,7 +33,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { useAuth } from '@/hooks/useAuth';
-import { useUsers } from '@/hooks/useUsers';
+import { useDeleteUserMutation, useUsersQuery } from '@/hooks/useUsersQuery';
 import type { User } from '@/types/api';
 import type { UserQueryParams } from '@/types/query';
 import { canDeleteUser, canManageSpecificUser, getRoleBadgeVariant, getRoleLabel } from '@/utils/rolePermissions';
@@ -46,16 +50,13 @@ import {
     type SortingState,
     type VisibilityState,
 } from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, Edit, MoreHorizontal, Plus, Search, Trash2 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { ArrowUpDown, ChevronDown, Edit, Loader2, MoreHorizontal, Plus, Search, Trash2, UserPlus } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 export function UserListPage() {
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
-  const { getUsers, deleteUser } = useUsers();
   
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -64,16 +65,39 @@ export function UserListPage() {
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
-    total: 0,
-    totalPages: 0,
   });
+
+  // React Query hooks
+  const queryParams: UserQueryParams = {
+    page: pagination.page,
+    limit: pagination.limit,
+    search: globalFilter || undefined,
+  };
+
+  const {
+    data: usersResponse,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useUsersQuery(queryParams);
+
+  const deleteUserMutation = useDeleteUserMutation();
+
+  const users = usersResponse?.data || [];
+  const paginationInfo = usersResponse?.pagination || {
+    page: 1,
+    limit: 10,
+    total: 0,
+    pages: 0,
+  };
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteUser(id);
-      loadUsers();
+      await deleteUserMutation.mutateAsync(id);
     } catch (error) {
-      console.error('Failed to delete user:', error);
+      // Error is handled by the mutation
+      console.error('Delete failed:', error);
     }
   };
 
@@ -210,90 +234,65 @@ export function UserListPage() {
                 ) && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete
-                          the user account for {user.name}.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleDelete(user.id)}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          );
-        },
-      },
-    ],
-    [currentUser, navigate]
-  );
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete
+                                the user account for {user.name}.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDelete(user.id)}
+                                disabled={deleteUserMutation.isPending}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                {deleteUserMutation.isPending && (
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                )}
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                );
+              },
+            },
+          ],
+          [currentUser, navigate, deleteUserMutation.isPending]
+        );
 
-  const table = useReactTable({
-    data: users,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: 'includesString',
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-      globalFilter,
-    },
-  });
-
-  const loadUsers = async (params?: UserQueryParams) => {
-    setLoading(true);
-    try {
-      const response = await getUsers({
-        page: pagination.page,
-        limit: pagination.limit,
-        search: globalFilter,
-        ...params,
-      });
-      setUsers(response.data);
-      setPagination({
-        page: response.pagination.page,
-        limit: response.pagination.limit,
-        total: response.pagination.total,
-        totalPages: response.pagination.pages,
-      });
-    } catch (error) {
-      console.error('Failed to load users:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadUsers();
-  }, [pagination.page, pagination.limit, globalFilter]);
-
-  return (
+        const table = useReactTable({
+          data: users,
+          columns,
+          onSortingChange: setSorting,
+          onColumnFiltersChange: setColumnFilters,
+          getCoreRowModel: getCoreRowModel(),
+          getPaginationRowModel: getPaginationRowModel(),
+          getSortedRowModel: getSortedRowModel(),
+          getFilteredRowModel: getFilteredRowModel(),
+          onColumnVisibilityChange: setColumnVisibility,
+          onRowSelectionChange: setRowSelection,
+          onGlobalFilterChange: setGlobalFilter,
+          globalFilterFn: 'includesString',
+          state: {
+            sorting,
+            columnFilters,
+            columnVisibility,
+            rowSelection,
+            globalFilter,
+          },
+        });  return (
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -325,11 +324,12 @@ export function UserListPage() {
                     value={globalFilter ?? ''}
                     onChange={(event) => setGlobalFilter(String(event.target.value))}
                     className="pl-10"
+                    disabled={isLoading}
                   />
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="ml-auto">
+                    <Button variant="outline" className="ml-auto" disabled={isLoading}>
                       Columns <ChevronDown className="ml-2 h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -359,147 +359,167 @@ export function UserListPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                      <TableRow key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => {
-                          return (
-                            <TableHead key={header.id}>
-                              {header.isPlaceholder
-                                ? null
-                                : flexRender(
-                                    header.column.columnDef.header,
-                                    header.getContext()
+              {isError ? (
+                <ErrorState
+                  type="server"
+                  title="Failed to load users"
+                  message={error?.message || 'Unable to fetch user data. Please try again.'}
+                  onRetry={() => refetch()}
+                  isRetrying={isLoading}
+                />
+              ) : (
+                <>
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                          <TableRow key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => {
+                              return (
+                                <TableHead key={header.id}>
+                                  {header.isPlaceholder
+                                    ? null
+                                    : flexRender(
+                                        header.column.columnDef.header,
+                                        header.getContext()
+                                      )}
+                                </TableHead>
+                              );
+                            })}
+                          </TableRow>
+                        ))}
+                      </TableHeader>
+                      <TableBody>
+                        {isLoading ? (
+                          <TableSkeleton rows={pagination.limit} columns={columns.length} />
+                        ) : table.getRowModel().rows?.length ? (
+                          table.getRowModel().rows.map((row) => (
+                            <TableRow
+                              key={row.id}
+                              data-state={row.getIsSelected() && "selected"}
+                            >
+                              {row.getVisibleCells().map((cell) => (
+                                <TableCell key={cell.id}>
+                                  {flexRender(
+                                    cell.column.columnDef.cell,
+                                    cell.getContext()
                                   )}
-                            </TableHead>
-                          );
-                        })}
-                      </TableRow>
-                    ))}
-                  </TableHeader>
-                  <TableBody>
-                    {loading ? (
-                      <TableRow>
-                        <TableCell colSpan={columns.length} className="h-24 text-center">
-                          Loading users...
-                        </TableCell>
-                      </TableRow>
-                    ) : table.getRowModel().rows?.length ? (
-                      table.getRowModel().rows.map((row) => (
-                        <TableRow
-                          key={row.id}
-                          data-state={row.getIsSelected() && "selected"}
-                        >
-                          {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                          ))
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={columns.length} className="p-0">
+                              <EmptyState
+                                type={globalFilter ? 'search' : 'create'}
+                                title={globalFilter ? 'No users found' : 'No users yet'}
+                                description={
+                                  globalFilter 
+                                    ? `No users match "${globalFilter}". Try adjusting your search terms.`
+                                    : 'Get started by creating your first user account.'
+                                }
+                                action={{
+                                  label: globalFilter ? 'Clear search' : 'Add User',
+                                  onClick: globalFilter ? () => setGlobalFilter('') : () => navigate({ to: '/users/new' }),
+                                  icon: globalFilter ? <Search className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />
+                                }}
+                              />
                             </TableCell>
-                          ))}
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={columns.length} className="h-24 text-center">
-                          No users found.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
 
-              <div className="flex items-center justify-between space-x-2 py-4">
-                <div className="flex-1 text-sm text-muted-foreground">
-                  {table.getFilteredSelectedRowModel().rows.length > 0 && (
-                    <span>
-                      {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                      {table.getFilteredRowModel().rows.length} row(s) selected.
-                    </span>
+                  {/* Pagination - only show if there's data */}
+                  {!isLoading && table.getRowModel().rows?.length > 0 && (
+                    <div className="flex items-center justify-between space-x-2 py-4">
+                      <div className="flex-1 text-sm text-muted-foreground">
+                        {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                          <span>
+                            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                            {table.getFilteredRowModel().rows.length} row(s) selected.
+                          </span>
+                        )}
+                        <div className="mt-1">
+                          Showing {table.getRowModel().rows.length} of {paginationInfo.total} users
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-6 lg:space-x-8">
+                        <div className="flex items-center space-x-2">
+                          <p className="text-sm font-medium">Rows per page</p>
+                          <select
+                            value={`${pagination.limit}`}
+                            onChange={(e) => {
+                              const newLimit = Number(e.target.value);
+                              table.setPageSize(newLimit);
+                              setPagination(prev => ({ ...prev, limit: newLimit, page: 1 }));
+                            }}
+                            disabled={isLoading}
+                            className="h-8 w-[70px] rounded border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {[10, 20, 30, 40, 50].map((pageSize) => (
+                              <option key={pageSize} value={pageSize}>
+                                {pageSize}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+                          Page {paginationInfo.page} of {paginationInfo.pages}
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="outline"
+                            className="hidden h-8 w-8 p-0 lg:flex"
+                            onClick={() => setPagination(prev => ({ ...prev, page: 1 }))}
+                            disabled={paginationInfo.page <= 1 || isLoading}
+                          >
+                            <span className="sr-only">Go to first page</span>
+                            <div className="h-4 w-4">{'<<'}</div>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="h-8 w-8 p-0"
+                            onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                            disabled={paginationInfo.page <= 1 || isLoading}
+                          >
+                            <span className="sr-only">Go to previous page</span>
+                            <div className="h-4 w-4">{'<'}</div>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="h-8 w-8 p-0"
+                            onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                            disabled={paginationInfo.page >= paginationInfo.pages || isLoading}
+                          >
+                            <span className="sr-only">Go to next page</span>
+                            <div className="h-4 w-4">{'>'}</div>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="hidden h-8 w-8 p-0 lg:flex"
+                            onClick={() => setPagination(prev => ({ ...prev, page: paginationInfo.pages }))}
+                            disabled={paginationInfo.page >= paginationInfo.pages || isLoading}
+                          >
+                            <span className="sr-only">Go to last page</span>
+                            <div className="h-4 w-4">{'>>'}</div>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
                   )}
-                  <div className="mt-1">
-                    Showing {table.getRowModel().rows.length} of {pagination.total} users
-                  </div>
-                </div>
-                <div className="flex items-center space-x-6 lg:space-x-8">
-                  <div className="flex items-center space-x-2">
-                    <p className="text-sm font-medium">Rows per page</p>
-                    <select
-                      value={`${table.getState().pagination.pageSize}`}
-                      onChange={(e) => {
-                        table.setPageSize(Number(e.target.value));
-                        setPagination(prev => ({ ...prev, limit: Number(e.target.value), page: 1 }));
-                      }}
-                      className="h-8 w-[70px] rounded border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {[10, 20, 30, 40, 50].map((pageSize) => (
-                        <option key={pageSize} value={pageSize}>
-                          {pageSize}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-                    Page {pagination.page} of {pagination.totalPages}
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      className="hidden h-8 w-8 p-0 lg:flex"
-                      onClick={() => {
-                        table.setPageIndex(0);
-                        setPagination(prev => ({ ...prev, page: 1 }));
-                      }}
-                      disabled={pagination.page <= 1}
-                    >
-                      <span className="sr-only">Go to first page</span>
-                      <div className="h-4 w-4">{'<<'}</div>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="h-8 w-8 p-0"
-                      onClick={() => {
-                        table.previousPage();
-                        setPagination(prev => ({ ...prev, page: prev.page - 1 }));
-                      }}
-                      disabled={pagination.page <= 1}
-                    >
-                      <span className="sr-only">Go to previous page</span>
-                      <div className="h-4 w-4">{'<'}</div>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="h-8 w-8 p-0"
-                      onClick={() => {
-                        table.nextPage();
-                        setPagination(prev => ({ ...prev, page: prev.page + 1 }));
-                      }}
-                      disabled={pagination.page >= pagination.totalPages}
-                    >
-                      <span className="sr-only">Go to next page</span>
-                      <div className="h-4 w-4">{'>'}</div>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="hidden h-8 w-8 p-0 lg:flex"
-                      onClick={() => {
-                        table.setPageIndex(pagination.totalPages - 1);
-                        setPagination(prev => ({ ...prev, page: prev.totalPages }));
-                      }}
-                      disabled={pagination.page >= pagination.totalPages}
-                    >
-                      <span className="sr-only">Go to last page</span>
-                      <div className="h-4 w-4">{'>>'}</div>
-                    </Button>
-                  </div>
-                </div>
-              </div>
+                </>
+              )}
             </CardContent>
           </Card>
+
+          {/* Submit overlay for delete operations */}
+          <SubmitOverlay 
+            isVisible={deleteUserMutation.isPending} 
+            message="Deleting user..." 
+          />
         </div>
       </main>
     </div>

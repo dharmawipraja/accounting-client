@@ -16,12 +16,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { SubmitOverlay } from '@/components/ui/submit-overlay';
 import { useAuth } from '@/hooks/useAuth';
+import { useCreateUserMutation, useUpdateUserMutation } from '@/hooks/useUsersQuery';
 import type { UserRole } from '@/types';
 import type { User } from '@/types/api';
-import type { CreateUserPayload, UpdateUserPayload } from '@/types/payloads';
 import { getAllowedRolesToAssign, getRoleLabel } from '@/utils/rolePermissions';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -37,14 +39,16 @@ type UserFormData = z.infer<typeof userFormSchema>;
 
 interface UserFormProps {
   user?: User;
-  onSubmit: (data: CreateUserPayload | UpdateUserPayload) => Promise<void>;
+  onSuccess?: () => void;
   onCancel: () => void;
-  loading?: boolean;
 }
 
-export function UserForm({ user, onSubmit, onCancel, loading = false }: UserFormProps) {
+export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
   const isEditing = !!user;
   const { user: currentUser } = useAuth();
+  
+  const createUserMutation = useCreateUserMutation();
+  const updateUserMutation = useUpdateUserMutation();
 
   const form = useForm<UserFormData>({
     resolver: zodResolver(userFormSchema),
@@ -59,18 +63,29 @@ export function UserForm({ user, onSubmit, onCancel, loading = false }: UserForm
 
   const handleSubmit = async (data: UserFormData) => {
     try {
-      const payload = { ...data };
-      
-      // Remove password field if editing and password is empty
-      if (isEditing && !data.password) {
-        delete payload.password;
+      if (isEditing && user) {
+        const payload = { ...data };
+        // Remove password field if editing and password is empty
+        if (!data.password) {
+          delete payload.password;
+        }
+        await updateUserMutation.mutateAsync({ id: user.id, payload });
+      } else {
+        // Ensure password is provided for creation
+        if (!data.password) {
+          form.setError('password', { message: 'Password is required for new users' });
+          return;
+        }
+        await createUserMutation.mutateAsync(data as any);
       }
-
-      await onSubmit(payload as CreateUserPayload | UpdateUserPayload);
+      onSuccess?.();
     } catch (error) {
+      // Error handling is done in the mutation hooks
       console.error('Form submission error:', error);
     }
   };
+
+  const isLoading = createUserMutation.isPending || updateUserMutation.isPending;
 
   // Get allowed roles based on current user's role
   const allowedRoles = currentUser?.role ? getAllowedRolesToAssign(currentUser.role) : [];
@@ -81,27 +96,125 @@ export function UserForm({ user, onSubmit, onCancel, loading = false }: UserForm
   }));
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          {isEditing ? `Edit User: ${user.name}` : 'Create New User'}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {isEditing ? `Edit User: ${user.name}` : 'Create New User'}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter username"
+                          {...field}
+                          disabled={isLoading}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter full name"
+                          {...field}
+                          disabled={isLoading}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={isLoading}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {roleOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={isLoading}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="ACTIVE">Active</SelectItem>
+                          <SelectItem value="INACTIVE">Inactive</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={form.control}
-                name="username"
+                name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>
+                      {isEditing ? 'New Password (leave blank to keep current)' : 'Password'}
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter username"
+                        type="password"
+                        placeholder={isEditing ? 'Leave blank to keep current password' : 'Enter password'}
                         {...field}
-                        disabled={loading}
+                        disabled={isLoading}
                       />
                     </FormControl>
                     <FormMessage />
@@ -109,119 +222,30 @@ export function UserForm({ user, onSubmit, onCancel, loading = false }: UserForm
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter full name"
-                        {...field}
-                        disabled={loading}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onCancel}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isLoading ? 'Saving...' : isEditing ? 'Update User' : 'Create User'}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={loading}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a role" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {roleOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Status</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={loading}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select status" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="ACTIVE">Active</SelectItem>
-                        <SelectItem value="INACTIVE">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {isEditing ? 'New Password (leave blank to keep current)' : 'Password'}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder={isEditing ? 'Leave blank to keep current password' : 'Enter password'}
-                      {...field}
-                      disabled={loading}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex justify-end space-x-2 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onCancel}
-                disabled={loading}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={loading}>
-                {loading ? 'Saving...' : isEditing ? 'Update User' : 'Create User'}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+      {/* Submit overlay for form submission */}
+      <SubmitOverlay 
+        isVisible={isLoading} 
+        message={isEditing ? 'Updating user...' : 'Creating user...'} 
+      />
+    </>
   );
 }
