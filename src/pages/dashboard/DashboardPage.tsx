@@ -1,9 +1,9 @@
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { APP_CONFIG } from '@/constants';
+import { useAuth } from '@/hooks/useAuth';
+import { getRoleDisplayName } from '@/utils/auth';
 import React from 'react';
-import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { APP_CONFIG } from '../../constants';
-import { useAuth } from '../../hooks/useAuth';
-import { getRoleDisplayName } from '../../utils/auth';
 
 export const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();

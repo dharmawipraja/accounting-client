@@ -1,8 +1,8 @@
+import { authService } from '@/services/auth';
+import { loginFailure, loginStart, loginSuccess, logout, setLoading } from '@/store/authSlice';
+import { addNotification } from '@/store/uiSlice';
+import type { ChangePasswordPayload, LoginPayload } from '@/types';
 import { useCallback } from 'react';
-import { authService } from '../services/auth';
-import { loginFailure, loginStart, loginSuccess, logout, setLoading } from '../store/authSlice';
-import { addNotification } from '../store/uiSlice';
-import type { ChangePasswordPayload, LoginPayload } from '../types';
 import { useAppDispatch, useAppSelector } from './redux';
 
 export const useAuth = () => {

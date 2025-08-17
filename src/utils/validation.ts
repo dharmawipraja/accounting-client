@@ -1,5 +1,5 @@
+import { VALIDATION_RULES } from '@/constants';
 import { isEmpty, isNaN, trim } from 'lodash';
-import { VALIDATION_RULES } from '../constants';
 
 /**
  * Validate username

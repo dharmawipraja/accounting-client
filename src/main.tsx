@@ -3,10 +3,10 @@ import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 
 // Import the generated route tree
-import { Toaster } from './components/ui/sonner'
+import { Toaster } from '@/components/ui/sonner'
 import { routeTree } from './routeTree.gen'
 
-import reportWebVitals from './reportWebVitals.ts'
+import reportWebVitals from './reportWebVitals'
 import './styles.css'
 
 // Create a new router instance

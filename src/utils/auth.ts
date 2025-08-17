@@ -1,6 +1,6 @@
+import { AUTH_CONFIG, ROLE_HIERARCHY, ROLE_PERMISSIONS, USER_ROLES } from '@/constants';
+import type { UserRole } from '@/types';
 import { filter, includes, map, some } from 'lodash';
-import { AUTH_CONFIG, ROLE_HIERARCHY, ROLE_PERMISSIONS, USER_ROLES } from '../constants';
-import type { UserRole } from '../types';
 import { safeJsonParse } from './index';
 
 /**

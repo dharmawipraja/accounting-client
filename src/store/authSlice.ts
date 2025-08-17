@@ -1,6 +1,6 @@
+import type { AuthState } from '@/types';
+import { clearAuthData, getStoredToken, getStoredUser, storeToken, storeUser } from '@/utils/auth';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { AuthState } from '../types';
-import { clearAuthData, getStoredToken, getStoredUser, storeToken, storeUser } from '../utils/auth';
 
 const initialState: AuthState = {
   user: getStoredUser(),

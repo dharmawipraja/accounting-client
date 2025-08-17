@@ -1,6 +1,6 @@
+import { API_CONFIG } from '@/constants';
+import { clearAuthData, getStoredToken } from '@/utils/auth';
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
-import { API_CONFIG } from '../constants';
-import { clearAuthData, getStoredToken } from '../utils/auth';
 
 // Create axios instance
 const createApiInstance = (): AxiosInstance => {

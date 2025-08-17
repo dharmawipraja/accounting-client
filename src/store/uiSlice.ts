@@ -1,6 +1,6 @@
+import type { Notification, UIState } from '@/types';
+import { generateId } from '@/utils';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { Notification, UIState } from '../types';
-import { generateId } from '../utils';
 
 const initialState: UIState = {
   isLoading: false,

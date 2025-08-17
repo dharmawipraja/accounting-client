@@ -1,4 +1,4 @@
-import type { ApiResponse, AuthResponse, ChangePasswordPayload, LoginPayload, User } from '../types';
+import type { ApiResponse, AuthResponse, ChangePasswordPayload, LoginPayload, User } from '@/types';
 import { api } from './api';
 
 export const authService = {
