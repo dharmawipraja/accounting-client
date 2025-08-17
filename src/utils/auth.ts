@@ -1,16 +1,22 @@
-import { AUTH_CONFIG, ROLE_HIERARCHY, ROLE_PERMISSIONS, USER_ROLES } from '@/constants';
-import type { UserRole } from '@/types';
-import { filter, includes, map, some } from 'lodash';
-import { safeJsonParse } from './index';
+import {
+  AUTH_CONFIG,
+  ROLE_HIERARCHY,
+  ROLE_PERMISSIONS,
+  USER_ROLES,
+} from '@/constants'
+import type { UserRole } from '@/types'
+import { filter, includes, map, some } from 'lodash'
+import { toast } from 'sonner'
+import { safeJsonParse } from './index'
 
 /**
  * Get token from localStorage
  */
 export function getStoredToken(): string | null {
   try {
-    return localStorage.getItem(AUTH_CONFIG.TOKEN_KEY);
+    return localStorage.getItem(AUTH_CONFIG.TOKEN_KEY)
   } catch {
-    return null;
+    return null
   }
 }
 
@@ -19,9 +25,9 @@ export function getStoredToken(): string | null {
  */
 export function storeToken(token: string): void {
   try {
-    localStorage.setItem(AUTH_CONFIG.TOKEN_KEY, token);
-  } catch (error) {
-    console.error('Failed to store token:', error);
+    localStorage.setItem(AUTH_CONFIG.TOKEN_KEY, token)
+  } catch {
+    toast.error('Failed to save authentication data')
   }
 }
 
@@ -30,9 +36,9 @@ export function storeToken(token: string): void {
  */
 export function removeToken(): void {
   try {
-    localStorage.removeItem(AUTH_CONFIG.TOKEN_KEY);
-  } catch (error) {
-    console.error('Failed to remove token:', error);
+    localStorage.removeItem(AUTH_CONFIG.TOKEN_KEY)
+  } catch {
+    toast.error('Failed to clear authentication data')
   }
 }
 
@@ -41,10 +47,10 @@ export function removeToken(): void {
  */
 export function getStoredUser() {
   try {
-    const userStr = localStorage.getItem(AUTH_CONFIG.USER_KEY);
-    return userStr ? safeJsonParse(userStr, null) : null;
+    const userStr = localStorage.getItem(AUTH_CONFIG.USER_KEY)
+    return userStr ? safeJsonParse(userStr, null) : null
   } catch {
-    return null;
+    return null
   }
 }
 
@@ -53,9 +59,9 @@ export function getStoredUser() {
  */
 export function storeUser(user: any): void {
   try {
-    localStorage.setItem(AUTH_CONFIG.USER_KEY, JSON.stringify(user));
-  } catch (error) {
-    console.error('Failed to store user:', error);
+    localStorage.setItem(AUTH_CONFIG.USER_KEY, JSON.stringify(user))
+  } catch {
+    toast.error('Failed to save user data')
   }
 }
 
@@ -64,9 +70,9 @@ export function storeUser(user: any): void {
  */
 export function removeUser(): void {
   try {
-    localStorage.removeItem(AUTH_CONFIG.USER_KEY);
-  } catch (error) {
-    console.error('Failed to remove user:', error);
+    localStorage.removeItem(AUTH_CONFIG.USER_KEY)
+  } catch {
+    toast.error('Failed to clear user data')
   }
 }
 
@@ -74,8 +80,8 @@ export function removeUser(): void {
  * Clear all authentication data
  */
 export function clearAuthData(): void {
-  removeToken();
-  removeUser();
+  removeToken()
+  removeUser()
 }
 
 /**
@@ -83,11 +89,11 @@ export function clearAuthData(): void {
  */
 export function isTokenExpired(token: string): boolean {
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const currentTime = Date.now() / 1000;
-    return payload.exp < currentTime;
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    const currentTime = Date.now() / 1000
+    return payload.exp < currentTime
   } catch {
-    return true;
+    return true
   }
 }
 
@@ -95,37 +101,49 @@ export function isTokenExpired(token: string): boolean {
  * Check if user has required role
  */
 export function hasRole(userRole: UserRole, requiredRole: UserRole): boolean {
-  const userLevel = ROLE_HIERARCHY[userRole] || 0;
-  const requiredLevel = ROLE_HIERARCHY[requiredRole] || 0;
-  return userLevel >= requiredLevel;
+  const userLevel = ROLE_HIERARCHY[userRole] || 0
+  const requiredLevel = ROLE_HIERARCHY[requiredRole] || 0
+  return userLevel >= requiredLevel
 }
 
 /**
  * Check if user has any of the required roles
  */
-export function hasAnyRole(userRole: UserRole, requiredRoles: UserRole[]): boolean {
-  return some(requiredRoles, role => hasRole(userRole, role));
+export function hasAnyRole(
+  userRole: UserRole,
+  requiredRoles: UserRole[],
+): boolean {
+  return some(requiredRoles, (role) => hasRole(userRole, role))
 }
 
 /**
  * Check if user can manage users
  */
 export function canManageUsers(userRole: UserRole): boolean {
-  return includes(ROLE_PERMISSIONS.USERS_MANAGEMENT as readonly UserRole[], userRole);
+  return includes(
+    ROLE_PERMISSIONS.USERS_MANAGEMENT as readonly UserRole[],
+    userRole,
+  )
 }
 
 /**
  * Check if user can manage accounts
  */
 export function canManageAccounts(userRole: UserRole): boolean {
-  return includes(ROLE_PERMISSIONS.ACCOUNTS_MANAGEMENT as readonly UserRole[], userRole);
+  return includes(
+    ROLE_PERMISSIONS.ACCOUNTS_MANAGEMENT as readonly UserRole[],
+    userRole,
+  )
 }
 
 /**
  * Check if user can manage ledgers
  */
 export function canManageLedgers(userRole: UserRole): boolean {
-  return includes(ROLE_PERMISSIONS.LEDGERS_MANAGEMENT as readonly UserRole[], userRole);
+  return includes(
+    ROLE_PERMISSIONS.LEDGERS_MANAGEMENT as readonly UserRole[],
+    userRole,
+  )
 }
 
 /**
@@ -139,19 +157,22 @@ export function getRoleDisplayName(role: UserRole): string {
     [USER_ROLES.KASIR]: 'Cashier',
     [USER_ROLES.KOLEKTOR]: 'Collector',
     [USER_ROLES.NASABAH]: 'Customer',
-  };
-  
-  return roleNames[role] || role;
+  }
+
+  return roleNames[role] || role
 }
 
 /**
  * Get available roles for user creation (based on current user role)
  */
 export function getAvailableRoles(currentUserRole: UserRole): UserRole[] {
-  const currentLevel = ROLE_HIERARCHY[currentUserRole] || 0;
-  
+  const currentLevel = ROLE_HIERARCHY[currentUserRole] || 0
+
   return map(
-    filter(Object.entries(ROLE_HIERARCHY), ([, level]) => level <= currentLevel),
-    ([role]) => role as UserRole
-  );
+    filter(
+      Object.entries(ROLE_HIERARCHY),
+      ([, level]) => level <= currentLevel,
+    ),
+    ([role]) => role as UserRole,
+  )
 }

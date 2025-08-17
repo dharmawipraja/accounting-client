@@ -1,19 +1,19 @@
-import Header from '@/components/Header';
-import { Button } from '@/components/ui/button';
-import { UserForm } from '@/components/users/UserForm';
-import { useNavigate } from '@tanstack/react-router';
-import { ArrowLeft } from 'lucide-react';
+import Header from '@/components/Header'
+import { Button } from '@/components/ui/button'
+import { UserForm } from '@/components/users/UserForm'
+import { useNavigate } from '@tanstack/react-router'
+import { ArrowLeft } from 'lucide-react'
 
 export function CreateUserPage() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleSuccess = () => {
-    navigate({ to: '/users' });
-  };
+    navigate({ to: '/users' })
+  }
 
   const handleCancel = () => {
-    navigate({ to: '/users' });
-  };
+    navigate({ to: '/users' })
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -39,12 +39,9 @@ export function CreateUserPage() {
             </p>
           </div>
 
-          <UserForm
-            onSuccess={handleSuccess}
-            onCancel={handleCancel}
-          />
+          <UserForm onSuccess={handleSuccess} onCancel={handleCancel} />
         </div>
       </main>
     </div>
-  );
+  )
 }

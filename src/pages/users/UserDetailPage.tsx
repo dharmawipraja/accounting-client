@@ -1,98 +1,99 @@
-import Header from '@/components/Header';
+import Header from '@/components/Header'
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useUsers } from '@/hooks/useUsers';
-import type { User } from '@/types/api';
-import { useNavigate, useParams } from '@tanstack/react-router';
-import { ArrowLeft, Edit, Shield, Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useUsers } from '@/hooks/useUsers'
+import type { User } from '@/types/api'
+import { useNavigate, useParams } from '@tanstack/react-router'
+import { ArrowLeft, Edit, Shield, Trash2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 export function UserDetailPage() {
-  const navigate = useNavigate();
-  const { id } = useParams({ from: '/users/$id/' });
-  const { getUserById, deleteUser } = useUsers();
-  
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  const navigate = useNavigate()
+  const { id } = useParams({ from: '/users/$id/' })
+  const { getUserById, deleteUser } = useUsers()
+
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const response = await getUserById(id);
-        setUser(response.data);
-      } catch (error) {
-        console.error('Failed to load user:', error);
-        navigate({ to: '/users' });
+        const response = await getUserById(id)
+        setUser(response.data)
+      } catch {
+        toast.error('Failed to load user details')
+        navigate({ to: '/users' })
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    loadUser();
-  }, [id, getUserById, navigate]);
+    loadUser()
+  }, [id, getUserById, navigate])
 
   const handleDelete = async () => {
-    setDeleteLoading(true);
+    setDeleteLoading(true)
     try {
-      await deleteUser(id);
-      navigate({ to: '/users' });
-    } catch (error) {
-      console.error('Failed to delete user:', error);
+      await deleteUser(id)
+      navigate({ to: '/users' })
+    } catch {
+      toast.error('Failed to delete user')
     } finally {
-      setDeleteLoading(false);
+      setDeleteLoading(false)
     }
-  };
+  }
 
   const getRoleLabel = (role: string) => {
     switch (role) {
       case 'ADMIN':
-        return 'Admin';
+        return 'Admin'
       case 'MANAJER':
-        return 'Manager';
+        return 'Manager'
       case 'AKUNTAN':
-        return 'Accountant';
+        return 'Accountant'
       case 'KASIR':
-        return 'Cashier';
+        return 'Cashier'
       case 'KOLEKTOR':
-        return 'Collector';
+        return 'Collector'
       case 'NASABAH':
-        return 'User';
+        return 'User'
       default:
-        return role;
+        return role
     }
-  };
+  }
 
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
       case 'ADMIN':
-        return 'destructive';
+        return 'destructive'
       case 'MANAJER':
-        return 'default';
+        return 'default'
       case 'AKUNTAN':
-        return 'secondary';
+        return 'secondary'
       case 'KASIR':
-        return 'outline';
+        return 'outline'
       case 'KOLEKTOR':
-        return 'outline';
+        return 'outline'
       case 'NASABAH':
-        return 'outline';
+        return 'outline'
       default:
-        return 'outline';
+        return 'outline'
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -119,7 +120,9 @@ export function UserDetailPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-center py-8">
-                    <div className="text-muted-foreground">Loading user data...</div>
+                    <div className="text-muted-foreground">
+                      Loading user data...
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -144,7 +147,9 @@ export function UserDetailPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-center py-8">
-                    <div className="text-muted-foreground">The requested user could not be found.</div>
+                    <div className="text-muted-foreground">
+                      The requested user could not be found.
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -163,7 +168,7 @@ export function UserDetailPage() {
                     <span>Back to Users</span>
                   </Button>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Button
                     variant="outline"
@@ -173,10 +178,13 @@ export function UserDetailPage() {
                     <Edit className="h-4 w-4" />
                     <span>Edit User</span>
                   </Button>
-                  
+
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="destructive" className="flex items-center space-x-1">
+                      <Button
+                        variant="destructive"
+                        className="flex items-center space-x-1"
+                      >
                         <Trash2 className="h-4 w-4" />
                         <span>Delete User</span>
                       </Button>
@@ -185,8 +193,8 @@ export function UserDetailPage() {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete
-                          the user account for {user.name}.
+                          This action cannot be undone. This will permanently
+                          delete the user account for {user.name}.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
@@ -205,98 +213,118 @@ export function UserDetailPage() {
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>User Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                  <span className="text-2xl font-semibold text-primary">
-                    {user.name.split(' ').map(n => n[0]).join('')}
-                  </span>
+                <div className="lg:col-span-2 space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>User Information</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                          <span className="text-2xl font-semibold text-primary">
+                            {user.name
+                              .split(' ')
+                              .map((n) => n[0])
+                              .join('')}
+                          </span>
+                        </div>
+                        <div>
+                          <h2 className="text-2xl font-bold">{user.name}</h2>
+                          <p className="text-muted-foreground">
+                            @{user.username}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                          <div className="flex items-center space-x-3">
+                            <Shield className="h-5 w-5 text-muted-foreground" />
+                            <div>
+                              <p className="text-sm font-medium">Username</p>
+                              <p className="text-sm text-muted-foreground">
+                                {user.username}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-4">
+                          <div className="flex items-center space-x-3">
+                            <Shield className="h-5 w-5 text-muted-foreground" />
+                            <div>
+                              <p className="text-sm font-medium">Role</p>
+                              <Badge variant={getRoleBadgeVariant(user.role)}>
+                                {getRoleLabel(user.role)}
+                              </Badge>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center space-x-3">
+                            <div className="h-5 w-5 flex items-center justify-center">
+                              <div
+                                className={`h-2 w-2 rounded-full ${
+                                  user.status === 'ACTIVE'
+                                    ? 'bg-green-500'
+                                    : 'bg-gray-500'
+                                }`}
+                              />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium">Status</p>
+                              <Badge
+                                variant={
+                                  user.status === 'ACTIVE'
+                                    ? 'default'
+                                    : 'secondary'
+                                }
+                              >
+                                {user.status === 'ACTIVE'
+                                  ? 'Active'
+                                  : 'Inactive'}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
-                <div>
-                  <h2 className="text-2xl font-bold">{user.name}</h2>
-                  <p className="text-muted-foreground">@{user.username}</p>
+
+                <div className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Account Details</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <p className="text-sm font-medium">User ID</p>
+                        <p className="text-sm text-muted-foreground font-mono">
+                          {user.id}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-sm font-medium">Created</p>
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(user.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-sm font-medium">Last Updated</p>
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(user.updatedAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <Shield className="h-5 w-5 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">Username</p>
-                      <p className="text-sm text-muted-foreground">{user.username}</p>
-                    </div>
-                  </div>
-
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <Shield className="h-5 w-5 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">Role</p>
-                      <Badge variant={getRoleBadgeVariant(user.role)}>
-                        {getRoleLabel(user.role)}
-                      </Badge>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-3">
-                    <div className="h-5 w-5 flex items-center justify-center">
-                      <div className={`h-2 w-2 rounded-full ${
-                        user.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'
-                      }`} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Status</p>
-                      <Badge variant={user.status === 'ACTIVE' ? 'default' : 'secondary'}>
-                        {user.status === 'ACTIVE' ? 'Active' : 'Inactive'}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm font-medium">User ID</p>
-                <p className="text-sm text-muted-foreground font-mono">{user.id}</p>
-              </div>
-              
-              <div>
-                <p className="text-sm font-medium">Created</p>
-                <p className="text-sm text-muted-foreground">
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-              
-              <div>
-                <p className="text-sm font-medium">Last Updated</p>
-                <p className="text-sm text-muted-foreground">
-                  {new Date(user.updatedAt).toLocaleDateString()}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </>
+            </>
           )}
         </div>
       </main>
     </div>
-  );
+  )
 }

@@ -1,15 +1,15 @@
-import { useAuth } from '@/hooks/useAuth';
-import { canAccessUserManagement } from '@/utils/rolePermissions';
-import { Link } from '@tanstack/react-router';
+import { useAuth } from '@/hooks/useAuth'
+import { canAccessUserManagement } from '@/utils/rolePermissions'
+import { Link } from '@tanstack/react-router'
 
 export default function Header() {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth()
 
   if (!isAuthenticated) {
-    return null;
+    return null
   }
 
-  const canViewUsers = user?.role ? canAccessUserManagement(user.role) : false;
+  const canViewUsers = user?.role ? canAccessUserManagement(user.role) : false
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -20,18 +20,18 @@ export default function Header() {
               PRSM Accounting
             </Link>
           </div>
-          
+
           <div className="flex items-center space-x-4 text-sm">
-            <Link 
-              to="/dashboard" 
+            <Link
+              to="/dashboard"
               className="hover:text-primary transition-colors"
               activeProps={{ className: 'text-primary font-medium' }}
             >
               Dashboard
             </Link>
             {canViewUsers && (
-              <Link 
-                to="/users" 
+              <Link
+                to="/users"
                 className="hover:text-primary transition-colors"
                 activeProps={{ className: 'text-primary font-medium' }}
               >
@@ -45,7 +45,7 @@ export default function Header() {
           <span className="text-sm text-muted-foreground">
             Welcome, {user?.name}
           </span>
-          <button 
+          <button
             onClick={logout}
             className="text-sm hover:text-primary transition-colors"
           >

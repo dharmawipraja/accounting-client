@@ -1,54 +1,61 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import { SubmitOverlay } from '@/components/ui/submit-overlay';
-import { useAuth } from '@/hooks/useAuth';
-import { useCreateUserMutation, useUpdateUserMutation } from '@/hooks/useUsersQuery';
-import type { UserRole } from '@/types';
-import type { User } from '@/types/api';
-import { getAllowedRolesToAssign, getRoleLabel } from '@/utils/rolePermissions';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { SubmitOverlay } from '@/components/ui/submit-overlay'
+import { useAuth } from '@/hooks/useAuth'
+import {
+  useCreateUserMutation,
+  useUpdateUserMutation,
+} from '@/hooks/useUsersQuery'
+import type { UserRole } from '@/types'
+import type { User } from '@/types/api'
+import { getAllowedRolesToAssign, getRoleLabel } from '@/utils/rolePermissions'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
 
 const userFormSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters').max(50),
   name: z.string().min(2, 'Name must be at least 2 characters').max(100),
-  password: z.string().min(6, 'Password must be at least 6 characters').optional(),
+  password: z
+    .string()
+    .min(6, 'Password must be at least 6 characters')
+    .optional(),
   role: z.enum(['ADMIN', 'MANAJER', 'AKUNTAN', 'KASIR', 'KOLEKTOR', 'NASABAH']),
   status: z.enum(['ACTIVE', 'INACTIVE']),
-});
+})
 
-type UserFormData = z.infer<typeof userFormSchema>;
+type UserFormData = z.infer<typeof userFormSchema>
 
 interface UserFormProps {
-  user?: User;
-  onSuccess?: () => void;
-  onCancel: () => void;
+  user?: User
+  onSuccess?: () => void
+  onCancel: () => void
 }
 
 export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
-  const isEditing = !!user;
-  const { user: currentUser } = useAuth();
-  
-  const createUserMutation = useCreateUserMutation();
-  const updateUserMutation = useUpdateUserMutation();
+  const isEditing = !!user
+  const { user: currentUser } = useAuth()
+
+  const createUserMutation = useCreateUserMutation()
+  const updateUserMutation = useUpdateUserMutation()
 
   const form = useForm<UserFormData>({
     resolver: zodResolver(userFormSchema),
@@ -59,41 +66,46 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       role: user?.role || 'NASABAH',
       status: user?.status || 'ACTIVE',
     },
-  });
+  })
 
   const handleSubmit = async (data: UserFormData) => {
     try {
       if (isEditing && user) {
-        const payload = { ...data };
+        const payload = { ...data }
         // Remove password field if editing and password is empty
         if (!data.password) {
-          delete payload.password;
+          delete payload.password
         }
-        await updateUserMutation.mutateAsync({ id: user.id, payload });
+        await updateUserMutation.mutateAsync({ id: user.id, payload })
       } else {
         // Ensure password is provided for creation
         if (!data.password) {
-          form.setError('password', { message: 'Password is required for new users' });
-          return;
+          form.setError('password', {
+            message: 'Password is required for new users',
+          })
+          return
         }
-        await createUserMutation.mutateAsync(data as any);
+        await createUserMutation.mutateAsync(data as any)
       }
-      onSuccess?.();
-    } catch (error) {
-      // Error handling is done in the mutation hooks
-      console.error('Form submission error:', error);
+      onSuccess?.()
+    } catch {
+      toast.error('Failed to save user')
     }
-  };
+  }
 
-  const isLoading = createUserMutation.isPending || updateUserMutation.isPending;
+  const isLoading = createUserMutation.isPending || updateUserMutation.isPending
 
   // Get allowed roles based on current user's role
-  const allowedRoles = currentUser?.role ? getAllowedRolesToAssign(currentUser.role) : [];
-  
-  const roleOptions: { value: UserRole; label: string }[] = allowedRoles.map(role => ({
-    value: role,
-    label: getRoleLabel(role),
-  }));
+  const allowedRoles = currentUser?.role
+    ? getAllowedRolesToAssign(currentUser.role)
+    : []
+
+  const roleOptions: { value: UserRole; label: string }[] = allowedRoles.map(
+    (role) => ({
+      value: role,
+      label: getRoleLabel(role),
+    }),
+  )
 
   return (
     <>
@@ -105,7 +117,10 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-6"
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -207,12 +222,18 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {isEditing ? 'New Password (leave blank to keep current)' : 'Password'}
+                      {isEditing
+                        ? 'New Password (leave blank to keep current)'
+                        : 'Password'}
                     </FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder={isEditing ? 'Leave blank to keep current password' : 'Enter password'}
+                        placeholder={
+                          isEditing
+                            ? 'Leave blank to keep current password'
+                            : 'Enter password'
+                        }
                         {...field}
                         disabled={isLoading}
                       />
@@ -232,8 +253,14 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isLoading}>
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isLoading ? 'Saving...' : isEditing ? 'Update User' : 'Create User'}
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {isLoading
+                    ? 'Saving...'
+                    : isEditing
+                      ? 'Update User'
+                      : 'Create User'}
                 </Button>
               </div>
             </form>
@@ -242,10 +269,10 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       </Card>
 
       {/* Submit overlay for form submission */}
-      <SubmitOverlay 
-        isVisible={isLoading} 
-        message={isEditing ? 'Updating user...' : 'Creating user...'} 
+      <SubmitOverlay
+        isVisible={isLoading}
+        message={isEditing ? 'Updating user...' : 'Creating user...'}
       />
     </>
-  );
+  )
 }

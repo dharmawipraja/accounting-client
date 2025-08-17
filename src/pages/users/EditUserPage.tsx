@@ -1,33 +1,33 @@
-import Header from '@/components/Header';
-import { Button } from '@/components/ui/button';
-import { ErrorState } from '@/components/ui/error-state';
-import { LoadingState } from '@/components/ui/loading-state';
-import { UserForm } from '@/components/users/UserForm';
-import { useUserQuery } from '@/hooks/useUsersQuery';
-import { useNavigate, useParams } from '@tanstack/react-router';
-import { ArrowLeft } from 'lucide-react';
+import Header from '@/components/Header'
+import { Button } from '@/components/ui/button'
+import { ErrorState } from '@/components/ui/error-state'
+import { LoadingState } from '@/components/ui/loading-state'
+import { UserForm } from '@/components/users/UserForm'
+import { useUserQuery } from '@/hooks/useUsersQuery'
+import { useNavigate, useParams } from '@tanstack/react-router'
+import { ArrowLeft } from 'lucide-react'
 
 export function EditUserPage() {
-  const navigate = useNavigate();
-  const { id } = useParams({ from: '/users/$id/edit' });
-  
+  const navigate = useNavigate()
+  const { id } = useParams({ from: '/users/$id/edit' })
+
   const {
     data: userResponse,
     isLoading,
     isError,
     error,
     refetch,
-  } = useUserQuery(id);
+  } = useUserQuery(id)
 
-  const user = userResponse?.data;
+  const user = userResponse?.data
 
   const handleSuccess = () => {
-    navigate({ to: '/users' });
-  };
+    navigate({ to: '/users' })
+  }
 
   const handleCancel = () => {
-    navigate({ to: '/users' });
-  };
+    navigate({ to: '/users' })
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -81,5 +81,5 @@ export function EditUserPage() {
         </div>
       </main>
     </div>
-  );
+  )
 }

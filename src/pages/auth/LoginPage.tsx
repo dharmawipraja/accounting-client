@@ -1,57 +1,63 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { APP_CONFIG } from '@/constants';
-import { useAuth } from '@/hooks/useAuth';
-import type { LoginPayload } from '@/types';
-import { validatePassword, validateUsername } from '@/utils/validation';
-import { Navigate } from '@tanstack/react-router';
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { APP_CONFIG } from '@/constants'
+import { useAuth } from '@/hooks/useAuth'
+import type { LoginPayload } from '@/types'
+import { validatePassword, validateUsername } from '@/utils/validation'
+import { Navigate } from '@tanstack/react-router'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 interface LoginFormData {
-  username: string;
-  password: string;
+  username: string
+  password: string
 }
 
 export const LoginPage: React.FC = () => {
-  const { login, isAuthenticated, isLoading } = useAuth();
+  const { login, isAuthenticated, isLoading } = useAuth()
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>();
+  } = useForm<LoginFormData>()
 
   // Redirect if already authenticated
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/dashboard" replace />
   }
 
   const onSubmit = async (data: LoginFormData) => {
     // Validate form data
-    const usernameError = validateUsername(data.username);
-    const passwordError = validatePassword(data.password);
-    
+    const usernameError = validateUsername(data.username)
+    const passwordError = validatePassword(data.password)
+
     if (usernameError || passwordError) {
-      toast.error('Please check your input and try again.');
-      return;
+      toast.error('Please check your input and try again.')
+      return
     }
 
     const payload: LoginPayload = {
       username: data.username.trim(),
       password: data.password,
-    };
-
-    const result = await login(payload);
-    if (!result.success) {
-      toast.error(result.message || 'Login failed. Please try again.');
-    } else {
-      toast.success('Login successful!');
     }
-  };
+
+    const result = await login(payload)
+    if (!result.success) {
+      toast.error(result.message || 'Login failed. Please try again.')
+    } else {
+      toast.success('Login successful!')
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -80,7 +86,7 @@ export const LoginPage: React.FC = () => {
               Enter your credentials to access your account
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent>
             <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-4">
@@ -96,7 +102,8 @@ export const LoginPage: React.FC = () => {
                       },
                       pattern: {
                         value: /^[a-zA-Z0-9_-]+$/,
-                        message: 'Username can only contain letters, numbers, underscores, and hyphens',
+                        message:
+                          'Username can only contain letters, numbers, underscores, and hyphens',
                       },
                     })}
                     type="text"
@@ -106,7 +113,9 @@ export const LoginPage: React.FC = () => {
                     required
                   />
                   {errors.username && (
-                    <p className="text-sm text-red-600">{errors.username.message}</p>
+                    <p className="text-sm text-red-600">
+                      {errors.username.message}
+                    </p>
                   )}
                 </div>
 
@@ -128,7 +137,9 @@ export const LoginPage: React.FC = () => {
                     required
                   />
                   {errors.password && (
-                    <p className="text-sm text-red-600">{errors.password.message}</p>
+                    <p className="text-sm text-red-600">
+                      {errors.password.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -152,5 +163,5 @@ export const LoginPage: React.FC = () => {
         </Card>
       </div>
     </div>
-  );
-};
+  )
+}
