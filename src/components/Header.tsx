@@ -1,3 +1,11 @@
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { LEDGER_TYPE_LABELS, ROUTES } from '@/constants'
 import { useAuth } from '@/hooks/useAuth'
 import {
   canAccessUserManagement,
@@ -5,6 +13,7 @@ import {
   canManageLedgers,
 } from '@/utils/rolePermissions'
 import { Link } from '@tanstack/react-router'
+import { ChevronDown, Plus } from 'lucide-react'
 
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuth()
@@ -45,31 +54,90 @@ export default function Header() {
               </Link>
             )}
             {canViewAccounts && (
-              <>
-                <Link
-                  to="/accounts/general"
-                  className="hover:text-primary transition-colors"
-                  activeProps={{ className: 'text-primary font-medium' }}
-                >
-                  General Accounts
-                </Link>
-                <Link
-                  to="/accounts/detail"
-                  className="hover:text-primary transition-colors"
-                  activeProps={{ className: 'text-primary font-medium' }}
-                >
-                  Detail Accounts
-                </Link>
-              </>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center hover:text-primary transition-colors">
+                    Accounts
+                    <ChevronDown className="ml-1 h-3 w-3" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/accounts/general"
+                      className="w-full hover:text-primary transition-colors"
+                    >
+                      General Accounts
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/accounts/detail"
+                      className="w-full hover:text-primary transition-colors"
+                    >
+                      Detail Accounts
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to={ROUTES.ACCOUNTS_GENERAL_CREATE}
+                      className="w-full hover:text-primary transition-colors"
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create Account General
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to={ROUTES.ACCOUNTS_DETAIL_CREATE}
+                      className="w-full hover:text-primary transition-colors"
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create Account Detail
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
             {canViewLedgers && (
-              <Link
-                to="/ledgers"
-                className="hover:text-primary transition-colors"
-                activeProps={{ className: 'text-primary font-medium' }}
-              >
-                Ledgers
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center hover:text-primary transition-colors">
+                    Ledgers
+                    <ChevronDown className="ml-1 h-3 w-3" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/ledgers"
+                      className="w-full hover:text-primary transition-colors"
+                    >
+                      View All Ledgers
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to={ROUTES.LEDGERS_KAS_MASUK}
+                      className="w-full hover:text-primary transition-colors"
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create {LEDGER_TYPE_LABELS.KAS_MASUK}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to={ROUTES.LEDGERS_KAS_KELUAR}
+                      className="w-full hover:text-primary transition-colors"
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create {LEDGER_TYPE_LABELS.KAS_KELUAR}
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
         </nav>

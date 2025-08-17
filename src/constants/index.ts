@@ -112,6 +112,8 @@ export const ROUTES = {
   USERS: '/users',
   ACCOUNTS_GENERAL: '/accounts/general',
   ACCOUNTS_DETAIL: '/accounts/detail',
+  ACCOUNTS_GENERAL_CREATE: '/accounts/general/new',
+  ACCOUNTS_DETAIL_CREATE: '/accounts/detail/new',
   LEDGERS: '/ledgers',
   LEDGERS_KAS_MASUK: '/ledgers/kas-masuk',
   LEDGERS_KAS_KELUAR: '/ledgers/kas-keluar',
