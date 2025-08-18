@@ -53,14 +53,18 @@ const accountGeneralFormSchema = z.object({
   accountCategory: z.enum(['ASSET', 'HUTANG', 'MODAL', 'PENDAPATAN', 'BIAYA']),
   reportType: z.enum(['NERACA', 'LABA_RUGI']),
   transactionType: z.enum(['DEBIT', 'CREDIT']),
-  amountCredit: z.string().refine(
-    (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
-    'Credit amount must be a valid non-negative number',
-  ),
-  amountDebit: z.string().refine(
-    (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
-    'Debit amount must be a valid non-negative number',
-  ),
+  amountCredit: z
+    .string()
+    .refine(
+      (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
+      'Credit amount must be a valid non-negative number',
+    ),
+  amountDebit: z
+    .string()
+    .refine(
+      (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
+      'Debit amount must be a valid non-negative number',
+    ),
 })
 
 type AccountGeneralFormData = z.infer<typeof accountGeneralFormSchema>

@@ -1,78 +1,78 @@
 import Header from '@/components/Header'
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
 import { Input } from '@/components/ui/input'
 import { TableSkeleton } from '@/components/ui/loading-state'
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select'
 import { SubmitOverlay } from '@/components/ui/submit-overlay'
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table'
 import {
-    ACCOUNT_CATEGORIES,
-    ACCOUNT_CATEGORY_LABELS,
-    PAGINATION_CONFIG,
-    REPORT_TYPES,
-    REPORT_TYPE_LABELS,
-    TRANSACTION_TYPE_LABELS,
+  ACCOUNT_CATEGORIES,
+  ACCOUNT_CATEGORY_LABELS,
+  PAGINATION_CONFIG,
+  REPORT_TYPES,
+  REPORT_TYPE_LABELS,
+  TRANSACTION_TYPE_LABELS,
 } from '@/constants'
 import {
-    useAccountsGeneralQuery,
-    useDeleteAccountGeneralMutation,
+  useAccountsGeneralQuery,
+  useDeleteAccountGeneralMutation,
 } from '@/hooks/useAccountsQuery'
 import { useAuth } from '@/hooks/useAuth'
 import type { AccountGeneral, AccountQueryParams } from '@/types/accounts'
 import { canManageAccounts } from '@/utils/rolePermissions'
 import { useNavigate } from '@tanstack/react-router'
 import {
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable,
-    type ColumnDef,
-    type SortingState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type SortingState,
 } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import {
-    ArrowUpDown,
-    Edit,
-    MoreHorizontal,
-    Plus,
-    Search,
-    Trash2,
+  ArrowUpDown,
+  Edit,
+  MoreHorizontal,
+  Plus,
+  Search,
+  Trash2,
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'

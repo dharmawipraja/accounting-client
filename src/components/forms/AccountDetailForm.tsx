@@ -55,14 +55,18 @@ const accountDetailSchema = z.object({
     Object.values(TRANSACTION_TYPES) as [string, ...string[]],
   ),
   accountGeneralId: z.string().min(1, 'General account is required'),
-  amountDebit: z.string().refine(
-    (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
-    'Debit amount must be a valid non-negative number',
-  ),
-  amountCredit: z.string().refine(
-    (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
-    'Credit amount must be a valid non-negative number',
-  ),
+  amountDebit: z
+    .string()
+    .refine(
+      (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
+      'Debit amount must be a valid non-negative number',
+    ),
+  amountCredit: z
+    .string()
+    .refine(
+      (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
+      'Credit amount must be a valid non-negative number',
+    ),
 })
 
 type AccountDetailFormData = z.infer<typeof accountDetailSchema>
