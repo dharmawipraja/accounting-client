@@ -23,7 +23,6 @@ export const useLedgersQuery = (params?: LedgerQueryParams) => {
   return useQuery({
     queryKey: ledgerQueryKeys.list(params),
     queryFn: () => ledgersService.getAll(params),
-    staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
 

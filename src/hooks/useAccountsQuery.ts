@@ -55,7 +55,6 @@ export function useAccountsGeneralQuery(params: AccountQueryParams = {}) {
   return useQuery({
     queryKey: accountQueryKeys.generalList(params),
     queryFn: () => accountsGeneralService.getAll(params),
-    staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
 
@@ -65,7 +64,6 @@ export function useAccountGeneralQuery(id: string) {
     queryKey: accountQueryKeys.generalDetail(id),
     queryFn: () => accountsGeneralService.getById(id),
     enabled: !!id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
 
@@ -147,7 +145,6 @@ export function useAccountsDetailQuery(params: AccountQueryParams = {}) {
   return useQuery({
     queryKey: accountQueryKeys.detailList(params),
     queryFn: () => accountsDetailService.getAll(params),
-    staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
 
@@ -157,7 +154,6 @@ export function useAccountDetailQuery(id: string) {
     queryKey: accountQueryKeys.detailDetail(id),
     queryFn: () => accountsDetailService.getById(id),
     enabled: !!id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
 

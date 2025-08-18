@@ -2,20 +2,20 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { LEDGER_TYPE_LABELS } from '@/constants'
@@ -24,13 +24,13 @@ import type { CreateBulkLedgersPayload } from '@/types/payloads'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from '@tanstack/react-router'
 import {
-    AlertTriangle,
-    ArrowLeft,
-    Calculator,
-    CheckCircle,
-    Plus,
-    Save,
-    Trash2,
+  AlertTriangle,
+  ArrowLeft,
+  Calculator,
+  CheckCircle,
+  Plus,
+  Save,
+  Trash2,
 } from 'lucide-react'
 import { useMemo } from 'react'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'

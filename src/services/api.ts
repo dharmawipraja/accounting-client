@@ -13,10 +13,13 @@ const createApiInstance = (): AxiosInstance => {
     timeout: API_CONFIG.TIMEOUT,
     headers: {
       'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0',
     },
   })
 
-  // Request interceptor to add auth token
+  // Request interceptor to add auth token and cache busting
   instance.interceptors.request.use(
     (config) => {
       const token = getStoredToken()

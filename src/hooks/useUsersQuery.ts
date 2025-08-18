@@ -22,7 +22,6 @@ export const useUsersQuery = (params?: UserQueryParams) => {
   return useQuery({
     queryKey: userKeys.list(params),
     queryFn: () => userService.getUsers(params),
-    staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
 
@@ -31,7 +30,6 @@ export const useUserQuery = (id: string) => {
     queryKey: userKeys.detail(id),
     queryFn: () => userService.getUserById(id),
     enabled: !!id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
 

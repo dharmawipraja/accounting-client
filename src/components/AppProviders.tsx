@@ -8,8 +8,11 @@ import { Provider as ReduxProvider } from 'react-redux'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      refetchOnWindowFocus: false,
+      staleTime: 0, // Always consider data stale - no caching
+      gcTime: 0, // Don't keep data in cache (renamed from cacheTime in v4+)
+      refetchOnWindowFocus: true, // Refetch when window gains focus
+      refetchOnMount: true, // Always refetch on mount
+      refetchOnReconnect: true, // Refetch when reconnected
       retry: (failureCount, error: any) => {
         // Don't retry on 4xx errors
         if (error?.response?.status >= 400 && error?.response?.status < 500) {
