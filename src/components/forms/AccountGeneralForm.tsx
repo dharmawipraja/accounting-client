@@ -53,8 +53,14 @@ const accountGeneralFormSchema = z.object({
   accountCategory: z.enum(['ASSET', 'HUTANG', 'MODAL', 'PENDAPATAN', 'BIAYA']),
   reportType: z.enum(['NERACA', 'LABA_RUGI']),
   transactionType: z.enum(['DEBIT', 'CREDIT']),
-  amountCredit: z.number().min(0, 'Credit amount must be positive'),
-  amountDebit: z.number().min(0, 'Debit amount must be positive'),
+  amountCredit: z.string().refine(
+    (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
+    'Credit amount must be a valid non-negative number',
+  ),
+  amountDebit: z.string().refine(
+    (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
+    'Debit amount must be a valid non-negative number',
+  ),
 })
 
 type AccountGeneralFormData = z.infer<typeof accountGeneralFormSchema>
@@ -89,14 +95,15 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
 
   const form = useForm<AccountGeneralFormData>({
     resolver: zodResolver(accountGeneralFormSchema),
+    mode: 'onChange',
     defaultValues: {
       accountNumber: '',
       accountName: '',
       accountCategory: 'ASSET',
       reportType: 'NERACA',
       transactionType: 'DEBIT',
-      amountCredit: 0,
-      amountDebit: 0,
+      amountCredit: '0',
+      amountDebit: '0',
     },
   })
 
@@ -109,8 +116,8 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
         accountCategory: account.accountCategory,
         reportType: account.reportType,
         transactionType: account.transactionType,
-        amountCredit: account.amountCredit,
-        amountDebit: account.amountDebit,
+        amountCredit: account.amountCredit.toString(),
+        amountDebit: account.amountDebit.toString(),
       })
     }
   }, [account, form, mode])
@@ -124,8 +131,8 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
           accountCategory: data.accountCategory,
           reportType: data.reportType,
           transactionType: data.transactionType,
-          amountCredit: data.amountCredit,
-          amountDebit: data.amountDebit,
+          amountCredit: parseFloat(data.amountCredit),
+          amountDebit: parseFloat(data.amountDebit),
         }
         await createMutation.mutateAsync(payload)
         toast.success('General account created successfully')
@@ -135,8 +142,8 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
           accountCategory: data.accountCategory,
           reportType: data.reportType,
           transactionType: data.transactionType,
-          amountCredit: data.amountCredit,
-          amountDebit: data.amountDebit,
+          amountCredit: parseFloat(data.amountCredit),
+          amountDebit: parseFloat(data.amountDebit),
         }
         await updateMutation.mutateAsync({ id: account.id, data: payload })
         toast.success('General account updated successfully')

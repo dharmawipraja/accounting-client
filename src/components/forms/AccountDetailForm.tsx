@@ -55,8 +55,14 @@ const accountDetailSchema = z.object({
     Object.values(TRANSACTION_TYPES) as [string, ...string[]],
   ),
   accountGeneralId: z.string().min(1, 'General account is required'),
-  amountDebit: z.string().min(0, 'Debit amount must be non-negative'),
-  amountCredit: z.string().min(0, 'Credit amount must be non-negative'),
+  amountDebit: z.string().refine(
+    (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
+    'Debit amount must be a valid non-negative number',
+  ),
+  amountCredit: z.string().refine(
+    (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
+    'Credit amount must be a valid non-negative number',
+  ),
 })
 
 type AccountDetailFormData = z.infer<typeof accountDetailSchema>
@@ -73,6 +79,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
 
   const form = useForm<AccountDetailFormData>({
     resolver: zodResolver(accountDetailSchema),
+    mode: 'onChange',
     defaultValues: {
       accountNumber: account?.accountNumber || '',
       accountName: account?.accountName || '',
@@ -165,7 +172,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
   const selectedTransactionType = form.watch('transactionType')
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <div className="container max-w-2xl px-4 py-8 mx-auto">
       {isSubmitting && (
         <SubmitOverlay
           isVisible={true}
@@ -184,7 +191,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
             size="sm"
             onClick={() => router.navigate({ to: '/accounts/detail' })}
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Detail Accounts
           </Button>
         </div>
@@ -205,7 +212,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Calculator className="h-5 w-5" />
+              <Calculator className="w-5 h-5" />
               Account Details
             </CardTitle>
           </CardHeader>
@@ -215,7 +222,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-6"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="accountNumber"
@@ -248,7 +255,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                   <FormField
                     control={form.control}
                     name="accountCategory"
@@ -441,7 +448,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                   )}
                 />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="amountDebit"
@@ -450,7 +457,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                         <FormLabel>Debit Amount</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                            <span className="absolute transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground">
                               Rp
                             </span>
                             <Input
@@ -476,7 +483,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                         <FormLabel>Credit Amount</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                            <span className="absolute transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground">
                               Rp
                             </span>
                             <Input
@@ -505,7 +512,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                     Cancel
                   </Button>
                   <Button type="submit" disabled={isSubmitting}>
-                    <Save className="mr-2 h-4 w-4" />
+                    <Save className="w-4 h-4 mr-2" />
                     {mode === 'create' ? 'Create Account' : 'Update Account'}
                   </Button>
                 </div>
