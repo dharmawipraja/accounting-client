@@ -79,7 +79,7 @@ export function AccountsDetailListPage() {
   const { user } = useAuth()
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState<string>('')
+  const [categoryFilter, setCategoryFilter] = useState<string>('all')
   const [currentPage, setCurrentPage] = useState<number>(
     PAGINATION_CONFIG.DEFAULT_PAGE,
   )
@@ -96,7 +96,7 @@ export function AccountsDetailListPage() {
       params.search = globalFilter
     }
 
-    if (categoryFilter) {
+    if (categoryFilter && categoryFilter !== 'all') {
       params.accountCategory = categoryFilter as any
     }
 
@@ -148,7 +148,7 @@ export function AccountsDetailListPage() {
           className="h-8 px-2"
         >
           Account Number
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="w-4 h-4 ml-2" />
         </Button>
       ),
       cell: ({ row }) => (
@@ -164,7 +164,7 @@ export function AccountsDetailListPage() {
           className="h-8 px-2"
         >
           Account Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="w-4 h-4 ml-2" />
         </Button>
       ),
       cell: ({ row }) => (
@@ -213,13 +213,13 @@ export function AccountsDetailListPage() {
           className="h-8 px-2"
         >
           Amount
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="w-4 h-4 ml-2" />
         </Button>
       ),
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue('amount'))
         return (
-          <div className="text-right font-medium">
+          <div className="font-medium text-right">
             Rp {amount.toLocaleString('id-ID')}
           </div>
         )
@@ -234,7 +234,7 @@ export function AccountsDetailListPage() {
           className="h-8 px-2"
         >
           Created At
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="w-4 h-4 ml-2" />
         </Button>
       ),
       cell: ({ row }) => {
@@ -254,9 +254,9 @@ export function AccountsDetailListPage() {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button variant="ghost" className="w-8 h-8 p-0">
                 <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreHorizontal className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -268,7 +268,7 @@ export function AccountsDetailListPage() {
                   })
                 }
               >
-                <Edit className="mr-2 h-4 w-4" />
+                <Edit className="w-4 h-4 mr-2" />
                 Edit
               </DropdownMenuItem>
               <AlertDialog>
@@ -277,7 +277,7 @@ export function AccountsDetailListPage() {
                     onSelect={(e) => e.preventDefault()}
                     className="text-red-600"
                   >
-                    <Trash2 className="mr-2 h-4 w-4" />
+                    <Trash2 className="w-4 h-4 mr-2" />
                     Delete
                   </DropdownMenuItem>
                 </AlertDialogTrigger>
@@ -326,7 +326,7 @@ export function AccountsDetailListPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 space-y-6">
+      <div className="container px-4 py-8 mx-auto space-y-6">
         <Header />
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Detail Accounts</h1>
@@ -341,7 +341,7 @@ export function AccountsDetailListPage() {
 
   if (isError) {
     return (
-      <div className="container mx-auto px-4 py-8 space-y-6">
+      <div className="container px-4 py-8 mx-auto space-y-6">
         <Header />
         <ErrorState
           type="server"
@@ -357,7 +357,7 @@ export function AccountsDetailListPage() {
   const pagination = accountsData?.pagination
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
+    <div className="container px-4 py-8 mx-auto space-y-6">
       <Header />
 
       {deleteAccountMutation.isPending && (
@@ -373,7 +373,7 @@ export function AccountsDetailListPage() {
         </div>
         {canManage && (
           <Button onClick={() => navigate({ to: '/accounts/detail/new' })}>
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="w-4 h-4 mr-2" />
             Add Detail Account
           </Button>
         )}
@@ -382,9 +382,9 @@ export function AccountsDetailListPage() {
       <Card>
         <CardHeader>
           <CardTitle>Detail Accounts</CardTitle>
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search accounts..."
                 value={globalFilter}
@@ -397,7 +397,7 @@ export function AccountsDetailListPage() {
                 <SelectValue placeholder="Filter by category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {Object.values(ACCOUNT_CATEGORIES).map((category) => (
                   <SelectItem key={category} value={category}>
                     {
@@ -420,12 +420,12 @@ export function AccountsDetailListPage() {
               action={{
                 label: 'Add First Detail Account',
                 onClick: () => navigate({ to: '/accounts/detail/new' }),
-                icon: <Plus className="h-4 w-4" />,
+                icon: <Plus className="w-4 h-4" />,
               }}
             />
           ) : (
             <>
-              <div className="rounded-md border">
+              <div className="border rounded-md">
                 <Table>
                   <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -475,7 +475,7 @@ export function AccountsDetailListPage() {
               </div>
 
               {pagination && (
-                <div className="flex items-center justify-between space-x-2 py-4">
+                <div className="flex items-center justify-between py-4 space-x-2">
                   <div className="text-sm text-muted-foreground">
                     Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
                     {Math.min(

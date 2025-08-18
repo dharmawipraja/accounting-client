@@ -111,7 +111,7 @@ export const LedgersListPage: React.FC = () => {
   const handleFilterChange = (key: keyof LedgerQueryParams, value: any) => {
     setFilters((prev) => ({
       ...prev,
-      [key]: value === '' ? undefined : value,
+      [key]: value === '' || value === 'all' ? undefined : value,
       page: 1, // Reset to first page when filtering
     }))
   }
@@ -273,7 +273,7 @@ export const LedgersListPage: React.FC = () => {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Ledger Type</label>
                   <Select
-                    value={filters.ledgerType || ''}
+                    value={filters.ledgerType || 'all'}
                     onValueChange={(value) =>
                       handleFilterChange('ledgerType', value)
                     }
@@ -282,7 +282,7 @@ export const LedgersListPage: React.FC = () => {
                       <SelectValue placeholder="All types" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All types</SelectItem>
+                      <SelectItem value="all">All types</SelectItem>
                       <SelectItem value="KAS_MASUK">Cash In</SelectItem>
                       <SelectItem value="KAS_KELUAR">Cash Out</SelectItem>
                     </SelectContent>
@@ -292,7 +292,7 @@ export const LedgersListPage: React.FC = () => {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Posting Status</label>
                   <Select
-                    value={filters.postingStatus || ''}
+                    value={filters.postingStatus || 'all'}
                     onValueChange={(value) =>
                       handleFilterChange('postingStatus', value)
                     }
@@ -301,7 +301,7 @@ export const LedgersListPage: React.FC = () => {
                       <SelectValue placeholder="All statuses" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All statuses</SelectItem>
+                      <SelectItem value="all">All statuses</SelectItem>
                       <SelectItem value="PENDING">Pending</SelectItem>
                       <SelectItem value="POSTED">Posted</SelectItem>
                     </SelectContent>

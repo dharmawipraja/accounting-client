@@ -1,78 +1,78 @@
 import Header from '@/components/Header'
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
 import { Input } from '@/components/ui/input'
 import { TableSkeleton } from '@/components/ui/loading-state'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/ui/select'
 import { SubmitOverlay } from '@/components/ui/submit-overlay'
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from '@/components/ui/table'
 import {
-  ACCOUNT_CATEGORIES,
-  ACCOUNT_CATEGORY_LABELS,
-  PAGINATION_CONFIG,
-  REPORT_TYPES,
-  REPORT_TYPE_LABELS,
-  TRANSACTION_TYPE_LABELS,
+    ACCOUNT_CATEGORIES,
+    ACCOUNT_CATEGORY_LABELS,
+    PAGINATION_CONFIG,
+    REPORT_TYPES,
+    REPORT_TYPE_LABELS,
+    TRANSACTION_TYPE_LABELS,
 } from '@/constants'
 import {
-  useAccountsGeneralQuery,
-  useDeleteAccountGeneralMutation,
+    useAccountsGeneralQuery,
+    useDeleteAccountGeneralMutation,
 } from '@/hooks/useAccountsQuery'
 import { useAuth } from '@/hooks/useAuth'
 import type { AccountGeneral, AccountQueryParams } from '@/types/accounts'
 import { canManageAccounts } from '@/utils/rolePermissions'
 import { useNavigate } from '@tanstack/react-router'
 import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type SortingState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    useReactTable,
+    type ColumnDef,
+    type SortingState,
 } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import {
-  ArrowUpDown,
-  Edit,
-  MoreHorizontal,
-  Plus,
-  Search,
-  Trash2,
+    ArrowUpDown,
+    Edit,
+    MoreHorizontal,
+    Plus,
+    Search,
+    Trash2,
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
@@ -82,8 +82,8 @@ export function AccountsGeneralListPage() {
   const { user } = useAuth()
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState<string>('')
-  const [reportTypeFilter, setReportTypeFilter] = useState<string>('')
+  const [categoryFilter, setCategoryFilter] = useState<string>('all')
+  const [reportTypeFilter, setReportTypeFilter] = useState<string>('all')
   const [currentPage, setCurrentPage] = useState<number>(
     PAGINATION_CONFIG.DEFAULT_PAGE,
   )
@@ -100,11 +100,11 @@ export function AccountsGeneralListPage() {
       params.search = globalFilter
     }
 
-    if (categoryFilter) {
+    if (categoryFilter && categoryFilter !== 'all') {
       params.accountCategory = categoryFilter as any
     }
 
-    if (reportTypeFilter) {
+    if (reportTypeFilter && reportTypeFilter !== 'all') {
       params.reportType = reportTypeFilter as any
     }
 
@@ -445,7 +445,7 @@ export function AccountsGeneralListPage() {
                 <SelectValue placeholder="Filter by category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {Object.values(ACCOUNT_CATEGORIES).map((category) => (
                   <SelectItem key={category} value={category}>
                     {
@@ -465,7 +465,7 @@ export function AccountsGeneralListPage() {
                 <SelectValue placeholder="Filter by report type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Report Types</SelectItem>
+                <SelectItem value="all">All Report Types</SelectItem>
                 {Object.values(REPORT_TYPES).map((reportType) => (
                   <SelectItem key={reportType} value={reportType}>
                     {
