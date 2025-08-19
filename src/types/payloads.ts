@@ -54,7 +54,7 @@ export interface UpdateAccountGeneralPayload {
 export interface CreateAccountDetailPayload {
   accountNumber: string // min: 1, max: 20, numbers and hyphens only
   accountName: string // min: 3 chars, max: 100
-  accountGeneralId: string // UUID
+  accountGeneralAccountNumber: string // UUID
   accountCategory: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
   reportType: 'NERACA' | 'LABA_RUGI'
   transactionType: 'DEBIT' | 'CREDIT'
@@ -75,8 +75,8 @@ export interface UpdateAccountDetailPayload {
 export interface LedgerItem {
   amount: number // positive decimal
   description: string // min: 3 chars, max: 500
-  accountDetailId: string // UUID
-  accountGeneralId: string // UUID
+  accountDetailAccountNumber: string // UUID
+  accountGeneralAccountNumber: string // UUID
   ledgerType: 'KAS_MASUK' | 'KAS_KELUAR'
   transactionType: 'DEBIT' | 'CREDIT'
   ledgerDate: string // ISO date string
@@ -89,8 +89,8 @@ export interface CreateBulkLedgersPayload {
 export interface UpdateLedgerPayload {
   amount?: number // positive decimal
   description?: string // min: 3 chars, max: 500
-  accountDetailId?: string // UUID
-  accountGeneralId?: string // UUID
+  accountDetailAccountNumber?: string // UUID
+  accountGeneralAccountNumber?: string // UUID
   ledgerType?: 'KAS_MASUK' | 'KAS_KELUAR'
   transactionType?: 'DEBIT' | 'CREDIT'
   ledgerDate?: string // ISO date string

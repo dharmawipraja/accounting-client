@@ -38,7 +38,7 @@ export interface AccountDetail {
   transactionType: TransactionType
   amountCredit: number
   amountDebit: number
-  accountGeneralId: string
+  accountGeneralAccountNumber: string
   createdBy: string
   updatedBy: string
   deletedAt?: string | null
@@ -75,7 +75,7 @@ export interface AccountGeneralFormData {
 export interface AccountDetailFormData {
   accountNumber: string
   accountName: string
-  accountGeneralId: string
+  accountGeneralAccountNumber: string
   accountCategory: AccountCategory
   reportType: ReportType
   transactionType: TransactionType

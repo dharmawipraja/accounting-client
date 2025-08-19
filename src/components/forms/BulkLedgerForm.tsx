@@ -45,8 +45,8 @@ const ledgerEntrySchema = z.object({
     .min(3, 'Description must be at least 3 characters')
     .max(500, 'Description must not exceed 500 characters'),
   transactionType: z.enum(['DEBIT', 'CREDIT']),
-  accountDetailId: z.string().min(1, 'Account detail is required'),
-  accountGeneralId: z.string().min(1, 'Account general is required'),
+  accountDetailAccountNumber: z.string().min(1, 'Account detail is required'),
+  accountGeneralAccountNumber: z.string().min(1, 'Account general is required'),
   amount: z.number().min(0.01, 'Amount must be greater than 0'),
   // Additional fields for form UI only
   referenceNumber: z
@@ -86,8 +86,8 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
           referenceNumber: '',
           description: '',
           transactionType: 'DEBIT',
-          accountDetailId: '',
-          accountGeneralId: '',
+          accountDetailAccountNumber: '',
+          accountGeneralAccountNumber: '',
           amount: 0,
         },
         {
@@ -95,8 +95,8 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
           referenceNumber: '',
           description: '',
           transactionType: 'CREDIT',
-          accountDetailId: '',
-          accountGeneralId: '',
+          accountDetailAccountNumber: '',
+          accountGeneralAccountNumber: '',
           amount: 0,
         },
       ],
@@ -160,8 +160,8 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
           description: entry.description,
           ledgerType: ledgerType, // Use the prop instead of form field
           transactionType: entry.transactionType,
-          accountDetailId: entry.accountDetailId,
-          accountGeneralId: entry.accountGeneralId,
+          accountDetailAccountNumber: entry.accountDetailAccountNumber,
+          accountGeneralAccountNumber: entry.accountGeneralAccountNumber,
           amount: entry.amount,
         })),
       }
@@ -185,8 +185,8 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
       referenceNumber: '',
       description: '',
       transactionType: 'DEBIT',
-      accountDetailId: '',
-      accountGeneralId: '',
+      accountDetailAccountNumber: '',
+      accountGeneralAccountNumber: '',
       amount: 0,
     })
   }
@@ -411,12 +411,12 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
 
                     <FormField
                       control={form.control}
-                      name={`entries.${index}.accountDetailId`}
+                      name={`entries.${index}.accountDetailAccountNumber`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Account Detail ID</FormLabel>
+                          <FormLabel>Account Detail Account Number</FormLabel>
                           <FormControl>
-                            <Input placeholder="Detail account ID" {...field} />
+                            <Input placeholder="Detail account number" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -425,13 +425,13 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
 
                     <FormField
                       control={form.control}
-                      name={`entries.${index}.accountGeneralId`}
+                      name={`entries.${index}.accountGeneralAccountNumber`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Account General ID</FormLabel>
+                          <FormLabel>Account General Account Number</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="General account ID"
+                              placeholder="General account number"
                               {...field}
                             />
                           </FormControl>

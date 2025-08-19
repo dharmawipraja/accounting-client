@@ -28,15 +28,15 @@ export interface AccountQueryParams extends PaginationParams {
 
 // Account detail specific query params
 export interface AccountDetailQueryParams extends AccountQueryParams {
-  accountGeneralId?: string // filter by parent general account
+  accountGeneralAccountNumber?: string // filter by parent general account
   includeLedgers?: boolean // default: false
 }
 
 // Ledger query params
 export interface LedgerQueryParams extends PaginationParams {
   search?: string // searches description and reference number
-  accountDetailId?: string
-  accountGeneralId?: string
+  accountDetailAccountNumber?: string
+  accountGeneralAccountNumber?: string
   ledgerType?: 'KAS_MASUK' | 'KAS_KELUAR'
   postingStatus?: 'PENDING' | 'POSTED'
   dateFrom?: string // ISO date string

@@ -72,7 +72,7 @@ export interface AccountDetail {
   transactionType: 'DEBIT' | 'CREDIT'
   amountCredit: number
   amountDebit: number
-  accountGeneralId: string
+  accountGeneralAccountNumber: string
   createdBy: string
   updatedBy: string
   deletedAt?: string | null
@@ -96,8 +96,8 @@ export interface Ledger {
   postingStatus: 'PENDING' | 'POSTED'
   ledgerDate: string
   postingAt?: string | null
-  accountDetailId: string
-  accountGeneralId: string
+  accountDetailAccountNumber: string
+  accountGeneralAccountNumber: string
   createdBy: string
   updatedBy: string
   createdAt: string

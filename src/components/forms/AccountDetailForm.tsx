@@ -54,7 +54,7 @@ const accountDetailSchema = z.object({
   transactionType: z.enum(
     Object.values(TRANSACTION_TYPES) as [string, ...string[]],
   ),
-  accountGeneralId: z.string().min(1, 'General account is required'),
+  accountGeneralAccountNumber: z.string().min(1, 'General account is required'),
   amountDebit: z
     .string()
     .refine(
@@ -90,7 +90,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
       accountCategory: account?.accountCategory || '',
       reportType: account?.reportType || '',
       transactionType: account?.transactionType || '',
-      accountGeneralId: account?.accountGeneralId || '',
+      accountGeneralAccountNumber: account?.accountGeneralAccountNumber || '',
       amountDebit: account?.amountDebit?.toString() || '0',
       amountCredit: account?.amountCredit?.toString() || '0',
     },
@@ -117,7 +117,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
         accountCategory: account.accountCategory,
         reportType: account.reportType,
         transactionType: account.transactionType,
-        accountGeneralId: account.accountGeneralId,
+        accountGeneralAccountNumber: account.accountGeneralAccountNumber,
         amountDebit: account.amountDebit.toString(),
         amountCredit: account.amountCredit.toString(),
       })
@@ -281,7 +281,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                           onValueChange={(value) => {
                             field.onChange(value)
                             // Reset general account when category changes
-                            form.setValue('accountGeneralId', '')
+                            form.setValue('accountGeneralAccountNumber', '')
                           }}
                           defaultValue={field.value}
                         >
@@ -409,7 +409,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
 
                 <FormField
                   control={form.control}
-                  name="accountGeneralId"
+                  name="accountGeneralAccountNumber"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>General Account</FormLabel>

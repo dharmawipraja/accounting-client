@@ -14,8 +14,8 @@ export interface Ledger {
   postingStatus: PostingStatus
   ledgerDate: string
   postingAt?: string | null
-  accountDetailId: string
-  accountGeneralId: string
+  accountDetailAccountNumber: string
+  accountGeneralAccountNumber: string
   createdBy: string
   updatedBy: string
   createdAt: string
@@ -37,8 +37,8 @@ export interface LedgerQueryParams {
   page?: number
   limit?: number
   search?: string // searches description and reference number
-  accountDetailId?: string
-  accountGeneralId?: string
+  accountDetailAccountNumber?: string
+  accountGeneralAccountNumber?: string
   ledgerType?: LedgerType
   postingStatus?: PostingStatus
   dateFrom?: string // ISO date string
@@ -51,8 +51,8 @@ export interface LedgerQueryParams {
 export interface LedgerFormData {
   amount: number
   description: string
-  accountDetailId: string
-  accountGeneralId: string
+  accountDetailAccountNumber: string
+  accountGeneralAccountNumber: string
   ledgerType: LedgerType
   transactionType: TransactionType
   ledgerDate: string

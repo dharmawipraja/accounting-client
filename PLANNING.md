@@ -570,7 +570,7 @@ interface AccountDetail {
   transactionType: 'DEBIT' | 'CREDIT'
   amountCredit: number
   amountDebit: number
-  accountGeneralId: string
+  accountGeneralAccountNumber: string
   createdBy: string
   updatedBy: string
   deletedAt?: string | null
@@ -594,8 +594,8 @@ interface Ledger {
   postingStatus: 'PENDING' | 'POSTED'
   ledgerDate: string
   postingAt?: string | null
-  accountDetailId: string
-  accountGeneralId: string
+  accountDetailAccountNumber: string
+  accountGeneralAccountNumber: string
   createdBy: string
   updatedBy: string
   createdAt: string
@@ -668,7 +668,7 @@ interface UpdateAccountGeneralPayload {
 interface CreateAccountDetailPayload {
   accountNumber: string // min: 1, max: 20, numbers and hyphens only
   accountName: string // min: 3 chars, max: 100
-  accountGeneralId: string // UUID
+  accountGeneralAccountNumber: string // UUID
   accountCategory: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
   reportType: 'NERACA' | 'LABA_RUGI'
   transactionType: 'DEBIT' | 'CREDIT'
@@ -689,8 +689,8 @@ interface UpdateAccountDetailPayload {
 interface LedgerItem {
   amount: number // positive decimal
   description: string // min: 3 chars, max: 500
-  accountDetailId: string // UUID
-  accountGeneralId: string // UUID
+  accountDetailAccountNumber: string // UUID
+  accountGeneralAccountNumber: string // UUID
   ledgerType: 'KAS_MASUK' | 'KAS_KELUAR'
   transactionType: 'DEBIT' | 'CREDIT'
   ledgerDate: string // ISO date string
@@ -703,8 +703,8 @@ interface CreateBulkLedgersPayload {
 interface UpdateLedgerPayload {
   amount?: number // positive decimal
   description?: string // min: 3 chars, max: 500
-  accountDetailId?: string // UUID
-  accountGeneralId?: string // UUID
+  accountDetailAccountNumber?: string // UUID
+  accountGeneralAccountNumber?: string // UUID
   ledgerType?: 'KAS_MASUK' | 'KAS_KELUAR'
   transactionType?: 'DEBIT' | 'CREDIT'
   ledgerDate?: string // ISO date string
@@ -741,15 +741,15 @@ interface AccountQueryParams extends PaginationParams {
 
 // Account detail specific query params
 interface AccountDetailQueryParams extends AccountQueryParams {
-  accountGeneralId?: string // filter by parent general account
+  accountGeneralAccountNumber?: string // filter by parent general account
   includeLedgers?: boolean // default: false
 }
 
 // Ledger query params
 interface LedgerQueryParams extends PaginationParams {
   search?: string // searches description and reference number
-  accountDetailId?: string
-  accountGeneralId?: string
+  accountDetailAccountNumber?: string
+  accountGeneralAccountNumber?: string
   ledgerType?: 'KAS_MASUK' | 'KAS_KELUAR'
   postingStatus?: 'PENDING' | 'POSTED'
   dateFrom?: string // ISO date string
