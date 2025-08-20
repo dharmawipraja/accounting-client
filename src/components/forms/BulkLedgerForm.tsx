@@ -170,7 +170,6 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
       toast.success('Ledger entries created successfully!')
       router.navigate({ to: '/ledgers' })
     } catch (error: any) {
-      console.error('Form submission error:', error)
       toast.error(
         error?.response?.data?.message ||
           error?.message ||
@@ -206,14 +205,14 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
   }
 
   return (
-    <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
       <div className="mb-6">
         <Button
           variant="ghost"
           onClick={handleCancel}
           className="mb-4 hover:bg-gray-100"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Ledgers
         </Button>
         <h1 className="text-3xl font-bold tracking-tight">
@@ -229,12 +228,12 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Calculator className="h-5 w-5" />
+            <Calculator className="w-5 h-5" />
             Transaction Balance Summary
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-500">
                 Total Debit Amount
@@ -266,20 +265,20 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
               <div className="flex items-center gap-2">
                 {isBalanced ? (
                   <>
-                    <CheckCircle className="h-5 w-5 text-green-500" />
+                    <CheckCircle className="w-5 h-5 text-green-500" />
                     <Badge
                       variant="outline"
-                      className="bg-green-50 text-green-700 border-green-200"
+                      className="text-green-700 border-green-200 bg-green-50"
                     >
                       Balanced
                     </Badge>
                   </>
                 ) : (
                   <>
-                    <AlertTriangle className="h-5 w-5 text-orange-500" />
+                    <AlertTriangle className="w-5 h-5 text-orange-500" />
                     <Badge
                       variant="outline"
-                      className="bg-orange-50 text-orange-700 border-orange-200"
+                      className="text-orange-700 border-orange-200 bg-orange-50"
                     >
                       Unbalanced
                     </Badge>
@@ -309,7 +308,7 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
             {fields.map((field, index) => (
               <Card key={field.id}>
                 <CardHeader>
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">
                       Entry #{index + 1}
                     </CardTitle>
@@ -321,12 +320,12 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
                       disabled={fields.length <= 2}
                       className="text-red-600 hover:text-red-800 hover:bg-red-50"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     <FormField
                       control={form.control}
                       name={`entries.${index}.ledgerDate`}
@@ -416,7 +415,10 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
                         <FormItem>
                           <FormLabel>Account Detail Account Number</FormLabel>
                           <FormControl>
-                            <Input placeholder="Detail account number" {...field} />
+                            <Input
+                              placeholder="Detail account number"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -462,8 +464,8 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
                   </div>
 
                   {/* Entry Summary */}
-                  <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                    <div className="flex justify-between items-center text-sm">
+                  <div className="p-3 mt-4 rounded-lg bg-gray-50">
+                    <div className="flex items-center justify-between text-sm">
                       <span className="font-medium">
                         {watchedEntries[index]?.transactionType || 'DEBIT'}{' '}
                         Entry
@@ -492,13 +494,13 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
               onClick={addEntry}
               className="flex items-center gap-2"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="w-4 h-4" />
               Add Another Entry
             </Button>
           </div>
 
           {/* Submit Buttons */}
-          <div className="flex justify-end space-x-4 pt-6">
+          <div className="flex justify-end pt-6 space-x-4">
             <Button
               type="button"
               variant="outline"
@@ -512,7 +514,7 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
               disabled={createBulkMutation.isPending || !isBalanced}
               className="flex items-center gap-2"
             >
-              <Save className="h-4 w-4" />
+              <Save className="w-4 h-4" />
               {createBulkMutation.isPending
                 ? 'Creating Entries...'
                 : `Create ${fields.length} Ledger Entries`}
@@ -521,12 +523,12 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
 
           {/* Balance Warning */}
           {!isBalanced && (
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+            <div className="p-4 border border-orange-200 rounded-lg bg-orange-50">
               <div className="flex items-center gap-2 text-orange-800">
-                <AlertTriangle className="h-5 w-5" />
+                <AlertTriangle className="w-5 h-5" />
                 <span className="font-medium">Transaction Not Balanced</span>
               </div>
-              <p className="text-sm text-orange-700 mt-1">
+              <p className="mt-1 text-sm text-orange-700">
                 In double-entry bookkeeping, total debit amounts must equal
                 total credit amounts. Please adjust the amounts to balance the
                 transaction before submitting.

@@ -1,15 +1,33 @@
-import Header from '@/components/Header'
+import { Link, useNavigate } from '@tanstack/react-router'
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnFiltersState,
+  type SortingState,
+  type VisibilityState,
+} from '@tanstack/react-table'
+import { format } from 'date-fns'
+import {
+  Building2,
+  ChevronDown,
+  DollarSign,
+  Edit,
+  Eye,
+  MoreHorizontal,
+  Plus,
+  Search,
+  Settings,
+  Trash2,
+  TrendingUp,
+  Users,
+} from 'lucide-react'
+import { useMemo, useState } from 'react'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -17,19 +35,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
 import { Input } from '@/components/ui/input'
-import { TableSkeleton } from '@/components/ui/loading-state'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { SubmitOverlay } from '@/components/ui/submit-overlay'
 import {
   Table,
@@ -39,545 +51,525 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  ACCOUNT_CATEGORIES,
-  ACCOUNT_CATEGORY_LABELS,
-  PAGINATION_CONFIG,
-  REPORT_TYPES,
-  REPORT_TYPE_LABELS,
-  TRANSACTION_TYPE_LABELS,
-} from '@/constants'
+
 import {
   useAccountsGeneralQuery,
   useDeleteAccountGeneralMutation,
 } from '@/hooks/useAccountsQuery'
-import { useAuth } from '@/hooks/useAuth'
-import type { AccountGeneral, AccountQueryParams } from '@/types/accounts'
-import { canManageAccounts } from '@/utils/rolePermissions'
-import { useNavigate } from '@tanstack/react-router'
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type SortingState,
-} from '@tanstack/react-table'
-import { format } from 'date-fns'
-import {
-  ArrowUpDown,
-  Edit,
-  MoreHorizontal,
-  Plus,
-  Search,
-  Trash2,
-} from 'lucide-react'
-import { useMemo, useState } from 'react'
-import { toast } from 'sonner'
+import type { AccountGeneral } from '@/types/accounts'
 
-export function AccountsGeneralListPage() {
+const columnHelper = createColumnHelper<AccountGeneral>()
+
+export default function AccountsGeneralListPage() {
   const navigate = useNavigate()
-  const { user } = useAuth()
+
+  // Table state
   const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({})
   const [globalFilter, setGlobalFilter] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState<string>('all')
-  const [reportTypeFilter, setReportTypeFilter] = useState<string>('all')
-  const [currentPage, setCurrentPage] = useState<number>(
-    PAGINATION_CONFIG.DEFAULT_PAGE,
-  )
-  const [pageSize] = useState(PAGINATION_CONFIG.DEFAULT_LIMIT)
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+  })
 
-  // Build query parameters
-  const queryParams: AccountQueryParams = useMemo(() => {
-    const params: AccountQueryParams = {
-      page: currentPage,
-      limit: pageSize,
-    }
-
-    if (globalFilter) {
-      params.search = globalFilter
-    }
-
-    if (categoryFilter && categoryFilter !== 'all') {
-      params.accountCategory = categoryFilter as any
-    }
-
-    if (reportTypeFilter && reportTypeFilter !== 'all') {
-      params.reportType = reportTypeFilter as any
-    }
-
-    return params
-  }, [currentPage, pageSize, globalFilter, categoryFilter, reportTypeFilter])
-
+  // Queries and mutations
   const {
     data: accountsData,
     isLoading,
     isError,
-    error,
     refetch,
-  } = useAccountsGeneralQuery(queryParams)
+  } = useAccountsGeneralQuery(pagination)
 
   const deleteAccountMutation = useDeleteAccountGeneralMutation()
 
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteAccountMutation.mutateAsync(id)
-    } catch {
-      toast.error('Failed to delete account')
-    }
-  }
-
-  const getBadgeVariant = (category: string) => {
-    switch (category) {
-      case 'ASSET':
-        return 'default'
-      case 'HUTANG':
-        return 'destructive'
-      case 'MODAL':
-        return 'secondary'
-      case 'PENDAPATAN':
-        return 'outline'
-      case 'BIAYA':
-        return 'secondary'
-      default:
-        return 'default'
-    }
-  }
-
-  const getTransactionTypeBadge = (type: string) => {
-    return type === 'DEBIT' ? 'default' : 'secondary'
-  }
-
-  const columns: ColumnDef<AccountGeneral>[] = [
-    {
-      accessorKey: 'accountNumber',
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="h-8 px-2"
-        >
-          Account Number
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => (
-        <div className="font-medium">{row.getValue('accountNumber')}</div>
-      ),
-    },
-    {
-      accessorKey: 'accountName',
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="h-8 px-2"
-        >
-          Account Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => (
-        <div className="font-medium">{row.getValue('accountName')}</div>
-      ),
-    },
-    {
-      accessorKey: 'accountCategory',
-      header: 'Category',
-      cell: ({ row }) => {
-        const category = row.getValue('accountCategory') as string
-        return (
-          <Badge variant={getBadgeVariant(category)}>
-            {
-              ACCOUNT_CATEGORY_LABELS[
-                category as keyof typeof ACCOUNT_CATEGORY_LABELS
-              ]
-            }
-          </Badge>
-        )
-      },
-    },
-    {
-      accessorKey: 'reportType',
-      header: 'Report Type',
-      cell: ({ row }) => {
-        const reportType = row.getValue('reportType') as string
-        return (
-          <Badge variant="outline">
-            {REPORT_TYPE_LABELS[reportType as keyof typeof REPORT_TYPE_LABELS]}
-          </Badge>
-        )
-      },
-    },
-    {
-      accessorKey: 'transactionType',
-      header: 'Transaction Type',
-      cell: ({ row }) => {
-        const transactionType = row.getValue('transactionType') as string
-        return (
-          <Badge variant={getTransactionTypeBadge(transactionType)}>
-            {
-              TRANSACTION_TYPE_LABELS[
-                transactionType as keyof typeof TRANSACTION_TYPE_LABELS
-              ]
-            }
-          </Badge>
-        )
-      },
-    },
-    {
-      accessorKey: 'amountDebit',
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="h-8 px-2"
-        >
-          Debit Amount
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const amount = parseFloat(row.getValue('amountDebit'))
-        return (
-          <div className="text-right font-medium">
-            Rp {amount.toLocaleString('id-ID')}
+  // Table columns
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('accountNumber', {
+        header: 'Account Code',
+        cell: ({ getValue }) => (
+          <div className="font-mono text-sm font-medium text-foreground">
+            {getValue()}
           </div>
-        )
-      },
-    },
-    {
-      accessorKey: 'amountCredit',
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="h-8 px-2"
-        >
-          Credit Amount
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const amount = parseFloat(row.getValue('amountCredit'))
-        return (
-          <div className="text-right font-medium">
-            Rp {amount.toLocaleString('id-ID')}
-          </div>
-        )
-      },
-    },
-    {
-      accessorKey: 'createdAt',
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="h-8 px-2"
-        >
-          Created At
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const date = new Date(row.getValue('createdAt'))
-        return <div>{format(date, 'dd/MM/yyyy HH:mm')}</div>
-      },
-    },
-    {
-      id: 'actions',
-      enableHiding: false,
-      cell: ({ row }) => {
-        const account = row.original
-        const canManage = canManageAccounts(user?.role)
-
-        if (!canManage) return null
-
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() =>
-                  navigate({
-                    to: '/accounts/general/$id/edit',
-                    params: { id: account.id },
-                  })
-                }
-              >
-                <Edit className="mr-2 h-4 w-4" />
-                Edit
-              </DropdownMenuItem>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <DropdownMenuItem
-                    onSelect={(e) => e.preventDefault()}
-                    className="text-red-600"
+        ),
+      }),
+      columnHelper.accessor('accountName', {
+        header: 'Account Name',
+        cell: ({ row }) => {
+          const account = row.original
+          return (
+            <div className="space-y-1">
+              <div className="font-medium text-foreground">
+                {account.accountName}
+              </div>
+              <div className="max-w-xs text-sm truncate text-muted-foreground">
+                {account.accountCategory}
+              </div>
+            </div>
+          )
+        },
+      }),
+      columnHelper.accessor('accountCategory', {
+        header: 'Category',
+        cell: ({ getValue }) => {
+          const category = getValue()
+          const categoryColors = {
+            ASSET: 'bg-blue-100 text-blue-700 border-blue-200',
+            HUTANG: 'bg-red-100 text-red-700 border-red-200',
+            MODAL: 'bg-green-100 text-green-700 border-green-200',
+            PENDAPATAN: 'bg-purple-100 text-purple-700 border-purple-200',
+            BIAYA: 'bg-orange-100 text-orange-700 border-orange-200',
+          }
+          return (
+            <Badge
+              variant="outline"
+              className={`${categoryColors[category] || 'bg-gray-100 text-gray-700'} capitalize`}
+            >
+              {category.toLowerCase()}
+            </Badge>
+          )
+        },
+      }),
+      columnHelper.accessor('reportType', {
+        header: 'Report Type',
+        cell: ({ getValue }) => {
+          const reportType = getValue()
+          return (
+            <Badge
+              variant={reportType === 'NERACA' ? 'default' : 'secondary'}
+              className="capitalize"
+            >
+              {reportType.toLowerCase().replace('_', ' ')}
+            </Badge>
+          )
+        },
+      }),
+      columnHelper.accessor('createdAt', {
+        header: 'Created',
+        cell: ({ getValue }) => {
+          const value = getValue()
+          return (
+            <div className="text-sm text-muted-foreground">
+              {value ? format(new Date(value), 'MMM dd, yyyy') : 'N/A'}
+            </div>
+          )
+        },
+      }),
+      columnHelper.display({
+        id: 'actions',
+        header: '',
+        cell: ({ row }) => {
+          const account = row.original
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="w-8 h-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/accounts/general"
+                    search={{ view: account.accountNumber }}
                   >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                  </DropdownMenuItem>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action will delete the general account "
-                      {account.accountName}". This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => handleDelete(account.id)}
-                      className="bg-red-600 hover:bg-red-700"
-                    >
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )
-      },
-    },
-  ]
+                    <Eye className="w-4 h-4 mr-2" />
+                    View details
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/accounts/general/$id/edit"
+                    params={{ id: account.accountNumber }}
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit account
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() =>
+                    deleteAccountMutation.mutate(account.accountNumber)
+                  }
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete account
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        },
+      }),
+    ],
+    [deleteAccountMutation],
+  )
 
+  // Table instance
   const table = useReactTable({
     data: accountsData?.data || [],
     columns,
     onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    onGlobalFilterChange: setGlobalFilter,
     state: {
       sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
       globalFilter,
     },
   })
 
-  const canManage = canManageAccounts(user?.role)
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8 space-y-6">
-        <Header />
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            General Accounts
-          </h1>
-          <p className="text-muted-foreground">
-            Manage your general chart of accounts
-          </p>
-        </div>
-        <TableSkeleton />
-      </div>
-    )
+  const paginationInfo = accountsData?.pagination || {
+    page: 1,
+    pages: 1,
+    total: 0,
+    limit: 10,
   }
 
-  if (isError) {
-    return (
-      <div className="container mx-auto px-4 py-8 space-y-6">
-        <Header />
-        <ErrorState
-          type="server"
-          title="Error Loading Accounts"
-          message={error?.message || 'Failed to load general accounts.'}
-          onRetry={() => refetch()}
-        />
-      </div>
-    )
-  }
-
-  const accounts = accountsData?.data || []
-  const pagination = accountsData?.pagination
+  // Stats data
+  const stats = useMemo(() => {
+    const accounts = accountsData?.data || []
+    return [
+      {
+        title: 'Total Accounts',
+        value: paginationInfo.total,
+        icon: Building2,
+        color: 'text-blue-600',
+        bgColor: 'bg-blue-50 dark:bg-blue-950/20',
+      },
+      {
+        title: 'Asset Accounts',
+        value: accounts.filter(
+          (a: AccountGeneral) => a.accountCategory === 'ASSET',
+        ).length,
+        icon: TrendingUp,
+        color: 'text-green-600',
+        bgColor: 'bg-green-50 dark:bg-green-950/20',
+      },
+      {
+        title: 'Income Accounts',
+        value: accounts.filter(
+          (a: AccountGeneral) => a.accountCategory === 'PENDAPATAN',
+        ).length,
+        icon: DollarSign,
+        color: 'text-purple-600',
+        bgColor: 'bg-purple-50 dark:bg-purple-950/20',
+      },
+      {
+        title: 'This Month',
+        value: accounts.filter((a: AccountGeneral) => {
+          if (!a.createdAt) return false
+          const accountDate = new Date(a.createdAt)
+          const now = new Date()
+          return (
+            accountDate.getMonth() === now.getMonth() &&
+            accountDate.getFullYear() === now.getFullYear()
+          )
+        }).length,
+        icon: Users,
+        color: 'text-orange-600',
+        bgColor: 'bg-orange-50 dark:bg-orange-950/20',
+      },
+    ]
+  }, [accountsData?.data, paginationInfo.total])
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
-      <Header />
-
-      {deleteAccountMutation.isPending && (
-        <SubmitOverlay isVisible={true} message="Deleting account..." />
-      )}
-
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+    <div className="container px-4 py-8 mx-auto space-y-8">
+      {/* Header */}
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
             General Accounts
           </h1>
           <p className="text-muted-foreground">
-            Manage your general chart of accounts
+            Manage your chart of accounts and financial structure
           </p>
         </div>
-        {canManage && (
-          <Button onClick={() => navigate({ to: '/accounts/general/new' })}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add General Account
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm">
+            <Settings className="w-4 h-4 mr-2" />
+            Settings
           </Button>
-        )}
+          <Button asChild>
+            <Link to="/accounts/general/new">
+              <Plus className="w-4 h-4 mr-2" />
+              Add Account
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>General Accounts</CardTitle>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search accounts..."
-                value={globalFilter}
-                onChange={(event) => setGlobalFilter(event.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="Filter by category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {Object.values(ACCOUNT_CATEGORIES).map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {
-                      ACCOUNT_CATEGORY_LABELS[
-                        category as keyof typeof ACCOUNT_CATEGORY_LABELS
-                      ]
-                    }
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select
-              value={reportTypeFilter}
-              onValueChange={setReportTypeFilter}
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat) => {
+          const Icon = stat.icon
+          return (
+            <Card
+              key={stat.title}
+              className="relative overflow-hidden border-0 shadow-lg"
             >
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="Filter by report type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Report Types</SelectItem>
-                {Object.values(REPORT_TYPES).map((reportType) => (
-                  <SelectItem key={reportType} value={reportType}>
-                    {
-                      REPORT_TYPE_LABELS[
-                        reportType as keyof typeof REPORT_TYPE_LABELS
-                      ]
-                    }
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {accounts.length === 0 ? (
-            <EmptyState
-              type="data"
-              title="No General Accounts Found"
-              description="There are no general accounts to display."
-              action={{
-                label: 'Add First General Account',
-                onClick: () => navigate({ to: '/accounts/general/new' }),
-                icon: <Plus className="h-4 w-4" />,
-              }}
-            />
-          ) : (
-            <>
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                      <TableRow key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => (
-                          <TableHead key={header.id}>
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext(),
-                                )}
-                          </TableHead>
-                        ))}
-                      </TableRow>
-                    ))}
-                  </TableHeader>
-                  <TableBody>
-                    {table.getRowModel().rows?.length ? (
-                      table.getRowModel().rows.map((row) => (
-                        <TableRow
-                          key={row.id}
-                          data-state={row.getIsSelected() && 'selected'}
-                        >
-                          {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext(),
-                              )}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell
-                          colSpan={columns.length}
-                          className="h-24 text-center"
-                        >
-                          No results found.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-
-              {pagination && (
-                <div className="flex items-center justify-between space-x-2 py-4">
-                  <div className="text-sm text-muted-foreground">
-                    Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
-                    {Math.min(
-                      pagination.page * pagination.limit,
-                      pagination.total,
-                    )}{' '}
-                    of {pagination.total} results
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-muted-foreground">
+                      {stat.title}
+                    </p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {stat.value}
+                    </p>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.max(1, prev - 1))
-                      }
-                      disabled={currentPage <= 1}
-                    >
-                      Previous
-                    </Button>
-                    <div className="text-sm">
-                      Page {pagination.page} of {pagination.pages}
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage((prev) => prev + 1)}
-                      disabled={currentPage >= pagination.pages}
-                    >
-                      Next
-                    </Button>
+                  <div className={`p-3 rounded-full ${stat.bgColor}`}>
+                    <Icon className={`h-6 w-6 ${stat.color}`} />
                   </div>
                 </div>
-              )}
-            </>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
+
+      {/* Main Content */}
+      <Card className="border-0 shadow-lg">
+        <CardHeader className="border-b border-border/50 bg-muted/30">
+          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+            <CardTitle className="text-xl font-semibold">
+              Chart of Accounts ({paginationInfo.total})
+            </CardTitle>
+
+            {/* Search and Filters */}
+            <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+              <div className="relative">
+                <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search accounts..."
+                  value={globalFilter ?? ''}
+                  onChange={(event) =>
+                    setGlobalFilter(String(event.target.value))
+                  }
+                  className="w-full pl-9 sm:w-64 bg-background/50"
+                />
+              </div>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="justify-between min-w-[140px]"
+                  >
+                    Columns
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  {table
+                    .getAllColumns()
+                    .filter((column) => column.getCanHide())
+                    .map((column) => {
+                      return (
+                        <DropdownMenuItem
+                          key={column.id}
+                          className="capitalize"
+                          onSelect={() =>
+                            column.toggleVisibility(!column.getIsVisible())
+                          }
+                        >
+                          <input
+                            type="checkbox"
+                            checked={column.getIsVisible()}
+                            onChange={() =>
+                              column.toggleVisibility(!column.getIsVisible())
+                            }
+                            className="mr-2"
+                          />
+                          {column.id}
+                        </DropdownMenuItem>
+                      )
+                    })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="p-0">
+          {deleteAccountMutation.isPending && (
+            <SubmitOverlay isVisible={true} />
+          )}
+
+          {isError ? (
+            <div className="p-6">
+              <ErrorState type="server" title="Failed to load accounts" />
+              <div className="mt-4">
+                <Button onClick={() => refetch()} variant="outline">
+                  Retry
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="overflow-hidden border rounded-lg border-border/50">
+              <Table>
+                <TableHeader className="bg-muted/30">
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow
+                      key={headerGroup.id}
+                      className="hover:bg-transparent border-border/50"
+                    >
+                      {headerGroup.headers.map((header) => (
+                        <TableHead key={header.id} className="font-semibold">
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableHeader>
+
+                <TableBody>
+                  {isLoading ? (
+                    Array.from({ length: 5 }).map((_, index) => (
+                      <TableRow key={index}>
+                        {columns.map((_, colIndex) => (
+                          <TableCell key={colIndex}>
+                            <div className="flex items-center space-x-3">
+                              <div className="w-16 h-4 rounded bg-muted animate-pulse"></div>
+                              <div className="space-y-2">
+                                <div className="w-32 h-4 rounded bg-muted animate-pulse"></div>
+                                <div className="w-24 h-3 rounded bg-muted animate-pulse"></div>
+                              </div>
+                            </div>
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : table.getRowModel().rows?.length > 0 ? (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && 'selected'}
+                        className="transition-colors hover:bg-muted/30"
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id} className="py-4">
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="p-0">
+                        <EmptyState
+                          type={globalFilter ? 'search' : 'create'}
+                          title={
+                            globalFilter
+                              ? 'No accounts found'
+                              : 'No accounts yet'
+                          }
+                          description={
+                            globalFilter
+                              ? `No accounts match "${globalFilter}". Try adjusting your search terms.`
+                              : 'Get started by creating your first chart of accounts.'
+                          }
+                          action={{
+                            label: globalFilter
+                              ? 'Clear search'
+                              : 'Add Account',
+                            onClick: globalFilter
+                              ? () => setGlobalFilter('')
+                              : () => navigate({ to: '/accounts/general/new' }),
+                            icon: globalFilter ? (
+                              <Search className="w-4 h-4" />
+                            ) : (
+                              <Plus className="w-4 h-4" />
+                            ),
+                          }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+
+          {!isLoading && table.getRowModel().rows?.length > 0 && (
+            <div className="flex flex-col items-center justify-between gap-4 p-6 border-t sm:flex-row border-border/50">
+              <div className="text-sm text-muted-foreground">
+                Showing {table.getRowModel().rows.length} of{' '}
+                {paginationInfo.total} accounts
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setPagination((prev) => ({
+                      ...prev,
+                      page: Math.max(1, prev.page - 1),
+                    }))
+                  }
+                  disabled={pagination.page === 1}
+                  className="hidden sm:flex"
+                >
+                  Previous
+                </Button>
+                <div className="flex items-center gap-1">
+                  {Array.from({
+                    length: Math.min(5, paginationInfo.pages),
+                  }).map((_, i) => {
+                    const page = i + 1
+                    return (
+                      <Button
+                        key={page}
+                        variant={
+                          pagination.page === page ? 'default' : 'outline'
+                        }
+                        size="sm"
+                        onClick={() =>
+                          setPagination((prev) => ({ ...prev, page }))
+                        }
+                        className="w-8 h-8"
+                      >
+                        {page}
+                      </Button>
+                    )
+                  })}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setPagination((prev) => ({
+                      ...prev,
+                      page: Math.min(paginationInfo.pages, prev.page + 1),
+                    }))
+                  }
+                  disabled={pagination.page === paginationInfo.pages}
+                  className="hidden sm:flex"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>

@@ -48,7 +48,6 @@ export const useCreateBulkLedgersMutation = () => {
       toast.success('Ledger entries created successfully')
     },
     onError: (error: any) => {
-      console.error('Error creating ledger entries:', error)
       toast.error(
         error?.response?.data?.message || 'Failed to create ledger entries',
       )
@@ -71,7 +70,6 @@ export const useUpdateLedgerMutation = () => {
       toast.success('Ledger entry updated successfully')
     },
     onError: (error: any) => {
-      console.error('Error updating ledger entry:', error)
       toast.error(
         error?.response?.data?.message || 'Failed to update ledger entry',
       )
@@ -93,7 +91,6 @@ export const useDeleteLedgerMutation = () => {
       toast.success('Ledger entry deleted successfully')
     },
     onError: (error: any) => {
-      console.error('Error deleting ledger entry:', error)
       toast.error(
         error?.response?.data?.message || 'Failed to delete ledger entry',
       )

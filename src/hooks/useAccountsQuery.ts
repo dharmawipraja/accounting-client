@@ -19,31 +19,31 @@ export const accountQueryKeys = {
   general: () => [...accountQueryKeys.all, 'general'] as const,
   generalList: (params: AccountQueryParams) =>
     [...accountQueryKeys.general(), 'list', params] as const,
-  generalDetail: (id: string) =>
-    [...accountQueryKeys.general(), 'detail', id] as const,
+  generalDetail: (accountNumber: string) =>
+    [...accountQueryKeys.general(), 'detail', accountNumber] as const,
   detail: () => [...accountQueryKeys.all, 'detail'] as const,
   detailList: (params: AccountQueryParams) =>
     [...accountQueryKeys.detail(), 'list', params] as const,
-  detailDetail: (id: string) =>
-    [...accountQueryKeys.detail(), 'detail', id] as const,
+  detailDetail: (accountNumber: string) =>
+    [...accountQueryKeys.detail(), 'detail', accountNumber] as const,
 }
 
 // ============================================================================
 // Individual General Account Query Hook
-export const useAccountGeneralByIdQuery = (id: string) => {
+export const useAccountGeneralByIdQuery = (accountNumber: string) => {
   return useQuery({
-    queryKey: ['accountGeneral', id],
-    queryFn: () => accountsGeneralService.getById(id),
-    enabled: !!id,
+    queryKey: ['accountGeneral', accountNumber],
+    queryFn: () => accountsGeneralService.getById(accountNumber),
+    enabled: !!accountNumber,
   })
 }
 
 // Individual Detail Account Query Hook
-export const useAccountDetailByIdQuery = (id: string) => {
+export const useAccountDetailByIdQuery = (accountNumber: string) => {
   return useQuery({
-    queryKey: ['accountDetail', id],
-    queryFn: () => accountsDetailService.getById(id),
-    enabled: !!id,
+    queryKey: ['accountDetail', accountNumber],
+    queryFn: () => accountsDetailService.getById(accountNumber),
+    enabled: !!accountNumber,
   })
 }
 
@@ -58,12 +58,12 @@ export function useAccountsGeneralQuery(params: AccountQueryParams = {}) {
   })
 }
 
-// Hook to fetch a single general account by ID
-export function useAccountGeneralQuery(id: string) {
+// Hook to fetch a single general account by accountNumber
+export function useAccountGeneralQuery(accountNumber: string) {
   return useQuery({
-    queryKey: accountQueryKeys.generalDetail(id),
-    queryFn: () => accountsGeneralService.getById(id),
-    enabled: !!id,
+    queryKey: accountQueryKeys.generalDetail(accountNumber),
+    queryFn: () => accountsGeneralService.getById(accountNumber),
+    enabled: !!accountNumber,
   })
 }
 
@@ -93,18 +93,18 @@ export function useUpdateAccountGeneralMutation() {
 
   return useMutation({
     mutationFn: ({
-      id,
+      accountNumber,
       data,
     }: {
-      id: string
+      accountNumber: string
       data: UpdateAccountGeneralPayload
-    }) => accountsGeneralService.update(id, data),
+    }) => accountsGeneralService.update(accountNumber, data),
     onSuccess: (data, variables) => {
       // Invalidate and refetch general accounts list
       queryClient.invalidateQueries({ queryKey: accountQueryKeys.general() })
       // Update the specific account in cache
       queryClient.setQueryData(
-        accountQueryKeys.generalDetail(variables.id),
+        accountQueryKeys.generalDetail(variables.accountNumber),
         data,
       )
       toast.success('General account updated successfully')
@@ -122,7 +122,8 @@ export function useDeleteAccountGeneralMutation() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (id: string) => accountsGeneralService.delete(id),
+    mutationFn: (accountNumber: string) =>
+      accountsGeneralService.delete(accountNumber),
     onSuccess: () => {
       // Invalidate and refetch general accounts list
       queryClient.invalidateQueries({ queryKey: accountQueryKeys.general() })
@@ -148,12 +149,12 @@ export function useAccountsDetailQuery(params: AccountQueryParams = {}) {
   })
 }
 
-// Hook to fetch a single detail account by ID
-export function useAccountDetailQuery(id: string) {
+// Hook to fetch a single detail account by accountNumber
+export function useAccountDetailQuery(accountNumber: string) {
   return useQuery({
-    queryKey: accountQueryKeys.detailDetail(id),
-    queryFn: () => accountsDetailService.getById(id),
-    enabled: !!id,
+    queryKey: accountQueryKeys.detailDetail(accountNumber),
+    queryFn: () => accountsDetailService.getById(accountNumber),
+    enabled: !!accountNumber,
   })
 }
 
@@ -183,18 +184,18 @@ export function useUpdateAccountDetailMutation() {
 
   return useMutation({
     mutationFn: ({
-      id,
+      accountNumber,
       data,
     }: {
-      id: string
+      accountNumber: string
       data: UpdateAccountDetailPayload
-    }) => accountsDetailService.update(id, data),
+    }) => accountsDetailService.update(accountNumber, data),
     onSuccess: (data, variables) => {
       // Invalidate and refetch detail accounts list
       queryClient.invalidateQueries({ queryKey: accountQueryKeys.detail() })
       // Update the specific account in cache
       queryClient.setQueryData(
-        accountQueryKeys.detailDetail(variables.id),
+        accountQueryKeys.detailDetail(variables.accountNumber),
         data,
       )
       toast.success('Detail account updated successfully')
@@ -212,7 +213,8 @@ export function useDeleteAccountDetailMutation() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (id: string) => accountsDetailService.delete(id),
+    mutationFn: (accountNumber: string) =>
+      accountsDetailService.delete(accountNumber),
     onSuccess: () => {
       // Invalidate and refetch detail accounts list
       queryClient.invalidateQueries({ queryKey: accountQueryKeys.detail() })

@@ -149,7 +149,10 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
           amountCredit: parseFloat(data.amountCredit),
           amountDebit: parseFloat(data.amountDebit),
         }
-        await updateMutation.mutateAsync({ id: account.id, data: payload })
+        await updateMutation.mutateAsync({
+          accountNumber: account.accountNumber,
+          data: payload,
+        })
         toast.success('General account updated successfully')
       }
 

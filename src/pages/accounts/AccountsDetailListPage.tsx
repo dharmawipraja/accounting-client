@@ -113,9 +113,9 @@ export function AccountsDetailListPage() {
 
   const deleteAccountMutation = useDeleteAccountDetailMutation()
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (accountNumber: string) => {
     try {
-      await deleteAccountMutation.mutateAsync(id)
+      await deleteAccountMutation.mutateAsync(accountNumber)
     } catch {
       toast.error('Failed to delete account')
     }
@@ -264,7 +264,7 @@ export function AccountsDetailListPage() {
                 onClick={() =>
                   navigate({
                     to: '/accounts/detail/$id/edit',
-                    params: { id: account.id },
+                    params: { id: account.accountNumber },
                   })
                 }
               >
@@ -292,7 +292,7 @@ export function AccountsDetailListPage() {
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={() => handleDelete(account.id)}
+                      onClick={() => handleDelete(account.accountNumber)}
                       className="bg-red-600 hover:bg-red-700"
                     >
                       Delete

@@ -35,17 +35,17 @@ Your Accounting API is a comprehensive RESTful service built with Fastify, featu
 
 - `GET /accounts/general` - List general accounts with pagination
 - `POST /accounts/general` - Create general account
-- `GET /accounts/general/:id` - Get general account by ID
-- `PUT /accounts/general/:id` - Update general account
-- `DELETE /accounts/general/:id` - Delete general account (soft delete)
+- `GET /accounts/general/:accountNumber` - Get general account by ID
+- `PUT /accounts/general/:accountNumber` - Update general account
+- `DELETE /accounts/general/:accountNumber` - Delete general account (soft delete)
 
 #### Account Detail (`/accounts/detail`) - Admin/Manager/Accountant only
 
 - `GET /accounts/detail` - List detail accounts with pagination
 - `POST /accounts/detail` - Create detail account
-- `GET /accounts/detail/:id` - Get detail account by ID
-- `PUT /accounts/detail/:id` - Update detail account
-- `DELETE /accounts/detail/:id` - Delete detail account (soft delete)
+- `GET /accounts/detail/:accountNumber` - Get detail account by accountNumber
+- `PUT /accounts/detail/:accountNumber` - Update detail account
+- `DELETE /accounts/detail/:accountNumber` - Delete detail account (soft delete)
 
 #### Ledgers (`/ledgers`) - Admin/Manager/Accountant only
 
@@ -925,11 +925,11 @@ AccountQueryParams
 PaginatedResponse<AccountGeneral>
 ```
 
-**GET /accounts/general/:id**
+**GET /accounts/general/:accountNumber**
 
 ```typescript
 // Path Parameters
-{ id: string }
+{ accountNumber: string }
 
 // Query Parameters
 { includeDeleted?: boolean } // default: false
@@ -938,12 +938,12 @@ PaginatedResponse<AccountGeneral>
 ApiResponse<AccountGeneral>
 ```
 
-**PUT /accounts/general/:id**
+**PUT /accounts/general/:accountNumber**
 
 ```typescript
 // Path Parameters
 {
-  id: string
+  accountNumber: string
 }
 
 // Request Body
@@ -953,12 +953,12 @@ UpdateAccountGeneralPayload
 ApiResponse<AccountGeneral>
 ```
 
-**DELETE /accounts/general/:id** (soft delete)
+**DELETE /accounts/general/:accountNumber** (soft delete)
 
 ```typescript
 // Path Parameters
 {
-  id: string
+  accountNumber: string
 }
 
 // Response
@@ -987,11 +987,11 @@ AccountDetailQueryParams
 PaginatedResponse<AccountDetail>
 ```
 
-**GET /accounts/detail/:id**
+**GET /accounts/detail/:accountNumber**
 
 ```typescript
 // Path Parameters
-{ id: string }
+{ accountNumber: string }
 
 // Query Parameters
 {
@@ -1003,12 +1003,12 @@ PaginatedResponse<AccountDetail>
 ApiResponse<AccountDetail>
 ```
 
-**PUT /accounts/detail/:id**
+**PUT /accounts/detail/:accountNumber**
 
 ```typescript
 // Path Parameters
 {
-  id: string
+  accountNumber: string
 }
 
 // Request Body
@@ -1018,7 +1018,7 @@ UpdateAccountDetailPayload
 ApiResponse<AccountDetail>
 ```
 
-**DELETE /accounts/detail/:id** (soft delete)
+**DELETE /accounts/detail/:accountNumber** (soft delete)
 
 ```typescript
 // Path Parameters
@@ -1164,15 +1164,19 @@ POST   /users/change-password
 Accounts:
 GET    /accounts/general
 POST   /accounts/general
-GET    /accounts/general/:id
-PUT    /accounts/general/:id
-DELETE /accounts/general/:id
+GET    /accounts/general/:AccountNumber
+PUT    /accounts/general/:AccountNumber
+DELETE /accounts/general/:AccountNumber
 
 GET    /accounts/detail
 POST   /accounts/detail
-GET    /accounts/detail/:id
-PUT    /accounts/detail/:id
-DELETE /accounts/detail/:id
+GET    /accounts/general/:accountNumber
+PUT    /accounts/general/:accountNumber
+DELETE /accounts/general/:accountNumber
+
+GET    /accounts/detail/:accountNumber
+PUT    /accounts/detail/:accountNumber
+DELETE /accounts/detail/:accountNumber
 
 Ledgers:
 GET    /ledgers

@@ -1,15 +1,33 @@
-import Header from '@/components/Header'
+import { Link, useNavigate } from '@tanstack/react-router'
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnFiltersState,
+  type SortingState,
+  type VisibilityState,
+} from '@tanstack/react-table'
+import { format } from 'date-fns'
+import {
+  Activity,
+  ChevronDown,
+  Edit,
+  Eye,
+  MoreHorizontal,
+  Search,
+  Settings,
+  Shield,
+  Trash2,
+  TrendingUp,
+  UserPlus,
+  Users,
+} from 'lucide-react'
+import { useMemo, useState } from 'react'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -17,12 +35,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
 import { Input } from '@/components/ui/input'
-import { TableSkeleton } from '@/components/ui/loading-state'
 import { SubmitOverlay } from '@/components/ui/submit-overlay'
 import {
   Table,
@@ -32,47 +51,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+
 import { useAuth } from '@/hooks/useAuth'
 import { useDeleteUserMutation, useUsersQuery } from '@/hooks/useUsersQuery'
-import type { User } from '@/types/api'
-import type { UserQueryParams } from '@/types/query'
-import {
-  canDeleteUser,
-  canManageSpecificUser,
-  getRoleBadgeVariant,
-  getRoleLabel,
-} from '@/utils/rolePermissions'
-import { useNavigate } from '@tanstack/react-router'
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState,
-  type VisibilityState,
-} from '@tanstack/react-table'
-import {
-  ArrowUpDown,
-  ChevronDown,
-  Edit,
-  Loader2,
-  MoreHorizontal,
-  Plus,
-  Search,
-  Trash2,
-  UserPlus,
-} from 'lucide-react'
-import { useMemo, useState } from 'react'
-import { toast } from 'sonner'
+import type { User } from '@/types'
 
-export function UserListPage() {
+const columnHelper = createColumnHelper<User>()
+
+export default function UserListPage() {
   const navigate = useNavigate()
   const { user: currentUser } = useAuth()
 
+  // Table state
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -83,214 +73,122 @@ export function UserListPage() {
     limit: 10,
   })
 
-  // React Query hooks
-  const queryParams: UserQueryParams = {
-    page: pagination.page,
-    limit: pagination.limit,
-    search: globalFilter || undefined,
-  }
-
+  // Queries and mutations
   const {
-    data: usersResponse,
+    data: usersData,
     isLoading,
     isError,
-    error,
     refetch,
-  } = useUsersQuery(queryParams)
+  } = useUsersQuery(pagination)
 
   const deleteUserMutation = useDeleteUserMutation()
 
-  const users = usersResponse?.data || []
-  const paginationInfo = usersResponse?.pagination || {
-    page: 1,
-    limit: 10,
-    total: 0,
-    pages: 0,
-  }
-
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteUserMutation.mutateAsync(id)
-    } catch {
-      toast.error('Failed to delete user')
-    }
-  }
-
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'ACTIVE':
-        return 'default'
-      case 'INACTIVE':
-        return 'secondary'
-      default:
-        return 'outline'
-    }
-  }
-
-  const columns = useMemo<ColumnDef<User>[]>(
+  // Table columns
+  const columns = useMemo(
     () => [
-      {
-        accessorKey: 'name',
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="h-8 px-2 lg:px-3"
-          >
-            Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        ),
-        cell: ({ row }) => (
-          <div>
-            <div className="font-medium">{row.getValue('name')}</div>
-            <div className="text-sm text-muted-foreground">
-              {row.original.username}
-            </div>
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'role',
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="h-8 px-2 lg:px-3"
-          >
-            Role
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        ),
-        cell: ({ row }) => (
-          <Badge variant={getRoleBadgeVariant(row.getValue('role'))}>
-            {getRoleLabel(row.getValue('role'))}
-          </Badge>
-        ),
-        filterFn: (row, id, value) => {
-          return value.includes(row.getValue(id))
-        },
-      },
-      {
-        accessorKey: 'status',
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="h-8 px-2 lg:px-3"
-          >
-            Status
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        ),
-        cell: ({ row }) => (
-          <Badge variant={getStatusBadgeVariant(row.getValue('status'))}>
-            {row.getValue('status') === 'ACTIVE' ? 'Active' : 'Inactive'}
-          </Badge>
-        ),
-        filterFn: (row, id, value) => {
-          return value.includes(row.getValue(id))
-        },
-      },
-      {
-        accessorKey: 'createdAt',
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="h-8 px-2 lg:px-3"
-          >
-            Created
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        ),
-        cell: ({ row }) => (
-          <div className="text-sm">
-            {new Date(row.getValue('createdAt')).toLocaleDateString()}
-          </div>
-        ),
-      },
-      {
-        id: 'actions',
-        enableHiding: false,
+      columnHelper.accessor('name', {
+        header: 'User',
         cell: ({ row }) => {
           const user = row.original
-
+          return (
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center justify-center w-10 h-10 text-sm font-semibold text-white rounded-full bg-gradient-to-br from-blue-500 to-purple-600">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <div className="font-medium text-foreground">{user.name}</div>
+                <div className="text-sm text-muted-foreground">
+                  {user.username}
+                </div>
+              </div>
+            </div>
+          )
+        },
+      }),
+      columnHelper.accessor('role', {
+        header: 'Role',
+        cell: ({ getValue }) => {
+          const role = getValue()
+          return (
+            <Badge
+              variant={role === 'ADMIN' ? 'default' : 'secondary'}
+              className="capitalize"
+            >
+              {role}
+            </Badge>
+          )
+        },
+      }),
+      columnHelper.accessor('status', {
+        header: 'Status',
+        cell: ({ getValue }) => {
+          const status = getValue()
+          return (
+            <Badge
+              variant={status === 'ACTIVE' ? 'default' : 'secondary'}
+              className={`capitalize ${status === 'ACTIVE' ? 'bg-green-100 text-green-700 border-green-200' : ''}`}
+            >
+              {status?.toLowerCase() || 'inactive'}
+            </Badge>
+          )
+        },
+      }),
+      columnHelper.accessor('createdAt', {
+        header: 'Created',
+        cell: ({ getValue }) => (
+          <div className="text-sm text-muted-foreground">
+            {format(new Date(getValue()), 'MMM dd, yyyy')}
+          </div>
+        ),
+      }),
+      columnHelper.display({
+        id: 'actions',
+        header: '',
+        cell: ({ row }) => {
+          const user = row.original
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
+                <Button variant="ghost" className="w-8 h-8 p-0">
                   <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
+                  <MoreHorizontal className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {canManageSpecificUser(
-                  currentUser?.role || 'NASABAH',
-                  currentUser?.id || '',
-                  user.id,
-                  user.role,
-                ) && (
-                  <DropdownMenuItem
-                    onClick={() => navigate({ to: `/users/${user.id}/edit` })}
-                  >
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem
-                  onClick={() => navigate({ to: `/users/${user.id}` })}
-                >
-                  View Details
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                  <Link to="/users/$id" params={{ id: user.id }}>
+                    <Eye className="w-4 h-4 mr-2" />
+                    View details
+                  </Link>
                 </DropdownMenuItem>
-                {canDeleteUser(
-                  currentUser?.role || 'NASABAH',
-                  currentUser?.id || '',
-                  user.id,
-                  user.role,
-                ) && (
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete the user account for {user.name}.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleDelete(user.id)}
-                          disabled={deleteUserMutation.isPending}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          {deleteUserMutation.isPending && (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          )}
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                )}
+                <DropdownMenuItem asChild>
+                  <Link to="/users/$id/edit" params={{ id: user.id }}>
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit user
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => deleteUserMutation.mutate(user.id)}
+                  disabled={user.id === currentUser?.id}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete user
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )
         },
-      },
+      }),
     ],
-    [currentUser, navigate, deleteUserMutation.isPending],
+    [currentUser?.id, deleteUserMutation],
   )
 
+  // Table instance
   const table = useReactTable({
-    data: users,
+    data: usersData?.data || [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -301,7 +199,6 @@ export function UserListPage() {
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: 'includesString',
     state: {
       sorting,
       columnFilters,
@@ -310,294 +207,342 @@ export function UserListPage() {
       globalFilter,
     },
   })
-  return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Users</h1>
-              <p className="text-muted-foreground">
-                Manage user accounts and permissions
-              </p>
-            </div>
-            <Button
-              onClick={() => navigate({ to: '/users/new' })}
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              Add User
-            </Button>
-          </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>User Management</CardTitle>
-              <div className="flex items-center space-x-2">
-                <div className="relative flex-1 max-w-sm">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                  <Input
-                    placeholder="Filter users..."
-                    value={globalFilter ?? ''}
-                    onChange={(event) =>
-                      setGlobalFilter(String(event.target.value))
-                    }
-                    className="pl-10"
-                    disabled={isLoading}
-                  />
+  const paginationInfo = usersData?.pagination || {
+    page: 1,
+    pages: 1,
+    total: 0,
+    limit: 10,
+  }
+
+  // Stats data
+  const stats = useMemo(() => {
+    const users = usersData?.data || []
+    return [
+      {
+        title: 'Total Users',
+        value: paginationInfo.total,
+        icon: Users,
+        color: 'text-blue-600',
+        bgColor: 'bg-blue-50 dark:bg-blue-950/20',
+      },
+      {
+        title: 'Active Users',
+        value: users.filter((u) => u.status === 'ACTIVE').length,
+        icon: Activity,
+        color: 'text-green-600',
+        bgColor: 'bg-green-50 dark:bg-green-950/20',
+      },
+      {
+        title: 'Administrators',
+        value: users.filter((u) => u.role === 'ADMIN').length,
+        icon: Shield,
+        color: 'text-purple-600',
+        bgColor: 'bg-purple-50 dark:bg-purple-950/20',
+      },
+      {
+        title: 'This Month',
+        value: users.filter((u) => {
+          const userDate = new Date(u.createdAt)
+          const now = new Date()
+          return (
+            userDate.getMonth() === now.getMonth() &&
+            userDate.getFullYear() === now.getFullYear()
+          )
+        }).length,
+        icon: TrendingUp,
+        color: 'text-orange-600',
+        bgColor: 'bg-orange-50 dark:bg-orange-950/20',
+      },
+    ]
+  }, [usersData?.data, paginationInfo.total])
+
+  return (
+    <div className="container px-4 py-8 mx-auto space-y-8">
+      {/* Header */}
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            User Management
+          </h1>
+          <p className="text-muted-foreground">
+            Manage user accounts and permissions
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm">
+            <Settings className="w-4 h-4 mr-2" />
+            Settings
+          </Button>
+          <Button asChild>
+            <Link to="/users/new">
+              <UserPlus className="w-4 h-4 mr-2" />
+              Add User
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat) => {
+          const Icon = stat.icon
+          return (
+            <Card
+              key={stat.title}
+              className="relative overflow-hidden border-0 shadow-lg"
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-muted-foreground">
+                      {stat.title}
+                    </p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {stat.value}
+                    </p>
+                  </div>
+                  <div className={`p-3 rounded-full ${stat.bgColor}`}>
+                    <Icon className={`h-6 w-6 ${stat.color}`} />
+                  </div>
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="ml-auto"
-                      disabled={isLoading}
-                    >
-                      Columns <ChevronDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {table
-                      .getAllColumns()
-                      .filter((column) => column.getCanHide())
-                      .map((column) => {
-                        return (
-                          <DropdownMenuItem
-                            key={column.id}
-                            className="capitalize"
-                            onClick={() =>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
+
+      {/* Main Content */}
+      <Card className="border-0 shadow-lg">
+        <CardHeader className="border-b border-border/50 bg-muted/30">
+          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+            <CardTitle className="text-xl font-semibold">
+              Users ({paginationInfo.total})
+            </CardTitle>
+
+            {/* Search and Filters */}
+            <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+              <div className="relative">
+                <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search users..."
+                  value={globalFilter ?? ''}
+                  onChange={(event) =>
+                    setGlobalFilter(String(event.target.value))
+                  }
+                  className="w-full pl-9 sm:w-64 bg-background/50"
+                />
+              </div>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="justify-between min-w-[140px]"
+                  >
+                    Columns
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  {table
+                    .getAllColumns()
+                    .filter((column) => column.getCanHide())
+                    .map((column) => {
+                      return (
+                        <DropdownMenuItem
+                          key={column.id}
+                          className="capitalize"
+                          onSelect={() =>
+                            column.toggleVisibility(!column.getIsVisible())
+                          }
+                        >
+                          <input
+                            type="checkbox"
+                            checked={column.getIsVisible()}
+                            onChange={() =>
                               column.toggleVisibility(!column.getIsVisible())
                             }
-                          >
-                            <input
-                              type="checkbox"
-                              checked={column.getIsVisible()}
-                              onChange={(e) =>
-                                column.toggleVisibility(!!e.target.checked)
-                              }
-                              className="mr-2"
-                            />
-                            {column.id}
-                          </DropdownMenuItem>
-                        )
-                      })}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {isError ? (
-                <ErrorState
-                  type="server"
-                  title="Failed to load users"
-                  message={
-                    error?.message ||
-                    'Unable to fetch user data. Please try again.'
-                  }
-                  onRetry={() => refetch()}
-                  isRetrying={isLoading}
-                />
-              ) : (
-                <>
-                  <div className="rounded-md border">
-                    <Table>
-                      <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                          <TableRow key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                              return (
-                                <TableHead key={header.id}>
-                                  {header.isPlaceholder
-                                    ? null
-                                    : flexRender(
-                                        header.column.columnDef.header,
-                                        header.getContext(),
-                                      )}
-                                </TableHead>
-                              )
-                            })}
-                          </TableRow>
-                        ))}
-                      </TableHeader>
-                      <TableBody>
-                        {isLoading ? (
-                          <TableSkeleton
-                            rows={pagination.limit}
-                            columns={columns.length}
+                            className="mr-2"
                           />
-                        ) : table.getRowModel().rows?.length ? (
-                          table.getRowModel().rows.map((row) => (
-                            <TableRow
-                              key={row.id}
-                              data-state={row.getIsSelected() && 'selected'}
-                            >
-                              {row.getVisibleCells().map((cell) => (
-                                <TableCell key={cell.id}>
-                                  {flexRender(
-                                    cell.column.columnDef.cell,
-                                    cell.getContext(),
-                                  )}
-                                </TableCell>
-                              ))}
-                            </TableRow>
-                          ))
-                        ) : (
-                          <TableRow>
-                            <TableCell colSpan={columns.length} className="p-0">
-                              <EmptyState
-                                type={globalFilter ? 'search' : 'create'}
-                                title={
-                                  globalFilter
-                                    ? 'No users found'
-                                    : 'No users yet'
-                                }
-                                description={
-                                  globalFilter
-                                    ? `No users match "${globalFilter}". Try adjusting your search terms.`
-                                    : 'Get started by creating your first user account.'
-                                }
-                                action={{
-                                  label: globalFilter
-                                    ? 'Clear search'
-                                    : 'Add User',
-                                  onClick: globalFilter
-                                    ? () => setGlobalFilter('')
-                                    : () => navigate({ to: '/users/new' }),
-                                  icon: globalFilter ? (
-                                    <Search className="h-4 w-4" />
-                                  ) : (
-                                    <UserPlus className="h-4 w-4" />
-                                  ),
-                                }}
-                              />
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
+                          {column.id}
+                        </DropdownMenuItem>
+                      )
+                    })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+        </CardHeader>
 
-                  {/* Pagination - only show if there's data */}
-                  {!isLoading && table.getRowModel().rows?.length > 0 && (
-                    <div className="flex items-center justify-between space-x-2 py-4">
-                      <div className="flex-1 text-sm text-muted-foreground">
-                        {table.getFilteredSelectedRowModel().rows.length >
-                          0 && (
-                          <span>
-                            {table.getFilteredSelectedRowModel().rows.length} of{' '}
-                            {table.getFilteredRowModel().rows.length} row(s)
-                            selected.
-                          </span>
-                        )}
-                        <div className="mt-1">
-                          Showing {table.getRowModel().rows.length} of{' '}
-                          {paginationInfo.total} users
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-6 lg:space-x-8">
-                        <div className="flex items-center space-x-2">
-                          <p className="text-sm font-medium">Rows per page</p>
-                          <select
-                            value={`${pagination.limit}`}
-                            onChange={(e) => {
-                              const newLimit = Number(e.target.value)
-                              table.setPageSize(newLimit)
-                              setPagination((prev) => ({
-                                ...prev,
-                                limit: newLimit,
-                                page: 1,
-                              }))
-                            }}
-                            disabled={isLoading}
-                            className="h-8 w-[70px] rounded border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          >
-                            {[10, 20, 30, 40, 50].map((pageSize) => (
-                              <option key={pageSize} value={pageSize}>
-                                {pageSize}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-                          Page {paginationInfo.page} of {paginationInfo.pages}
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            variant="outline"
-                            className="hidden h-8 w-8 p-0 lg:flex"
-                            onClick={() =>
-                              setPagination((prev) => ({ ...prev, page: 1 }))
-                            }
-                            disabled={paginationInfo.page <= 1 || isLoading}
-                          >
-                            <span className="sr-only">Go to first page</span>
-                            <div className="h-4 w-4">{'<<'}</div>
-                          </Button>
-                          <Button
-                            variant="outline"
-                            className="h-8 w-8 p-0"
-                            onClick={() =>
-                              setPagination((prev) => ({
-                                ...prev,
-                                page: prev.page - 1,
-                              }))
-                            }
-                            disabled={paginationInfo.page <= 1 || isLoading}
-                          >
-                            <span className="sr-only">Go to previous page</span>
-                            <div className="h-4 w-4">{'<'}</div>
-                          </Button>
-                          <Button
-                            variant="outline"
-                            className="h-8 w-8 p-0"
-                            onClick={() =>
-                              setPagination((prev) => ({
-                                ...prev,
-                                page: prev.page + 1,
-                              }))
-                            }
-                            disabled={
-                              paginationInfo.page >= paginationInfo.pages ||
-                              isLoading
-                            }
-                          >
-                            <span className="sr-only">Go to next page</span>
-                            <div className="h-4 w-4">{'>'}</div>
-                          </Button>
-                          <Button
-                            variant="outline"
-                            className="hidden h-8 w-8 p-0 lg:flex"
-                            onClick={() =>
-                              setPagination((prev) => ({
-                                ...prev,
-                                page: paginationInfo.pages,
-                              }))
-                            }
-                            disabled={
-                              paginationInfo.page >= paginationInfo.pages ||
-                              isLoading
-                            }
-                          >
-                            <span className="sr-only">Go to last page</span>
-                            <div className="h-4 w-4">{'>>'}</div>
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
+        <CardContent className="p-0">
+          {/* Loading overlay for delete operations */}
+          {deleteUserMutation.isPending && <SubmitOverlay isVisible={true} />}
+
+          {isError ? (
+            <div className="p-6">
+              <ErrorState
+                type="server"
+                title="Failed to load users"
+                onRetry={() => refetch()}
+              />
+            </div>
+          ) : (
+            <div className="overflow-hidden border rounded-lg border-border/50">
+              <Table>
+                <TableHeader className="bg-muted/30">
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow
+                      key={headerGroup.id}
+                      className="hover:bg-transparent border-border/50"
+                    >
+                      {headerGroup.headers.map((header) => (
+                        <TableHead key={header.id} className="font-semibold">
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableHeader>
+
+                <TableBody>
+                  {isLoading ? (
+                    // Loading skeleton
+                    Array.from({ length: 5 }).map((_, index) => (
+                      <TableRow key={index}>
+                        {columns.map((_, colIndex) => (
+                          <TableCell key={colIndex}>
+                            <div className="flex items-center space-x-3">
+                              <div className="w-10 h-10 rounded-full bg-muted animate-pulse"></div>
+                              <div className="space-y-2">
+                                <div className="w-24 h-4 rounded bg-muted animate-pulse"></div>
+                                <div className="w-16 h-3 rounded bg-muted animate-pulse"></div>
+                              </div>
+                            </div>
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : table.getRowModel().rows?.length > 0 ? (
+                    // Data rows
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && 'selected'}
+                        className="transition-colors hover:bg-muted/30"
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id} className="py-4">
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : (
+                    // Empty state
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="p-0">
+                        <EmptyState
+                          type={globalFilter ? 'search' : 'create'}
+                          title={
+                            globalFilter ? 'No users found' : 'No users yet'
+                          }
+                          description={
+                            globalFilter
+                              ? `No users match "${globalFilter}". Try adjusting your search terms.`
+                              : 'Get started by creating your first user account.'
+                          }
+                          action={{
+                            label: globalFilter ? 'Clear search' : 'Add User',
+                            onClick: globalFilter
+                              ? () => setGlobalFilter('')
+                              : () => navigate({ to: '/users/new' }),
+                            icon: globalFilter ? (
+                              <Search className="w-4 h-4" />
+                            ) : (
+                              <UserPlus className="w-4 h-4" />
+                            ),
+                          }}
+                        />
+                      </TableCell>
+                    </TableRow>
                   )}
-                </>
-              )}
-            </CardContent>
-          </Card>
+                </TableBody>
+              </Table>
+            </div>
+          )}
 
-          {/* Submit overlay for delete operations */}
-          <SubmitOverlay
-            isVisible={deleteUserMutation.isPending}
-            message="Deleting user..."
-          />
-        </div>
-      </main>
+          {/* Pagination */}
+          {!isLoading && table.getRowModel().rows?.length > 0 && (
+            <div className="flex flex-col items-center justify-between gap-4 p-6 border-t sm:flex-row border-border/50">
+              <div className="text-sm text-muted-foreground">
+                Showing {table.getRowModel().rows.length} of{' '}
+                {paginationInfo.total} users
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setPagination((prev) => ({
+                      ...prev,
+                      page: Math.max(1, prev.page - 1),
+                    }))
+                  }
+                  disabled={pagination.page === 1}
+                  className="hidden sm:flex"
+                >
+                  Previous
+                </Button>
+                <div className="flex items-center gap-1">
+                  {Array.from({
+                    length: Math.min(5, paginationInfo.pages),
+                  }).map((_, i) => {
+                    const page = i + 1
+                    return (
+                      <Button
+                        key={page}
+                        variant={
+                          pagination.page === page ? 'default' : 'outline'
+                        }
+                        size="sm"
+                        onClick={() =>
+                          setPagination((prev) => ({ ...prev, page }))
+                        }
+                        className="w-8 h-8"
+                      >
+                        {page}
+                      </Button>
+                    )
+                  })}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setPagination((prev) => ({
+                      ...prev,
+                      page: Math.min(paginationInfo.pages, prev.page + 1),
+                    }))
+                  }
+                  disabled={pagination.page === paginationInfo.pages}
+                  className="hidden sm:flex"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }

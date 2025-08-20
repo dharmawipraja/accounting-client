@@ -1,5 +1,5 @@
 import { ProtectedRoute } from '@/components/ProtectedRoute'
-import { AccountsGeneralListPage } from '@/pages/accounts/AccountsGeneralListPage'
+import AccountsGeneralListPage from '@/pages/accounts/AccountsGeneralListPage'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/accounts/general/')({

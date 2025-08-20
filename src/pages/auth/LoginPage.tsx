@@ -13,6 +13,7 @@ import { useAuth } from '@/hooks/useAuth'
 import type { LoginPayload } from '@/types'
 import { validatePassword, validateUsername } from '@/utils/validation'
 import { Navigate } from '@tanstack/react-router'
+import { BookOpen, Eye, EyeOff, Lock, Shield, User } from 'lucide-react'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -24,6 +25,7 @@ interface LoginFormData {
 
 export const LoginPage: React.FC = () => {
   const { login, isAuthenticated, isLoading } = useAuth()
+  const [showPassword, setShowPassword] = React.useState(false)
 
   const {
     register,
@@ -60,105 +62,144 @@ export const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <Card>
-          <CardHeader className="text-center">
-            <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-blue-100 mb-4">
-              <svg
-                className="h-6 w-6 text-blue-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
+    <div className="flex items-center justify-center min-h-screen px-4 py-12 bg-gradient-surface sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8">
+        {/* Background decoration */}
+        <div className="absolute inset-0 overflow-hidden -z-10">
+          <div className="absolute rounded-full top-1/4 left-1/4 w-72 h-72 bg-primary/5 blur-3xl"></div>
+          <div className="absolute rounded-full bottom-1/4 right-1/4 w-96 h-96 bg-primary/3 blur-3xl"></div>
+        </div>
+
+        <Card className="glass shadow-floating animate-fade-in-scale">
+          <CardHeader className="space-y-6 text-center">
+            {/* Logo */}
+            <div className="flex items-center justify-center w-16 h-16 mx-auto rounded-2xl bg-gradient-primary shadow-elegant">
+              <BookOpen className="w-8 h-8 text-primary-foreground" />
             </div>
-            <CardTitle className="text-3xl font-extrabold text-gray-900">
-              Sign in to {APP_CONFIG.NAME}
-            </CardTitle>
-            <CardDescription>
-              Enter your credentials to access your account
-            </CardDescription>
+
+            <div className="space-y-2">
+              <CardTitle className="text-3xl font-bold text-foreground">
+                Welcome to {APP_CONFIG.NAME}
+              </CardTitle>
+              <CardDescription className="text-lg">
+                Sign in to access your accounting dashboard
+              </CardDescription>
+            </div>
+
+            {/* Security badge */}
+            <div className="inline-flex items-center px-4 py-2 space-x-2 text-sm rounded-full bg-primary/5">
+              <Shield className="w-4 h-4 text-primary" />
+              <span className="font-medium text-primary">
+                Secure & Encrypted
+              </span>
+            </div>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="space-y-6">
             <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    {...register('username', {
-                      required: 'Username is required',
-                      minLength: {
-                        value: 3,
-                        message: 'Username must be at least 3 characters',
-                      },
-                      pattern: {
-                        value: /^[a-zA-Z0-9_-]+$/,
-                        message:
-                          'Username can only contain letters, numbers, underscores, and hyphens',
-                      },
-                    })}
-                    type="text"
-                    placeholder="Enter your username"
-                    disabled={isSubmitting || isLoading}
-                    autoComplete="username"
-                    required
-                  />
+                {/* Username Field */}
+                <div className="form-section">
+                  <Label htmlFor="username" className="text-sm font-medium">
+                    Username
+                  </Label>
+                  <div className="relative mt-2">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <User className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    <Input
+                      id="username"
+                      type="text"
+                      placeholder="Enter your username"
+                      className="h-12 py-3 pl-10 pr-4 text-base"
+                      {...register('username', {
+                        required: 'Username is required',
+                        minLength: {
+                          value: 3,
+                          message: 'Username must be at least 3 characters',
+                        },
+                      })}
+                    />
+                  </div>
                   {errors.username && (
-                    <p className="text-sm text-red-600">
+                    <p className="mt-2 text-sm text-destructive">
                       {errors.username.message}
                     </p>
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    {...register('password', {
-                      required: 'Password is required',
-                      minLength: {
-                        value: 6,
-                        message: 'Password must be at least 6 characters',
-                      },
-                    })}
-                    type="password"
-                    placeholder="Enter your password"
-                    disabled={isSubmitting || isLoading}
-                    autoComplete="current-password"
-                    required
-                  />
+                {/* Password Field */}
+                <div className="form-section">
+                  <Label htmlFor="password" className="text-sm font-medium">
+                    Password
+                  </Label>
+                  <div className="relative mt-2">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <Lock className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    <Input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter your password"
+                      className="h-12 py-3 pl-10 pr-12 text-base"
+                      {...register('password', {
+                        required: 'Password is required',
+                        minLength: {
+                          value: 6,
+                          message: 'Password must be at least 6 characters',
+                        },
+                      })}
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 flex items-center pr-3"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5 transition-colors text-muted-foreground hover:text-foreground" />
+                      ) : (
+                        <Eye className="w-5 h-5 transition-colors text-muted-foreground hover:text-foreground" />
+                      )}
+                    </button>
+                  </div>
                   {errors.password && (
-                    <p className="text-sm text-red-600">
+                    <p className="mt-2 text-sm text-destructive">
                       {errors.password.message}
                     </p>
                   )}
                 </div>
               </div>
 
-              <div>
-                <Button
-                  type="submit"
-                  className="w-full"
-                  size="lg"
-                  disabled={isSubmitting || isLoading}
-                >
-                  {isSubmitting || isLoading ? 'Signing in...' : 'Sign in'}
-                </Button>
-              </div>
-
-              <div className="text-center text-sm text-gray-600">
-                <p>Contact your administrator for account access</p>
-              </div>
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={isSubmitting || isLoading}
+                className="w-full h-12 text-base font-medium transition-all bg-gradient-primary hover:opacity-90 shadow-elegant hover:shadow-floating"
+              >
+                {isSubmitting || isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 border-2 rounded-full border-primary-foreground border-t-transparent animate-spin"></div>
+                    <span>Signing in...</span>
+                  </div>
+                ) : (
+                  'Sign In'
+                )}
+              </Button>
             </form>
+
+            {/* Additional Info */}
+            <div className="pt-6 space-y-4 border-t border-border/50">
+              <div className="space-y-3 text-center">
+                <p className="text-sm text-muted-foreground">
+                  Need help? Contact your system administrator
+                </p>
+                <div className="flex items-center justify-center space-x-4 text-xs text-muted-foreground">
+                  <span>Version {APP_CONFIG.VERSION}</span>
+                  <span>•</span>
+                  <span>{APP_CONFIG.ENVIRONMENT}</span>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

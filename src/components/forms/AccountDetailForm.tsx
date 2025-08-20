@@ -137,7 +137,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
         toast.success('Detail account created successfully')
       } else if (account) {
         await updateMutation.mutateAsync({
-          id: account.id,
+          accountNumber: account.accountNumber,
           data: payload as UpdateAccountDetailPayload,
         })
         toast.success('Detail account updated successfully')

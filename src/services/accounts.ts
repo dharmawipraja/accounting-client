@@ -22,9 +22,9 @@ export const accountsGeneralService = {
     return response.data
   },
 
-  // Get single general account by ID
-  async getById(id: string): Promise<ApiResponse<AccountGeneral>> {
-    const response = await api.get(`/accounts/general/${id}`)
+  // Get single general account by accountNumber
+  async getById(accountNumber: string): Promise<ApiResponse<AccountGeneral>> {
+    const response = await api.get(`/accounts/general/${accountNumber}`)
     return response.data
   },
 
@@ -38,16 +38,16 @@ export const accountsGeneralService = {
 
   // Update general account
   async update(
-    id: string,
+    accountNumber: string,
     data: UpdateAccountGeneralPayload,
   ): Promise<ApiResponse<AccountGeneral>> {
-    const response = await api.put(`/accounts/general/${id}`, data)
+    const response = await api.put(`/accounts/general/${accountNumber}`, data)
     return response.data
   },
 
   // Delete general account (soft delete)
-  async delete(id: string): Promise<ApiResponse<void>> {
-    const response = await api.delete(`/accounts/general/${id}`)
+  async delete(accountNumber: string): Promise<ApiResponse<void>> {
+    const response = await api.delete(`/accounts/general/${accountNumber}`)
     return response.data
   },
 }
@@ -62,9 +62,9 @@ export const accountsDetailService = {
     return response.data
   },
 
-  // Get single detail account by ID
-  async getById(id: string): Promise<ApiResponse<AccountDetail>> {
-    const response = await api.get(`/accounts/detail/${id}`)
+  // Get single detail account by accountNumber
+  async getById(accountNumber: string): Promise<ApiResponse<AccountDetail>> {
+    const response = await api.get(`/accounts/detail/${accountNumber}`)
     return response.data
   },
 
@@ -78,16 +78,16 @@ export const accountsDetailService = {
 
   // Update detail account
   async update(
-    id: string,
+    accountNumber: string,
     data: UpdateAccountDetailPayload,
   ): Promise<ApiResponse<AccountDetail>> {
-    const response = await api.put(`/accounts/detail/${id}`, data)
+    const response = await api.put(`/accounts/detail/${accountNumber}`, data)
     return response.data
   },
 
   // Delete detail account (soft delete)
-  async delete(id: string): Promise<ApiResponse<void>> {
-    const response = await api.delete(`/accounts/detail/${id}`)
+  async delete(accountNumber: string): Promise<ApiResponse<void>> {
+    const response = await api.delete(`/accounts/detail/${accountNumber}`)
     return response.data
   },
 }
