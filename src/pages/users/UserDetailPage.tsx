@@ -1,4 +1,3 @@
-import Header from '@/components/Header'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -97,8 +96,7 @@ export function UserDetailPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
         <div className="space-y-6">
           {loading ? (
             <>
@@ -109,7 +107,7 @@ export function UserDetailPage() {
                   onClick={() => navigate({ to: '/users' })}
                   className="flex items-center space-x-1"
                 >
-                  <ArrowLeft className="h-4 w-4" />
+                  <ArrowLeft className="w-4 h-4" />
                   <span>Back to Users</span>
                 </Button>
               </div>
@@ -136,7 +134,7 @@ export function UserDetailPage() {
                   onClick={() => navigate({ to: '/users' })}
                   className="flex items-center space-x-1"
                 >
-                  <ArrowLeft className="h-4 w-4" />
+                  <ArrowLeft className="w-4 h-4" />
                   <span>Back to Users</span>
                 </Button>
               </div>
@@ -164,7 +162,7 @@ export function UserDetailPage() {
                     onClick={() => navigate({ to: '/users' })}
                     className="flex items-center space-x-1"
                   >
-                    <ArrowLeft className="h-4 w-4" />
+                    <ArrowLeft className="w-4 h-4" />
                     <span>Back to Users</span>
                   </Button>
                 </div>
@@ -175,7 +173,7 @@ export function UserDetailPage() {
                     onClick={() => navigate({ to: `/users/${user.id}/edit` })}
                     className="flex items-center space-x-1"
                   >
-                    <Edit className="h-4 w-4" />
+                    <Edit className="w-4 h-4" />
                     <span>Edit User</span>
                   </Button>
 
@@ -185,7 +183,7 @@ export function UserDetailPage() {
                         variant="destructive"
                         className="flex items-center space-x-1"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="w-4 h-4" />
                         <span>Delete User</span>
                       </Button>
                     </AlertDialogTrigger>
@@ -212,15 +210,15 @@ export function UserDetailPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 space-y-6">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                <div className="space-y-6 lg:col-span-2">
                   <Card>
                     <CardHeader>
                       <CardTitle>User Information</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
                       <div className="flex items-center space-x-4">
-                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10">
                           <span className="text-2xl font-semibold text-primary">
                             {user.name
                               .split(' ')
@@ -236,10 +234,10 @@ export function UserDetailPage() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div className="space-y-4">
                           <div className="flex items-center space-x-3">
-                            <Shield className="h-5 w-5 text-muted-foreground" />
+                            <Shield className="w-5 h-5 text-muted-foreground" />
                             <div>
                               <p className="text-sm font-medium">Username</p>
                               <p className="text-sm text-muted-foreground">
@@ -251,7 +249,7 @@ export function UserDetailPage() {
 
                         <div className="space-y-4">
                           <div className="flex items-center space-x-3">
-                            <Shield className="h-5 w-5 text-muted-foreground" />
+                            <Shield className="w-5 h-5 text-muted-foreground" />
                             <div>
                               <p className="text-sm font-medium">Role</p>
                               <Badge variant={getRoleBadgeVariant(user.role)}>
@@ -261,7 +259,7 @@ export function UserDetailPage() {
                           </div>
 
                           <div className="flex items-center space-x-3">
-                            <div className="h-5 w-5 flex items-center justify-center">
+                            <div className="flex items-center justify-center w-5 h-5">
                               <div
                                 className={`h-2 w-2 rounded-full ${
                                   user.status === 'ACTIVE'
@@ -299,7 +297,7 @@ export function UserDetailPage() {
                     <CardContent className="space-y-4">
                       <div>
                         <p className="text-sm font-medium">User ID</p>
-                        <p className="text-sm text-muted-foreground font-mono">
+                        <p className="font-mono text-sm text-muted-foreground">
                           {user.id}
                         </p>
                       </div>

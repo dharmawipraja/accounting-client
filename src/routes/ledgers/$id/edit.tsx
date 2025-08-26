@@ -1,4 +1,4 @@
-import Header from '@/components/Header'
+import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ErrorState } from '@/components/ui/error-state'
@@ -21,8 +21,7 @@ function LedgerEditPage() {
   if (!canManage) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
           <ErrorState
             type="generic"
             title="Access Denied"
@@ -36,8 +35,7 @@ function LedgerEditPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
           <LoadingState />
         </main>
       </div>
@@ -47,8 +45,7 @@ function LedgerEditPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
           <ErrorState
             type="server"
             title="Failed to Load Ledger"
@@ -62,8 +59,7 @@ function LedgerEditPage() {
   if (!ledger?.data) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
           <ErrorState
             type="notFound"
             title="Ledger Entry Not Found"
@@ -76,8 +72,7 @@ function LedgerEditPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
         <div className="mb-6">
           <Button
             variant="ghost"
@@ -86,7 +81,7 @@ function LedgerEditPage() {
             }
             className="mb-4 hover:bg-gray-100"
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Ledger Details
           </Button>
           <h1 className="text-3xl font-bold tracking-tight">
@@ -100,15 +95,15 @@ function LedgerEditPage() {
             <CardTitle>Edit Ledger Entry Form</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8">
-              <p className="text-gray-500 mb-4">
+            <div className="py-8 text-center">
+              <p className="mb-4 text-gray-500">
                 Ledger entry edit form is under development
               </p>
               <p className="text-sm text-gray-400">
                 This feature will allow you to edit existing ledger entries with
                 proper validation.
               </p>
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+              <div className="p-4 mt-6 rounded-lg bg-gray-50">
                 <p className="text-sm text-gray-600">
                   <strong>Current Entry:</strong> {ledger.data.referenceNumber}
                 </p>
@@ -129,5 +124,9 @@ function LedgerEditPage() {
 }
 
 export const Route = createFileRoute('/ledgers/$id/edit')({
-  component: LedgerEditPage,
+  component: () => (
+    <ProtectedRoute requiredRoles={['ADMIN', 'MANAJER', 'AKUNTAN']}>
+      <LedgerEditPage />
+    </ProtectedRoute>
+  ),
 })

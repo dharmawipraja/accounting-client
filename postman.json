@@ -1,0 +1,1157 @@
+{
+    "info": {
+        "name": "Accounting API",
+        "description": "Postman collection generated from project routes",
+        "version": "1.0.0",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3001",
+            "type": "string"
+        },
+        {
+            "key": "apiVersion",
+            "value": "v1",
+            "type": "string"
+        },
+        {
+            "key": "adminUsername",
+            "value": "admin",
+            "type": "string"
+        },
+        {
+            "key": "adminPassword",
+            "value": "admin123456",
+            "type": "string"
+        },
+        {
+            "key": "authToken",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{authToken}}",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "if (pm.request.method === 'POST' || pm.request.method === 'PUT') {",
+                    "  if (!pm.request.headers.has('Content-Type')) pm.request.headers.add({ key: 'Content-Type', value: 'application/json' });",
+                    "}"
+                ]
+            }
+        }
+    ],
+    "item": [
+        {
+            "name": "Health & Info",
+            "item": [
+                {
+                    "name": "Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/health",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "health"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "API Info",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Readiness Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/ready",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "ready"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Liveness Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/live",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "live"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "  let jsonData = {};",
+                                    "  try { jsonData = pm.response.json(); } catch (e) { jsonData = {}; }",
+                                    "  if (jsonData && jsonData.data && jsonData.data.token) pm.collectionVariables.set('authToken', jsonData.data.token);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/auth/logout",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "auth",
+                                "logout"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/auth/profile",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "auth",
+                                "profile"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Refresh Token",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/auth/refresh",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "auth",
+                                "refresh"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Users",
+            "item": [
+                {
+                    "name": "List Users",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/users?page=1&limit=10&search=admin",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "users"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "admin",
+                                    "disabled": true
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/users/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "users",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "user_id_here"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"newuser\",\n  \"password\": \"secret123\",\n  \"role\": \"ADMIN\",\n  \"name\": \"New User\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/users",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "users"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update User",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Updated Name\",\n  \"status\": \"ACTIVE\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/users/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "users",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "user_id_here"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete User",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/users/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "users",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "user_id_here"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Accounts",
+            "item": [
+                {
+                    "name": "General",
+                    "item": [
+                        {
+                            "name": "List General Accounts",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/accounts/general?page=1&limit=10&accountCategory=ASSET&reportType=NERACA&search=cash",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "accounts",
+                                        "general"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "10"
+                                        },
+                                        {
+                                            "key": "accountCategory",
+                                            "value": "ASSET",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "reportType",
+                                            "value": "NERACA",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "search",
+                                            "value": "cash",
+                                            "disabled": true
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Get General Account",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/accounts/general/:accountNumber",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "accounts",
+                                        "general",
+                                        ":accountNumber"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "accountNumber",
+                                            "value": "1000"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Create General Account",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"accountNumber\": \"1000\",\n  \"accountName\": \"Cash\",\n  \"accountCategory\": \"ASSET\",\n  \"reportType\": \"NERACA\",\n  \"transactionType\": \"DEBIT\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/accounts/general",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "accounts",
+                                        "general"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update General Account",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"accountName\": \"Updated Name\",\n  \"transactionType\": \"DEBIT\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/accounts/general/:accountNumber",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "accounts",
+                                        "general",
+                                        ":accountNumber"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "accountNumber",
+                                            "value": "1000"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Delete General Account",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/accounts/general/:accountNumber",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "accounts",
+                                        "general",
+                                        ":accountNumber"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "accountNumber",
+                                            "value": "1000"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Detail",
+                    "item": [
+                        {
+                            "name": "List Detail Accounts",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/accounts/detail?page=1&limit=10&accountCategory=ASSET&reportType=NERACA&accountGeneralAccountNumber=1000&search=cash",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "accounts",
+                                        "detail"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "10"
+                                        },
+                                        {
+                                            "key": "accountCategory",
+                                            "value": "ASSET",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "reportType",
+                                            "value": "NERACA",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "accountGeneralAccountNumber",
+                                            "value": "1000",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "search",
+                                            "value": "cash",
+                                            "disabled": true
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Get Detail Account",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/accounts/detail/:accountNumber",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "accounts",
+                                        "detail",
+                                        ":accountNumber"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "accountNumber",
+                                            "value": "1000.01"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Create Detail Account",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"accountNumber\": \"1000.01\",\n  \"accountName\": \"Cash on Hand\",\n  \"accountGeneralAccountNumber\": \"1000\",\n  \"accountCategory\": \"ASSET\",\n  \"reportType\": \"NERACA\",\n  \"transactionType\": \"DEBIT\",\n  \"initialAmountDebit\": 0\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/accounts/detail",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "accounts",
+                                        "detail"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update Detail Account",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"accountName\": \"Updated Cash on Hand\",\n  \"transactionType\": \"DEBIT\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/accounts/detail/:accountNumber",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "accounts",
+                                        "detail",
+                                        ":accountNumber"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "accountNumber",
+                                            "value": "1000.01"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Delete Detail Account",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/accounts/detail/:accountNumber",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "accounts",
+                                        "detail",
+                                        ":accountNumber"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "accountNumber",
+                                            "value": "1000.01"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Ledgers & Posting",
+            "item": [
+                {
+                    "name": "Ledgers",
+                    "item": [
+                        {
+                            "name": "List Ledgers",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/ledgers?page=1&limit=10&accountDetailId=detail_id&accountGeneralId=general_id&startDate=2025-08-01&endDate=2025-08-31",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "ledgers"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "10"
+                                        },
+                                        {
+                                            "key": "accountDetailId",
+                                            "value": "detail_id",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "accountGeneralId",
+                                            "value": "general_id",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "startDate",
+                                            "value": "2025-08-01",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "endDate",
+                                            "value": "2025-08-31",
+                                            "disabled": true
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Get Ledger",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/ledgers/:id",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "ledgers",
+                                        ":id"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "id",
+                                            "value": "ledger_id_here"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Create Bulk Ledgers",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"ledgers\": [\n    {\n      \"description\": \"Cash payment received\",\n      \"amount\": 1000.00,\n      \"transactionType\": \"DEBIT\",\n      \"accountDetailId\": \"detail_account_id_1\",\n      \"accountGeneralId\": \"general_account_id_1\"\n    },\n    {\n      \"description\": \"Revenue recognition\",\n      \"amount\": 1000.00,\n      \"transactionType\": \"CREDIT\",\n      \"accountDetailId\": \"detail_account_id_2\",\n      \"accountGeneralId\": \"general_account_id_2\"\n    }\n  ]\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/ledgers",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "ledgers"
+                                    ]
+                                },
+                                "description": "Create bulk ledger entries"
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update Ledger",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"description\": \"Updated description\",\n  \"amount\": 1500.00,\n  \"transactionType\": \"DEBIT\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/ledgers/:id",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "ledgers",
+                                        ":id"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "id",
+                                            "value": "ledger_id_here"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Delete Ledger",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/ledgers/:id",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "ledgers",
+                                        ":id"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "id",
+                                            "value": "ledger_id_here"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Get Ledgers by Date",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/ledgers/date/:ledgerDate",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "ledgers",
+                                        "date",
+                                        ":ledgerDate"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "ledgerDate",
+                                            "value": "2025-08-25"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Posting",
+                    "item": [
+                        {
+                            "name": "Post Buku Besar (Ledgers)",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"ledgerDate\": \"2025-08-25\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/posting/buku-besar",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "posting",
+                                        "buku-besar"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Post Neraca Detail",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"date\": \"25-08-2025\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/posting/neraca-detail",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "posting",
+                                        "neraca-detail"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Calculate Neraca Balance",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/posting/neraca-balance/calculate?date=25-08-2025",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "posting",
+                                        "neraca-balance",
+                                        "calculate"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "date",
+                                            "value": "25-08-2025"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Post Neraca Balance (SHU)",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"date\": \"25-08-2025\",\n  \"sisaHasilUsahaAmount\": 1000000\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/posting/neraca-balance",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "posting",
+                                        "neraca-balance"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Post Neraca Akhir",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"date\": \"25-08-2025\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/posting/neraca-akhir",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "posting",
+                                        "neraca-akhir"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Unpost Buku Besar (Ledgers)",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"ledgerDate\": \"2025-08-25\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/posting/unposting/buku-besar",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "posting",
+                                        "unposting",
+                                        "buku-besar"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Unpost Neraca Detail",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"date\": \"25-08-2025\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/{{apiVersion}}/posting/unposting/neraca-detail",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "{{apiVersion}}",
+                                        "posting",
+                                        "unposting",
+                                        "neraca-detail"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

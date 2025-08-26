@@ -15,8 +15,12 @@ import {
 } from '@/utils/rolePermissions'
 import { Link } from '@tanstack/react-router'
 import {
+  BarChart3,
   BookOpen,
+  Calculator,
+  CheckCircle,
   ChevronDown,
+  FileText,
   FolderOpen,
   LayoutDashboard,
   LogOut,
@@ -183,6 +187,72 @@ export default function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+
+          {canViewLedgers && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="nav-link flex items-center space-x-2 data-[state=open]:bg-primary/10"
+                >
+                  <Calculator className="h-4 w-4" />
+                  <span>Posting</span>
+                  <ChevronDown className="ml-1 h-3 w-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="start"
+                className="w-64 animate-fade-in-scale"
+              >
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/posting"
+                    className="w-full flex items-center space-x-2"
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    <span>Posting Dashboard</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/posting/buku-besar"
+                    className="w-full flex items-center space-x-2"
+                  >
+                    <FileText className="h-4 w-4" />
+                    <span>Buku Besar Posting</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/posting/neraca-detail"
+                    className="w-full flex items-center space-x-2"
+                  >
+                    <BarChart3 className="h-4 w-4" />
+                    <span>Neraca Detail Posting</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/posting/neraca-balance"
+                    className="w-full flex items-center space-x-2"
+                  >
+                    <Calculator className="h-4 w-4" />
+                    <span>Neraca Balance Posting</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/posting/neraca-akhir"
+                    className="w-full flex items-center space-x-2"
+                  >
+                    <CheckCircle className="h-4 w-4" />
+                    <span>Neraca Akhir Posting</span>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </nav>
 
         {/* Desktop User Actions */}
@@ -288,6 +358,52 @@ export default function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <span>View All Ledgers</span>
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {canViewLedgers && (
+              <div className="space-y-1">
+                <div className="nav-link flex items-center space-x-3 w-full p-3 text-muted-foreground">
+                  <Calculator className="h-5 w-5" />
+                  <span>Posting</span>
+                </div>
+                <div className="pl-8 space-y-1">
+                  <Link
+                    to="/posting"
+                    className="nav-link flex items-center space-x-3 w-full p-2 text-sm"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span>Posting Dashboard</span>
+                  </Link>
+                  <Link
+                    to="/posting/buku-besar"
+                    className="nav-link flex items-center space-x-3 w-full p-2 text-sm"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span>Buku Besar Posting</span>
+                  </Link>
+                  <Link
+                    to="/posting/neraca-detail"
+                    className="nav-link flex items-center space-x-3 w-full p-2 text-sm"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span>Neraca Detail Posting</span>
+                  </Link>
+                  <Link
+                    to="/posting/neraca-balance"
+                    className="nav-link flex items-center space-x-3 w-full p-2 text-sm"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span>Neraca Balance Posting</span>
+                  </Link>
+                  <Link
+                    to="/posting/neraca-akhir"
+                    className="nav-link flex items-center space-x-3 w-full p-2 text-sm"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span>Neraca Akhir Posting</span>
                   </Link>
                 </div>
               </div>

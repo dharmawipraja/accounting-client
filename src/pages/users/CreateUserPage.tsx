@@ -1,4 +1,3 @@
-import Header from '@/components/Header'
 import { Button } from '@/components/ui/button'
 import { UserForm } from '@/components/users/UserForm'
 import { useNavigate } from '@tanstack/react-router'
@@ -17,8 +16,7 @@ export function CreateUserPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
         <div className="space-y-6">
           <div className="flex items-center space-x-2">
             <Button
@@ -27,7 +25,7 @@ export function CreateUserPage() {
               onClick={() => navigate({ to: '/users' })}
               className="flex items-center space-x-1"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="w-4 h-4" />
               <span>Back to Users</span>
             </Button>
           </div>

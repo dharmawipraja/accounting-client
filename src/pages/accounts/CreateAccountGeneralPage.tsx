@@ -1,4 +1,3 @@
-import Header from '@/components/Header'
 import { AccountGeneralForm } from '@/components/forms/AccountGeneralForm'
 import { useAuth } from '@/hooks/useAuth'
 import { canManageAccounts } from '@/utils/rolePermissions'
@@ -23,7 +22,6 @@ export function CreateAccountGeneralPage() {
 
   return (
     <div>
-      <Header />
       <AccountGeneralForm mode="create" />
     </div>
   )

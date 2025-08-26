@@ -21,7 +21,6 @@ import {
   MoreHorizontal,
   Plus,
   Search,
-  Settings,
   Trash2,
   TrendingUp,
   Users,
@@ -298,10 +297,6 @@ export default function AccountsGeneralListPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm">
-            <Settings className="w-4 h-4 mr-2" />
-            Settings
-          </Button>
           <Button asChild>
             <Link to="/accounts/general/new">
               <Plus className="w-4 h-4 mr-2" />

@@ -1,21 +1,14 @@
-import { ProtectedRoute } from '@/components/ProtectedRoute'
+import { AppLayout } from '@/components/AppLayout'
 import { UserDetailPage } from '@/pages/users/UserDetailPage'
+import { requireRoles } from '@/utils/routeAuth'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/users/$id/')({
-  component: UserDetailComponent,
-})
-
-function UserDetailComponent() {
-  const { id } = Route.useParams()
-
-  return (
-    <ProtectedRoute
-      requiredRoles={['ADMIN', 'MANAJER']}
-      allowOwnAccess={true}
-      targetUserId={id}
-    >
+  beforeLoad: ({ params }) => 
+    requireRoles(['ADMIN', 'MANAJER'], true, params.id)(),
+  component: () => (
+    <AppLayout>
       <UserDetailPage />
-    </ProtectedRoute>
-  )
-}
+    </AppLayout>
+  ),
+})

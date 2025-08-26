@@ -19,7 +19,6 @@ import {
   Eye,
   MoreHorizontal,
   Search,
-  Settings,
   Shield,
   Trash2,
   TrendingUp,
@@ -270,10 +269,6 @@ export default function UserListPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm">
-            <Settings className="w-4 h-4 mr-2" />
-            Settings
-          </Button>
           <Button asChild>
             <Link to="/users/new">
               <UserPlus className="w-4 h-4 mr-2" />

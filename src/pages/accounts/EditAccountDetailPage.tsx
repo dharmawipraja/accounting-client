@@ -1,4 +1,3 @@
-import Header from '@/components/Header'
 import { AccountDetailForm } from '@/components/forms/AccountDetailForm'
 import { ErrorState } from '@/components/ui/error-state'
 import { LoadingState } from '@/components/ui/loading-state'
@@ -36,8 +35,7 @@ export function EditAccountDetailPage() {
   if (isLoading) {
     return (
       <div>
-        <Header />
-        <div className="container mx-auto px-4 py-8">
+        <div className="container px-4 py-8 mx-auto">
           <LoadingState message="Loading account details..." />
         </div>
       </div>
@@ -47,8 +45,7 @@ export function EditAccountDetailPage() {
   if (isError) {
     return (
       <div>
-        <Header />
-        <div className="container mx-auto px-4 py-8">
+        <div className="container px-4 py-8 mx-auto">
           <ErrorState
             type="server"
             title="Error Loading Account"
@@ -63,8 +60,7 @@ export function EditAccountDetailPage() {
   if (!account) {
     return (
       <div>
-        <Header />
-        <div className="container mx-auto px-4 py-8">
+        <div className="container px-4 py-8 mx-auto">
           <ErrorState
             type="notFound"
             title="Account Not Found"
@@ -78,7 +74,6 @@ export function EditAccountDetailPage() {
 
   return (
     <div>
-      <Header />
       <AccountDetailForm mode="edit" account={account.data} />
     </div>
   )

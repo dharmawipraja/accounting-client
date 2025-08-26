@@ -1,17 +1,18 @@
-import { useAuth } from '@/hooks/useAuth'
-import { createFileRoute, Navigate } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
-  component: HomePage,
+  beforeLoad: ({ context }) => {
+    // Redirect based on authentication status
+    if (context.auth.isAuthenticated) {
+      throw redirect({
+        to: '/dashboard',
+        replace: true
+      })
+    } else {
+      throw redirect({
+        to: '/auth/login',
+        replace: true
+      })
+    }
+  },
 })
-
-function HomePage() {
-  const { isAuthenticated } = useAuth()
-
-  // Redirect based on authentication status
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />
-  } else {
-    return <Navigate to="/auth/login" replace />
-  }
-}

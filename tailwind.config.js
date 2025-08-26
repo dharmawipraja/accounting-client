@@ -120,6 +120,15 @@ export default {
         floating:
           '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
       },
+      backgroundImage: {
+        'gradient-primary':
+          'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%)',
+        'gradient-surface':
+          'linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%)',
+      },
+      backdropBlur: {
+        glass: '16px',
+      },
     },
   },
   plugins: [],

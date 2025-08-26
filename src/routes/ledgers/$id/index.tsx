@@ -1,4 +1,4 @@
-import Header from '@/components/Header'
+import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -29,8 +29,7 @@ function LedgerDetailPage() {
   if (!canManage) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
           <ErrorState
             type="generic"
             title="Access Denied"
@@ -44,8 +43,7 @@ function LedgerDetailPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
           <LoadingState />
         </main>
       </div>
@@ -55,8 +53,7 @@ function LedgerDetailPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
           <ErrorState
             type="server"
             title="Failed to Load Ledger"
@@ -70,8 +67,7 @@ function LedgerDetailPage() {
   if (!ledger?.data) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
           <ErrorState
             type="notFound"
             title="Ledger Entry Not Found"
@@ -90,7 +86,7 @@ function LedgerDetailPage() {
         return (
           <Badge
             variant="outline"
-            className="bg-green-50 text-green-700 border-green-200"
+            className="text-green-700 border-green-200 bg-green-50"
           >
             Cash In
           </Badge>
@@ -99,7 +95,7 @@ function LedgerDetailPage() {
         return (
           <Badge
             variant="outline"
-            className="bg-red-50 text-red-700 border-red-200"
+            className="text-red-700 border-red-200 bg-red-50"
           >
             Cash Out
           </Badge>
@@ -115,7 +111,7 @@ function LedgerDetailPage() {
         return (
           <Badge
             variant="outline"
-            className="bg-green-50 text-green-700 border-green-200"
+            className="text-green-700 border-green-200 bg-green-50"
           >
             Posted
           </Badge>
@@ -124,7 +120,7 @@ function LedgerDetailPage() {
         return (
           <Badge
             variant="outline"
-            className="bg-yellow-50 text-yellow-700 border-yellow-200"
+            className="text-yellow-700 border-yellow-200 bg-yellow-50"
           >
             Pending
           </Badge>
@@ -140,7 +136,7 @@ function LedgerDetailPage() {
         return (
           <Badge
             variant="outline"
-            className="bg-blue-50 text-blue-700 border-blue-200"
+            className="text-blue-700 border-blue-200 bg-blue-50"
           >
             Debit
           </Badge>
@@ -149,7 +145,7 @@ function LedgerDetailPage() {
         return (
           <Badge
             variant="outline"
-            className="bg-purple-50 text-purple-700 border-purple-200"
+            className="text-purple-700 border-purple-200 bg-purple-50"
           >
             Credit
           </Badge>
@@ -161,19 +157,18 @@ function LedgerDetailPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
         <div className="mb-6">
           <Button
             variant="ghost"
             onClick={() => router.navigate({ to: '/ledgers' })}
             className="mb-4 hover:bg-gray-100"
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Ledgers
           </Button>
 
-          <div className="flex justify-between items-start">
+          <div className="flex items-start justify-between">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">
                 Ledger Entry Details
@@ -188,7 +183,7 @@ function LedgerDetailPage() {
               }
               className="flex items-center gap-2"
             >
-              <Edit className="h-4 w-4" />
+              <Edit className="w-4 h-4" />
               Edit Entry
             </Button>
           </div>
@@ -198,12 +193,12 @@ function LedgerDetailPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Hash className="h-5 w-5" />
+                <Hash className="w-5 h-5" />
                 Entry Information
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <div>
                   <label className="text-sm font-medium text-gray-500">
                     Reference Number
@@ -217,8 +212,8 @@ function LedgerDetailPage() {
                   <label className="text-sm font-medium text-gray-500">
                     Date
                   </label>
-                  <div className="mt-1 flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-gray-400" />
+                  <div className="flex items-center gap-2 mt-1">
+                    <Calendar className="w-4 h-4 text-gray-400" />
                     <span className="text-lg font-medium">
                       {new Date(ledgerData.ledgerDate).toLocaleDateString()}
                     </span>
@@ -229,8 +224,8 @@ function LedgerDetailPage() {
                   <label className="text-sm font-medium text-gray-500">
                     Amount
                   </label>
-                  <div className="mt-1 flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-gray-400" />
+                  <div className="flex items-center gap-2 mt-1">
+                    <DollarSign className="w-4 h-4 text-gray-400" />
                     <span className="text-lg font-medium">
                       {new Intl.NumberFormat('id-ID', {
                         style: 'currency',
@@ -281,12 +276,12 @@ function LedgerDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Building2 className="h-5 w-5" />
+                  <Building2 className="w-5 h-5" />
                   Account Information
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   {ledgerData.accountDetail && (
                     <div>
                       <label className="text-sm font-medium text-gray-500">
@@ -324,7 +319,7 @@ function LedgerDetailPage() {
               <CardTitle>Audit Information</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
                   <label className="text-sm font-medium text-gray-500">
                     Created At
@@ -377,5 +372,9 @@ function LedgerDetailPage() {
 }
 
 export const Route = createFileRoute('/ledgers/$id/')({
-  component: LedgerDetailPage,
+  component: () => (
+    <ProtectedRoute requiredRoles={['ADMIN', 'MANAJER', 'AKUNTAN']}>
+      <LedgerDetailPage />
+    </ProtectedRoute>
+  ),
 })

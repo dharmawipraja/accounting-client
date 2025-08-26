@@ -71,4 +71,6 @@ export interface LoadingState {
 // Export all API types
 export * from './api'
 export * from './payloads'
+export * from './posting'
 export * from './query'
+

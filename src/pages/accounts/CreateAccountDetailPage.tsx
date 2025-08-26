@@ -1,4 +1,3 @@
-import Header from '@/components/Header'
 import { AccountDetailForm } from '@/components/forms/AccountDetailForm'
 import { useAuth } from '@/hooks/useAuth'
 import { canManageAccounts } from '@/utils/rolePermissions'
@@ -23,7 +22,6 @@ export function CreateAccountDetailPage() {
 
   return (
     <div>
-      <Header />
       <AccountDetailForm mode="create" />
     </div>
   )

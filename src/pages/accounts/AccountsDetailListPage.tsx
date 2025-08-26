@@ -1,4 +1,3 @@
-import Header from '@/components/Header'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -327,7 +326,6 @@ export function AccountsDetailListPage() {
   if (isLoading) {
     return (
       <div className="container px-4 py-8 mx-auto space-y-6">
-        <Header />
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Detail Accounts</h1>
           <p className="text-muted-foreground">
@@ -342,7 +340,6 @@ export function AccountsDetailListPage() {
   if (isError) {
     return (
       <div className="container px-4 py-8 mx-auto space-y-6">
-        <Header />
         <ErrorState
           type="server"
           title="Error Loading Accounts"
@@ -358,8 +355,6 @@ export function AccountsDetailListPage() {
 
   return (
     <div className="container px-4 py-8 mx-auto space-y-6">
-      <Header />
-
       {deleteAccountMutation.isPending && (
         <SubmitOverlay isVisible={true} message="Deleting account..." />
       )}

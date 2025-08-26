@@ -1,4 +1,3 @@
-import Header from '@/components/Header'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -90,16 +89,11 @@ export const LedgersListPage: React.FC = () => {
 
   if (!canManage) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <ErrorState
-            type="generic"
-            title="Access Denied"
-            message="You don't have permission to access ledger management."
-          />
-        </main>
-      </div>
+      <ErrorState
+        type="generic"
+        title="Access Denied"
+        message="You don't have permission to access ledger management."
+      />
     )
   }
 
@@ -188,343 +182,317 @@ export const LedgersListPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <ErrorState
-            type="server"
-            title="Failed to Load Ledgers"
-            message="There was an error loading the ledger entries. Please try again."
-            onRetry={() => refetch()}
-          />
-        </main>
-      </div>
+      <ErrorState
+        type="server"
+        title="Failed to Load Ledgers"
+        message="There was an error loading the ledger entries. Please try again."
+        onRetry={() => refetch()}
+      />
     )
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Ledgers</h1>
-              <p className="text-muted-foreground">
-                Manage your ledger entries and transactions
-              </p>
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="w-full sm:w-auto">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Ledger Entry
-                  <ChevronDown className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={() =>
-                    router.navigate({ to: ROUTES.LEDGERS_KAS_MASUK })
-                  }
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  {LEDGER_TYPE_LABELS.KAS_MASUK}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() =>
-                    router.navigate({ to: ROUTES.LEDGERS_KAS_KELUAR })
-                  }
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  {LEDGER_TYPE_LABELS.KAS_KELUAR}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          {/* Filters */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Filter className="h-5 w-5" />
-                Search & Filter
-              </CardTitle>
-              <CardDescription>
-                Search and filter ledger entries
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Search</label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search description, reference..."
-                      value={searchTerm}
-                      onChange={(e) => handleSearch(e.target.value)}
-                      className="pl-9"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Ledger Type</label>
-                  <Select
-                    value={filters.ledgerType || 'all'}
-                    onValueChange={(value) =>
-                      handleFilterChange('ledgerType', value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="All types" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All types</SelectItem>
-                      <SelectItem value="KAS_MASUK">Cash In</SelectItem>
-                      <SelectItem value="KAS_KELUAR">Cash Out</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Posting Status</label>
-                  <Select
-                    value={filters.postingStatus || 'all'}
-                    onValueChange={(value) =>
-                      handleFilterChange('postingStatus', value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="All statuses" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All statuses</SelectItem>
-                      <SelectItem value="PENDING">Pending</SelectItem>
-                      <SelectItem value="POSTED">Posted</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Items per page</label>
-                  <Select
-                    value={String(filters.limit || 10)}
-                    onValueChange={(value) =>
-                      handleFilterChange('limit', parseInt(value))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Ledger List */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileSpreadsheet className="h-5 w-5" />
-                Ledger Entries
-                {ledgersResponse?.pagination && (
-                  <span className="text-sm font-normal text-muted-foreground">
-                    ({ledgersResponse.pagination.total} total)
-                  </span>
-                )}
-              </CardTitle>
-              <CardDescription>
-                View and manage all ledger entries
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <LoadingState variant="card" />
-              ) : !ledgersResponse?.data ||
-                ledgersResponse.data.length === 0 ? (
-                <EmptyState
-                  type={
-                    searchTerm || Object.keys(filters).length > 2
-                      ? 'search'
-                      : 'data'
-                  }
-                  title={
-                    searchTerm || Object.keys(filters).length > 2
-                      ? 'No ledger entries found'
-                      : 'No ledger entries yet'
-                  }
-                  description={
-                    searchTerm || Object.keys(filters).length > 2
-                      ? 'Try adjusting your search criteria or filters.'
-                      : 'Create your first ledger entry to get started.'
-                  }
-                  action={{
-                    label: 'Create Ledger Entry',
-                    onClick: () => router.navigate({ to: '/ledgers/new' }),
-                  }}
-                />
-              ) : (
-                <div className="space-y-4">
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Reference</TableHead>
-                          <TableHead>Description</TableHead>
-                          <TableHead>Amount</TableHead>
-                          <TableHead>Type</TableHead>
-                          <TableHead>Transaction</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Account</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {ledgersResponse.data.map((ledger) => (
-                          <TableRow key={ledger.id}>
-                            <TableCell className="font-medium">
-                              {ledger.referenceNumber}
-                            </TableCell>
-                            <TableCell className="max-w-48">
-                              <div
-                                className="truncate"
-                                title={ledger.description}
-                              >
-                                {ledger.description}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-1">
-                                <DollarSign className="h-3 w-3" />
-                                {formatCurrency(ledger.amount)}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              {getLedgerTypeBadge(ledger.ledgerType)}
-                            </TableCell>
-                            <TableCell>
-                              {getTransactionTypeBadge(ledger.transactionType)}
-                            </TableCell>
-                            <TableCell>
-                              {getPostingStatusBadge(ledger.postingStatus)}
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-1">
-                                <Calendar className="h-3 w-3" />
-                                {formatDate(ledger.ledgerDate)}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="text-sm">
-                                {ledger.accountDetail?.accountName || 'N/A'}
-                                <div className="text-xs text-muted-foreground">
-                                  {ledger.accountDetail?.accountNumber}
-                                </div>
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex items-center justify-end gap-2">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleView(ledger.id)}
-                                >
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleEdit(ledger.id)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() =>
-                                    handleDelete(ledger.id, ledger.description)
-                                  }
-                                  disabled={deleteMutation.isPending}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-
-                  {/* Pagination */}
-                  {ledgersResponse.pagination &&
-                    ledgersResponse.pagination.pages > 1 && (
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm text-muted-foreground">
-                          Showing{' '}
-                          {(ledgersResponse.pagination.page - 1) *
-                            ledgersResponse.pagination.limit +
-                            1}{' '}
-                          to{' '}
-                          {Math.min(
-                            ledgersResponse.pagination.page *
-                              ledgersResponse.pagination.limit,
-                            ledgersResponse.pagination.total,
-                          )}{' '}
-                          of {ledgersResponse.pagination.total} entries
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              handlePageChange(
-                                ledgersResponse.pagination.page - 1,
-                              )
-                            }
-                            disabled={ledgersResponse.pagination.page <= 1}
-                          >
-                            Previous
-                          </Button>
-                          <span className="text-sm">
-                            Page {ledgersResponse.pagination.page} of{' '}
-                            {ledgersResponse.pagination.pages}
-                          </span>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              handlePageChange(
-                                ledgersResponse.pagination.page + 1,
-                              )
-                            }
-                            disabled={
-                              ledgersResponse.pagination.page >=
-                              ledgersResponse.pagination.pages
-                            }
-                          >
-                            Next
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Ledgers</h1>
+          <p className="text-muted-foreground">
+            Manage your ledger entries and transactions
+          </p>
         </div>
-      </main>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className="w-full sm:w-auto">
+              <Plus className="w-4 h-4 mr-2" />
+              Create Ledger Entry
+              <ChevronDown className="w-4 h-4 ml-2" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={() => router.navigate({ to: ROUTES.LEDGERS_KAS_MASUK })}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {LEDGER_TYPE_LABELS.KAS_MASUK}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.navigate({ to: ROUTES.LEDGERS_KAS_KELUAR })}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {LEDGER_TYPE_LABELS.KAS_KELUAR}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      {/* Filters */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Filter className="w-5 h-5" />
+            Search & Filter
+          </CardTitle>
+          <CardDescription>Search and filter ledger entries</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Search</label>
+              <div className="relative">
+                <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search description, reference..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Ledger Type</label>
+              <Select
+                value={filters.ledgerType || 'all'}
+                onValueChange={(value) =>
+                  handleFilterChange('ledgerType', value)
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="All types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All types</SelectItem>
+                  <SelectItem value="KAS_MASUK">Cash In</SelectItem>
+                  <SelectItem value="KAS_KELUAR">Cash Out</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Posting Status</label>
+              <Select
+                value={filters.postingStatus || 'all'}
+                onValueChange={(value) =>
+                  handleFilterChange('postingStatus', value)
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="All statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All statuses</SelectItem>
+                  <SelectItem value="PENDING">Pending</SelectItem>
+                  <SelectItem value="POSTED">Posted</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Items per page</label>
+              <Select
+                value={String(filters.limit || 10)}
+                onValueChange={(value) =>
+                  handleFilterChange('limit', parseInt(value))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Ledger List */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileSpreadsheet className="w-5 h-5" />
+            Ledger Entries
+            {ledgersResponse?.pagination && (
+              <span className="text-sm font-normal text-muted-foreground">
+                ({ledgersResponse.pagination.total} total)
+              </span>
+            )}
+          </CardTitle>
+          <CardDescription>View and manage all ledger entries</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <LoadingState variant="card" />
+          ) : !ledgersResponse?.data || ledgersResponse.data.length === 0 ? (
+            <EmptyState
+              type={
+                searchTerm || Object.keys(filters).length > 2
+                  ? 'search'
+                  : 'data'
+              }
+              title={
+                searchTerm || Object.keys(filters).length > 2
+                  ? 'No ledger entries found'
+                  : 'No ledger entries yet'
+              }
+              description={
+                searchTerm || Object.keys(filters).length > 2
+                  ? 'Try adjusting your search criteria or filters.'
+                  : 'Create your first ledger entry to get started.'
+              }
+              action={{
+                label: 'Create Ledger Entry',
+                onClick: () => router.navigate({ to: '/ledgers/new' }),
+              }}
+            />
+          ) : (
+            <div className="space-y-4">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Reference</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Transaction</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Account</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {ledgersResponse.data.map((ledger) => (
+                      <TableRow key={ledger.id}>
+                        <TableCell className="font-medium">
+                          {ledger.referenceNumber}
+                        </TableCell>
+                        <TableCell className="max-w-48">
+                          <div className="truncate" title={ledger.description}>
+                            {ledger.description}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <DollarSign className="w-3 h-3" />
+                            {formatCurrency(ledger.amount)}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {getLedgerTypeBadge(ledger.ledgerType)}
+                        </TableCell>
+                        <TableCell>
+                          {getTransactionTypeBadge(ledger.transactionType)}
+                        </TableCell>
+                        <TableCell>
+                          {getPostingStatusBadge(ledger.postingStatus)}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {formatDate(ledger.ledgerDate)}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            {ledger.accountDetail?.accountName || 'N/A'}
+                            <div className="text-xs text-muted-foreground">
+                              {ledger.accountDetail?.accountNumber}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleView(ledger.id)}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEdit(ledger.id)}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                handleDelete(ledger.id, ledger.description)
+                              }
+                              disabled={deleteMutation.isPending}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Pagination */}
+              {ledgersResponse.pagination &&
+                ledgersResponse.pagination.pages > 1 && (
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-muted-foreground">
+                      Showing{' '}
+                      {(ledgersResponse.pagination.page - 1) *
+                        ledgersResponse.pagination.limit +
+                        1}{' '}
+                      to{' '}
+                      {Math.min(
+                        ledgersResponse.pagination.page *
+                          ledgersResponse.pagination.limit,
+                        ledgersResponse.pagination.total,
+                      )}{' '}
+                      of {ledgersResponse.pagination.total} entries
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          handlePageChange(ledgersResponse.pagination.page - 1)
+                        }
+                        disabled={ledgersResponse.pagination.page <= 1}
+                      >
+                        Previous
+                      </Button>
+                      <span className="text-sm">
+                        Page {ledgersResponse.pagination.page} of{' '}
+                        {ledgersResponse.pagination.pages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          handlePageChange(ledgersResponse.pagination.page + 1)
+                        }
+                        disabled={
+                          ledgersResponse.pagination.page >=
+                          ledgersResponse.pagination.pages
+                        }
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
+                )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }

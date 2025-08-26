@@ -12,12 +12,18 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
+import { Route as PostingIndexRouteImport } from './routes/posting/index'
 import { Route as LedgersIndexRouteImport } from './routes/ledgers/index'
 import { Route as UsersNewRouteImport } from './routes/users/new'
+import { Route as PostingNeracaDetailRouteImport } from './routes/posting/neraca-detail'
+import { Route as PostingNeracaBalanceRouteImport } from './routes/posting/neraca-balance'
+import { Route as PostingNeracaAkhirRouteImport } from './routes/posting/neraca-akhir'
+import { Route as PostingBukuBesarRouteImport } from './routes/posting/buku-besar'
 import { Route as LedgersNewRouteImport } from './routes/ledgers/new'
 import { Route as LedgersKasMasukRouteImport } from './routes/ledgers/kas-masuk'
 import { Route as LedgersKasKeluarRouteImport } from './routes/ledgers/kas-keluar'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as LedgersIndexImprovedRouteImport } from './routes/ledgers/index.improved'
 import { Route as UsersIdIndexRouteImport } from './routes/users/$id/index'
 import { Route as LedgersIdIndexRouteImport } from './routes/ledgers/$id/index'
 import { Route as AccountsGeneralIndexRouteImport } from './routes/accounts/general/index'
@@ -26,6 +32,7 @@ import { Route as UsersIdEditRouteImport } from './routes/users/$id/edit'
 import { Route as LedgersIdEditRouteImport } from './routes/ledgers/$id/edit'
 import { Route as AccountsGeneralNewRouteImport } from './routes/accounts/general/new'
 import { Route as AccountsDetailNewRouteImport } from './routes/accounts/detail/new'
+import { Route as UsersIdIndexWithLoaderRouteImport } from './routes/users/$id/index.with-loader'
 import { Route as AccountsGeneralIdEditRouteImport } from './routes/accounts/general/$id/edit'
 import { Route as AccountsDetailIdEditRouteImport } from './routes/accounts/detail/$id/edit'
 
@@ -44,6 +51,11 @@ const UsersIndexRoute = UsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PostingIndexRoute = PostingIndexRouteImport.update({
+  id: '/posting/',
+  path: '/posting/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LedgersIndexRoute = LedgersIndexRouteImport.update({
   id: '/ledgers/',
   path: '/ledgers/',
@@ -52,6 +64,26 @@ const LedgersIndexRoute = LedgersIndexRouteImport.update({
 const UsersNewRoute = UsersNewRouteImport.update({
   id: '/users/new',
   path: '/users/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostingNeracaDetailRoute = PostingNeracaDetailRouteImport.update({
+  id: '/posting/neraca-detail',
+  path: '/posting/neraca-detail',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostingNeracaBalanceRoute = PostingNeracaBalanceRouteImport.update({
+  id: '/posting/neraca-balance',
+  path: '/posting/neraca-balance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostingNeracaAkhirRoute = PostingNeracaAkhirRouteImport.update({
+  id: '/posting/neraca-akhir',
+  path: '/posting/neraca-akhir',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostingBukuBesarRoute = PostingBukuBesarRouteImport.update({
+  id: '/posting/buku-besar',
+  path: '/posting/buku-besar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LedgersNewRoute = LedgersNewRouteImport.update({
@@ -72,6 +104,11 @@ const LedgersKasKeluarRoute = LedgersKasKeluarRouteImport.update({
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/auth/login',
   path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LedgersIndexImprovedRoute = LedgersIndexImprovedRouteImport.update({
+  id: '/ledgers/index/improved',
+  path: '/ledgers/index/improved',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UsersIdIndexRoute = UsersIdIndexRouteImport.update({
@@ -114,6 +151,11 @@ const AccountsDetailNewRoute = AccountsDetailNewRouteImport.update({
   path: '/accounts/detail/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsersIdIndexWithLoaderRoute = UsersIdIndexWithLoaderRouteImport.update({
+  id: '/users/$id/index/with-loader',
+  path: '/users/$id/index/with-loader',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AccountsGeneralIdEditRoute = AccountsGeneralIdEditRouteImport.update({
   id: '/accounts/general/$id/edit',
   path: '/accounts/general/$id/edit',
@@ -132,8 +174,13 @@ export interface FileRoutesByFullPath {
   '/ledgers/kas-keluar': typeof LedgersKasKeluarRoute
   '/ledgers/kas-masuk': typeof LedgersKasMasukRoute
   '/ledgers/new': typeof LedgersNewRoute
+  '/posting/buku-besar': typeof PostingBukuBesarRoute
+  '/posting/neraca-akhir': typeof PostingNeracaAkhirRoute
+  '/posting/neraca-balance': typeof PostingNeracaBalanceRoute
+  '/posting/neraca-detail': typeof PostingNeracaDetailRoute
   '/users/new': typeof UsersNewRoute
   '/ledgers': typeof LedgersIndexRoute
+  '/posting': typeof PostingIndexRoute
   '/users': typeof UsersIndexRoute
   '/accounts/detail/new': typeof AccountsDetailNewRoute
   '/accounts/general/new': typeof AccountsGeneralNewRoute
@@ -143,8 +190,10 @@ export interface FileRoutesByFullPath {
   '/accounts/general': typeof AccountsGeneralIndexRoute
   '/ledgers/$id': typeof LedgersIdIndexRoute
   '/users/$id': typeof UsersIdIndexRoute
+  '/ledgers/index/improved': typeof LedgersIndexImprovedRoute
   '/accounts/detail/$id/edit': typeof AccountsDetailIdEditRoute
   '/accounts/general/$id/edit': typeof AccountsGeneralIdEditRoute
+  '/users/$id/index/with-loader': typeof UsersIdIndexWithLoaderRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -153,8 +202,13 @@ export interface FileRoutesByTo {
   '/ledgers/kas-keluar': typeof LedgersKasKeluarRoute
   '/ledgers/kas-masuk': typeof LedgersKasMasukRoute
   '/ledgers/new': typeof LedgersNewRoute
+  '/posting/buku-besar': typeof PostingBukuBesarRoute
+  '/posting/neraca-akhir': typeof PostingNeracaAkhirRoute
+  '/posting/neraca-balance': typeof PostingNeracaBalanceRoute
+  '/posting/neraca-detail': typeof PostingNeracaDetailRoute
   '/users/new': typeof UsersNewRoute
   '/ledgers': typeof LedgersIndexRoute
+  '/posting': typeof PostingIndexRoute
   '/users': typeof UsersIndexRoute
   '/accounts/detail/new': typeof AccountsDetailNewRoute
   '/accounts/general/new': typeof AccountsGeneralNewRoute
@@ -164,8 +218,10 @@ export interface FileRoutesByTo {
   '/accounts/general': typeof AccountsGeneralIndexRoute
   '/ledgers/$id': typeof LedgersIdIndexRoute
   '/users/$id': typeof UsersIdIndexRoute
+  '/ledgers/index/improved': typeof LedgersIndexImprovedRoute
   '/accounts/detail/$id/edit': typeof AccountsDetailIdEditRoute
   '/accounts/general/$id/edit': typeof AccountsGeneralIdEditRoute
+  '/users/$id/index/with-loader': typeof UsersIdIndexWithLoaderRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -175,8 +231,13 @@ export interface FileRoutesById {
   '/ledgers/kas-keluar': typeof LedgersKasKeluarRoute
   '/ledgers/kas-masuk': typeof LedgersKasMasukRoute
   '/ledgers/new': typeof LedgersNewRoute
+  '/posting/buku-besar': typeof PostingBukuBesarRoute
+  '/posting/neraca-akhir': typeof PostingNeracaAkhirRoute
+  '/posting/neraca-balance': typeof PostingNeracaBalanceRoute
+  '/posting/neraca-detail': typeof PostingNeracaDetailRoute
   '/users/new': typeof UsersNewRoute
   '/ledgers/': typeof LedgersIndexRoute
+  '/posting/': typeof PostingIndexRoute
   '/users/': typeof UsersIndexRoute
   '/accounts/detail/new': typeof AccountsDetailNewRoute
   '/accounts/general/new': typeof AccountsGeneralNewRoute
@@ -186,8 +247,10 @@ export interface FileRoutesById {
   '/accounts/general/': typeof AccountsGeneralIndexRoute
   '/ledgers/$id/': typeof LedgersIdIndexRoute
   '/users/$id/': typeof UsersIdIndexRoute
+  '/ledgers/index/improved': typeof LedgersIndexImprovedRoute
   '/accounts/detail/$id/edit': typeof AccountsDetailIdEditRoute
   '/accounts/general/$id/edit': typeof AccountsGeneralIdEditRoute
+  '/users/$id/index/with-loader': typeof UsersIdIndexWithLoaderRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -198,8 +261,13 @@ export interface FileRouteTypes {
     | '/ledgers/kas-keluar'
     | '/ledgers/kas-masuk'
     | '/ledgers/new'
+    | '/posting/buku-besar'
+    | '/posting/neraca-akhir'
+    | '/posting/neraca-balance'
+    | '/posting/neraca-detail'
     | '/users/new'
     | '/ledgers'
+    | '/posting'
     | '/users'
     | '/accounts/detail/new'
     | '/accounts/general/new'
@@ -209,8 +277,10 @@ export interface FileRouteTypes {
     | '/accounts/general'
     | '/ledgers/$id'
     | '/users/$id'
+    | '/ledgers/index/improved'
     | '/accounts/detail/$id/edit'
     | '/accounts/general/$id/edit'
+    | '/users/$id/index/with-loader'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -219,8 +289,13 @@ export interface FileRouteTypes {
     | '/ledgers/kas-keluar'
     | '/ledgers/kas-masuk'
     | '/ledgers/new'
+    | '/posting/buku-besar'
+    | '/posting/neraca-akhir'
+    | '/posting/neraca-balance'
+    | '/posting/neraca-detail'
     | '/users/new'
     | '/ledgers'
+    | '/posting'
     | '/users'
     | '/accounts/detail/new'
     | '/accounts/general/new'
@@ -230,8 +305,10 @@ export interface FileRouteTypes {
     | '/accounts/general'
     | '/ledgers/$id'
     | '/users/$id'
+    | '/ledgers/index/improved'
     | '/accounts/detail/$id/edit'
     | '/accounts/general/$id/edit'
+    | '/users/$id/index/with-loader'
   id:
     | '__root__'
     | '/'
@@ -240,8 +317,13 @@ export interface FileRouteTypes {
     | '/ledgers/kas-keluar'
     | '/ledgers/kas-masuk'
     | '/ledgers/new'
+    | '/posting/buku-besar'
+    | '/posting/neraca-akhir'
+    | '/posting/neraca-balance'
+    | '/posting/neraca-detail'
     | '/users/new'
     | '/ledgers/'
+    | '/posting/'
     | '/users/'
     | '/accounts/detail/new'
     | '/accounts/general/new'
@@ -251,8 +333,10 @@ export interface FileRouteTypes {
     | '/accounts/general/'
     | '/ledgers/$id/'
     | '/users/$id/'
+    | '/ledgers/index/improved'
     | '/accounts/detail/$id/edit'
     | '/accounts/general/$id/edit'
+    | '/users/$id/index/with-loader'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -262,8 +346,13 @@ export interface RootRouteChildren {
   LedgersKasKeluarRoute: typeof LedgersKasKeluarRoute
   LedgersKasMasukRoute: typeof LedgersKasMasukRoute
   LedgersNewRoute: typeof LedgersNewRoute
+  PostingBukuBesarRoute: typeof PostingBukuBesarRoute
+  PostingNeracaAkhirRoute: typeof PostingNeracaAkhirRoute
+  PostingNeracaBalanceRoute: typeof PostingNeracaBalanceRoute
+  PostingNeracaDetailRoute: typeof PostingNeracaDetailRoute
   UsersNewRoute: typeof UsersNewRoute
   LedgersIndexRoute: typeof LedgersIndexRoute
+  PostingIndexRoute: typeof PostingIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
   AccountsDetailNewRoute: typeof AccountsDetailNewRoute
   AccountsGeneralNewRoute: typeof AccountsGeneralNewRoute
@@ -273,8 +362,10 @@ export interface RootRouteChildren {
   AccountsGeneralIndexRoute: typeof AccountsGeneralIndexRoute
   LedgersIdIndexRoute: typeof LedgersIdIndexRoute
   UsersIdIndexRoute: typeof UsersIdIndexRoute
+  LedgersIndexImprovedRoute: typeof LedgersIndexImprovedRoute
   AccountsDetailIdEditRoute: typeof AccountsDetailIdEditRoute
   AccountsGeneralIdEditRoute: typeof AccountsGeneralIdEditRoute
+  UsersIdIndexWithLoaderRoute: typeof UsersIdIndexWithLoaderRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -300,6 +391,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/posting/': {
+      id: '/posting/'
+      path: '/posting'
+      fullPath: '/posting'
+      preLoaderRoute: typeof PostingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ledgers/': {
       id: '/ledgers/'
       path: '/ledgers'
@@ -312,6 +410,34 @@ declare module '@tanstack/react-router' {
       path: '/users/new'
       fullPath: '/users/new'
       preLoaderRoute: typeof UsersNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/posting/neraca-detail': {
+      id: '/posting/neraca-detail'
+      path: '/posting/neraca-detail'
+      fullPath: '/posting/neraca-detail'
+      preLoaderRoute: typeof PostingNeracaDetailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/posting/neraca-balance': {
+      id: '/posting/neraca-balance'
+      path: '/posting/neraca-balance'
+      fullPath: '/posting/neraca-balance'
+      preLoaderRoute: typeof PostingNeracaBalanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/posting/neraca-akhir': {
+      id: '/posting/neraca-akhir'
+      path: '/posting/neraca-akhir'
+      fullPath: '/posting/neraca-akhir'
+      preLoaderRoute: typeof PostingNeracaAkhirRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/posting/buku-besar': {
+      id: '/posting/buku-besar'
+      path: '/posting/buku-besar'
+      fullPath: '/posting/buku-besar'
+      preLoaderRoute: typeof PostingBukuBesarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ledgers/new': {
@@ -340,6 +466,13 @@ declare module '@tanstack/react-router' {
       path: '/auth/login'
       fullPath: '/auth/login'
       preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ledgers/index/improved': {
+      id: '/ledgers/index/improved'
+      path: '/ledgers/index/improved'
+      fullPath: '/ledgers/index/improved'
+      preLoaderRoute: typeof LedgersIndexImprovedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/users/$id/': {
@@ -398,6 +531,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountsDetailNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/users/$id/index/with-loader': {
+      id: '/users/$id/index/with-loader'
+      path: '/users/$id/index/with-loader'
+      fullPath: '/users/$id/index/with-loader'
+      preLoaderRoute: typeof UsersIdIndexWithLoaderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/accounts/general/$id/edit': {
       id: '/accounts/general/$id/edit'
       path: '/accounts/general/$id/edit'
@@ -422,8 +562,13 @@ const rootRouteChildren: RootRouteChildren = {
   LedgersKasKeluarRoute: LedgersKasKeluarRoute,
   LedgersKasMasukRoute: LedgersKasMasukRoute,
   LedgersNewRoute: LedgersNewRoute,
+  PostingBukuBesarRoute: PostingBukuBesarRoute,
+  PostingNeracaAkhirRoute: PostingNeracaAkhirRoute,
+  PostingNeracaBalanceRoute: PostingNeracaBalanceRoute,
+  PostingNeracaDetailRoute: PostingNeracaDetailRoute,
   UsersNewRoute: UsersNewRoute,
   LedgersIndexRoute: LedgersIndexRoute,
+  PostingIndexRoute: PostingIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
   AccountsDetailNewRoute: AccountsDetailNewRoute,
   AccountsGeneralNewRoute: AccountsGeneralNewRoute,
@@ -433,8 +578,10 @@ const rootRouteChildren: RootRouteChildren = {
   AccountsGeneralIndexRoute: AccountsGeneralIndexRoute,
   LedgersIdIndexRoute: LedgersIdIndexRoute,
   UsersIdIndexRoute: UsersIdIndexRoute,
+  LedgersIndexImprovedRoute: LedgersIndexImprovedRoute,
   AccountsDetailIdEditRoute: AccountsDetailIdEditRoute,
   AccountsGeneralIdEditRoute: AccountsGeneralIdEditRoute,
+  UsersIdIndexWithLoaderRoute: UsersIdIndexWithLoaderRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
