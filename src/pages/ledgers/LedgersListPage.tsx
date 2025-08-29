@@ -211,16 +211,10 @@ export const LedgersListPage: React.FC = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() => router.navigate({ to: ROUTES.LEDGERS_KAS_MASUK })}
+              onClick={() => router.navigate({ to: ROUTES.LEDGERS_KAS })}
             >
               <Plus className="w-4 h-4 mr-2" />
-              {LEDGER_TYPE_LABELS.KAS_MASUK}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => router.navigate({ to: ROUTES.LEDGERS_KAS_KELUAR })}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              {LEDGER_TYPE_LABELS.KAS_KELUAR}
+              {LEDGER_TYPE_LABELS.KAS}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

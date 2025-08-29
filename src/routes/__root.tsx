@@ -1,5 +1,8 @@
 import { AppProviders } from '@/components/AppProviders'
-import { NotFoundBoundary, RouteErrorBoundary } from '@/components/ErrorBoundary'
+import {
+  NotFoundBoundary,
+  RouteErrorBoundary,
+} from '@/components/ErrorBoundary'
 import { createAuthContext, type AuthContext } from '@/utils/routeAuth'
 import { TanstackDevtools } from '@tanstack/react-devtools'
 import { Outlet, createRootRoute } from '@tanstack/react-router'

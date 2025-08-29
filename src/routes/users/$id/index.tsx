@@ -4,7 +4,7 @@ import { requireRoles } from '@/utils/routeAuth'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/users/$id/')({
-  beforeLoad: ({ params }) => 
+  beforeLoad: ({ params }) =>
     requireRoles(['ADMIN', 'MANAJER'], true, params.id)(),
   component: () => (
     <AppLayout>

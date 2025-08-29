@@ -5,9 +5,9 @@ import { requireRoles } from '@/utils/routeAuth'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/users/$id/index/with-loader')({
-  beforeLoad: ({ params }) => 
+  beforeLoad: ({ params }) =>
     requireRoles(['ADMIN', 'MANAJER'], true, params.id)(),
-  
+
   // Load user data before rendering the component
   loader: async ({ params }) => {
     const response = await userService.getUserById(params.id)
@@ -15,10 +15,10 @@ export const Route = createFileRoute('/users/$id/index/with-loader')({
       throw new Error(response.message || 'Failed to load user')
     }
     return {
-      user: response.data
+      user: response.data,
     }
   },
-  
+
   // Handle pending UI while loader runs
   pendingComponent: () => (
     <AppLayout>
@@ -30,7 +30,7 @@ export const Route = createFileRoute('/users/$id/index/with-loader')({
       </div>
     </AppLayout>
   ),
-  
+
   component: () => (
     <AppLayout>
       <UserDetailPage />

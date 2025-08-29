@@ -80,6 +80,7 @@ export const LEDGER_TYPES = {
 } as const
 
 export const LEDGER_TYPE_LABELS = {
+  KAS: 'Kas',
   [LEDGER_TYPES.KAS_MASUK]: 'Kas Masuk',
   [LEDGER_TYPES.KAS_KELUAR]: 'Kas Keluar',
 } as const
@@ -115,6 +116,7 @@ export const ROUTES = {
   ACCOUNTS_GENERAL_CREATE: '/accounts/general/new',
   ACCOUNTS_DETAIL_CREATE: '/accounts/detail/new',
   LEDGERS: '/ledgers',
+  LEDGERS_KAS: '/ledgers/kas',
   LEDGERS_KAS_MASUK: '/ledgers/kas-masuk',
   LEDGERS_KAS_KELUAR: '/ledgers/kas-keluar',
 } as const

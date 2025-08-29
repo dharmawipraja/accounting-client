@@ -6,12 +6,12 @@ export const Route = createFileRoute('/')({
     if (context.auth.isAuthenticated) {
       throw redirect({
         to: '/dashboard',
-        replace: true
+        replace: true,
       })
     } else {
       throw redirect({
         to: '/auth/login',
-        replace: true
+        replace: true,
       })
     }
   },

@@ -2,5 +2,5 @@ import { NeracaBalancePostingPage } from '@/pages/posting/NeracaBalancePostingPa
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/posting/neraca-balance')({
-    component: NeracaBalancePostingPage,
+  component: NeracaBalancePostingPage,
 })
