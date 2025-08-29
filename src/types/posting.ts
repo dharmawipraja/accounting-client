@@ -34,12 +34,24 @@ export interface PostingResponse {
 }
 
 export interface NeracaBalanceCalculation {
-  totalAsset: number
-  totalLiability: number
-  totalEquity: number
-  sisaHasilUsaha: number
-  isBalanced: boolean
-  calculatedAt: string
+  data: {
+    calculationDetails: {
+      accountsProcessed: number
+      calculationDate: string
+      sisaHasilUsaha: string // API returns string, not number
+      totalBiaya: string // API returns string, not number
+      totalPendapatan: string // API returns string, not number
+      year: string
+    }
+    existingRecord?: {
+      id: string
+      currentAmount: string
+      accountingClose: boolean
+      createdAt: string
+      updatedAt: string
+    }
+    canSave: boolean
+  }
 }
 
 // Posting status enum

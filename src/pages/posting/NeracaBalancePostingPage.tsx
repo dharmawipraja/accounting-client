@@ -18,16 +18,8 @@ import { formatCurrency } from '@/utils'
 import { getCurrentDateForAPI } from '@/utils/date'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from '@tanstack/react-router'
-import {
-  AlertTriangle,
-  ArrowLeft,
-  Calculator,
-  Calendar,
-  CheckCircle,
-  DollarSign,
-  XCircle,
-} from 'lucide-react'
-import { useState } from 'react'
+import { AlertTriangle, ArrowLeft, Calculator, Calendar } from 'lucide-react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -50,9 +42,7 @@ const formatDateForAPI = (isoDate: string): string => {
 
 export function NeracaBalancePostingPage() {
   const router = useRouter()
-  const [calculationDate, setCalculationDate] = useState<string>(
-    getCurrentDateForAPI(),
-  )
+
   const postMutation = usePostNeracaBalanceMutation()
 
   const form = useForm<NeracaBalanceFormData>({
@@ -64,12 +54,22 @@ export function NeracaBalancePostingPage() {
   })
 
   // Fetch balance calculation
-  const {
-    data: balanceCalculation,
-    isLoading: isCalculating,
-    error: calculationError,
-    refetch: recalculate,
-  } = useNeracaBalanceQuery(formatDateForAPI(calculationDate))
+  const { data: balanceCalculation } = useNeracaBalanceQuery(
+    formatDateForAPI(getCurrentDateForAPI()),
+  )
+
+  // Auto-populate SHU amount when balance calculation is available
+  useEffect(() => {
+    if (
+      balanceCalculation?.data?.data?.calculationDetails?.sisaHasilUsaha !==
+      undefined
+    ) {
+      const shuAmount = parseFloat(
+        balanceCalculation.data.data.calculationDetails.sisaHasilUsaha,
+      )
+      form.setValue('sisaHasilUsahaAmount', shuAmount)
+    }
+  }, [balanceCalculation, form])
 
   const onSubmitPost = async (data: NeracaBalanceFormData) => {
     try {
@@ -85,13 +85,7 @@ export function NeracaBalancePostingPage() {
     }
   }
 
-  const handleCalculate = () => {
-    const dateValue = form.getValues('date')
-    setCalculationDate(dateValue)
-    recalculate()
-  }
-
-  const balance = balanceCalculation?.data
+  const balance = balanceCalculation?.data?.data
 
   return (
     <div className="space-y-6">
@@ -119,7 +113,7 @@ export function NeracaBalancePostingPage() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Balance Calculation */}
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle>Balance Calculation</CardTitle>
             <CardDescription>
@@ -144,28 +138,14 @@ export function NeracaBalancePostingPage() {
               <div className="flex items-end">
                 <Button
                   onClick={handleCalculate}
-                  disabled={isCalculating}
                   variant="outline"
                 >
-                  {isCalculating ? <LoadingState size="sm" /> : 'Calculate'}
+                  Calculate
                 </Button>
               </div>
             </div>
 
-            {calculationError && (
-              <div className="p-4 border border-red-200 rounded-lg bg-red-50">
-                <div className="flex items-center gap-2">
-                  <XCircle className="w-4 h-4 text-red-600" />
-                  <span className="font-medium text-red-800">
-                    Calculation Error
-                  </span>
-                </div>
-                <p className="mt-1 text-sm text-red-700">
-                  Unable to calculate balance. Please check the date and try
-                  again.
-                </p>
-              </div>
-            )}
+
 
             {balance && (
               <div className="space-y-4">
@@ -230,14 +210,15 @@ export function NeracaBalancePostingPage() {
               </div>
             )}
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Posting Form */}
         <Card>
           <CardHeader>
             <CardTitle>Post Neraca Balance</CardTitle>
             <CardDescription>
-              Post balance sheet with Sisa Hasil Usaha (SHU) amount
+              Post balance sheet with auto-calculated Sisa Hasil Usaha (SHU)
+              amount
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -266,21 +247,16 @@ export function NeracaBalancePostingPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="sisaHasilUsahaAmount">
-                  Sisa Hasil Usaha Amount
+                  Sisa Hasil Usaha Amount (Auto-calculated)
                 </Label>
                 <div className="relative">
-                  <DollarSign className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <Input
                     id="sisaHasilUsahaAmount"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="Enter SHU amount"
-                    {...form.register('sisaHasilUsahaAmount', {
-                      valueAsNumber: true,
-                    })}
-                    className="pl-10"
-                    disabled={postMutation.isPending}
+                    type="text"
+                    value={formatCurrency(form.watch('sisaHasilUsahaAmount'))}
+                    readOnly
+                    className="pl-10 cursor-not-allowed bg-gray-50"
+                    disabled
                   />
                 </div>
                 {form.formState.errors.sisaHasilUsahaAmount && (
@@ -288,20 +264,32 @@ export function NeracaBalancePostingPage() {
                     {form.formState.errors.sisaHasilUsahaAmount.message}
                   </p>
                 )}
-                {balance && (
-                  <p className="text-sm text-blue-600">
-                    Suggested amount: {formatCurrency(balance.sisaHasilUsaha)}
+                {balance?.calculationDetails ? (
+                  <p className="text-sm text-green-600">
+                    Amount automatically set from balance calculation:{' '}
+                    {formatCurrency(
+                      parseFloat(balance.calculationDetails.sisaHasilUsaha),
+                    )}
+                  </p>
+                ) : (
+                  <p className="text-sm text-orange-600">
+                    Please calculate the balance first to auto-populate this
+                    field.
                   </p>
                 )}
               </div>
 
               <Button
                 type="submit"
-                disabled={postMutation.isPending}
+                disabled={
+                  postMutation.isPending || !balance?.calculationDetails
+                }
                 className="w-full"
               >
                 {postMutation.isPending ? (
                   <LoadingState size="sm" />
+                ) : !balance?.calculationDetails ? (
+                  'Calculate Balance First'
                 ) : (
                   'Post Neraca Balance'
                 )}
@@ -315,7 +303,8 @@ export function NeracaBalancePostingPage() {
               </div>
               <p className="mt-1 text-sm text-amber-700">
                 Ensure you have calculated and verified the balance before
-                posting. The SHU amount should match your calculation results.
+                posting. The SHU amount will be automatically set from your
+                calculation results.
               </p>
             </div>
           </CardContent>

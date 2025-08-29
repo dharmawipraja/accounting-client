@@ -18,7 +18,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { LEDGER_TYPE_LABELS } from '@/constants'
+
+import { useAccountsDetailQuery } from '@/hooks/useAccountsQuery'
 import { useCreateBulkLedgersMutation } from '@/hooks/useLedgersQuery'
 import type { CreateBulkLedgersPayload } from '@/types/payloads'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -47,6 +48,7 @@ const ledgerEntrySchema = z.object({
   transactionType: z.enum(['DEBIT', 'CREDIT']),
   accountDetailAccountNumber: z.string().min(1, 'Account detail is required'),
   accountGeneralAccountNumber: z.string().min(1, 'Account general is required'),
+  ledgerType: z.enum(['KAS_MASUK', 'KAS_KELUAR']),
   amount: z.number().min(0.01, 'Amount must be greater than 0'),
   // Additional fields for form UI only
   referenceNumber: z
@@ -64,18 +66,47 @@ const bulkLedgerFormSchema = z.object({
 
 type BulkLedgerFormData = z.infer<typeof bulkLedgerFormSchema>
 
-interface BulkLedgerFormProps {
-  ledgerType: 'KAS_MASUK' | 'KAS_KELUAR'
-}
-
 const transactionTypeOptions = [
   { value: 'DEBIT', label: 'Debit' },
   { value: 'CREDIT', label: 'Credit' },
 ] as const
 
-export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
+const ledgerTypeOptions = [
+  { value: 'KAS_MASUK', label: 'Kas Masuk' },
+  { value: 'KAS_KELUAR', label: 'Kas Keluar' },
+] as const
+
+export function BulkLedgerForm() {
   const router = useRouter()
   const createBulkMutation = useCreateBulkLedgersMutation()
+
+  // Fetch accounts data for dropdown
+  const { data: accountsData, isLoading: isLoadingAccounts } =
+    useAccountsDetailQuery({
+      limit: 1000, // Get a large number to include all accounts
+    })
+
+  // Helper function to handle account detail selection
+  const handleAccountDetailChange = (
+    accountNumber: string,
+    entryIndex: number,
+  ) => {
+    const selectedAccount = accountsData?.data?.find(
+      (account) => account.accountNumber === accountNumber,
+    )
+
+    if (selectedAccount) {
+      // Auto-populate the general account number
+      form.setValue(
+        `entries.${entryIndex}.accountDetailAccountNumber`,
+        accountNumber,
+      )
+      form.setValue(
+        `entries.${entryIndex}.accountGeneralAccountNumber`,
+        selectedAccount.accountGeneralAccountNumber,
+      )
+    }
+  }
 
   const form = useForm<BulkLedgerFormData>({
     resolver: zodResolver(bulkLedgerFormSchema),
@@ -88,6 +119,7 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
           transactionType: 'DEBIT',
           accountDetailAccountNumber: '',
           accountGeneralAccountNumber: '',
+          ledgerType: 'KAS_MASUK',
           amount: 0,
         },
         {
@@ -97,6 +129,7 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
           transactionType: 'CREDIT',
           accountDetailAccountNumber: '',
           accountGeneralAccountNumber: '',
+          ledgerType: 'KAS_MASUK',
           amount: 0,
         },
       ],
@@ -158,7 +191,7 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
         ledgers: data.entries.map((entry) => ({
           ledgerDate: entry.ledgerDate,
           description: entry.description,
-          ledgerType: ledgerType, // Use the prop instead of form field
+          ledgerType: entry.ledgerType, // Use the ledgerType from form field
           transactionType: entry.transactionType,
           accountDetailAccountNumber: entry.accountDetailAccountNumber,
           accountGeneralAccountNumber: entry.accountGeneralAccountNumber,
@@ -186,6 +219,7 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
       transactionType: 'DEBIT',
       accountDetailAccountNumber: '',
       accountGeneralAccountNumber: '',
+      ledgerType: 'KAS_MASUK',
       amount: 0,
     })
   }
@@ -216,11 +250,10 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
           Back to Ledgers
         </Button>
         <h1 className="text-3xl font-bold tracking-tight">
-          Create {LEDGER_TYPE_LABELS[ledgerType]} Entries
+          Create Ledger Entries
         </h1>
         <p className="text-gray-600">
-          Add multiple {LEDGER_TYPE_LABELS[ledgerType].toLowerCase()} entries
-          with double-entry validation
+          Add multiple ledger entries with double-entry validation
         </p>
       </div>
 
@@ -413,13 +446,38 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
                       name={`entries.${index}.accountDetailAccountNumber`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Account Detail Account Number</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Detail account number"
-                              {...field}
-                            />
-                          </FormControl>
+                          <FormLabel>Account Detail</FormLabel>
+                          <Select
+                            onValueChange={(value) => {
+                              field.onChange(value)
+                              handleAccountDetailChange(value, index)
+                            }}
+                            defaultValue={field.value}
+                            disabled={isLoadingAccounts}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue
+                                  placeholder={
+                                    isLoadingAccounts
+                                      ? 'Loading accounts...'
+                                      : 'Select account detail'
+                                  }
+                                />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {accountsData?.data?.map((account) => (
+                                <SelectItem
+                                  key={account.accountNumber}
+                                  value={account.accountNumber}
+                                >
+                                  {account.accountNumber} -{' '}
+                                  {account.accountName}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -427,16 +485,30 @@ export function BulkLedgerForm({ ledgerType }: BulkLedgerFormProps) {
 
                     <FormField
                       control={form.control}
-                      name={`entries.${index}.accountGeneralAccountNumber`}
+                      name={`entries.${index}.ledgerType`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Account General Account Number</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="General account number"
-                              {...field}
-                            />
-                          </FormControl>
+                          <FormLabel>Ledger Type</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select ledger type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {ledgerTypeOptions.map((option) => (
+                                <SelectItem
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}

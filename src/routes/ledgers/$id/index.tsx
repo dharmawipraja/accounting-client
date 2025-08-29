@@ -8,14 +8,7 @@ import { useLedgerQuery } from '@/hooks/useLedgersQuery'
 import type { RootState } from '@/store'
 import { canManageLedgers } from '@/utils/rolePermissions'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import {
-  ArrowLeft,
-  Building2,
-  Calendar,
-  DollarSign,
-  Edit,
-  Hash,
-} from 'lucide-react'
+import { ArrowLeft, Building2, Calendar, Edit, Hash } from 'lucide-react'
 import { useSelector } from 'react-redux'
 
 function LedgerDetailPage() {
@@ -225,7 +218,6 @@ function LedgerDetailPage() {
                     Amount
                   </label>
                   <div className="flex items-center gap-2 mt-1">
-                    <DollarSign className="w-4 h-4 text-gray-400" />
                     <span className="text-lg font-medium">
                       {new Intl.NumberFormat('id-ID', {
                         style: 'currency',

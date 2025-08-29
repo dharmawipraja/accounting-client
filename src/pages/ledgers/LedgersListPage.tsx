@@ -46,7 +46,6 @@ import { useRouter } from '@tanstack/react-router'
 import {
   Calendar,
   ChevronDown,
-  DollarSign,
   Edit,
   Eye,
   FileSpreadsheet,
@@ -374,7 +373,6 @@ export const LedgersListPage: React.FC = () => {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1">
-                            <DollarSign className="w-3 h-3" />
                             {formatCurrency(ledger.amount)}
                           </div>
                         </TableCell>

@@ -13,13 +13,13 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: true, // Refetch when window gains focus
       refetchOnMount: true, // Always refetch on mount
       refetchOnReconnect: true, // Refetch when reconnected
-      retry: (failureCount, error: any) => {
-        // Don't retry on 4xx errors
-        if (error?.response?.status >= 400 && error?.response?.status < 500) {
-          return false
-        }
-        return failureCount < 3
-      },
+      // retry: (failureCount, error: any) => {
+      //   // Don't retry on 4xx errors
+      //   if (error?.response?.status >= 400 && error?.response?.status < 500) {
+      //     return false
+      //   }
+      //   return failureCount < 3
+      // },
     },
     mutations: {
       retry: false,
