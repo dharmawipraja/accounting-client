@@ -150,23 +150,23 @@ function LedgerDetailPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
-        <div className="mb-6">
+      <main className="container px-3 py-4 mx-auto sm:px-6 lg:px-8">
+        <div className="mb-4 space-y-3 sm:mb-6">
           <Button
             variant="ghost"
             onClick={() => router.navigate({ to: '/ledgers' })}
-            className="mb-4 hover:bg-gray-100"
+            className="hover:bg-gray-100 md:hidden"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Ledgers
           </Button>
 
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-1">
+              <h1 className="text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl">
                 Ledger Entry Details
               </h1>
-              <p className="text-gray-600">
+              <p className="text-sm text-gray-600 sm:text-base">
                 View and manage ledger entry information
               </p>
             </div>

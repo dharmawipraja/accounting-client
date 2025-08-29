@@ -257,14 +257,14 @@ export default function UserListPage() {
   }, [usersData?.data, paginationInfo.total])
 
   return (
-    <div className="container px-4 py-8 mx-auto space-y-8">
+    <div className="container px-3 py-4 mx-auto space-y-6 sm:px-6 sm:py-8 sm:space-y-8 lg:px-8">
       {/* Header */}
-      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+      <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center sm:gap-4">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl lg:text-3xl">
             User Management
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm text-muted-foreground sm:text-base">
             Manage user accounts and permissions
           </p>
         </div>
@@ -279,7 +279,7 @@ export default function UserListPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => {
           const Icon = stat.icon
           return (
@@ -287,7 +287,7 @@ export default function UserListPage() {
               key={stat.title}
               className="relative overflow-hidden border-0 shadow-lg"
             >
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-muted-foreground">

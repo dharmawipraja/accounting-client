@@ -67,30 +67,30 @@ export function BukuBesarPostingPage() {
   const isLoading = postMutation.isPending || unpostMutation.isPending
 
   return (
-    <div className="space-y-6">
+    <div className="container px-3 py-4 mx-auto space-y-4 sm:px-6 lg:px-8 lg:space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <Button
           variant="outline"
           size="sm"
           onClick={() => router.navigate({ to: '/posting' })}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 self-start md:hidden"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Posting
         </Button>
-        <div>
-          <h1 className="flex items-center gap-3 text-3xl font-bold text-gray-900">
-            <FileText className="w-8 h-8 text-blue-600" />
-            Buku Besar Posting
+        <div className="space-y-1">
+          <h1 className="flex items-center gap-2 text-xl font-bold text-gray-900 sm:gap-3 sm:text-2xl lg:text-3xl">
+            <FileText className="w-6 h-6 text-blue-600 sm:w-7 sm:h-7 lg:w-8 lg:h-8" />
+            <span className="leading-tight">Buku Besar Posting</span>
           </h1>
-          <p className="mt-1 text-gray-600">
+          <p className="text-sm text-gray-600 sm:text-base">
             Post general ledger entries for a specific date
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
         {/* Posting Form */}
         <Card>
           <CardHeader>

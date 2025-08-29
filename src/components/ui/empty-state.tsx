@@ -64,7 +64,7 @@ export function EmptyState({
 
   return (
     <Card className={`${config.bgColor} ${config.borderColor} border-2`}>
-      <CardContent className="flex flex-col items-center justify-center py-16 px-8">
+      <CardContent className="flex flex-col items-center justify-center py-12 px-6 sm:py-16 sm:px-8">
         <div className="mb-6">{icon || config.icon}</div>
         <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">
           {title || config.defaultTitle}

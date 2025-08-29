@@ -59,7 +59,11 @@ export const RouteErrorBoundary: React.FC<ErrorBoundaryProps> = ({
               <RefreshCw className="w-4 h-4 mr-2" />
               Try Again
             </Button>
-            <Button onClick={handleGoBack} variant="outline" className="w-full">
+            <Button
+              onClick={handleGoBack}
+              variant="outline"
+              className="w-full md:hidden"
+            >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Go Back
             </Button>
@@ -100,7 +104,11 @@ export const NotFoundBoundary: React.FC = () => {
           </p>
 
           <div className="flex flex-col gap-2">
-            <Button onClick={handleGoBack} variant="default" className="w-full">
+            <Button
+              onClick={handleGoBack}
+              variant="default"
+              className="w-full md:hidden"
+            >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Go Back
             </Button>

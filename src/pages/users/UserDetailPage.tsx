@@ -96,8 +96,8 @@ export function UserDetailPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
-        <div className="space-y-6">
+      <main className="container px-3 py-4 mx-auto sm:px-6 lg:px-8">
+        <div className="space-y-4 sm:space-y-6">
           {loading ? (
             <>
               <div className="flex items-center space-x-2">
@@ -105,7 +105,7 @@ export function UserDetailPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => navigate({ to: '/users' })}
-                  className="flex items-center space-x-1"
+                  className="flex items-center space-x-1 md:hidden"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Back to Users</span>
@@ -132,7 +132,7 @@ export function UserDetailPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => navigate({ to: '/users' })}
-                  className="flex items-center space-x-1"
+                  className="flex items-center space-x-1 md:hidden"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Back to Users</span>
@@ -160,7 +160,7 @@ export function UserDetailPage() {
                     variant="ghost"
                     size="sm"
                     onClick={() => navigate({ to: '/users' })}
-                    className="flex items-center space-x-1"
+                    className="flex items-center space-x-1 md:hidden"
                   >
                     <ArrowLeft className="w-4 h-4" />
                     <span>Back to Users</span>
@@ -171,7 +171,7 @@ export function UserDetailPage() {
                   <Button
                     variant="outline"
                     onClick={() => navigate({ to: `/users/${user.id}/edit` })}
-                    className="flex items-center space-x-1"
+                    className="flex items-center space-x-1 md:hidden"
                   >
                     <Edit className="w-4 h-4" />
                     <span>Edit User</span>
@@ -181,7 +181,7 @@ export function UserDetailPage() {
                     <AlertDialogTrigger asChild>
                       <Button
                         variant="destructive"
-                        className="flex items-center space-x-1"
+                        className="flex items-center space-x-1 md:hidden"
                       >
                         <Trash2 className="w-4 h-4" />
                         <span>Delete User</span>
@@ -210,8 +210,8 @@ export function UserDetailPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <div className="space-y-6 lg:col-span-2">
+              <div className="grid grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-3">
+                <div className="space-y-4 lg:col-span-2 lg:space-y-6">
                   <Card>
                     <CardHeader>
                       <CardTitle>User Information</CardTitle>
@@ -227,7 +227,9 @@ export function UserDetailPage() {
                           </span>
                         </div>
                         <div>
-                          <h2 className="text-2xl font-bold">{user.name}</h2>
+                          <h2 className="text-xl font-bold sm:text-2xl">
+                            {user.name}
+                          </h2>
                           <p className="text-muted-foreground">
                             @{user.username}
                           </p>

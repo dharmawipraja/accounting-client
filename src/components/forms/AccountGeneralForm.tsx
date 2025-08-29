@@ -174,7 +174,7 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
         <Button
           variant="ghost"
           onClick={() => router.navigate({ to: '/accounts/general' })}
-          className="mb-4"
+          className="mb-4 md:hidden"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to General Accounts
@@ -190,16 +190,16 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calculator className="h-5 w-5" />
+        <CardHeader className="pb-4 sm:pb-6">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+            <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
             Account Information
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm sm:text-base">
             Fill in the details for the general account
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4 sm:space-y-6">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}

@@ -239,34 +239,36 @@ export function BulkLedgerForm() {
   }
 
   return (
-    <div className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
-      <div className="mb-6">
+    <div className="container px-3 py-4 mx-auto sm:px-6 lg:px-8">
+      <div className="mb-4 space-y-3 sm:mb-6">
         <Button
           variant="ghost"
           onClick={handleCancel}
-          className="mb-4 hover:bg-gray-100"
+          className="hover:bg-gray-100 md:hidden"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Ledgers
         </Button>
-        <h1 className="text-3xl font-bold tracking-tight">
-          Create Ledger Entries
-        </h1>
-        <p className="text-gray-600">
-          Add multiple ledger entries with double-entry validation
-        </p>
+        <div className="space-y-1">
+          <h1 className="text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl">
+            Create Ledger Entries
+          </h1>
+          <p className="text-sm text-gray-600 sm:text-base">
+            Add multiple ledger entries with double-entry validation
+          </p>
+        </div>
       </div>
 
       {/* Balance Summary Card */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calculator className="w-5 h-5" />
+      <Card className="mb-4 sm:mb-6">
+        <CardHeader className="pb-3 sm:pb-6">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+            <Calculator className="w-4 h-4 sm:w-5 sm:h-5" />
             Transaction Balance Summary
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <CardContent className="pt-0">
+          <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-3">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-500">
                 Total Debit Amount

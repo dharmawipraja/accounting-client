@@ -30,14 +30,14 @@ export function EditUserPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
-        <div className="space-y-6">
-          <div className="flex items-center space-x-2">
+      <main className="container px-3 py-4 mx-auto sm:px-6 lg:px-8">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate({ to: '/users' })}
-              className="flex items-center space-x-1"
+              className="flex items-center space-x-1 self-start md:hidden"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Users</span>
@@ -62,9 +62,11 @@ export function EditUserPage() {
             />
           ) : (
             <>
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">Edit User</h1>
-                <p className="text-muted-foreground">
+              <div className="space-y-1">
+                <h1 className="text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl">
+                  Edit User
+                </h1>
+                <p className="text-sm text-muted-foreground sm:text-base">
                   Update user information and permissions
                 </p>
               </div>

@@ -188,12 +188,13 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
         />
       )}
 
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
+      <div className="container px-3 py-4 mx-auto space-y-4 sm:px-6 lg:px-8 lg:space-y-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => router.navigate({ to: '/accounts/detail' })}
+            className="self-start md:hidden"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Detail Accounts

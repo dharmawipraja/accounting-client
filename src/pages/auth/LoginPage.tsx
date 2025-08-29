@@ -62,8 +62,8 @@ export const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 py-12 bg-gradient-surface sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
+    <div className="flex items-center justify-center min-h-screen px-3 py-8 bg-gradient-surface sm:px-6 sm:py-12 lg:px-8">
+      <div className="w-full max-w-md space-y-6 sm:space-y-8">
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden -z-10">
           <div className="absolute rounded-full top-1/4 left-1/4 w-72 h-72 bg-primary/5 blur-3xl"></div>
@@ -77,11 +77,11 @@ export const LoginPage: React.FC = () => {
               <BookOpen className="w-8 h-8 text-primary-foreground" />
             </div>
 
-            <div className="space-y-2">
-              <CardTitle className="text-3xl font-bold text-foreground">
+            <div className="space-y-1 sm:space-y-2">
+              <CardTitle className="text-2xl font-bold text-foreground sm:text-3xl">
                 Welcome to {APP_CONFIG.NAME}
               </CardTitle>
-              <CardDescription className="text-lg">
+              <CardDescription className="text-base sm:text-lg">
                 Sign in to access your accounting dashboard
               </CardDescription>
             </div>
@@ -95,7 +95,7 @@ export const LoginPage: React.FC = () => {
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4 sm:space-y-6">
             <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-4">
                 {/* Username Field */}

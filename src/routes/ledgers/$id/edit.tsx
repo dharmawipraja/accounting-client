@@ -72,22 +72,26 @@ function LedgerEditPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
-        <div className="mb-6">
+      <main className="container px-3 py-4 mx-auto sm:px-6 lg:px-8">
+        <div className="mb-4 space-y-3 sm:mb-6">
           <Button
             variant="ghost"
             onClick={() =>
               router.navigate({ to: '/ledgers/$id', params: { id } })
             }
-            className="mb-4 hover:bg-gray-100"
+            className="hover:bg-gray-100 md:hidden"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Ledger Details
           </Button>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Edit Ledger Entry
-          </h1>
-          <p className="text-gray-600">Update the ledger entry information</p>
+          <div className="space-y-1">
+            <h1 className="text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl">
+              Edit Ledger Entry
+            </h1>
+            <p className="text-sm text-gray-600 sm:text-base">
+              Update the ledger entry information
+            </p>
+          </div>
         </div>
 
         <Card>

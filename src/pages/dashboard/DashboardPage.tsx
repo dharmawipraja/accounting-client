@@ -76,21 +76,21 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-surface">
-      <main className="container px-4 py-8 mx-auto space-y-8 sm:px-6 lg:px-8">
+      <main className="container px-3 py-4 mx-auto space-y-6 sm:px-6 sm:py-8 sm:space-y-8 lg:px-8">
         {/* Welcome Section */}
-        <div className="space-y-4 text-center animate-fade-in-scale">
-          <h1 className="text-4xl font-bold text-foreground">
+        <div className="space-y-3 text-center animate-fade-in-scale sm:space-y-4">
+          <h1 className="text-2xl font-bold text-foreground sm:text-3xl lg:text-4xl">
             Welcome back, {user.name}! 👋
           </h1>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-base text-muted-foreground sm:text-lg">
             Manage your accounting operations with ease
           </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 animate-slide-in-up">
+        <div className="grid grid-cols-1 gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-4 animate-slide-in-up">
           <Card className="dashboard-card group">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
@@ -113,7 +113,7 @@ export const DashboardPage: React.FC = () => {
           </Card>
 
           <Card className="dashboard-card group">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
@@ -136,7 +136,7 @@ export const DashboardPage: React.FC = () => {
           </Card>
 
           <Card className="dashboard-card group">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
@@ -159,7 +159,7 @@ export const DashboardPage: React.FC = () => {
           </Card>
 
           <Card className="dashboard-card group">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
