@@ -162,3 +162,13 @@ export const canManageLedgers = (userRole?: UserRole): boolean => {
     userRole === 'ADMIN' || userRole === 'MANAJER' || userRole === 'AKUNTAN'
   )
 }
+
+/**
+ * Check if user can access reports
+ */
+export const canAccessReports = (userRole?: UserRole): boolean => {
+  if (!userRole) return false
+  return (
+    userRole === 'ADMIN' || userRole === 'MANAJER' || userRole === 'AKUNTAN'
+  )
+}
