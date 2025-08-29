@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
@@ -36,6 +37,11 @@ import { Route as UsersIdIndexWithLoaderRouteImport } from './routes/users/$id/i
 import { Route as AccountsGeneralIdEditRouteImport } from './routes/accounts/general/$id/edit'
 import { Route as AccountsDetailIdEditRouteImport } from './routes/accounts/detail/$id/edit'
 
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -170,6 +176,7 @@ const AccountsDetailIdEditRoute = AccountsDetailIdEditRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/reports': typeof ReportsRoute
   '/auth/login': typeof AuthLoginRoute
   '/ledgers/kas': typeof LedgersKasRoute
   '/ledgers/kas-keluar': typeof LedgersKasKeluarRoute
@@ -198,6 +205,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/reports': typeof ReportsRoute
   '/auth/login': typeof AuthLoginRoute
   '/ledgers/kas': typeof LedgersKasRoute
   '/ledgers/kas-keluar': typeof LedgersKasKeluarRoute
@@ -227,6 +235,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/reports': typeof ReportsRoute
   '/auth/login': typeof AuthLoginRoute
   '/ledgers/kas': typeof LedgersKasRoute
   '/ledgers/kas-keluar': typeof LedgersKasKeluarRoute
@@ -257,6 +266,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/reports'
     | '/auth/login'
     | '/ledgers/kas'
     | '/ledgers/kas-keluar'
@@ -285,6 +295,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/dashboard'
+    | '/reports'
     | '/auth/login'
     | '/ledgers/kas'
     | '/ledgers/kas-keluar'
@@ -313,6 +324,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/dashboard'
+    | '/reports'
     | '/auth/login'
     | '/ledgers/kas'
     | '/ledgers/kas-keluar'
@@ -342,6 +354,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
+  ReportsRoute: typeof ReportsRoute
   AuthLoginRoute: typeof AuthLoginRoute
   LedgersKasRoute: typeof LedgersKasRoute
   LedgersKasKeluarRoute: typeof LedgersKasKeluarRoute
@@ -370,6 +383,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -558,6 +578,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
+  ReportsRoute: ReportsRoute,
   AuthLoginRoute: AuthLoginRoute,
   LedgersKasRoute: LedgersKasRoute,
   LedgersKasKeluarRoute: LedgersKasKeluarRoute,
