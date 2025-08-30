@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select'
 import { SubmitOverlay } from '@/components/ui/submit-overlay'
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslation } from '@/hooks/useTranslation'
 import {
   useCreateUserMutation,
   useUpdateUserMutation,
@@ -53,6 +54,7 @@ interface UserFormProps {
 export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
   const isEditing = !!user
   const { user: currentUser } = useAuth()
+  const { t } = useTranslation()
 
   const createUserMutation = useCreateUserMutation()
   const updateUserMutation = useUpdateUserMutation()
@@ -74,14 +76,14 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
         const payload = { ...data }
         // Remove password field if editing and password is empty
         if (!data.password) {
-          delete payload.password
+          delete (payload as any).password
         }
         await updateUserMutation.mutateAsync({ id: user.id, payload })
       } else {
         // Ensure password is provided for creation
         if (!data.password) {
           form.setError('password', {
-            message: 'Password is required for new users',
+            message: t('users.passwordRequired'),
           })
           return
         }
@@ -89,7 +91,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       }
       onSuccess?.()
     } catch {
-      toast.error('Failed to save user')
+      toast.error(t('users.failedToSave'))
     }
   }
 
@@ -112,7 +114,9 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       <Card>
         <CardHeader>
           <CardTitle>
-            {isEditing ? `Edit User: ${user.name}` : 'Create New User'}
+            {isEditing
+              ? t('users.editUser', { name: user.name })
+              : t('users.createNew')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -127,10 +131,10 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                   name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Username</FormLabel>
+                      <FormLabel>{t('users.username')}</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter username"
+                          placeholder={t('users.enterUsername')}
                           {...field}
                           disabled={isLoading}
                         />
@@ -145,10 +149,10 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Full Name</FormLabel>
+                      <FormLabel>{t('users.fullName')}</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter full name"
+                          placeholder={t('users.enterFullName')}
                           {...field}
                           disabled={isLoading}
                         />
@@ -165,7 +169,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                   name="role"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Role</FormLabel>
+                      <FormLabel>{t('common.role')}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -173,7 +177,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a role" />
+                            <SelectValue placeholder={t('users.selectRole')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -194,7 +198,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                   name="status"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Status</FormLabel>
+                      <FormLabel>{t('common.status')}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -202,12 +206,18 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select status" />
+                            <SelectValue
+                              placeholder={t('users.selectStatus')}
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="ACTIVE">Active</SelectItem>
-                          <SelectItem value="INACTIVE">Inactive</SelectItem>
+                          <SelectItem value="ACTIVE">
+                            {t('common.active')}
+                          </SelectItem>
+                          <SelectItem value="INACTIVE">
+                            {t('common.inactive')}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -222,17 +232,15 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {isEditing
-                        ? 'New Password (leave blank to keep current)'
-                        : 'Password'}
+                      {isEditing ? t('users.newPassword') : t('users.password')}
                     </FormLabel>
                     <FormControl>
                       <Input
                         type="password"
                         placeholder={
                           isEditing
-                            ? 'Leave blank to keep current password'
-                            : 'Enter password'
+                            ? t('users.leaveBlankToKeep')
+                            : t('users.enterPassword')
                         }
                         {...field}
                         disabled={isLoading}
@@ -250,17 +258,17 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                   onClick={onCancel}
                   disabled={isLoading}
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button type="submit" disabled={isLoading}>
                   {isLoading && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   {isLoading
-                    ? 'Saving...'
+                    ? t('users.saving')
                     : isEditing
-                      ? 'Update User'
-                      : 'Create User'}
+                      ? t('users.updateUser')
+                      : t('users.createUser')}
                 </Button>
               </div>
             </form>
@@ -271,7 +279,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       {/* Submit overlay for form submission */}
       <SubmitOverlay
         isVisible={isLoading}
-        message={isEditing ? 'Updating user...' : 'Creating user...'}
+        message={isEditing ? t('users.updating') : t('users.creating')}
       />
     </>
   )

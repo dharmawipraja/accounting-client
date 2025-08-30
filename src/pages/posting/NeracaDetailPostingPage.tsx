@@ -13,6 +13,7 @@ import {
   usePostNeracaDetailMutation,
   useUnpostNeracaDetailMutation,
 } from '@/hooks/usePostingQuery'
+import { useTranslation } from '@/hooks/useTranslation'
 // import type { NeracaDetailFormData } from '@/types/posting'
 import { getCurrentDateForAPI } from '@/utils/date'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -39,6 +40,7 @@ const formatDateForAPI = (isoDate: string): string => {
 
 export function NeracaDetailPostingPage() {
   const router = useRouter()
+  const { t } = useTranslation()
   const postMutation = usePostNeracaDetailMutation()
   const unpostMutation = useUnpostNeracaDetailMutation()
 
@@ -54,10 +56,11 @@ export function NeracaDetailPostingPage() {
       await postMutation.mutateAsync({
         date: formatDateForAPI(data.date),
       })
-      toast.success('Neraca Detail posted successfully!')
+      toast.success(t('posting.neracaDetailPosting.successPost'))
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || 'Failed to post Neraca Detail',
+        error?.response?.data?.message ||
+          t('posting.neracaDetailPosting.errorPost'),
       )
     }
   }
@@ -67,10 +70,11 @@ export function NeracaDetailPostingPage() {
       await unpostMutation.mutateAsync({
         date: formatDateForAPI(data.date),
       })
-      toast.success('Neraca Detail unposted successfully!')
+      toast.success(t('posting.neracaDetailPosting.successUnpost'))
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || 'Failed to unpost Neraca Detail',
+        error?.response?.data?.message ||
+          t('posting.neracaDetailPosting.errorUnpost'),
       )
     }
   }
@@ -88,15 +92,17 @@ export function NeracaDetailPostingPage() {
           className="flex items-center gap-2 self-start md:hidden"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Posting
+          {t('posting.backToPosting')}
         </Button>
         <div className="space-y-1">
           <h1 className="flex items-center gap-2 text-xl font-bold text-gray-900 sm:gap-3 sm:text-2xl lg:text-3xl">
             <BarChart3 className="w-6 h-6 text-green-600 sm:w-7 sm:h-7 lg:w-8 lg:h-8" />
-            <span className="leading-tight">Neraca Detail Posting</span>
+            <span className="leading-tight">
+              {t('posting.neracaDetailPosting.title')}
+            </span>
           </h1>
           <p className="text-sm text-gray-600 sm:text-base">
-            Post detailed balance sheet information
+            {t('posting.neracaDetailPosting.subtitle')}
           </p>
         </div>
       </div>
@@ -105,9 +111,9 @@ export function NeracaDetailPostingPage() {
         {/* Posting Form */}
         <Card>
           <CardHeader>
-            <CardTitle>Post Neraca Detail</CardTitle>
+            <CardTitle>{t('posting.neracaDetailPosting.postButton')}</CardTitle>
             <CardDescription>
-              Post detailed balance sheet with account-level breakdowns
+              {t('posting.neracaDetailPosting.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -116,7 +122,7 @@ export function NeracaDetailPostingPage() {
               className="space-y-4"
             >
               <div className="space-y-2">
-                <Label htmlFor="date">Posting Date</Label>
+                <Label htmlFor="date">{t('posting.postingDate')}</Label>
                 <div className="relative">
                   <Calendar className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <Input
@@ -139,7 +145,7 @@ export function NeracaDetailPostingPage() {
                   {postMutation.isPending ? (
                     <LoadingState size="sm" />
                   ) : (
-                    'Post Neraca Detail'
+                    t('posting.neracaDetailPosting.postButton')
                   )}
                 </Button>
 
@@ -153,7 +159,7 @@ export function NeracaDetailPostingPage() {
                   {unpostMutation.isPending ? (
                     <LoadingState size="sm" />
                   ) : (
-                    'Unpost Neraca Detail'
+                    t('posting.neracaDetailPosting.unpostButton')
                   )}
                 </Button>
               </div>
@@ -166,48 +172,48 @@ export function NeracaDetailPostingPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-amber-500" />
-              Operation Information
+              {t('posting.neracaDetailPosting.operationInfo')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-3">
               <h4 className="font-medium text-gray-900">
-                What is Neraca Detail Posting?
+                {t('posting.neracaDetailPosting.whatIs')}
               </h4>
               <p className="text-sm text-gray-600">
-                Neraca Detail posting creates a detailed balance sheet that
-                shows account-level breakdowns for assets, liabilities, and
-                equity accounts.
+                {t('posting.neracaDetailPosting.explanation')}
               </p>
             </div>
 
             <div className="space-y-3">
               <h4 className="font-medium text-gray-900">
-                What happens during posting?
+                {t('posting.bukuBesarPosting.whatHappens')}
               </h4>
               <ul className="space-y-1 text-sm text-gray-600">
-                <li>• Detailed account balances are calculated and recorded</li>
-                <li>• Sub-account totals are aggregated to parent accounts</li>
-                <li>• Balance sheet structure is validated for completeness</li>
-                <li>• Detailed balance report becomes available for review</li>
+                <li>• {t('posting.neracaDetailPosting.step1')}</li>
+                <li>• {t('posting.neracaDetailPosting.step2')}</li>
+                <li>• {t('posting.neracaDetailPosting.step3')}</li>
+                <li>• {t('posting.neracaDetailPosting.step4')}</li>
               </ul>
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">Prerequisites</h4>
+              <h4 className="font-medium text-gray-900">
+                {t('posting.neracaDetailPosting.prerequisites')}
+              </h4>
               <ul className="space-y-1 text-sm text-gray-600">
-                <li>• Buku Besar must be posted for the same date</li>
-                <li>• All account detail entries should be complete</li>
-                <li>• Account hierarchies should be properly structured</li>
+                <li>• {t('posting.neracaDetailPosting.prereq1')}</li>
+                <li>• {t('posting.neracaDetailPosting.prereq2')}</li>
+                <li>• {t('posting.neracaDetailPosting.prereq3')}</li>
               </ul>
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">When to use Unpost?</h4>
+              <h4 className="font-medium text-gray-900">
+                {t('posting.bukuBesarPosting.whenUnpost')}
+              </h4>
               <p className="text-sm text-gray-600">
-                Unposting removes the detailed balance sheet and returns
-                accounts to their pre-posting state. Use this if account
-                structures need adjustment.
+                {t('posting.neracaDetailPosting.unpostExplanation')}
               </p>
             </div>
 
@@ -215,12 +221,11 @@ export function NeracaDetailPostingPage() {
               <div className="flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-blue-600" />
                 <span className="font-medium text-blue-800">
-                  Processing Order
+                  {t('posting.neracaDetailPosting.processingOrder')}
                 </span>
               </div>
               <p className="mt-1 text-sm text-blue-700">
-                This should be performed after Buku Besar posting and before
-                Neraca Balance posting for proper sequence.
+                {t('posting.neracaDetailPosting.orderNote')}
               </p>
             </div>
           </CardContent>

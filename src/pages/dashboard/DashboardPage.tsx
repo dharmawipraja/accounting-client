@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/card'
 import { APP_CONFIG } from '@/constants'
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslation } from '@/hooks/useTranslation'
 import { getRoleDisplayName } from '@/utils/auth'
 import {
   Activity,
@@ -26,6 +27,7 @@ import React from 'react'
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth()
+  const { t } = useTranslation()
 
   if (!user) {
     return (
@@ -41,32 +43,32 @@ export const DashboardPage: React.FC = () => {
 
   const quickActions = [
     {
-      title: 'Users',
-      description: 'Manage user accounts',
+      title: t('navigation.users'),
+      description: t('dashboard.manageUserAccounts'),
       icon: Users,
       href: '/users',
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
     },
     {
-      title: 'Accounts',
-      description: 'Manage chart of accounts',
+      title: t('navigation.accounts'),
+      description: t('dashboard.manageChartOfAccounts'),
       icon: FolderOpen,
       href: '/accounts/general',
       color: 'text-green-600',
       bgColor: 'bg-green-50',
     },
     {
-      title: 'Ledgers',
-      description: 'View transaction ledgers',
+      title: t('navigation.ledgers'),
+      description: t('dashboard.viewTransactionLedgers'),
       icon: BookOpen,
       href: '/ledgers',
       color: 'text-purple-600',
       bgColor: 'bg-purple-50',
     },
     {
-      title: 'Reports',
-      description: 'Generate financial reports',
+      title: t('navigation.reports'),
+      description: t('dashboard.generateFinancialReports'),
       icon: BarChart3,
       href: '/reports',
       color: 'text-orange-600',
@@ -80,10 +82,10 @@ export const DashboardPage: React.FC = () => {
         {/* Welcome Section */}
         <div className="space-y-3 text-center animate-fade-in-scale sm:space-y-4">
           <h1 className="text-2xl font-bold text-foreground sm:text-3xl lg:text-4xl">
-            Welcome back, {user.name}! 👋
+            {t('dashboard.welcome', { name: user.name })}
           </h1>
           <p className="text-base text-muted-foreground sm:text-lg">
-            Manage your accounting operations with ease
+            {t('app.tagline')}
           </p>
         </div>
 
@@ -94,7 +96,7 @@ export const DashboardPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Total Users
+                    {t('dashboard.totalUsers')}
                   </p>
                   <p className="text-2xl font-bold">24</p>
                 </div>
@@ -106,7 +108,7 @@ export const DashboardPage: React.FC = () => {
                 <TrendingUp className="w-4 h-4 mr-1 text-green-500" />
                 <span className="text-green-500">+12%</span>
                 <span className="ml-1 text-muted-foreground">
-                  from last month
+                  {t('dashboard.fromLastMonth')}
                 </span>
               </div>
             </CardContent>
@@ -117,7 +119,7 @@ export const DashboardPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Active Accounts
+                    {t('dashboard.activeAccounts')}
                   </p>
                   <p className="text-2xl font-bold">156</p>
                 </div>
@@ -129,7 +131,7 @@ export const DashboardPage: React.FC = () => {
                 <TrendingUp className="w-4 h-4 mr-1 text-green-500" />
                 <span className="text-green-500">+5%</span>
                 <span className="ml-1 text-muted-foreground">
-                  from last month
+                  {t('dashboard.fromLastMonth')}
                 </span>
               </div>
             </CardContent>
@@ -140,7 +142,7 @@ export const DashboardPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Monthly Transactions
+                    {t('dashboard.monthlyTransactions')}
                   </p>
                   <p className="text-2xl font-bold">1,247</p>
                 </div>
@@ -152,7 +154,7 @@ export const DashboardPage: React.FC = () => {
                 <TrendingUp className="w-4 h-4 mr-1 text-green-500" />
                 <span className="text-green-500">+18%</span>
                 <span className="ml-1 text-muted-foreground">
-                  from last month
+                  {t('dashboard.fromLastMonth')}
                 </span>
               </div>
             </CardContent>
@@ -163,7 +165,7 @@ export const DashboardPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    System Health
+                    {t('dashboard.systemHealth')}
                   </p>
                   <p className="text-2xl font-bold">99.9%</p>
                 </div>
@@ -174,7 +176,7 @@ export const DashboardPage: React.FC = () => {
               <div className="flex items-center mt-2 text-sm">
                 <div className="w-2 h-2 mr-2 bg-green-500 rounded-full"></div>
                 <span className="text-muted-foreground">
-                  All systems operational
+                  {t('dashboard.allSystemsOperational')}
                 </span>
               </div>
             </CardContent>
@@ -187,7 +189,7 @@ export const DashboardPage: React.FC = () => {
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center space-x-2">
                 <User className="w-5 h-5 text-primary" />
-                <span>Profile Information</span>
+                <span>{t('dashboard.profileInformation')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -203,7 +205,9 @@ export const DashboardPage: React.FC = () => {
 
               <div className="pt-4 space-y-3 border-t border-border/50">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Role</span>
+                  <span className="text-sm text-muted-foreground">
+                    {t('dashboard.role')}
+                  </span>
                   <div className="flex items-center space-x-2">
                     <Shield className="w-4 h-4 text-primary" />
                     <span className="font-medium">
@@ -214,7 +218,7 @@ export const DashboardPage: React.FC = () => {
                 {user.status && (
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">
-                      Status
+                      {t('dashboard.status')}
                     </span>
                     <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">
                       {user.status}
@@ -228,8 +232,10 @@ export const DashboardPage: React.FC = () => {
           {/* Quick Actions */}
           <Card className="dashboard-card animate-slide-in-up [animation-delay:0.2s]">
             <CardHeader className="pb-4">
-              <CardTitle>Quick Actions</CardTitle>
-              <CardDescription>Access frequently used features</CardDescription>
+              <CardTitle>{t('dashboard.quickActions')}</CardTitle>
+              <CardDescription>
+                {t('dashboard.accessFrequentlyUsed')}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-3">
@@ -266,35 +272,43 @@ export const DashboardPage: React.FC = () => {
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center space-x-2">
                 <Globe className="w-5 h-5 text-primary" />
-                <span>System Information</span>
+                <span>{t('dashboard.systemInformation')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
-                    Environment
+                    {t('dashboard.environment')}
                   </span>
                   <span className="font-medium">{APP_CONFIG.ENVIRONMENT}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Version</span>
+                  <span className="text-sm text-muted-foreground">
+                    {t('dashboard.version')}
+                  </span>
                   <span className="font-medium">{APP_CONFIG.VERSION}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Status</span>
+                  <span className="text-sm text-muted-foreground">
+                    {t('common.status')}
+                  </span>
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="font-medium text-green-600">Online</span>
+                    <span className="font-medium text-green-600">
+                      {t('dashboard.online')}
+                    </span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
-                    Last Updated
+                    {t('dashboard.lastUpdated')}
                   </span>
                   <div className="flex items-center space-x-1 text-muted-foreground">
                     <Clock className="w-3 h-3" />
-                    <span className="text-sm">2 hours ago</span>
+                    <span className="text-sm">
+                      {t('dashboard.timeAgo.hoursAgo', { count: 2 })}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -1,0 +1,556 @@
+{
+  "app": {
+    "name": "PRSM Accounting",
+    "tagline": "Manage your accounting operations with ease"
+  },
+  "auth": {
+    "login": "Sign In",
+    "logout": "Sign Out",
+    "signOut": "Sign out of your account",
+    "loginPage": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to your account",
+      "username": "Username",
+      "password": "Password",
+      "submit": "Sign In",
+      "error": "Invalid credentials"
+    }
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "accounts": "Accounts",
+    "ledgers": "Ledgers",
+    "posting": "Posting",
+    "reports": "Reports",
+    "generalAccounts": "General Accounts",
+    "detailAccounts": "Detail Accounts",
+    "createGeneralAccount": "Create General Account",
+    "createDetailAccount": "Create Detail Account",
+    "viewAllLedgers": "View All Ledgers",
+    "createKas": "Create Kas",
+    "postingDashboard": "Posting Dashboard",
+    "bukuBesarPosting": "Buku Besar Posting",
+    "neracaDetailPosting": "Neraca Detail Posting",
+    "neracaBalancePosting": "Neraca Balance Posting",
+    "neracaAkhirPosting": "Neraca Akhir Posting"
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {{name}}! 👋",
+    "totalUsers": "Total Users",
+    "activeAccounts": "Active Accounts",
+    "monthlyTransactions": "Monthly Transactions",
+    "systemHealth": "System Health",
+    "fromLastMonth": "from last month",
+    "allSystemsOperational": "All systems operational",
+    "profileInformation": "Profile Information",
+    "role": "Role",
+    "status": "Status",
+    "quickActions": "Quick Actions",
+    "accessFrequentlyUsed": "Access frequently used features",
+    "manageUserAccounts": "Manage user accounts",
+    "manageChartOfAccounts": "Manage chart of accounts",
+    "viewTransactionLedgers": "View transaction ledgers",
+    "generateFinancialReports": "Generate financial reports",
+    "systemInformation": "System Information",
+    "environment": "Environment",
+    "version": "Version",
+    "online": "Online",
+    "lastUpdated": "Last Updated",
+    "hoursAgo": "hours ago",
+    "lastLogin": "Last login: {{date}}",
+    "recentActivity": "Recent Activity",
+    "overviewRecentActions": "Overview of your recent actions in the system",
+    "activities": {
+      "createdUserAccount": "Created new user account",
+      "updatedAccountSettings": "Updated general account settings",
+      "generatedMonthlyReport": "Generated monthly report",
+      "addedLedgerEntry": "Added new ledger entry"
+    },
+    "timeAgo": {
+      "hoursAgo": "{{count}} hours ago",
+      "daysAgo": "{{count}} days ago"
+    }
+  },
+  "accounts": {
+    "general": "General Accounts",
+    "detail": "Detail Accounts",
+    "accountNumber": "Account Number",
+    "accountName": "Account Name",
+    "accountCategory": "Account Category",
+    "reportType": "Report Type",
+    "transactionType": "Transaction Type",
+    "creditAmount": "Credit Amount",
+    "debitAmount": "Debit Amount",
+    "categories": {
+      "ASSET": "Asset",
+      "HUTANG": "Hutang",
+      "MODAL": "Modal",
+      "PENDAPATAN": "Pendapatan",
+      "BIAYA": "Biaya"
+    },
+    "reportTypes": {
+      "NERACA": "Neraca",
+      "LABA_RUGI": "Laba Rugi"
+    },
+    "transactionTypes": {
+      "DEBIT": "Debit",
+      "CREDIT": "Credit"
+    },
+    "form": {
+      "create": "Create",
+      "edit": "Edit",
+      "generalAccount": "General Account",
+      "detailAccount": "Detail Account",
+      "createNew": "Create a new {{type}} for your chart of accounts",
+      "updateInfo": "Update the {{type}} information",
+      "accountInformation": "Account Information",
+      "fillDetails": "Fill in the details for the {{type}}",
+      "required": "*",
+      "placeholder": {
+        "accountNumber": "e.g., 1001",
+        "accountName": "e.g., Kas",
+        "selectCategory": "Select category",
+        "selectReportType": "Select report type",
+        "selectTransactionType": "Select transaction type"
+      },
+      "accountClassification": "Account Classification",
+      "balanceInformation": "Balance Information",
+      "cancel": "Cancel",
+      "save": "Save",
+      "creating": "Creating...",
+      "updating": "Updating...",
+      "createAccount": "Create Account",
+      "updateAccount": "Update Account",
+      "backTo": "Back to {{type}}"
+    },
+    "validation": {
+      "accountNumberRequired": "Account number is required",
+      "accountNumberLength": "Account number must not exceed 20 characters",
+      "accountNumberFormat": "Account number can only contain numbers and hyphens",
+      "accountNameRequired": "Account name must be at least 3 characters",
+      "accountNameLength": "Account name must not exceed 100 characters",
+      "creditAmountValid": "Credit amount must be a valid non-negative number",
+      "debitAmountValid": "Debit amount must be a valid non-negative number"
+    },
+    "messages": {
+      "generalCreated": "General account created successfully",
+      "generalUpdated": "General account updated successfully",
+      "detailCreated": "Detail account created successfully",
+      "detailUpdated": "Detail account updated successfully",
+      "createFailed": "Failed to create {{type}}",
+      "updateFailed": "Failed to update {{type}}"
+    }
+  },
+  "reports": {
+    "title": "Generate Reports",
+    "subtitle": "Generate comprehensive account reports in PDF or Excel format",
+    "configuration": "Report Configuration",
+    "configureSettings": "Configure your account report settings and generate the file",
+    "reportType": "Report Type",
+    "fileFormat": "File Format",
+    "types": {
+      "neracaDetail": {
+        "title": "Neraca Detail",
+        "description": "Only get data from account detail with ReportType NERACA"
+      },
+      "neraca": {
+        "title": "Neraca",
+        "description": "Only get data from account general with ReportType NERACA"
+      },
+      "penjelasanNeraca": {
+        "title": "Penjelasan Neraca",
+        "description": "Combine both data from account general and account detail with ReportType NERACA"
+      }
+    },
+    "formats": {
+      "pdf": {
+        "label": "PDF Document",
+        "description": "Portable Document Format"
+      },
+      "xlsx": {
+        "label": "Excel Spreadsheet",
+        "description": "Microsoft Excel Format"
+      }
+    },
+    "preview": "Report Preview",
+    "type": "Type",
+    "format": "Format",
+    "filename": "Filename",
+    "notSelected": "Not selected",
+    "generate": "Generate Report",
+    "generating": "Generating...",
+    "selectTypeAndFormat": "Please select report type and format",
+    "generatedSuccessfully": "{{format}} report generated successfully!",
+    "generateFailed": "Failed to generate report. Please try again.",
+    "information": "Report Information",
+    "neracaDetailInfo": "Only includes account detail data with ReportType NERACA, showing detailed balance sheet account information.",
+    "neracaInfo": "Only includes account general data with ReportType NERACA, showing main balance sheet account structure.",
+    "penjelasanNeracaInfo": "Combines both account general and detail data with ReportType NERACA, providing comprehensive balance sheet overview."
+  },
+  "user": {
+    "profile": "Profile",
+    "profileSettings": "Profile Settings",
+    "manageYourAccount": "Manage your account",
+    "preferences": "Preferences",
+    "appSettings": "App settings & preferences",
+    "welcomeBack": "Welcome back to PRSM",
+    "comingSoon": {
+      "profileSettings": "Profile settings coming soon!",
+      "appPreferences": "App preferences coming soon!"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "role": "Role",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "create": "Create",
+    "update": "Update",
+    "search": "Search",
+    "filter": "Filter",
+    "actions": "Actions",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "select": "Select",
+    "selectAll": "Select All",
+    "clear": "Clear",
+    "download": "Download",
+    "upload": "Upload",
+    "submit": "Submit",
+    "reset": "Reset",
+    "refresh": "Refresh",
+    "view": "View",
+    "add": "Add",
+    "remove": "Remove",
+    "required": "Required",
+    "optional": "Optional",
+    "pleaseWait": "Please wait"
+  },
+  "validation": {
+    "required": "This field is required",
+    "minLength": "Must be at least {{min}} characters",
+    "maxLength": "Must not exceed {{max}} characters",
+    "email": "Must be a valid email address",
+    "number": "Must be a valid number",
+    "positive": "Must be a positive number",
+    "nonNegative": "Must be a non-negative number"
+  },
+  "table": {
+    "noData": "No data available",
+    "loading": "Loading data...",
+    "error": "Error loading data",
+    "rowsPerPage": "Rows per page",
+    "of": "of",
+    "page": "Page",
+    "firstPage": "First page",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "lastPage": "Last page"
+  },
+  "users": {
+    "title": "User Management",
+    "subtitle": "Manage system users and their roles",
+    "createNew": "Create New User",
+    "editUser": "Edit User: {{name}}",
+    "username": "Username",
+    "fullName": "Full Name",
+    "password": "Password",
+    "newPassword": "New Password (leave blank to keep current)",
+    "enterUsername": "Enter username",
+    "enterFullName": "Enter full name",
+    "enterPassword": "Enter password",
+    "leaveBlankToKeep": "Leave blank to keep current password",
+    "selectRole": "Select a role",
+    "selectStatus": "Select status",
+    "saving": "Saving...",
+    "creating": "Creating user...",
+    "updating": "Updating user...",
+    "updateUser": "Update User",
+    "createUser": "Create User",
+    "failedToSave": "Failed to save user",
+    "passwordRequired": "Password is required for new users",
+    "actions": "Actions",
+    "viewDetails": "View Details",
+    "deleteUser": "Delete User",
+    "searchUsers": "Search users...",
+    "totalUsers": "Total Users",
+    "activeUsers": "Active Users",
+    "roles": {
+      "ADMIN": "Administrator",
+      "MANAJER": "Manager",
+      "AKUNTAN": "Accountant",
+      "KASIR": "Cashier",
+      "KOLEKTOR": "Collector",
+      "NASABAH": "Customer"
+    }
+  },
+  "ledgers": {
+    "title": "Ledger Management",
+    "subtitle": "Manage ledger entries and transactions",
+    "createBulk": "Create Bulk Entries",
+    "date": "Date",
+    "description": "Description",
+    "referenceNumber": "Reference Number",
+    "amount": "Amount",
+    "ledgerType": "Ledger Type",
+    "accountDetail": "Account Detail",
+    "accountGeneral": "Account General",
+    "selectAccountDetail": "Select account detail",
+    "selectLedgerType": "Select ledger type",
+    "enterDescription": "Enter description",
+    "addEntry": "Add Entry",
+    "removeEntry": "Remove Entry",
+    "balanced": "Balanced",
+    "unbalanced": "Unbalanced",
+    "totalCredit": "Total Credit",
+    "totalDebit": "Total Debit",
+    "difference": "Difference",
+    "backToLedgers": "Back to Ledgers",
+    "saveLedgers": "Save Ledgers",
+    "saving": "Saving...",
+    "balanceSummary": "Transaction Balance Summary",
+    "balanceStatus": "Balance Status",
+    "validation": {
+      "dateRequired": "Date is required",
+      "descriptionMin": "Description must be at least 3 characters",
+      "descriptionMax": "Description must not exceed 500 characters",
+      "accountDetailRequired": "Account detail is required",
+      "accountGeneralRequired": "Account general is required",
+      "amountGreaterThanZero": "Amount must be greater than 0",
+      "referenceRequired": "Reference number is required",
+      "referenceMax": "Reference number must not exceed 50 characters",
+      "minTwoEntries": "At least 2 entries are required for double-entry"
+    },
+    "types": {
+      "KAS_MASUK": "Cash In",
+      "KAS_KELUAR": "Cash Out"
+    }
+  },
+  "emptyState": {
+    "search": {
+      "title": "No search results",
+      "description": "Try adjusting your search terms or filters to find what you're looking for."
+    },
+    "create": {
+      "title": "Get started",
+      "description": "Create your first item to begin managing your data."
+    },
+    "filter": {
+      "title": "No items match your filters",
+      "description": "Try clearing some filters to see more results."
+    },
+    "data": {
+      "title": "No data available",
+      "description": "There are no items to display at the moment."
+    }
+  },
+  "errorState": {
+    "network": {
+      "title": "Connection Problem",
+      "message": "Please check your internet connection and try again."
+    },
+    "server": {
+      "title": "Server Error",
+      "message": "Something went wrong on our end. Please try again in a moment."
+    },
+    "notFound": {
+      "title": "Not Found",
+      "message": "The requested resource could not be found."
+    },
+    "generic": {
+      "title": "Something went wrong",
+      "message": "An unexpected error occurred. Please try again."
+    },
+    "retrying": "Retrying...",
+    "tryAgain": "Try Again"
+  },
+  "posting": {
+    "dashboard": "Posting Dashboard",
+    "bukuBesar": "General Ledger Posting",
+    "neracaDetail": "Balance Sheet Detail Posting",
+    "neracaBalance": "Balance Sheet Posting",
+    "neracaAkhir": "Final Balance Sheet Posting",
+    "title": "Posting Operations",
+    "subtitle": "Manage accounting period-end posting and closing procedures",
+    "accessDenied": "Access Denied",
+    "noPermission": "You don't have permission to access posting functionality.",
+    "pendingPosts": "Pending Posts",
+    "operationsAwaiting": "Operations awaiting execution",
+    "lastPosted": "Last Posted",
+    "mostRecentDate": "Most recent posting date",
+    "periodStatus": "Period Status",
+    "currentPeriod": "Current accounting period",
+    "open": "Open",
+    "accessOperation": "Access Operation",
+    "importantNotes": "Important Notes",
+    "sequenceNote": "Posting operations should be performed in sequence: Buku Besar → Neraca Detail → Neraca Balance → Neraca Akhir",
+    "verifyNote": "Always verify calculations before posting final balance sheets",
+    "unpostingNote": "Unposting operations reverse the effects of posting - use with caution",
+    "completenessNote": "Ensure all ledger entries are complete before beginning posting procedures",
+    "backToPosting": "Back to Posting",
+    "postingDate": "Posting Date",
+    "ledgerDate": "Ledger Date",
+    "periodEndDate": "Period End Date",
+    "bukuBesarPosting": {
+      "title": "Buku Besar Posting",
+      "subtitle": "Post general ledger entries for a specific date",
+      "description": "Post all pending ledger entries to the general ledger for the specified date",
+      "postButton": "Post Buku Besar",
+      "unpostButton": "Unpost Buku Besar",
+      "successPost": "Buku Besar posted successfully!",
+      "errorPost": "Failed to post Buku Besar",
+      "successUnpost": "Buku Besar unposted successfully!",
+      "errorUnpost": "Failed to unpost Buku Besar",
+      "operationInfo": "Operation Information",
+      "whatIs": "What is Buku Besar Posting?",
+      "explanation": "Buku Besar (General Ledger) posting transfers all pending ledger entries to the posted status, making them part of the official accounting records.",
+      "whatHappens": "What happens during posting?",
+      "step1": "All PENDING ledger entries for the date are marked as POSTED",
+      "step2": "Account balances are updated with the posted amounts",
+      "step3": "The posting timestamp is recorded for audit purposes",
+      "step4": "Posted entries become immutable and part of the official record",
+      "whenUnpost": "When to use Unpost?",
+      "unpostExplanation": "Unposting reverses the posting operation and returns entries to PENDING status. Use this only when corrections are needed before month-end closing.",
+      "importantWarning": "Important Warning",
+      "warning": "Always ensure all ledger entries are correct before posting. Unposting should be done carefully as it affects financial reporting."
+    },
+    "neracaDetailPosting": {
+      "title": "Neraca Detail Posting",
+      "subtitle": "Post detailed balance sheet information",
+      "description": "Post detailed balance sheet with account-level breakdowns",
+      "postButton": "Post Neraca Detail",
+      "unpostButton": "Unpost Neraca Detail",
+      "successPost": "Neraca Detail posted successfully!",
+      "errorPost": "Failed to post Neraca Detail",
+      "successUnpost": "Neraca Detail unposted successfully!",
+      "errorUnpost": "Failed to unpost Neraca Detail",
+      "whatIs": "What is Neraca Detail Posting?",
+      "explanation": "Neraca Detail posting creates a detailed balance sheet that shows account-level breakdowns for assets, liabilities, and equity accounts.",
+      "step1": "Detailed account balances are calculated and recorded",
+      "step2": "Sub-account totals are aggregated to parent accounts",
+      "step3": "Balance sheet structure is validated for completeness",
+      "step4": "Detailed balance report becomes available for review",
+      "prerequisites": "Prerequisites",
+      "prereq1": "Buku Besar must be posted for the same date",
+      "prereq2": "All account detail entries should be complete",
+      "prereq3": "Account hierarchies should be properly structured",
+      "unpostExplanation": "Unposting removes the detailed balance sheet and returns accounts to their pre-posting state. Use this if account structures need adjustment.",
+      "processingOrder": "Processing Order",
+      "orderNote": "This should be performed after Buku Besar posting and before Neraca Balance posting for proper sequence."
+    },
+    "neracaBalancePosting": {
+      "title": "Neraca Balance Posting",
+      "subtitle": "Calculate and post balance sheet with retained earnings (SHU)",
+      "description": "Post balance sheet with auto-calculated Sisa Hasil Usaha (SHU) amount",
+      "postButton": "Post Neraca Balance",
+      "successPost": "Neraca Balance posted successfully!",
+      "errorPost": "Failed to post Neraca Balance",
+      "shuAmount": "Sisa Hasil Usaha Amount (Auto-calculated)",
+      "autoCalculated": "Amount automatically set from balance calculation:",
+      "calculateFirst": "Please calculate the balance first to auto-populate this field.",
+      "calculateBalanceFirst": "Calculate Balance First",
+      "reminder": "Reminder",
+      "reminderText": "Ensure you have calculated and verified the balance before posting. The SHU amount will be automatically set from your calculation results."
+    },
+    "neracaAkhirPosting": {
+      "title": "Neraca Akhir Posting",
+      "subtitle": "Post final balance sheet for period-end closing",
+      "description": "Finalize the balance sheet for accounting period closure",
+      "postButton": "Post Neraca Akhir",
+      "successPost": "Neraca Akhir posted successfully!",
+      "errorPost": "Failed to post Neraca Akhir",
+      "finalStepWarning": "Final Step Warning",
+      "finalWarning": "This is the final step in the posting sequence. Once completed, the accounting period will be considered closed and locked.",
+      "whatIs": "What is Neraca Akhir Posting?",
+      "explanation": "Neraca Akhir (Final Balance Sheet) posting is the last step in the accounting period closure process. It creates the official final balance sheet that will be used for financial reporting.",
+      "step1": "Final balance sheet is generated and locked",
+      "step2": "All account balances are finalized for the period",
+      "step3": "Financial statements become officially reportable",
+      "step4": "Period closure is marked as complete",
+      "step5": "Audit trail is finalized for compliance",
+      "prereq1": "Buku Besar posting completed",
+      "prereq2": "Neraca Detail posting completed",
+      "prereq3": "Neraca Balance posting completed",
+      "prereq4": "All account reconciliations verified",
+      "prereq5": "Management approval for period closure",
+      "afterPosting": "After Posting",
+      "afterNote": "Once Neraca Akhir is posted, the accounting period is considered closed. Any subsequent adjustments will require special procedures and approvals.",
+      "periodClosure": "Period Closure",
+      "closureNote": "Ensure all previous posting steps are completed and verified before proceeding with this final posting operation.",
+      "bestPractice": "Best Practice",
+      "practiceNote": "Backup your database before performing final posting to ensure data recovery capability if needed."
+    },
+    "operations": {
+      "bukuBesar": {
+        "title": "Buku Besar Posting",
+        "description": "Post general ledger entries for a specific date"
+      },
+      "neracaDetail": {
+        "title": "Neraca Detail Posting",
+        "description": "Post detailed balance sheet information"
+      },
+      "neracaBalance": {
+        "title": "Neraca Balance Posting",
+        "description": "Post balance sheet with retained earnings (SHU)"
+      },
+      "neracaAkhir": {
+        "title": "Neraca Akhir Posting",
+        "description": "Post final balance sheet for period-end closing"
+      }
+    }
+  },
+  "ledgersList": {
+    "title": "Ledgers",
+    "subtitle": "Manage your ledger entries and transactions",
+    "createLedgerEntry": "Create Ledger Entry",
+    "searchAndFilter": "Search & Filter",
+    "searchDescription": "Search and filter ledger entries",
+    "search": "Search",
+    "searchPlaceholder": "Search description, reference...",
+    "ledgerType": "Ledger Type",
+    "postingStatus": "Posting Status",
+    "itemsPerPage": "Items per page",
+    "allTypes": "All types",
+    "allStatuses": "All statuses",
+    "pending": "Pending",
+    "posted": "Posted",
+    "ledgerEntries": "Ledger Entries",
+    "viewAndManage": "View and manage all ledger entries",
+    "total": "total",
+    "noEntriesFound": "No ledger entries found",
+    "noEntriesYet": "No ledger entries yet",
+    "adjustCriteria": "Try adjusting your search criteria or filters.",
+    "createFirstEntry": "Create your first ledger entry to get started.",
+    "reference": "Reference",
+    "description": "Description",
+    "amount": "Amount",
+    "type": "Type",
+    "transaction": "Transaction",
+    "date": "Date",
+    "account": "Account",
+    "cashIn": "Cash In",
+    "cashOut": "Cash Out",
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "entries": "entries",
+    "previous": "Previous",
+    "next": "Next",
+    "failedToLoad": "Failed to Load Ledgers",
+    "errorLoading": "There was an error loading the ledger entries. Please try again.",
+    "deleteConfirm": "Are you sure you want to delete the ledger entry \"{{description}}\"? This action cannot be undone."
+  }
+}

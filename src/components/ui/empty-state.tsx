@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { useTranslation } from '@/hooks/useTranslation'
 import { Database, FileX, PlusCircle, Search } from 'lucide-react'
 
 interface EmptyStateProps {
@@ -21,39 +22,39 @@ export function EmptyState({
   type = 'data',
   icon,
 }: EmptyStateProps) {
+  const { t } = useTranslation()
+
   const getEmptyConfig = () => {
     switch (type) {
       case 'search':
         return {
           icon: <Search className="h-16 w-16 text-gray-400" />,
-          defaultTitle: 'No search results',
-          defaultDescription:
-            "Try adjusting your search terms or filters to find what you're looking for.",
+          defaultTitle: t('emptyState.search.title'),
+          defaultDescription: t('emptyState.search.description'),
           bgColor: 'bg-blue-50',
           borderColor: 'border-blue-200',
         }
       case 'create':
         return {
           icon: <PlusCircle className="h-16 w-16 text-green-400" />,
-          defaultTitle: 'Get started',
-          defaultDescription:
-            'Create your first item to begin managing your data.',
+          defaultTitle: t('emptyState.create.title'),
+          defaultDescription: t('emptyState.create.description'),
           bgColor: 'bg-green-50',
           borderColor: 'border-green-200',
         }
       case 'filter':
         return {
           icon: <FileX className="h-16 w-16 text-orange-400" />,
-          defaultTitle: 'No items match your filters',
-          defaultDescription: 'Try clearing some filters to see more results.',
+          defaultTitle: t('emptyState.filter.title'),
+          defaultDescription: t('emptyState.filter.description'),
           bgColor: 'bg-orange-50',
           borderColor: 'border-orange-200',
         }
       default:
         return {
           icon: <Database className="h-16 w-16 text-gray-400" />,
-          defaultTitle: 'No data available',
-          defaultDescription: 'There are no items to display at the moment.',
+          defaultTitle: t('emptyState.data.title'),
+          defaultDescription: t('emptyState.data.description'),
           bgColor: 'bg-gray-50',
           borderColor: 'border-gray-200',
         }

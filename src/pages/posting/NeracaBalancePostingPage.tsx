@@ -13,6 +13,7 @@ import {
   useNeracaBalanceQuery,
   usePostNeracaBalanceMutation,
 } from '@/hooks/usePostingQuery'
+import { useTranslation } from '@/hooks/useTranslation'
 // import type { NeracaBalanceFormData } from '@/types/posting'
 import { formatCurrency } from '@/utils'
 import { getCurrentDateForAPI } from '@/utils/date'
@@ -42,6 +43,7 @@ const formatDateForAPI = (isoDate: string): string => {
 
 export function NeracaBalancePostingPage() {
   const router = useRouter()
+  const { t } = useTranslation()
 
   const postMutation = usePostNeracaBalanceMutation()
 
@@ -77,10 +79,11 @@ export function NeracaBalancePostingPage() {
         date: formatDateForAPI(data.date),
         sisaHasilUsahaAmount: data.sisaHasilUsahaAmount,
       })
-      toast.success('Neraca Balance posted successfully!')
+      toast.success(t('posting.neracaBalancePosting.successPost'))
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || 'Failed to post Neraca Balance',
+        error?.response?.data?.message ||
+          t('posting.neracaBalancePosting.errorPost'),
       )
     }
   }
@@ -98,15 +101,17 @@ export function NeracaBalancePostingPage() {
           className="flex items-center gap-2 self-start md:hidden"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Posting
+          {t('posting.backToPosting')}
         </Button>
         <div className="space-y-1">
           <h1 className="flex items-center gap-2 text-xl font-bold text-gray-900 sm:gap-3 sm:text-2xl lg:text-3xl">
             <Calculator className="w-6 h-6 text-purple-600 sm:w-7 sm:h-7 lg:w-8 lg:h-8" />
-            <span className="leading-tight">Neraca Balance Posting</span>
+            <span className="leading-tight">
+              {t('posting.neracaBalancePosting.title')}
+            </span>
           </h1>
           <p className="text-sm text-gray-600 sm:text-base">
-            Calculate and post balance sheet with retained earnings (SHU)
+            {t('posting.neracaBalancePosting.subtitle')}
           </p>
         </div>
       </div>
@@ -215,10 +220,11 @@ export function NeracaBalancePostingPage() {
         {/* Posting Form */}
         <Card>
           <CardHeader>
-            <CardTitle>Post Neraca Balance</CardTitle>
+            <CardTitle>
+              {t('posting.neracaBalancePosting.postButton')}
+            </CardTitle>
             <CardDescription>
-              Post balance sheet with auto-calculated Sisa Hasil Usaha (SHU)
-              amount
+              {t('posting.neracaBalancePosting.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -227,7 +233,7 @@ export function NeracaBalancePostingPage() {
               className="space-y-4"
             >
               <div className="space-y-2">
-                <Label htmlFor="date">Posting Date</Label>
+                <Label htmlFor="date">{t('posting.postingDate')}</Label>
                 <div className="relative">
                   <Calendar className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <Input
@@ -247,7 +253,7 @@ export function NeracaBalancePostingPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="sisaHasilUsahaAmount">
-                  Sisa Hasil Usaha Amount (Auto-calculated)
+                  {t('posting.neracaBalancePosting.shuAmount')}
                 </Label>
                 <div className="relative">
                   <Input
@@ -266,15 +272,14 @@ export function NeracaBalancePostingPage() {
                 )}
                 {balance?.calculationDetails ? (
                   <p className="text-sm text-green-600">
-                    Amount automatically set from balance calculation:{' '}
+                    {t('posting.neracaBalancePosting.autoCalculated')}{' '}
                     {formatCurrency(
                       parseFloat(balance.calculationDetails.sisaHasilUsaha),
                     )}
                   </p>
                 ) : (
                   <p className="text-sm text-orange-600">
-                    Please calculate the balance first to auto-populate this
-                    field.
+                    {t('posting.neracaBalancePosting.calculateFirst')}
                   </p>
                 )}
               </div>
@@ -289,9 +294,9 @@ export function NeracaBalancePostingPage() {
                 {postMutation.isPending ? (
                   <LoadingState size="sm" />
                 ) : !balance?.calculationDetails ? (
-                  'Calculate Balance First'
+                  t('posting.neracaBalancePosting.calculateBalanceFirst')
                 ) : (
-                  'Post Neraca Balance'
+                  t('posting.neracaBalancePosting.postButton')
                 )}
               </Button>
             </form>
@@ -299,12 +304,12 @@ export function NeracaBalancePostingPage() {
             <div className="p-4 border rounded-lg bg-amber-50 border-amber-200">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-600" />
-                <span className="font-medium text-amber-800">Reminder</span>
+                <span className="font-medium text-amber-800">
+                  {t('posting.neracaBalancePosting.reminder')}
+                </span>
               </div>
               <p className="mt-1 text-sm text-amber-700">
-                Ensure you have calculated and verified the balance before
-                posting. The SHU amount will be automatically set from your
-                calculation results.
+                {t('posting.neracaBalancePosting.reminderText')}
               </p>
             </div>
           </CardContent>

@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { LoadingState } from '@/components/ui/loading-state'
 import { usePostNeracaAkhirMutation } from '@/hooks/usePostingQuery'
+import { useTranslation } from '@/hooks/useTranslation'
 // import type { NeracaAkhirFormData } from '@/types/posting'
 import { getCurrentDateForAPI } from '@/utils/date'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -36,6 +37,7 @@ const formatDateForAPI = (isoDate: string): string => {
 
 export function NeracaAkhirPostingPage() {
   const router = useRouter()
+  const { t } = useTranslation()
   const postMutation = usePostNeracaAkhirMutation()
 
   const form = useForm<NeracaAkhirFormData>({
@@ -50,10 +52,11 @@ export function NeracaAkhirPostingPage() {
       await postMutation.mutateAsync({
         date: formatDateForAPI(data.date),
       })
-      toast.success('Neraca Akhir posted successfully!')
+      toast.success(t('posting.neracaAkhirPosting.successPost'))
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || 'Failed to post Neraca Akhir',
+        error?.response?.data?.message ||
+          t('posting.neracaAkhirPosting.errorPost'),
       )
     }
   }
@@ -71,15 +74,17 @@ export function NeracaAkhirPostingPage() {
           className="flex items-center gap-2 self-start md:hidden"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Posting
+          {t('posting.backToPosting')}
         </Button>
         <div className="space-y-1">
           <h1 className="flex items-center gap-2 text-xl font-bold text-gray-900 sm:gap-3 sm:text-2xl lg:text-3xl">
             <CheckCircle className="w-6 h-6 text-amber-600 sm:w-7 sm:h-7 lg:w-8 lg:h-8" />
-            <span className="leading-tight">Neraca Akhir Posting</span>
+            <span className="leading-tight">
+              {t('posting.neracaAkhirPosting.title')}
+            </span>
           </h1>
           <p className="text-sm text-gray-600 sm:text-base">
-            Post final balance sheet for period-end closing
+            {t('posting.neracaAkhirPosting.subtitle')}
           </p>
         </div>
       </div>
@@ -88,9 +93,9 @@ export function NeracaAkhirPostingPage() {
         {/* Posting Form */}
         <Card>
           <CardHeader>
-            <CardTitle>Post Neraca Akhir</CardTitle>
+            <CardTitle>{t('posting.neracaAkhirPosting.postButton')}</CardTitle>
             <CardDescription>
-              Finalize the balance sheet for accounting period closure
+              {t('posting.neracaAkhirPosting.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -99,7 +104,7 @@ export function NeracaAkhirPostingPage() {
               className="space-y-4"
             >
               <div className="space-y-2">
-                <Label htmlFor="date">Period End Date</Label>
+                <Label htmlFor="date">{t('posting.periodEndDate')}</Label>
                 <div className="relative">
                   <Calendar className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <Input
@@ -118,7 +123,11 @@ export function NeracaAkhirPostingPage() {
               </div>
 
               <Button type="submit" disabled={isLoading} className="w-full">
-                {isLoading ? <LoadingState size="sm" /> : 'Post Neraca Akhir'}
+                {isLoading ? (
+                  <LoadingState size="sm" />
+                ) : (
+                  t('posting.neracaAkhirPosting.postButton')
+                )}
               </Button>
             </form>
 
@@ -126,12 +135,11 @@ export function NeracaAkhirPostingPage() {
               <div className="flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-red-600" />
                 <span className="font-medium text-red-800">
-                  Final Step Warning
+                  {t('posting.neracaAkhirPosting.finalStepWarning')}
                 </span>
               </div>
               <p className="mt-1 text-sm text-red-700">
-                This is the final step in the posting sequence. Once completed,
-                the accounting period will be considered closed and locked.
+                {t('posting.neracaAkhirPosting.finalWarning')}
               </p>
             </div>
           </CardContent>
@@ -142,51 +150,51 @@ export function NeracaAkhirPostingPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-amber-500" />
-              Operation Information
+              {t('posting.bukuBesarPosting.operationInfo')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-3">
               <h4 className="font-medium text-gray-900">
-                What is Neraca Akhir Posting?
+                {t('posting.neracaAkhirPosting.whatIs')}
               </h4>
               <p className="text-sm text-gray-600">
-                Neraca Akhir (Final Balance Sheet) posting is the last step in
-                the accounting period closure process. It creates the official
-                final balance sheet that will be used for financial reporting.
+                {t('posting.neracaAkhirPosting.explanation')}
               </p>
             </div>
 
             <div className="space-y-3">
               <h4 className="font-medium text-gray-900">
-                What happens during posting?
+                {t('posting.bukuBesarPosting.whatHappens')}
               </h4>
               <ul className="space-y-1 text-sm text-gray-600">
-                <li>• Final balance sheet is generated and locked</li>
-                <li>• All account balances are finalized for the period</li>
-                <li>• Financial statements become officially reportable</li>
-                <li>• Period closure is marked as complete</li>
-                <li>• Audit trail is finalized for compliance</li>
+                <li>• {t('posting.neracaAkhirPosting.step1')}</li>
+                <li>• {t('posting.neracaAkhirPosting.step2')}</li>
+                <li>• {t('posting.neracaAkhirPosting.step3')}</li>
+                <li>• {t('posting.neracaAkhirPosting.step4')}</li>
+                <li>• {t('posting.neracaAkhirPosting.step5')}</li>
               </ul>
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">Prerequisites</h4>
+              <h4 className="font-medium text-gray-900">
+                {t('posting.neracaDetailPosting.prerequisites')}
+              </h4>
               <ul className="space-y-1 text-sm text-gray-600">
-                <li>• Buku Besar posting completed</li>
-                <li>• Neraca Detail posting completed</li>
-                <li>• Neraca Balance posting completed</li>
-                <li>• All account reconciliations verified</li>
-                <li>• Management approval for period closure</li>
+                <li>• {t('posting.neracaAkhirPosting.prereq1')}</li>
+                <li>• {t('posting.neracaAkhirPosting.prereq2')}</li>
+                <li>• {t('posting.neracaAkhirPosting.prereq3')}</li>
+                <li>• {t('posting.neracaAkhirPosting.prereq4')}</li>
+                <li>• {t('posting.neracaAkhirPosting.prereq5')}</li>
               </ul>
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">After Posting</h4>
+              <h4 className="font-medium text-gray-900">
+                {t('posting.neracaAkhirPosting.afterPosting')}
+              </h4>
               <p className="text-sm text-gray-600">
-                Once Neraca Akhir is posted, the accounting period is considered
-                closed. Any subsequent adjustments will require special
-                procedures and approvals.
+                {t('posting.neracaAkhirPosting.afterNote')}
               </p>
             </div>
 
@@ -194,12 +202,11 @@ export function NeracaAkhirPostingPage() {
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-amber-600" />
                 <span className="font-medium text-amber-800">
-                  Period Closure
+                  {t('posting.neracaAkhirPosting.periodClosure')}
                 </span>
               </div>
               <p className="mt-1 text-sm text-amber-700">
-                Ensure all previous posting steps are completed and verified
-                before proceeding with this final posting operation.
+                {t('posting.neracaAkhirPosting.closureNote')}
               </p>
             </div>
 
@@ -207,12 +214,11 @@ export function NeracaAkhirPostingPage() {
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-600" />
                 <span className="font-medium text-green-800">
-                  Best Practice
+                  {t('posting.neracaAkhirPosting.bestPractice')}
                 </span>
               </div>
               <p className="mt-1 text-sm text-green-700">
-                Backup your database before performing final posting to ensure
-                data recovery capability if needed.
+                {t('posting.neracaAkhirPosting.practiceNote')}
               </p>
             </div>
           </CardContent>

@@ -9,6 +9,9 @@ import { routeTree } from './routeTree.gen'
 import reportWebVitals from './reportWebVitals'
 import './styles.css'
 
+// Initialize i18n
+import './i18n/config'
+
 // Create a new router instance
 const router = createRouter({
   routeTree,

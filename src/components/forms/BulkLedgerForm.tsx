@@ -21,6 +21,7 @@ import { Textarea } from '@/components/ui/textarea'
 
 import { useAccountsDetailQuery } from '@/hooks/useAccountsQuery'
 import { useCreateBulkLedgersMutation } from '@/hooks/useLedgersQuery'
+import { useTranslation } from '@/hooks/useTranslation'
 import type { CreateBulkLedgersPayload } from '@/types/payloads'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from '@tanstack/react-router'
@@ -39,6 +40,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 
 // Individual ledger entry schema (matching API LedgerItem interface)
+// Note: Validation messages will be translated dynamically in the form
 const ledgerEntrySchema = z.object({
   ledgerDate: z.string().min(1, 'Date is required'),
   description: z
@@ -66,18 +68,20 @@ const bulkLedgerFormSchema = z.object({
 
 type BulkLedgerFormData = z.infer<typeof bulkLedgerFormSchema>
 
+// These will be translated dynamically
 const transactionTypeOptions = [
-  { value: 'DEBIT', label: 'Debit' },
-  { value: 'CREDIT', label: 'Credit' },
+  { value: 'DEBIT', labelKey: 'accounts.transactionTypes.DEBIT' },
+  { value: 'CREDIT', labelKey: 'accounts.transactionTypes.CREDIT' },
 ] as const
 
 const ledgerTypeOptions = [
-  { value: 'KAS_MASUK', label: 'Kas Masuk' },
-  { value: 'KAS_KELUAR', label: 'Kas Keluar' },
+  { value: 'KAS_MASUK', labelKey: 'ledgers.types.KAS_MASUK' },
+  { value: 'KAS_KELUAR', labelKey: 'ledgers.types.KAS_KELUAR' },
 ] as const
 
 export function BulkLedgerForm() {
   const router = useRouter()
+  const { t } = useTranslation()
   const createBulkMutation = useCreateBulkLedgersMutation()
 
   // Fetch accounts data for dropdown
@@ -170,11 +174,14 @@ export function BulkLedgerForm() {
   const handleSubmit = async (data: BulkLedgerFormData) => {
     // Validate double-entry balance
     if (!isBalanced) {
-      toast.error('Transaction is not balanced!', {
-        description: `Total Debit (${totalDebitAmount.toLocaleString('id-ID', {
-          style: 'currency',
-          currency: 'IDR',
-        })}) must equal Total Credit (${totalCreditAmount.toLocaleString(
+      toast.error(t('ledgers.unbalanced'), {
+        description: `${t('ledgers.totalDebit')} (${totalDebitAmount.toLocaleString(
+          'id-ID',
+          {
+            style: 'currency',
+            currency: 'IDR',
+          },
+        )}) ${t('ledgers.totalCredit')} (${totalCreditAmount.toLocaleString(
           'id-ID',
           {
             style: 'currency',
@@ -228,9 +235,7 @@ export function BulkLedgerForm() {
     if (fields.length > 2) {
       remove(index)
     } else {
-      toast.error(
-        'At least 2 entries are required for double-entry bookkeeping',
-      )
+      toast.error(t('ledgers.validation.minTwoEntries'))
     }
   }
 
@@ -247,14 +252,14 @@ export function BulkLedgerForm() {
           className="hover:bg-gray-100 md:hidden"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Ledgers
+          {t('ledgers.backToLedgers')}
         </Button>
         <div className="space-y-1">
           <h1 className="text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl">
-            Create Ledger Entries
+            {t('ledgers.createBulk')}
           </h1>
           <p className="text-sm text-gray-600 sm:text-base">
-            Add multiple ledger entries with double-entry validation
+            {t('ledgers.subtitle')}
           </p>
         </div>
       </div>
@@ -264,14 +269,14 @@ export function BulkLedgerForm() {
         <CardHeader className="pb-3 sm:pb-6">
           <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <Calculator className="w-4 h-4 sm:w-5 sm:h-5" />
-            Transaction Balance Summary
+            {t('ledgers.balanceSummary')}
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
           <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-3">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-500">
-                Total Debit Amount
+                {t('ledgers.totalDebit')}
               </label>
               <div className="text-2xl font-bold text-blue-600">
                 {totalDebitAmount.toLocaleString('id-ID', {
@@ -283,7 +288,7 @@ export function BulkLedgerForm() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-500">
-                Total Credit Amount
+                {t('ledgers.totalCredit')}
               </label>
               <div className="text-2xl font-bold text-purple-600">
                 {totalCreditAmount.toLocaleString('id-ID', {
@@ -295,7 +300,7 @@ export function BulkLedgerForm() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-500">
-                Balance Status
+                Status
               </label>
               <div className="flex items-center gap-2">
                 {isBalanced ? (
@@ -305,7 +310,7 @@ export function BulkLedgerForm() {
                       variant="outline"
                       className="text-green-700 border-green-200 bg-green-50"
                     >
-                      Balanced
+                      {t('ledgers.balanced')}
                     </Badge>
                   </>
                 ) : (
@@ -315,7 +320,7 @@ export function BulkLedgerForm() {
                       variant="outline"
                       className="text-orange-700 border-orange-200 bg-orange-50"
                     >
-                      Unbalanced
+                      {t('ledgers.unbalanced')}
                     </Badge>
                   </>
                 )}
@@ -410,7 +415,7 @@ export function BulkLedgerForm() {
                                   key={option.value}
                                   value={option.value}
                                 >
-                                  {option.label}
+                                  {t(option.labelKey)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -506,7 +511,7 @@ export function BulkLedgerForm() {
                                   key={option.value}
                                   value={option.value}
                                 >
-                                  {option.label}
+                                  {t(option.labelKey)}
                                 </SelectItem>
                               ))}
                             </SelectContent>

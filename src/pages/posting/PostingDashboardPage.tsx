@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslation } from '@/hooks/useTranslation'
 import { canManageLedgers } from '@/utils/rolePermissions'
 import { useRouter } from '@tanstack/react-router'
 import {
@@ -21,6 +22,7 @@ import {
 export function PostingDashboardPage() {
   const router = useRouter()
   const { user } = useAuth()
+  const { t } = useTranslation()
 
   // Check if user can access posting functionality
   const canAccessPosting = user ? canManageLedgers(user.role) : false
@@ -31,10 +33,8 @@ export function PostingDashboardPage() {
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-            <CardTitle>Access Denied</CardTitle>
-            <CardDescription>
-              You don't have permission to access posting functionality.
-            </CardDescription>
+            <CardTitle>{t('posting.accessDenied')}</CardTitle>
+            <CardDescription>{t('posting.noPermission')}</CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -44,32 +44,32 @@ export function PostingDashboardPage() {
   const postingOperations = [
     {
       id: 'buku-besar',
-      title: 'Buku Besar Posting',
-      description: 'Post general ledger entries for a specific date',
+      title: t('posting.operations.bukuBesar.title'),
+      description: t('posting.operations.bukuBesar.description'),
       icon: FileText,
       color: 'bg-blue-50 text-blue-600 border-blue-200',
       route: '/posting/buku-besar',
     },
     {
       id: 'neraca-detail',
-      title: 'Neraca Detail Posting',
-      description: 'Post detailed balance sheet information',
+      title: t('posting.operations.neracaDetail.title'),
+      description: t('posting.operations.neracaDetail.description'),
       icon: BarChart3,
       color: 'bg-green-50 text-green-600 border-green-200',
       route: '/posting/neraca-detail',
     },
     {
       id: 'neraca-balance',
-      title: 'Neraca Balance Posting',
-      description: 'Post balance sheet with retained earnings (SHU)',
+      title: t('posting.operations.neracaBalance.title'),
+      description: t('posting.operations.neracaBalance.description'),
       icon: Calculator,
       color: 'bg-purple-50 text-purple-600 border-purple-200',
       route: '/posting/neraca-balance',
     },
     {
       id: 'neraca-akhir',
-      title: 'Neraca Akhir Posting',
-      description: 'Post final balance sheet for period-end closing',
+      title: t('posting.operations.neracaAkhir.title'),
+      description: t('posting.operations.neracaAkhir.description'),
       icon: CheckCircle,
       color: 'bg-amber-50 text-amber-600 border-amber-200',
       route: '/posting/neraca-akhir',
@@ -80,49 +80,55 @@ export function PostingDashboardPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="border-b pb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Posting Operations</h1>
-        <p className="text-gray-600 mt-2">
-          Manage accounting period-end posting and closing procedures
-        </p>
+        <h1 className="text-3xl font-bold text-gray-900">
+          {t('posting.title')}
+        </h1>
+        <p className="text-gray-600 mt-2">{t('posting.subtitle')}</p>
       </div>
 
       {/* Status Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Posts</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('posting.pendingPosts')}
+            </CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">-</div>
             <p className="text-xs text-muted-foreground">
-              Operations awaiting execution
+              {t('posting.operationsAwaiting')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Last Posted</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('posting.lastPosted')}
+            </CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">-</div>
             <p className="text-xs text-muted-foreground">
-              Most recent posting date
+              {t('posting.mostRecentDate')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Period Status</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('posting.periodStatus')}
+            </CardTitle>
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Open</div>
+            <div className="text-2xl font-bold">{t('posting.open')}</div>
             <p className="text-xs text-muted-foreground">
-              Current accounting period
+              {t('posting.currentPeriod')}
             </p>
           </CardContent>
         </Card>
@@ -160,7 +166,7 @@ export function PostingDashboardPage() {
                     router.navigate({ to: operation.route })
                   }}
                 >
-                  Access Operation
+                  {t('posting.accessOperation')}
                 </Button>
               </CardContent>
             </Card>
@@ -173,24 +179,17 @@ export function PostingDashboardPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AlertCircle className="w-5 h-5 text-amber-500" />
-            Important Notes
+            {t('posting.importantNotes')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
+          <p className="text-sm text-gray-600">• {t('posting.sequenceNote')}</p>
+          <p className="text-sm text-gray-600">• {t('posting.verifyNote')}</p>
           <p className="text-sm text-gray-600">
-            • Posting operations should be performed in sequence: Buku Besar →
-            Neraca Detail → Neraca Balance → Neraca Akhir
+            • {t('posting.unpostingNote')}
           </p>
           <p className="text-sm text-gray-600">
-            • Always verify calculations before posting final balance sheets
-          </p>
-          <p className="text-sm text-gray-600">
-            • Unposting operations reverse the effects of posting - use with
-            caution
-          </p>
-          <p className="text-sm text-gray-600">
-            • Ensure all ledger entries are complete before beginning posting
-            procedures
+            • {t('posting.completenessNote')}
           </p>
         </CardContent>
       </Card>

@@ -1,0 +1,556 @@
+{
+  "app": {
+    "name": "Akuntansi PRSM",
+    "tagline": "Kelola operasi akuntansi Anda dengan mudah"
+  },
+  "auth": {
+    "login": "Masuk",
+    "logout": "Keluar",
+    "signOut": "Keluar dari akun Anda",
+    "loginPage": {
+      "title": "Selamat Datang Kembali",
+      "subtitle": "Masuk ke akun Anda",
+      "username": "Nama Pengguna",
+      "password": "Kata Sandi",
+      "submit": "Masuk",
+      "error": "Kredensial tidak valid"
+    }
+  },
+  "navigation": {
+    "dashboard": "Dasbor",
+    "users": "Pengguna",
+    "accounts": "Akun",
+    "ledgers": "Buku Besar",
+    "posting": "Posting",
+    "reports": "Laporan",
+    "generalAccounts": "Akun Umum",
+    "detailAccounts": "Akun Detail",
+    "createGeneralAccount": "Buat Akun Umum",
+    "createDetailAccount": "Buat Akun Detail",
+    "viewAllLedgers": "Lihat Semua Buku Besar",
+    "createKas": "Buat Kas",
+    "postingDashboard": "Dasbor Posting",
+    "bukuBesarPosting": "Posting Buku Besar",
+    "neracaDetailPosting": "Posting Neraca Detail",
+    "neracaBalancePosting": "Posting Neraca Saldo",
+    "neracaAkhirPosting": "Posting Neraca Akhir"
+  },
+  "dashboard": {
+    "welcome": "Selamat datang kembali, {{name}}! 👋",
+    "totalUsers": "Total Pengguna",
+    "activeAccounts": "Akun Aktif",
+    "monthlyTransactions": "Transaksi Bulanan",
+    "systemHealth": "Kesehatan Sistem",
+    "fromLastMonth": "dari bulan lalu",
+    "allSystemsOperational": "Semua sistem beroperasi",
+    "profileInformation": "Informasi Profil",
+    "role": "Peran",
+    "status": "Status",
+    "quickActions": "Aksi Cepat",
+    "accessFrequentlyUsed": "Akses fitur yang sering digunakan",
+    "manageUserAccounts": "Kelola akun pengguna",
+    "manageChartOfAccounts": "Kelola bagan akun",
+    "viewTransactionLedgers": "Lihat buku besar transaksi",
+    "generateFinancialReports": "Buat laporan keuangan",
+    "systemInformation": "Informasi Sistem",
+    "environment": "Lingkungan",
+    "version": "Versi",
+    "online": "Online",
+    "lastUpdated": "Terakhir Diperbarui",
+    "hoursAgo": "jam yang lalu",
+    "lastLogin": "Terakhir masuk: {{date}}",
+    "recentActivity": "Aktivitas Terkini",
+    "overviewRecentActions": "Ringkasan tindakan terkini Anda dalam sistem",
+    "activities": {
+      "createdUserAccount": "Membuat akun pengguna baru",
+      "updatedAccountSettings": "Memperbarui pengaturan akun umum",
+      "generatedMonthlyReport": "Membuat laporan bulanan",
+      "addedLedgerEntry": "Menambahkan entri buku besar baru"
+    },
+    "timeAgo": {
+      "hoursAgo": "{{count}} jam yang lalu",
+      "daysAgo": "{{count}} hari yang lalu"
+    }
+  },
+  "accounts": {
+    "general": "Akun Umum",
+    "detail": "Akun Detail",
+    "accountNumber": "Nomor Akun",
+    "accountName": "Nama Akun",
+    "accountCategory": "Kategori Akun",
+    "reportType": "Jenis Laporan",
+    "transactionType": "Jenis Transaksi",
+    "creditAmount": "Jumlah Kredit",
+    "debitAmount": "Jumlah Debit",
+    "categories": {
+      "ASSET": "Aset",
+      "HUTANG": "Hutang",
+      "MODAL": "Modal",
+      "PENDAPATAN": "Pendapatan",
+      "BIAYA": "Biaya"
+    },
+    "reportTypes": {
+      "NERACA": "Neraca",
+      "LABA_RUGI": "Laba Rugi"
+    },
+    "transactionTypes": {
+      "DEBIT": "Debit",
+      "CREDIT": "Kredit"
+    },
+    "form": {
+      "create": "Buat",
+      "edit": "Edit",
+      "generalAccount": "Akun Umum",
+      "detailAccount": "Akun Detail",
+      "createNew": "Buat {{type}} baru untuk bagan akun Anda",
+      "updateInfo": "Perbarui informasi {{type}}",
+      "accountInformation": "Informasi Akun",
+      "fillDetails": "Isi detail untuk {{type}}",
+      "required": "*",
+      "placeholder": {
+        "accountNumber": "contoh: 1001",
+        "accountName": "contoh: Kas",
+        "selectCategory": "Pilih kategori",
+        "selectReportType": "Pilih jenis laporan",
+        "selectTransactionType": "Pilih jenis transaksi"
+      },
+      "accountClassification": "Klasifikasi Akun",
+      "balanceInformation": "Informasi Saldo",
+      "cancel": "Batal",
+      "save": "Simpan",
+      "creating": "Membuat...",
+      "updating": "Memperbarui...",
+      "createAccount": "Buat Akun",
+      "updateAccount": "Perbarui Akun",
+      "backTo": "Kembali ke {{type}}"
+    },
+    "validation": {
+      "accountNumberRequired": "Nomor akun wajib diisi",
+      "accountNumberLength": "Nomor akun tidak boleh melebihi 20 karakter",
+      "accountNumberFormat": "Nomor akun hanya boleh berisi angka dan tanda hubung",
+      "accountNameRequired": "Nama akun minimal 3 karakter",
+      "accountNameLength": "Nama akun tidak boleh melebihi 100 karakter",
+      "creditAmountValid": "Jumlah kredit harus berupa angka yang valid dan tidak negatif",
+      "debitAmountValid": "Jumlah debit harus berupa angka yang valid dan tidak negatif"
+    },
+    "messages": {
+      "generalCreated": "Akun umum berhasil dibuat",
+      "generalUpdated": "Akun umum berhasil diperbarui",
+      "detailCreated": "Akun detail berhasil dibuat",
+      "detailUpdated": "Akun detail berhasil diperbarui",
+      "createFailed": "Gagal membuat {{type}}",
+      "updateFailed": "Gagal memperbarui {{type}}"
+    }
+  },
+  "reports": {
+    "title": "Buat Laporan",
+    "subtitle": "Buat laporan akun komprehensif dalam format PDF atau Excel",
+    "configuration": "Konfigurasi Laporan",
+    "configureSettings": "Konfigurasikan pengaturan laporan akun Anda dan buat file",
+    "reportType": "Jenis Laporan",
+    "fileFormat": "Format File",
+    "types": {
+      "neracaDetail": {
+        "title": "Neraca Detail",
+        "description": "Hanya mengambil data dari akun detail dengan JenisLaporan NERACA"
+      },
+      "neraca": {
+        "title": "Neraca",
+        "description": "Hanya mengambil data dari akun umum dengan JenisLaporan NERACA"
+      },
+      "penjelasanNeraca": {
+        "title": "Penjelasan Neraca",
+        "description": "Menggabungkan data dari akun umum dan akun detail dengan JenisLaporan NERACA"
+      }
+    },
+    "formats": {
+      "pdf": {
+        "label": "Dokumen PDF",
+        "description": "Format Dokumen Portabel"
+      },
+      "xlsx": {
+        "label": "Spreadsheet Excel",
+        "description": "Format Microsoft Excel"
+      }
+    },
+    "preview": "Pratinjau Laporan",
+    "type": "Jenis",
+    "format": "Format",
+    "filename": "Nama File",
+    "notSelected": "Tidak dipilih",
+    "generate": "Buat Laporan",
+    "generating": "Membuat...",
+    "selectTypeAndFormat": "Silakan pilih jenis laporan dan format",
+    "generatedSuccessfully": "Laporan {{format}} berhasil dibuat!",
+    "generateFailed": "Gagal membuat laporan. Silakan coba lagi.",
+    "information": "Informasi Laporan",
+    "neracaDetailInfo": "Hanya mencakup data akun detail dengan JenisLaporan NERACA, menampilkan informasi akun neraca yang detail.",
+    "neracaInfo": "Hanya mencakup data akun umum dengan JenisLaporan NERACA, menampilkan struktur akun neraca utama.",
+    "penjelasanNeracaInfo": "Menggabungkan data akun umum dan detail dengan JenisLaporan NERACA, memberikan ringkasan neraca yang komprehensif."
+  },
+  "user": {
+    "profile": "Profil",
+    "profileSettings": "Pengaturan Profil",
+    "manageYourAccount": "Kelola akun Anda",
+    "preferences": "Preferensi",
+    "appSettings": "Pengaturan & preferensi aplikasi",
+    "welcomeBack": "Selamat datang kembali di PRSM",
+    "comingSoon": {
+      "profileSettings": "Pengaturan profil segera hadir!",
+      "appPreferences": "Preferensi aplikasi segera hadir!"
+    }
+  },
+  "common": {
+    "loading": "Memuat...",
+    "role": "Peran",
+    "error": "Kesalahan",
+    "success": "Berhasil",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "edit": "Edit",
+    "delete": "Hapus",
+    "create": "Buat",
+    "update": "Perbarui",
+    "search": "Cari",
+    "filter": "Filter",
+    "actions": "Aksi",
+    "status": "Status",
+    "active": "Aktif",
+    "inactive": "Tidak Aktif",
+    "yes": "Ya",
+    "no": "Tidak",
+    "confirm": "Konfirmasi",
+    "back": "Kembali",
+    "next": "Selanjutnya",
+    "previous": "Sebelumnya",
+    "close": "Tutup",
+    "select": "Pilih",
+    "selectAll": "Pilih Semua",
+    "clear": "Bersihkan",
+    "download": "Unduh",
+    "upload": "Unggah",
+    "submit": "Kirim",
+    "reset": "Reset",
+    "refresh": "Perbarui",
+    "view": "Lihat",
+    "add": "Tambah",
+    "remove": "Hapus",
+    "required": "Wajib",
+    "optional": "Opsional",
+    "pleaseWait": "Mohon tunggu"
+  },
+  "validation": {
+    "required": "Field ini wajib diisi",
+    "minLength": "Minimal {{min}} karakter",
+    "maxLength": "Tidak boleh melebihi {{max}} karakter",
+    "email": "Harus berupa alamat email yang valid",
+    "number": "Harus berupa angka yang valid",
+    "positive": "Harus berupa angka positif",
+    "nonNegative": "Harus berupa angka non-negatif"
+  },
+  "table": {
+    "noData": "Tidak ada data tersedia",
+    "loading": "Memuat data...",
+    "error": "Kesalahan memuat data",
+    "rowsPerPage": "Baris per halaman",
+    "of": "dari",
+    "page": "Halaman",
+    "firstPage": "Halaman pertama",
+    "previousPage": "Halaman sebelumnya",
+    "nextPage": "Halaman selanjutnya",
+    "lastPage": "Halaman terakhir"
+  },
+  "users": {
+    "title": "Manajemen Pengguna",
+    "subtitle": "Kelola pengguna sistem dan peran mereka",
+    "createNew": "Buat Pengguna Baru",
+    "editUser": "Edit Pengguna: {{name}}",
+    "username": "Nama Pengguna",
+    "fullName": "Nama Lengkap",
+    "password": "Kata Sandi",
+    "newPassword": "Kata Sandi Baru (kosongkan untuk tetap saat ini)",
+    "enterUsername": "Masukkan nama pengguna",
+    "enterFullName": "Masukkan nama lengkap",
+    "enterPassword": "Masukkan kata sandi",
+    "leaveBlankToKeep": "Kosongkan untuk mempertahankan kata sandi saat ini",
+    "selectRole": "Pilih peran",
+    "selectStatus": "Pilih status",
+    "saving": "Menyimpan...",
+    "creating": "Membuat pengguna...",
+    "updating": "Memperbarui pengguna...",
+    "updateUser": "Perbarui Pengguna",
+    "createUser": "Buat Pengguna",
+    "failedToSave": "Gagal menyimpan pengguna",
+    "passwordRequired": "Kata sandi wajib untuk pengguna baru",
+    "actions": "Aksi",
+    "viewDetails": "Lihat Detail",
+    "deleteUser": "Hapus Pengguna",
+    "searchUsers": "Cari pengguna...",
+    "totalUsers": "Total Pengguna",
+    "activeUsers": "Pengguna Aktif",
+    "roles": {
+      "ADMIN": "Administrator",
+      "MANAJER": "Manajer",
+      "AKUNTAN": "Akuntan",
+      "KASIR": "Kasir",
+      "KOLEKTOR": "Kolektor",
+      "NASABAH": "Nasabah"
+    }
+  },
+  "ledgers": {
+    "title": "Manajemen Buku Besar",
+    "subtitle": "Kelola entri buku besar dan transaksi",
+    "createBulk": "Buat Entri Massal",
+    "date": "Tanggal",
+    "description": "Deskripsi",
+    "referenceNumber": "Nomor Referensi",
+    "amount": "Jumlah",
+    "ledgerType": "Jenis Buku Besar",
+    "accountDetail": "Akun Detail",
+    "accountGeneral": "Akun Umum",
+    "selectAccountDetail": "Pilih akun detail",
+    "selectLedgerType": "Pilih jenis buku besar",
+    "enterDescription": "Masukkan deskripsi",
+    "addEntry": "Tambah Entri",
+    "removeEntry": "Hapus Entri",
+    "balanced": "Seimbang",
+    "unbalanced": "Tidak Seimbang",
+    "totalCredit": "Total Kredit",
+    "totalDebit": "Total Debit",
+    "difference": "Selisih",
+    "backToLedgers": "Kembali ke Buku Besar",
+    "saveLedgers": "Simpan Buku Besar",
+    "saving": "Menyimpan...",
+    "balanceSummary": "Ringkasan Saldo Transaksi",
+    "balanceStatus": "Status Saldo",
+    "validation": {
+      "dateRequired": "Tanggal wajib diisi",
+      "descriptionMin": "Deskripsi minimal 3 karakter",
+      "descriptionMax": "Deskripsi tidak boleh melebihi 500 karakter",
+      "accountDetailRequired": "Akun detail wajib diisi",
+      "accountGeneralRequired": "Akun umum wajib diisi",
+      "amountGreaterThanZero": "Jumlah harus lebih besar dari 0",
+      "referenceRequired": "Nomor referensi wajib diisi",
+      "referenceMax": "Nomor referensi tidak boleh melebihi 50 karakter",
+      "minTwoEntries": "Minimal 2 entri diperlukan untuk double-entry"
+    },
+    "types": {
+      "KAS_MASUK": "Kas Masuk",
+      "KAS_KELUAR": "Kas Keluar"
+    }
+  },
+  "emptyState": {
+    "search": {
+      "title": "Tidak ada hasil pencarian",
+      "description": "Coba sesuaikan kata kunci pencarian atau filter untuk menemukan yang Anda cari."
+    },
+    "create": {
+      "title": "Mari mulai",
+      "description": "Buat item pertama Anda untuk mulai mengelola data."
+    },
+    "filter": {
+      "title": "Tidak ada item yang sesuai dengan filter Anda",
+      "description": "Coba hapus beberapa filter untuk melihat lebih banyak hasil."
+    },
+    "data": {
+      "title": "Tidak ada data tersedia",
+      "description": "Tidak ada item untuk ditampilkan saat ini."
+    }
+  },
+  "errorState": {
+    "network": {
+      "title": "Masalah Koneksi",
+      "message": "Silakan periksa koneksi internet Anda dan coba lagi."
+    },
+    "server": {
+      "title": "Kesalahan Server",
+      "message": "Terjadi kesalahan di sisi kami. Silakan coba lagi sebentar."
+    },
+    "notFound": {
+      "title": "Tidak Ditemukan",
+      "message": "Sumber daya yang diminta tidak dapat ditemukan."
+    },
+    "generic": {
+      "title": "Terjadi kesalahan",
+      "message": "Terjadi kesalahan yang tidak terduga. Silakan coba lagi."
+    },
+    "retrying": "Mencoba lagi...",
+    "tryAgain": "Coba Lagi"
+  },
+  "posting": {
+    "dashboard": "Dasbor Posting",
+    "bukuBesar": "Posting Buku Besar",
+    "neracaDetail": "Posting Neraca Detail",
+    "neracaBalance": "Posting Neraca Saldo",
+    "neracaAkhir": "Posting Neraca Akhir",
+    "title": "Operasi Posting",
+    "subtitle": "Kelola prosedur posting dan penutupan akhir periode akuntansi",
+    "accessDenied": "Akses Ditolak",
+    "noPermission": "Anda tidak memiliki izin untuk mengakses fungsi posting.",
+    "pendingPosts": "Posting Tertunda",
+    "operationsAwaiting": "Operasi menunggu eksekusi",
+    "lastPosted": "Terakhir Diposting",
+    "mostRecentDate": "Tanggal posting terbaru",
+    "periodStatus": "Status Periode",
+    "currentPeriod": "Periode akuntansi saat ini",
+    "open": "Terbuka",
+    "accessOperation": "Akses Operasi",
+    "importantNotes": "Catatan Penting",
+    "sequenceNote": "Operasi posting harus dilakukan secara berurutan: Buku Besar → Neraca Detail → Neraca Balance → Neraca Akhir",
+    "verifyNote": "Selalu verifikasi perhitungan sebelum memposting neraca akhir",
+    "unpostingNote": "Operasi unposting membalikkan efek posting - gunakan dengan hati-hati",
+    "completenessNote": "Pastikan semua entri buku besar lengkap sebelum memulai prosedur posting",
+    "backToPosting": "Kembali ke Posting",
+    "postingDate": "Tanggal Posting",
+    "ledgerDate": "Tanggal Buku Besar",
+    "periodEndDate": "Tanggal Akhir Periode",
+    "bukuBesarPosting": {
+      "title": "Posting Buku Besar",
+      "subtitle": "Posting entri buku besar umum untuk tanggal tertentu",
+      "description": "Posting semua entri buku besar yang tertunda ke buku besar umum untuk tanggal yang ditentukan",
+      "postButton": "Posting Buku Besar",
+      "unpostButton": "Batalkan Posting Buku Besar",
+      "successPost": "Buku Besar berhasil diposting!",
+      "errorPost": "Gagal memposting Buku Besar",
+      "successUnpost": "Buku Besar berhasil dibatalkan!",
+      "errorUnpost": "Gagal membatalkan posting Buku Besar",
+      "operationInfo": "Informasi Operasi",
+      "whatIs": "Apa itu Posting Buku Besar?",
+      "explanation": "Posting Buku Besar mentransfer semua entri buku besar yang tertunda ke status diposting, menjadikannya bagian dari catatan akuntansi resmi.",
+      "whatHappens": "Apa yang terjadi saat posting?",
+      "step1": "Semua entri buku besar TERTUNDA untuk tanggal tersebut ditandai sebagai DIPOSTING",
+      "step2": "Saldo akun diperbarui dengan jumlah yang diposting",
+      "step3": "Timestamp posting dicatat untuk tujuan audit",
+      "step4": "Entri yang diposting menjadi tidak berubah dan bagian dari catatan resmi",
+      "whenUnpost": "Kapan menggunakan Unpost?",
+      "unpostExplanation": "Unposting membalikkan operasi posting dan mengembalikan entri ke status TERTUNDA. Gunakan ini hanya ketika koreksi diperlukan sebelum penutupan akhir bulan.",
+      "importantWarning": "Peringatan Penting",
+      "warning": "Selalu pastikan semua entri buku besar benar sebelum posting. Unposting harus dilakukan dengan hati-hati karena mempengaruhi pelaporan keuangan."
+    },
+    "neracaDetailPosting": {
+      "title": "Posting Neraca Detail",
+      "subtitle": "Posting informasi neraca yang detail",
+      "description": "Posting neraca detail dengan perincian tingkat akun",
+      "postButton": "Posting Neraca Detail",
+      "unpostButton": "Batalkan Posting Neraca Detail",
+      "successPost": "Neraca Detail berhasil diposting!",
+      "errorPost": "Gagal memposting Neraca Detail",
+      "successUnpost": "Neraca Detail berhasil dibatalkan!",
+      "errorUnpost": "Gagal membatalkan posting Neraca Detail",
+      "whatIs": "Apa itu Posting Neraca Detail?",
+      "explanation": "Posting Neraca Detail membuat neraca detail yang menampilkan perincian tingkat akun untuk akun aset, kewajiban, dan ekuitas.",
+      "step1": "Saldo akun detail dihitung dan dicatat",
+      "step2": "Total sub-akun diagregasi ke akun induk",
+      "step3": "Struktur neraca divalidasi untuk kelengkapan",
+      "step4": "Laporan neraca detail tersedia untuk ditinjau",
+      "prerequisites": "Prasyarat",
+      "prereq1": "Buku Besar harus diposting untuk tanggal yang sama",
+      "prereq2": "Semua entri detail akun harus lengkap",
+      "prereq3": "Hirarki akun harus terstruktur dengan benar",
+      "unpostExplanation": "Unposting menghapus neraca detail dan mengembalikan akun ke status sebelum posting. Gunakan ini jika struktur akun perlu penyesuaian.",
+      "processingOrder": "Urutan Pemrosesan",
+      "orderNote": "Ini harus dilakukan setelah posting Buku Besar dan sebelum posting Neraca Balance untuk urutan yang tepat."
+    },
+    "neracaBalancePosting": {
+      "title": "Posting Neraca Balance",
+      "subtitle": "Hitung dan posting neraca dengan laba ditahan (SHU)",
+      "description": "Posting neraca dengan jumlah Sisa Hasil Usaha (SHU) yang dihitung otomatis",
+      "postButton": "Posting Neraca Balance",
+      "successPost": "Neraca Balance berhasil diposting!",
+      "errorPost": "Gagal memposting Neraca Balance",
+      "shuAmount": "Jumlah Sisa Hasil Usaha (Otomatis)",
+      "autoCalculated": "Jumlah otomatis diatur dari perhitungan neraca:",
+      "calculateFirst": "Silakan hitung neraca terlebih dahulu untuk mengisi field ini secara otomatis.",
+      "calculateBalanceFirst": "Hitung Neraca Terlebih Dahulu",
+      "reminder": "Pengingat",
+      "reminderText": "Pastikan Anda telah menghitung dan memverifikasi neraca sebelum posting. Jumlah SHU akan secara otomatis diatur dari hasil perhitungan Anda."
+    },
+    "neracaAkhirPosting": {
+      "title": "Posting Neraca Akhir",
+      "subtitle": "Posting neraca akhir untuk penutupan akhir periode",
+      "description": "Finalisasi neraca untuk penutupan periode akuntansi",
+      "postButton": "Posting Neraca Akhir",
+      "successPost": "Neraca Akhir berhasil diposting!",
+      "errorPost": "Gagal memposting Neraca Akhir",
+      "finalStepWarning": "Peringatan Langkah Akhir",
+      "finalWarning": "Ini adalah langkah terakhir dalam urutan posting. Setelah selesai, periode akuntansi akan dianggap ditutup dan dikunci.",
+      "whatIs": "Apa itu Posting Neraca Akhir?",
+      "explanation": "Posting Neraca Akhir adalah langkah terakhir dalam proses penutupan periode akuntansi. Ini membuat neraca akhir resmi yang akan digunakan untuk pelaporan keuangan.",
+      "step1": "Neraca akhir dibuat dan dikunci",
+      "step2": "Semua saldo akun diselesaikan untuk periode tersebut",
+      "step3": "Laporan keuangan menjadi secara resmi dapat dilaporkan",
+      "step4": "Penutupan periode ditandai sebagai selesai",
+      "step5": "Jejak audit diselesaikan untuk kepatuhan",
+      "prereq1": "Posting Buku Besar selesai",
+      "prereq2": "Posting Neraca Detail selesai",
+      "prereq3": "Posting Neraca Balance selesai",
+      "prereq4": "Semua rekonsiliasi akun diverifikasi",
+      "prereq5": "Persetujuan manajemen untuk penutupan periode",
+      "afterPosting": "Setelah Posting",
+      "afterNote": "Setelah Neraca Akhir diposting, periode akuntansi dianggap ditutup. Setiap penyesuaian selanjutnya akan memerlukan prosedur dan persetujuan khusus.",
+      "periodClosure": "Penutupan Periode",
+      "closureNote": "Pastikan semua langkah posting sebelumnya selesai dan diverifikasi sebelum melanjutkan operasi posting akhir ini.",
+      "bestPractice": "Praktik Terbaik",
+      "practiceNote": "Backup database Anda sebelum melakukan posting akhir untuk memastikan kemampuan pemulihan data jika diperlukan."
+    },
+    "operations": {
+      "bukuBesar": {
+        "title": "Posting Buku Besar",
+        "description": "Posting entri buku besar umum untuk tanggal tertentu"
+      },
+      "neracaDetail": {
+        "title": "Posting Neraca Detail",
+        "description": "Posting informasi neraca yang detail"
+      },
+      "neracaBalance": {
+        "title": "Posting Neraca Balance",
+        "description": "Posting neraca dengan laba ditahan (SHU)"
+      },
+      "neracaAkhir": {
+        "title": "Posting Neraca Akhir",
+        "description": "Posting neraca akhir untuk penutupan akhir periode"
+      }
+    }
+  },
+  "ledgersList": {
+    "title": "Buku Besar",
+    "subtitle": "Kelola entri buku besar dan transaksi Anda",
+    "createLedgerEntry": "Buat Entri Buku Besar",
+    "searchAndFilter": "Cari & Filter",
+    "searchDescription": "Cari dan filter entri buku besar",
+    "search": "Cari",
+    "searchPlaceholder": "Cari deskripsi, referensi...",
+    "ledgerType": "Jenis Buku Besar",
+    "postingStatus": "Status Posting",
+    "itemsPerPage": "Item per halaman",
+    "allTypes": "Semua jenis",
+    "allStatuses": "Semua status",
+    "pending": "Tertunda",
+    "posted": "Diposting",
+    "ledgerEntries": "Entri Buku Besar",
+    "viewAndManage": "Lihat dan kelola semua entri buku besar",
+    "total": "total",
+    "noEntriesFound": "Tidak ada entri buku besar ditemukan",
+    "noEntriesYet": "Belum ada entri buku besar",
+    "adjustCriteria": "Coba sesuaikan kriteria pencarian atau filter Anda.",
+    "createFirstEntry": "Buat entri buku besar pertama Anda untuk memulai.",
+    "reference": "Referensi",
+    "description": "Deskripsi",
+    "amount": "Jumlah",
+    "type": "Jenis",
+    "transaction": "Transaksi",
+    "date": "Tanggal",
+    "account": "Akun",
+    "cashIn": "Kas Masuk",
+    "cashOut": "Kas Keluar",
+    "showing": "Menampilkan",
+    "to": "sampai",
+    "of": "dari",
+    "entries": "entri",
+    "previous": "Sebelumnya",
+    "next": "Selanjutnya",
+    "failedToLoad": "Gagal Memuat Buku Besar",
+    "errorLoading": "Terjadi kesalahan saat memuat entri buku besar. Silakan coba lagi.",
+    "deleteConfirm": "Apakah Anda yakin ingin menghapus entri buku besar \"{{description}}\"? Tindakan ini tidak dapat dibatalkan."
+  }
+}

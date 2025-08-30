@@ -26,6 +26,7 @@ import {
   useCreateAccountGeneralMutation,
   useUpdateAccountGeneralMutation,
 } from '@/hooks/useAccountsQuery'
+import { useTranslation } from '@/hooks/useTranslation'
 import type { AccountGeneral } from '@/types/accounts'
 import type {
   CreateAccountGeneralPayload,
@@ -39,66 +40,77 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-// Form schema for validation
-const accountGeneralFormSchema = z.object({
-  accountNumber: z
-    .string()
-    .min(1, 'Account number is required')
-    .max(20, 'Account number must not exceed 20 characters')
-    .regex(/^[0-9-]+$/, 'Account number can only contain numbers and hyphens'),
-  accountName: z
-    .string()
-    .min(3, 'Account name must be at least 3 characters')
-    .max(100, 'Account name must not exceed 100 characters'),
-  accountCategory: z.enum(['ASSET', 'HUTANG', 'MODAL', 'PENDAPATAN', 'BIAYA']),
-  reportType: z.enum(['NERACA', 'LABA_RUGI']),
-  transactionType: z.enum(['DEBIT', 'CREDIT']),
-  amountCredit: z
-    .string()
-    .refine(
-      (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
-      'Credit amount must be a valid non-negative number',
-    ),
-  amountDebit: z
-    .string()
-    .refine(
-      (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
-      'Debit amount must be a valid non-negative number',
-    ),
-})
+// Note: For validation messages, we'll handle them in the component with dynamic translation
+const createAccountGeneralFormSchema = (t: any) =>
+  z.object({
+    accountNumber: z
+      .string()
+      .min(1, t('accounts.validation.accountNumberRequired'))
+      .max(20, t('accounts.validation.accountNumberLength'))
+      .regex(/^[0-9-]+$/, t('accounts.validation.accountNumberFormat')),
+    accountName: z
+      .string()
+      .min(3, t('accounts.validation.accountNameRequired'))
+      .max(100, t('accounts.validation.accountNameLength')),
+    accountCategory: z.enum([
+      'ASSET',
+      'HUTANG',
+      'MODAL',
+      'PENDAPATAN',
+      'BIAYA',
+    ]),
+    reportType: z.enum(['NERACA', 'LABA_RUGI']),
+    transactionType: z.enum(['DEBIT', 'CREDIT']),
+    amountCredit: z
+      .string()
+      .refine(
+        (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
+        t('accounts.validation.creditAmountValid'),
+      ),
+    amountDebit: z
+      .string()
+      .refine(
+        (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
+        t('accounts.validation.debitAmountValid'),
+      ),
+  })
 
-type AccountGeneralFormData = z.infer<typeof accountGeneralFormSchema>
+type AccountGeneralFormData = z.infer<
+  ReturnType<typeof createAccountGeneralFormSchema>
+>
 
 interface AccountGeneralFormProps {
   mode: 'create' | 'edit'
   account?: AccountGeneral
 }
 
+// These options will use translation keys
 const accountCategoryOptions = [
-  { value: 'ASSET', label: 'Asset' },
-  { value: 'HUTANG', label: 'Hutang' },
-  { value: 'MODAL', label: 'Modal' },
-  { value: 'PENDAPATAN', label: 'Pendapatan' },
-  { value: 'BIAYA', label: 'Biaya' },
+  { value: 'ASSET', labelKey: 'accounts.categories.ASSET' },
+  { value: 'HUTANG', labelKey: 'accounts.categories.HUTANG' },
+  { value: 'MODAL', labelKey: 'accounts.categories.MODAL' },
+  { value: 'PENDAPATAN', labelKey: 'accounts.categories.PENDAPATAN' },
+  { value: 'BIAYA', labelKey: 'accounts.categories.BIAYA' },
 ] as const
 
 const reportTypeOptions = [
-  { value: 'NERACA', label: 'Neraca' },
-  { value: 'LABA_RUGI', label: 'Laba Rugi' },
+  { value: 'NERACA', labelKey: 'accounts.reportTypes.NERACA' },
+  { value: 'LABA_RUGI', labelKey: 'accounts.reportTypes.LABA_RUGI' },
 ] as const
 
 const transactionTypeOptions = [
-  { value: 'DEBIT', label: 'Debit' },
-  { value: 'CREDIT', label: 'Credit' },
+  { value: 'DEBIT', labelKey: 'accounts.transactionTypes.DEBIT' },
+  { value: 'CREDIT', labelKey: 'accounts.transactionTypes.CREDIT' },
 ] as const
 
 export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const createMutation = useCreateAccountGeneralMutation()
   const updateMutation = useUpdateAccountGeneralMutation()
 
   const form = useForm<AccountGeneralFormData>({
-    resolver: zodResolver(accountGeneralFormSchema),
+    resolver: zodResolver(createAccountGeneralFormSchema(t)),
     mode: 'onChange',
     defaultValues: {
       accountNumber: '',
@@ -139,7 +151,7 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
           amountDebit: parseFloat(data.amountDebit),
         }
         await createMutation.mutateAsync(payload)
-        toast.success('General account created successfully')
+        toast.success(t('accounts.messages.generalCreated'))
       } else if (account) {
         const payload: UpdateAccountGeneralPayload = {
           accountName: data.accountName,
@@ -153,15 +165,19 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
           accountNumber: account.accountNumber,
           data: payload,
         })
-        toast.success('General account updated successfully')
+        toast.success(t('accounts.messages.generalUpdated'))
       }
 
       router.navigate({ to: '/accounts/general' })
     } catch {
       toast.error(
         mode === 'create'
-          ? 'Failed to create general account'
-          : 'Failed to update general account',
+          ? t('accounts.messages.createFailed', {
+              type: t('accounts.form.generalAccount'),
+            })
+          : t('accounts.messages.updateFailed', {
+              type: t('accounts.form.generalAccount'),
+            }),
       )
     }
   }
@@ -177,15 +193,22 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
           className="mb-4 md:hidden"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to General Accounts
+          {t('accounts.form.backTo', { type: t('accounts.general') })}
         </Button>
         <h1 className="text-3xl font-bold">
-          {mode === 'create' ? 'Create' : 'Edit'} General Account
+          {mode === 'create'
+            ? t('accounts.form.create')
+            : t('accounts.form.edit')}{' '}
+          {t('accounts.form.generalAccount')}
         </h1>
         <p className="text-muted-foreground">
           {mode === 'create'
-            ? 'Create a new general account for your chart of accounts'
-            : 'Update the general account information'}
+            ? t('accounts.form.createNew', {
+                type: t('accounts.form.generalAccount'),
+              })
+            : t('accounts.form.updateInfo', {
+                type: t('accounts.form.generalAccount'),
+              })}
         </p>
       </div>
 
@@ -193,10 +216,12 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
         <CardHeader className="pb-4 sm:pb-6">
           <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
-            Account Information
+            {t('accounts.form.accountInformation')}
           </CardTitle>
           <CardDescription className="text-sm sm:text-base">
-            Fill in the details for the general account
+            {t('accounts.form.fillDetails', {
+              type: t('accounts.form.generalAccount'),
+            })}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 sm:space-y-6">
@@ -212,10 +237,15 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
                   name="accountNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Account Number *</FormLabel>
+                      <FormLabel>
+                        {t('accounts.accountNumber')}{' '}
+                        {t('accounts.form.required')}
+                      </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="e.g., 1001"
+                          placeholder={t(
+                            'accounts.form.placeholder.accountNumber',
+                          )}
                           {...field}
                           disabled={mode === 'edit'}
                         />
@@ -230,9 +260,17 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
                   name="accountName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Account Name *</FormLabel>
+                      <FormLabel>
+                        {t('accounts.accountName')}{' '}
+                        {t('accounts.form.required')}
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Kas" {...field} />
+                        <Input
+                          placeholder={t(
+                            'accounts.form.placeholder.accountName',
+                          )}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -249,20 +287,27 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
                   name="accountCategory"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Account Category *</FormLabel>
+                      <FormLabel>
+                        {t('accounts.accountCategory')}{' '}
+                        {t('accounts.form.required')}
+                      </FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select category" />
+                            <SelectValue
+                              placeholder={t(
+                                'accounts.form.placeholder.selectCategory',
+                              )}
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {accountCategoryOptions.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
-                              {option.label}
+                              {t(option.labelKey)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -277,20 +322,26 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
                   name="reportType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Report Type *</FormLabel>
+                      <FormLabel>
+                        {t('accounts.reportType')} {t('accounts.form.required')}
+                      </FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select report type" />
+                            <SelectValue
+                              placeholder={t(
+                                'accounts.form.placeholder.selectReportType',
+                              )}
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {reportTypeOptions.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
-                              {option.label}
+                              {t(option.labelKey)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -305,20 +356,27 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
                   name="transactionType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Transaction Type *</FormLabel>
+                      <FormLabel>
+                        {t('accounts.transactionType')}{' '}
+                        {t('accounts.form.required')}
+                      </FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select transaction type" />
+                            <SelectValue
+                              placeholder={t(
+                                'accounts.form.placeholder.selectTransactionType',
+                              )}
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {transactionTypeOptions.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
-                              {option.label}
+                              {t(option.labelKey)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -338,7 +396,7 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
                   name="amountCredit"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Credit Amount</FormLabel>
+                      <FormLabel>{t('accounts.creditAmount')}</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -358,7 +416,7 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
                   name="amountDebit"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Debit Amount</FormLabel>
+                      <FormLabel>{t('accounts.debitAmount')}</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -382,17 +440,17 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
                   onClick={() => router.navigate({ to: '/accounts/general' })}
                   disabled={isSubmitting}
                 >
-                  Cancel
+                  {t('accounts.form.cancel')}
                 </Button>
                 <Button type="submit" disabled={isSubmitting}>
                   <Save className="mr-2 h-4 w-4" />
                   {isSubmitting
                     ? mode === 'create'
-                      ? 'Creating...'
-                      : 'Updating...'
+                      ? t('accounts.form.creating')
+                      : t('accounts.form.updating')
                     : mode === 'create'
-                      ? 'Create Account'
-                      : 'Update Account'}
+                      ? t('accounts.form.createAccount')
+                      : t('accounts.form.updateAccount')}
                 </Button>
               </div>
             </form>

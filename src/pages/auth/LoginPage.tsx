@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { APP_CONFIG } from '@/constants'
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslation } from '@/hooks/useTranslation'
 import type { LoginPayload } from '@/types'
 import { validatePassword, validateUsername } from '@/utils/validation'
 import { Navigate } from '@tanstack/react-router'
@@ -25,6 +26,7 @@ interface LoginFormData {
 
 export const LoginPage: React.FC = () => {
   const { login, isAuthenticated, isLoading } = useAuth()
+  const { t } = useTranslation()
   const [showPassword, setShowPassword] = React.useState(false)
 
   const {
@@ -44,7 +46,7 @@ export const LoginPage: React.FC = () => {
     const passwordError = validatePassword(data.password)
 
     if (usernameError || passwordError) {
-      toast.error('Please check your input and try again.')
+      toast.error(t('auth.loginPage.error'))
       return
     }
 
@@ -55,9 +57,9 @@ export const LoginPage: React.FC = () => {
 
     const result = await login(payload)
     if (!result.success) {
-      toast.error(result.message || 'Login failed. Please try again.')
+      toast.error(result.message || t('auth.loginPage.error'))
     } else {
-      toast.success('Login successful!')
+      toast.success(t('common.success') + '!')
     }
   }
 
@@ -79,10 +81,10 @@ export const LoginPage: React.FC = () => {
 
             <div className="space-y-1 sm:space-y-2">
               <CardTitle className="text-2xl font-bold text-foreground sm:text-3xl">
-                Welcome to {APP_CONFIG.NAME}
+                {t('auth.loginPage.title')}
               </CardTitle>
               <CardDescription className="text-base sm:text-lg">
-                Sign in to access your accounting dashboard
+                {t('auth.loginPage.subtitle')}
               </CardDescription>
             </div>
 
@@ -90,7 +92,7 @@ export const LoginPage: React.FC = () => {
             <div className="inline-flex items-center px-4 py-2 space-x-2 text-sm rounded-full bg-primary/5">
               <Shield className="w-4 h-4 text-primary" />
               <span className="font-medium text-primary">
-                Secure & Encrypted
+                Aman & Terenkripsi
               </span>
             </div>
           </CardHeader>
@@ -101,7 +103,7 @@ export const LoginPage: React.FC = () => {
                 {/* Username Field */}
                 <div className="form-section">
                   <Label htmlFor="username" className="text-sm font-medium">
-                    Username
+                    {t('auth.loginPage.username')}
                   </Label>
                   <div className="relative mt-2">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -110,13 +112,13 @@ export const LoginPage: React.FC = () => {
                     <Input
                       id="username"
                       type="text"
-                      placeholder="Enter your username"
+                      placeholder={t('users.enterUsername')}
                       className="h-12 py-3 pl-10 pr-4 text-base"
                       {...register('username', {
-                        required: 'Username is required',
+                        required: t('validation.required'),
                         minLength: {
                           value: 3,
-                          message: 'Username must be at least 3 characters',
+                          message: t('validation.minLength', { min: 3 }),
                         },
                       })}
                     />
@@ -131,7 +133,7 @@ export const LoginPage: React.FC = () => {
                 {/* Password Field */}
                 <div className="form-section">
                   <Label htmlFor="password" className="text-sm font-medium">
-                    Password
+                    {t('auth.loginPage.password')}
                   </Label>
                   <div className="relative mt-2">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -140,13 +142,13 @@ export const LoginPage: React.FC = () => {
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="Enter your password"
+                      placeholder={t('users.enterPassword')}
                       className="h-12 py-3 pl-10 pr-12 text-base"
                       {...register('password', {
-                        required: 'Password is required',
+                        required: t('validation.required'),
                         minLength: {
                           value: 6,
-                          message: 'Password must be at least 6 characters',
+                          message: t('validation.minLength', { min: 6 }),
                         },
                       })}
                     />
@@ -179,10 +181,10 @@ export const LoginPage: React.FC = () => {
                 {isSubmitting || isLoading ? (
                   <div className="flex items-center space-x-2">
                     <div className="w-4 h-4 border-2 rounded-full border-primary-foreground border-t-transparent animate-spin"></div>
-                    <span>Signing in...</span>
+                    <span>{t('auth.loginPage.submit')}...</span>
                   </div>
                 ) : (
-                  'Sign In'
+                  t('auth.loginPage.submit')
                 )}
               </Button>
             </form>
@@ -191,7 +193,7 @@ export const LoginPage: React.FC = () => {
             <div className="pt-6 space-y-4 border-t border-border/50">
               <div className="space-y-3 text-center">
                 <p className="text-sm text-muted-foreground">
-                  Need help? Contact your system administrator
+                  Butuh bantuan? Hubungi administrator sistem Anda
                 </p>
                 <div className="flex items-center justify-center space-x-4 text-xs text-muted-foreground">
                   <span>Version {APP_CONFIG.VERSION}</span>

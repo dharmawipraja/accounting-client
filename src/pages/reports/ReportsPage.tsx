@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { SubmitOverlay } from '@/components/ui/submit-overlay'
+import { useTranslation } from '@/hooks/useTranslation'
 import {
   reportsService,
   type ReportGenerationOptions,
@@ -24,6 +25,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 
 export function ReportsPage() {
+  const { t } = useTranslation()
   const [isGenerating, setIsGenerating] = useState(false)
   const [reportType, setReportType] = useState<
     'neraca-detail' | 'neraca' | 'penjelasan-neraca'
@@ -32,7 +34,7 @@ export function ReportsPage() {
 
   const handleGenerateReport = async () => {
     if (!reportType || !format) {
-      toast.error('Please select report type and format')
+      toast.error(t('reports.selectTypeAndFormat'))
       return
     }
 
@@ -50,10 +52,12 @@ export function ReportsPage() {
 
       await reportsService.generateReportByType(reportType, options)
 
-      toast.success(`${format.toUpperCase()} report generated successfully!`)
+      toast.success(
+        t('reports.generatedSuccessfully', { format: format.toUpperCase() }),
+      )
     } catch (error) {
       console.error('Error generating report:', error)
-      toast.error('Failed to generate report. Please try again.')
+      toast.error(t('reports.generateFailed'))
     } finally {
       setIsGenerating(false)
     }
@@ -62,25 +66,24 @@ export function ReportsPage() {
   const reportOptions = [
     {
       id: 'neraca-detail',
-      title: 'Neraca Detail',
-      description: 'Only get data from account detail with ReportType NERACA',
+      title: t('reports.types.neracaDetail.title'),
+      description: t('reports.types.neracaDetail.description'),
       icon: FileText,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
     },
     {
       id: 'neraca',
-      title: 'Neraca',
-      description: 'Only get data from account general with ReportType NERACA',
+      title: t('reports.types.neraca.title'),
+      description: t('reports.types.neraca.description'),
       icon: BarChart3,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
     },
     {
       id: 'penjelasan-neraca',
-      title: 'Penjelasan Neraca',
-      description:
-        'Combine both data from account general and account detail with ReportType NERACA',
+      title: t('reports.types.penjelasanNeraca.title'),
+      description: t('reports.types.penjelasanNeraca.description'),
       icon: FileSpreadsheet,
       color: 'text-purple-600',
       bgColor: 'bg-purple-50',
@@ -90,15 +93,15 @@ export function ReportsPage() {
   const formatOptions = [
     {
       value: 'pdf',
-      label: 'PDF Document',
+      label: t('reports.formats.pdf.label'),
       icon: FileText,
-      description: 'Portable Document Format',
+      description: t('reports.formats.pdf.description'),
     },
     {
       value: 'xlsx',
-      label: 'Excel Spreadsheet',
+      label: t('reports.formats.xlsx.label'),
       icon: FileSpreadsheet,
-      description: 'Microsoft Excel Format',
+      description: t('reports.formats.xlsx.description'),
     },
   ]
 
@@ -107,7 +110,7 @@ export function ReportsPage() {
       {isGenerating && (
         <SubmitOverlay
           isVisible={true}
-          message="Generating report... Please wait"
+          message={`${t('reports.generating')} ${t('common.pleaseWait')}`}
         />
       )}
 
@@ -116,10 +119,10 @@ export function ReportsPage() {
           {/* Header */}
           <div className="space-y-2">
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl">
-              Generate Reports
+              {t('reports.title')}
             </h1>
             <p className="text-sm text-muted-foreground sm:text-base">
-              Generate comprehensive account reports in PDF or Excel format
+              {t('reports.subtitle')}
             </p>
           </div>
 
@@ -128,17 +131,17 @@ export function ReportsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart3 className="w-5 h-5" />
-                Report Configuration
+                {t('reports.configuration')}
               </CardTitle>
               <CardDescription>
-                Configure your account report settings and generate the file
+                {t('reports.configureSettings')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-6 sm:grid-cols-2">
                 {/* Report Type Dropdown */}
                 <div className="space-y-3">
-                  <Label htmlFor="report-type">Report Type</Label>
+                  <Label htmlFor="report-type">{t('reports.reportType')}</Label>
                   <Select
                     value={reportType}
                     onValueChange={(
@@ -146,7 +149,7 @@ export function ReportsPage() {
                     ) => setReportType(value)}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select report type" />
+                      <SelectValue placeholder={t('reports.reportType')} />
                     </SelectTrigger>
                     <SelectContent>
                       {reportOptions.map((option) => {
@@ -177,13 +180,13 @@ export function ReportsPage() {
 
                 {/* Format Selection */}
                 <div className="space-y-3">
-                  <Label htmlFor="format">File Format</Label>
+                  <Label htmlFor="format">{t('reports.fileFormat')}</Label>
                   <Select
                     value={format}
                     onValueChange={(value: 'pdf' | 'xlsx') => setFormat(value)}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select format" />
+                      <SelectValue placeholder={t('reports.fileFormat')} />
                     </SelectTrigger>
                     <SelectContent>
                       {formatOptions.map((option) => {
@@ -211,20 +214,22 @@ export function ReportsPage() {
 
               {/* Report Preview */}
               <div className="p-4 rounded-lg bg-muted/30">
-                <h4 className="mb-2 text-sm font-medium">Report Preview</h4>
+                <h4 className="mb-2 text-sm font-medium">
+                  {t('reports.preview')}
+                </h4>
                 <div className="space-y-1 text-xs text-muted-foreground">
                   <p>
-                    Type:{' '}
+                    {t('reports.type')}:{' '}
                     {reportOptions.find((opt) => opt.id === reportType)
-                      ?.title || 'Not selected'}
+                      ?.title || t('reports.notSelected')}
                   </p>
                   <p>
-                    Format:{' '}
+                    {t('reports.format')}:{' '}
                     {formatOptions.find((opt) => opt.value === format)?.label ||
-                      'Not selected'}
+                      t('reports.notSelected')}
                   </p>
                   <p>
-                    Filename: {reportType}_accounts_report_
+                    {t('reports.filename')}: {reportType}_accounts_report_
                     {new Date().toISOString().split('T')[0]}.{format}
                   </p>
                 </div>
@@ -238,7 +243,7 @@ export function ReportsPage() {
                 size="lg"
               >
                 <Download className="w-4 h-4 mr-2" />
-                {isGenerating ? 'Generating...' : 'Generate Report'}
+                {isGenerating ? t('reports.generating') : t('reports.generate')}
               </Button>
             </CardContent>
           </Card>
@@ -246,32 +251,34 @@ export function ReportsPage() {
           {/* Information Card */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Report Information</CardTitle>
+              <CardTitle className="text-lg">
+                {t('reports.information')}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <div>
-                  <h4 className="mb-1 text-sm font-medium">Neraca Detail</h4>
+                  <h4 className="mb-1 text-sm font-medium">
+                    {t('reports.types.neracaDetail.title')}
+                  </h4>
                   <p className="text-xs text-muted-foreground">
-                    Only includes account detail data with ReportType NERACA,
-                    showing detailed balance sheet account information.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="mb-1 text-sm font-medium">Neraca</h4>
-                  <p className="text-xs text-muted-foreground">
-                    Only includes account general data with ReportType NERACA,
-                    showing main balance sheet account structure.
+                    {t('reports.neracaDetailInfo')}
                   </p>
                 </div>
                 <div>
                   <h4 className="mb-1 text-sm font-medium">
-                    Penjelasan Neraca
+                    {t('reports.types.neraca.title')}
                   </h4>
                   <p className="text-xs text-muted-foreground">
-                    Combines both account general and detail data with
-                    ReportType NERACA, providing comprehensive balance sheet
-                    overview.
+                    {t('reports.neracaInfo')}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="mb-1 text-sm font-medium">
+                    {t('reports.types.penjelasanNeraca.title')}
+                  </h4>
+                  <p className="text-xs text-muted-foreground">
+                    {t('reports.penjelasanNeracaInfo')}
                   </p>
                 </div>
               </div>

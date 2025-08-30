@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { ROUTES } from '@/constants'
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslation } from '@/hooks/useTranslation'
 import {
   canAccessUserManagement,
   canManageAccounts,
@@ -37,6 +38,7 @@ import { toast } from 'sonner'
 
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuth()
+  const { t } = useTranslation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   if (!isAuthenticated) {
@@ -62,7 +64,7 @@ export default function Header() {
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-primary-foreground">
               <BookOpen className="w-5 h-5" />
             </div>
-            <span className="hidden sm:inline-block">PRSM Accounting</span>
+            <span className="hidden sm:inline-block">{t('app.name')}</span>
           </Link>
         </div>
 
@@ -74,7 +76,7 @@ export default function Header() {
             activeProps={{ className: 'nav-link active' }}
           >
             <LayoutDashboard className="w-4 h-4" />
-            <span>Dashboard</span>
+            <span>{t('navigation.dashboard')}</span>
           </Link>
 
           {canViewUsers && (
@@ -84,7 +86,7 @@ export default function Header() {
               activeProps={{ className: 'nav-link active' }}
             >
               <Users className="w-4 h-4" />
-              <span>Users</span>
+              <span>{t('navigation.users')}</span>
             </Link>
           )}
 
@@ -96,7 +98,7 @@ export default function Header() {
                   className="nav-link flex items-center space-x-2 data-[state=open]:bg-primary/10"
                 >
                   <FolderOpen className="w-4 h-4" />
-                  <span>Accounts</span>
+                  <span>{t('navigation.accounts')}</span>
                   <ChevronDown className="w-3 h-3 ml-1" />
                 </Button>
               </DropdownMenuTrigger>
@@ -110,7 +112,7 @@ export default function Header() {
                     className="flex items-center w-full space-x-2"
                   >
                     <FolderOpen className="w-4 h-4" />
-                    <span>General Accounts</span>
+                    <span>{t('navigation.generalAccounts')}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
@@ -119,7 +121,7 @@ export default function Header() {
                     className="flex items-center w-full space-x-2"
                   >
                     <FolderOpen className="w-4 h-4" />
-                    <span>Detail Accounts</span>
+                    <span>{t('navigation.detailAccounts')}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -129,7 +131,7 @@ export default function Header() {
                     className="flex items-center w-full space-x-2"
                   >
                     <Plus className="w-4 h-4" />
-                    <span>Create General Account</span>
+                    <span>{t('navigation.createGeneralAccount')}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
@@ -138,7 +140,7 @@ export default function Header() {
                     className="flex items-center w-full space-x-2"
                   >
                     <Plus className="w-4 h-4" />
-                    <span>Create Detail Account</span>
+                    <span>{t('navigation.createDetailAccount')}</span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -153,7 +155,7 @@ export default function Header() {
                   className="nav-link flex items-center space-x-2 data-[state=open]:bg-primary/10"
                 >
                   <BookOpen className="w-4 h-4" />
-                  <span>Ledgers</span>
+                  <span>{t('navigation.ledgers')}</span>
                   <ChevronDown className="w-3 h-3 ml-1" />
                 </Button>
               </DropdownMenuTrigger>
@@ -167,7 +169,7 @@ export default function Header() {
                     className="flex items-center w-full space-x-2"
                   >
                     <BookOpen className="w-4 h-4" />
-                    <span>View All Ledgers</span>
+                    <span>{t('navigation.viewAllLedgers')}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -177,7 +179,7 @@ export default function Header() {
                     className="flex items-center w-full space-x-2"
                   >
                     <Plus className="w-4 h-4" />
-                    <span>Create Kas</span>
+                    <span>{t('navigation.createKas')}</span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -192,7 +194,7 @@ export default function Header() {
                   className="nav-link flex items-center space-x-2 data-[state=open]:bg-primary/10"
                 >
                   <Calculator className="w-4 h-4" />
-                  <span>Posting</span>
+                  <span>{t('navigation.posting')}</span>
                   <ChevronDown className="w-3 h-3 ml-1" />
                 </Button>
               </DropdownMenuTrigger>

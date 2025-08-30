@@ -13,6 +13,7 @@ import {
   usePostBukuBesarMutation,
   useUnpostBukuBesarMutation,
 } from '@/hooks/usePostingQuery'
+import { useTranslation } from '@/hooks/useTranslation'
 // import type { BukuBesarFormData } from '@/types/posting'
 import { getCurrentDateForAPI } from '@/utils/date'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -30,6 +31,7 @@ type BukuBesarFormData = z.infer<typeof bukuBesarFormSchema>
 
 export function BukuBesarPostingPage() {
   const router = useRouter()
+  const { t } = useTranslation()
   const postMutation = usePostBukuBesarMutation()
   const unpostMutation = useUnpostBukuBesarMutation()
 
@@ -45,9 +47,12 @@ export function BukuBesarPostingPage() {
       await postMutation.mutateAsync({
         ledgerDate: data.ledgerDate,
       })
-      toast.success('Buku Besar posted successfully!')
+      toast.success(t('posting.bukuBesarPosting.successPost'))
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Failed to post Buku Besar')
+      toast.error(
+        error?.response?.data?.message ||
+          t('posting.bukuBesarPosting.errorPost'),
+      )
     }
   }
 
@@ -56,10 +61,11 @@ export function BukuBesarPostingPage() {
       await unpostMutation.mutateAsync({
         ledgerDate: data.ledgerDate,
       })
-      toast.success('Buku Besar unposted successfully!')
+      toast.success(t('posting.bukuBesarPosting.successUnpost'))
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || 'Failed to unpost Buku Besar',
+        error?.response?.data?.message ||
+          t('posting.bukuBesarPosting.errorUnpost'),
       )
     }
   }
@@ -77,15 +83,17 @@ export function BukuBesarPostingPage() {
           className="flex items-center gap-2 self-start md:hidden"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Posting
+          {t('posting.backToPosting')}
         </Button>
         <div className="space-y-1">
           <h1 className="flex items-center gap-2 text-xl font-bold text-gray-900 sm:gap-3 sm:text-2xl lg:text-3xl">
             <FileText className="w-6 h-6 text-blue-600 sm:w-7 sm:h-7 lg:w-8 lg:h-8" />
-            <span className="leading-tight">Buku Besar Posting</span>
+            <span className="leading-tight">
+              {t('posting.bukuBesarPosting.title')}
+            </span>
           </h1>
           <p className="text-sm text-gray-600 sm:text-base">
-            Post general ledger entries for a specific date
+            {t('posting.bukuBesarPosting.subtitle')}
           </p>
         </div>
       </div>
@@ -94,10 +102,9 @@ export function BukuBesarPostingPage() {
         {/* Posting Form */}
         <Card>
           <CardHeader>
-            <CardTitle>Post Buku Besar</CardTitle>
+            <CardTitle>{t('posting.bukuBesarPosting.postButton')}</CardTitle>
             <CardDescription>
-              Post all pending ledger entries to the general ledger for the
-              specified date
+              {t('posting.bukuBesarPosting.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -106,7 +113,7 @@ export function BukuBesarPostingPage() {
               className="space-y-4"
             >
               <div className="space-y-2">
-                <Label htmlFor="ledgerDate">Ledger Date</Label>
+                <Label htmlFor="ledgerDate">{t('posting.ledgerDate')}</Label>
                 <div className="relative">
                   <Calendar className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <Input
@@ -129,7 +136,7 @@ export function BukuBesarPostingPage() {
                   {postMutation.isPending ? (
                     <LoadingState size="sm" />
                   ) : (
-                    'Post Buku Besar'
+                    t('posting.bukuBesarPosting.postButton')
                   )}
                 </Button>
 
@@ -143,7 +150,7 @@ export function BukuBesarPostingPage() {
                   {unpostMutation.isPending ? (
                     <LoadingState size="sm" />
                   ) : (
-                    'Unpost Buku Besar'
+                    t('posting.bukuBesarPosting.unpostButton')
                   )}
                 </Button>
               </div>
@@ -156,44 +163,37 @@ export function BukuBesarPostingPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-amber-500" />
-              Operation Information
+              {t('posting.bukuBesarPosting.operationInfo')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-3">
               <h4 className="font-medium text-gray-900">
-                What is Buku Besar Posting?
+                {t('posting.bukuBesarPosting.whatIs')}
               </h4>
               <p className="text-sm text-gray-600">
-                Buku Besar (General Ledger) posting transfers all pending ledger
-                entries to the posted status, making them part of the official
-                accounting records.
+                {t('posting.bukuBesarPosting.explanation')}
               </p>
             </div>
 
             <div className="space-y-3">
               <h4 className="font-medium text-gray-900">
-                What happens during posting?
+                {t('posting.bukuBesarPosting.whatHappens')}
               </h4>
               <ul className="space-y-1 text-sm text-gray-600">
-                <li>
-                  • All PENDING ledger entries for the date are marked as POSTED
-                </li>
-                <li>• Account balances are updated with the posted amounts</li>
-                <li>• The posting timestamp is recorded for audit purposes</li>
-                <li>
-                  • Posted entries become immutable and part of the official
-                  record
-                </li>
+                <li>• {t('posting.bukuBesarPosting.step1')}</li>
+                <li>• {t('posting.bukuBesarPosting.step2')}</li>
+                <li>• {t('posting.bukuBesarPosting.step3')}</li>
+                <li>• {t('posting.bukuBesarPosting.step4')}</li>
               </ul>
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">When to use Unpost?</h4>
+              <h4 className="font-medium text-gray-900">
+                {t('posting.bukuBesarPosting.whenUnpost')}
+              </h4>
               <p className="text-sm text-gray-600">
-                Unposting reverses the posting operation and returns entries to
-                PENDING status. Use this only when corrections are needed before
-                month-end closing.
+                {t('posting.bukuBesarPosting.unpostExplanation')}
               </p>
             </div>
 
@@ -201,13 +201,11 @@ export function BukuBesarPostingPage() {
               <div className="flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-600" />
                 <span className="font-medium text-amber-800">
-                  Important Warning
+                  {t('posting.bukuBesarPosting.importantWarning')}
                 </span>
               </div>
               <p className="mt-1 text-sm text-amber-700">
-                Always ensure all ledger entries are correct before posting.
-                Unposting should be done carefully as it affects financial
-                reporting.
+                {t('posting.bukuBesarPosting.warning')}
               </p>
             </div>
           </CardContent>

@@ -38,6 +38,7 @@ import {
   useDeleteLedgerMutation,
   useLedgersQuery,
 } from '@/hooks/useLedgersQuery'
+import { useTranslation } from '@/hooks/useTranslation'
 import type { LedgerQueryParams } from '@/types/ledgers'
 import { formatCurrency } from '@/utils'
 import { formatDate } from '@/utils/date'
@@ -59,6 +60,7 @@ import React, { useMemo, useState } from 'react'
 
 export const LedgersListPage: React.FC = () => {
   const router = useRouter()
+  const { t } = useTranslation()
   const { user } = useAuth()
   const [searchTerm, setSearchTerm] = useState('')
   const [filters, setFilters] = useState<Partial<LedgerQueryParams>>({
@@ -90,8 +92,8 @@ export const LedgersListPage: React.FC = () => {
     return (
       <ErrorState
         type="generic"
-        title="Access Denied"
-        message="You don't have permission to access ledger management."
+        title={t('posting.accessDenied')}
+        message={t('posting.noPermission')}
       />
     )
   }
@@ -122,11 +124,7 @@ export const LedgersListPage: React.FC = () => {
   }
 
   const handleDelete = async (id: string, description: string) => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete the ledger entry "${description}"? This action cannot be undone.`,
-      )
-    ) {
+    if (window.confirm(t('ledgersList.deleteConfirm', { description }))) {
       try {
         await deleteMutation.mutateAsync(id)
       } catch {
@@ -142,8 +140,8 @@ export const LedgersListPage: React.FC = () => {
     } as const
 
     const labels = {
-      KAS_MASUK: 'Cash In',
-      KAS_KELUAR: 'Cash Out',
+      KAS_MASUK: t('ledgersList.cashIn'),
+      KAS_KELUAR: t('ledgersList.cashOut'),
     }
 
     return (
@@ -183,8 +181,8 @@ export const LedgersListPage: React.FC = () => {
     return (
       <ErrorState
         type="server"
-        title="Failed to Load Ledgers"
-        message="There was an error loading the ledger entries. Please try again."
+        title={t('ledgersList.failedToLoad')}
+        message={t('ledgersList.errorLoading')}
         onRetry={() => refetch()}
       />
     )
@@ -195,16 +193,16 @@ export const LedgersListPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Ledgers</h1>
-          <p className="text-muted-foreground">
-            Manage your ledger entries and transactions
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t('ledgersList.title')}
+          </h1>
+          <p className="text-muted-foreground">{t('ledgersList.subtitle')}</p>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
-              Create Ledger Entry
+              {t('ledgersList.createLedgerEntry')}
               <ChevronDown className="w-4 h-4 ml-2" />
             </Button>
           </DropdownMenuTrigger>
@@ -224,18 +222,22 @@ export const LedgersListPage: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="w-5 h-5" />
-            Search & Filter
+            {t('ledgersList.searchAndFilter')}
           </CardTitle>
-          <CardDescription>Search and filter ledger entries</CardDescription>
+          <CardDescription>
+            {t('ledgersList.searchDescription')}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Search</label>
+              <label className="text-sm font-medium">
+                {t('ledgersList.search')}
+              </label>
               <div className="relative">
                 <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search description, reference..."
+                  placeholder={t('ledgersList.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => handleSearch(e.target.value)}
                   className="pl-9"
@@ -244,7 +246,9 @@ export const LedgersListPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Ledger Type</label>
+              <label className="text-sm font-medium">
+                {t('ledgersList.ledgerType')}
+              </label>
               <Select
                 value={filters.ledgerType || 'all'}
                 onValueChange={(value) =>
@@ -252,18 +256,26 @@ export const LedgersListPage: React.FC = () => {
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="All types" />
+                  <SelectValue placeholder={t('ledgersList.allTypes')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All types</SelectItem>
-                  <SelectItem value="KAS_MASUK">Cash In</SelectItem>
-                  <SelectItem value="KAS_KELUAR">Cash Out</SelectItem>
+                  <SelectItem value="all">
+                    {t('ledgersList.allTypes')}
+                  </SelectItem>
+                  <SelectItem value="KAS_MASUK">
+                    {t('ledgersList.cashIn')}
+                  </SelectItem>
+                  <SelectItem value="KAS_KELUAR">
+                    {t('ledgersList.cashOut')}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Posting Status</label>
+              <label className="text-sm font-medium">
+                {t('ledgersList.postingStatus')}
+              </label>
               <Select
                 value={filters.postingStatus || 'all'}
                 onValueChange={(value) =>
@@ -271,18 +283,26 @@ export const LedgersListPage: React.FC = () => {
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="All statuses" />
+                  <SelectValue placeholder={t('ledgersList.allStatuses')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All statuses</SelectItem>
-                  <SelectItem value="PENDING">Pending</SelectItem>
-                  <SelectItem value="POSTED">Posted</SelectItem>
+                  <SelectItem value="all">
+                    {t('ledgersList.allStatuses')}
+                  </SelectItem>
+                  <SelectItem value="PENDING">
+                    {t('ledgersList.pending')}
+                  </SelectItem>
+                  <SelectItem value="POSTED">
+                    {t('ledgersList.posted')}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Items per page</label>
+              <label className="text-sm font-medium">
+                {t('ledgersList.itemsPerPage')}
+              </label>
               <Select
                 value={String(filters.limit || 10)}
                 onValueChange={(value) =>
@@ -309,14 +329,14 @@ export const LedgersListPage: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileSpreadsheet className="w-5 h-5" />
-            Ledger Entries
+            {t('ledgersList.ledgerEntries')}
             {ledgersResponse?.pagination && (
               <span className="text-sm font-normal text-muted-foreground">
-                ({ledgersResponse.pagination.total} total)
+                ({ledgersResponse.pagination.total} {t('ledgersList.total')})
               </span>
             )}
           </CardTitle>
-          <CardDescription>View and manage all ledger entries</CardDescription>
+          <CardDescription>{t('ledgersList.viewAndManage')}</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -330,16 +350,16 @@ export const LedgersListPage: React.FC = () => {
               }
               title={
                 searchTerm || Object.keys(filters).length > 2
-                  ? 'No ledger entries found'
-                  : 'No ledger entries yet'
+                  ? t('ledgersList.noEntriesFound')
+                  : t('ledgersList.noEntriesYet')
               }
               description={
                 searchTerm || Object.keys(filters).length > 2
-                  ? 'Try adjusting your search criteria or filters.'
-                  : 'Create your first ledger entry to get started.'
+                  ? t('ledgersList.adjustCriteria')
+                  : t('ledgersList.createFirstEntry')
               }
               action={{
-                label: 'Create Ledger Entry',
+                label: t('ledgersList.createLedgerEntry'),
                 onClick: () => router.navigate({ to: '/ledgers/new' }),
               }}
             />
@@ -349,15 +369,17 @@ export const LedgersListPage: React.FC = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Reference</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Transaction</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Account</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>{t('ledgersList.reference')}</TableHead>
+                      <TableHead>{t('ledgersList.description')}</TableHead>
+                      <TableHead>{t('ledgersList.amount')}</TableHead>
+                      <TableHead>{t('ledgersList.type')}</TableHead>
+                      <TableHead>{t('ledgersList.transaction')}</TableHead>
+                      <TableHead>{t('common.status')}</TableHead>
+                      <TableHead>{t('ledgersList.date')}</TableHead>
+                      <TableHead>{t('ledgersList.account')}</TableHead>
+                      <TableHead className="text-right">
+                        {t('users.actions')}
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -438,17 +460,18 @@ export const LedgersListPage: React.FC = () => {
                 ledgersResponse.pagination.pages > 1 && (
                   <div className="flex items-center justify-between">
                     <p className="text-sm text-muted-foreground">
-                      Showing{' '}
+                      {t('ledgersList.showing')}{' '}
                       {(ledgersResponse.pagination.page - 1) *
                         ledgersResponse.pagination.limit +
                         1}{' '}
-                      to{' '}
+                      {t('ledgersList.to')}{' '}
                       {Math.min(
                         ledgersResponse.pagination.page *
                           ledgersResponse.pagination.limit,
                         ledgersResponse.pagination.total,
                       )}{' '}
-                      of {ledgersResponse.pagination.total} entries
+                      {t('ledgersList.of')} {ledgersResponse.pagination.total}{' '}
+                      {t('ledgersList.entries')}
                     </p>
                     <div className="flex items-center gap-2">
                       <Button
@@ -459,11 +482,11 @@ export const LedgersListPage: React.FC = () => {
                         }
                         disabled={ledgersResponse.pagination.page <= 1}
                       >
-                        Previous
+                        {t('ledgersList.previous')}
                       </Button>
                       <span className="text-sm">
-                        Page {ledgersResponse.pagination.page} of{' '}
-                        {ledgersResponse.pagination.pages}
+                        {t('table.page')} {ledgersResponse.pagination.page}{' '}
+                        {t('ledgersList.of')} {ledgersResponse.pagination.pages}
                       </span>
                       <Button
                         variant="outline"
@@ -476,7 +499,7 @@ export const LedgersListPage: React.FC = () => {
                           ledgersResponse.pagination.pages
                         }
                       >
-                        Next
+                        {t('ledgersList.next')}
                       </Button>
                     </div>
                   </div>

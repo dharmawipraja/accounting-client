@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { useTranslation } from '@/hooks/useTranslation'
 import { AlertCircle, RefreshCw, WifiOff } from 'lucide-react'
 
 interface ErrorStateProps {
@@ -17,39 +18,39 @@ export function ErrorState({
   isRetrying = false,
   type = 'generic',
 }: ErrorStateProps) {
+  const { t } = useTranslation()
+
   const getErrorConfig = () => {
     switch (type) {
       case 'network':
         return {
           icon: <WifiOff className="h-16 w-16 text-red-400" />,
-          defaultTitle: 'Connection Problem',
-          defaultMessage:
-            'Please check your internet connection and try again.',
+          defaultTitle: t('errorState.network.title'),
+          defaultMessage: t('errorState.network.message'),
           bgColor: 'bg-red-50',
           borderColor: 'border-red-200',
         }
       case 'server':
         return {
           icon: <AlertCircle className="h-16 w-16 text-orange-400" />,
-          defaultTitle: 'Server Error',
-          defaultMessage:
-            'Something went wrong on our end. Please try again in a moment.',
+          defaultTitle: t('errorState.server.title'),
+          defaultMessage: t('errorState.server.message'),
           bgColor: 'bg-orange-50',
           borderColor: 'border-orange-200',
         }
       case 'notFound':
         return {
           icon: <AlertCircle className="h-16 w-16 text-gray-400" />,
-          defaultTitle: 'Not Found',
-          defaultMessage: 'The requested resource could not be found.',
+          defaultTitle: t('errorState.notFound.title'),
+          defaultMessage: t('errorState.notFound.message'),
           bgColor: 'bg-gray-50',
           borderColor: 'border-gray-200',
         }
       default:
         return {
           icon: <AlertCircle className="h-16 w-16 text-red-400" />,
-          defaultTitle: 'Something went wrong',
-          defaultMessage: 'An unexpected error occurred. Please try again.',
+          defaultTitle: t('errorState.generic.title'),
+          defaultMessage: t('errorState.generic.message'),
           bgColor: 'bg-red-50',
           borderColor: 'border-red-200',
         }
@@ -78,7 +79,7 @@ export function ErrorState({
             <RefreshCw
               className={`h-4 w-4 ${isRetrying ? 'animate-spin' : ''}`}
             />
-            {isRetrying ? 'Retrying...' : 'Try Again'}
+            {isRetrying ? t('errorState.retrying') : t('errorState.tryAgain')}
           </Button>
         )}
       </CardContent>
