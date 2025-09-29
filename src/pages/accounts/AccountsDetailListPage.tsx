@@ -48,7 +48,9 @@ import {
   useDeleteAccountDetailMutation,
 } from '@/hooks/useAccountsQuery'
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslation } from '@/hooks/useTranslation'
 import type { AccountDetail, AccountQueryParams } from '@/types/accounts'
+import { formatCurrency } from '@/utils/formatters'
 import { canManageAccounts } from '@/utils/rolePermissions'
 import { useNavigate } from '@tanstack/react-router'
 import {
@@ -75,6 +77,7 @@ import { toast } from 'sonner'
 
 export function AccountsDetailListPage() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { user } = useAuth()
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')
@@ -172,7 +175,7 @@ export function AccountsDetailListPage() {
     },
     {
       accessorKey: 'accountCategory',
-      header: 'Category',
+      header: t('labels.category'),
       cell: ({ row }) => {
         const category = row.getValue('accountCategory') as string
         return (
@@ -188,7 +191,7 @@ export function AccountsDetailListPage() {
     },
     {
       accessorKey: 'accountGeneral',
-      header: 'General Account',
+      header: t('labels.generalAccount'),
       cell: ({ row }) => {
         const accountGeneral = row.original.accountGeneral
         if (!accountGeneral)
@@ -218,9 +221,7 @@ export function AccountsDetailListPage() {
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue('amount'))
         return (
-          <div className="font-medium text-right">
-            Rp {amount.toLocaleString('id-ID')}
-          </div>
+          <div className="font-medium text-right">{formatCurrency(amount)}</div>
         )
       },
     },
@@ -342,8 +343,8 @@ export function AccountsDetailListPage() {
       <div className="container px-4 py-8 mx-auto space-y-6">
         <ErrorState
           type="server"
-          title="Error Loading Accounts"
-          message={error?.message || 'Failed to load detail accounts.'}
+          title={t('messages.errorLoadingAccounts')}
+          message={error?.message || t('messages.failedToLoadAccounts')}
           onRetry={() => refetch()}
         />
       </div>
@@ -356,7 +357,10 @@ export function AccountsDetailListPage() {
   return (
     <div className="container px-4 py-8 mx-auto space-y-6">
       {deleteAccountMutation.isPending && (
-        <SubmitOverlay isVisible={true} message="Deleting account..." />
+        <SubmitOverlay
+          isVisible={true}
+          message={t('messages.deletingAccount')}
+        />
       )}
 
       <div className="flex items-center justify-between">
@@ -381,7 +385,7 @@ export function AccountsDetailListPage() {
             <div className="relative flex-1">
               <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search accounts..."
+                placeholder={t('placeholders.searchAccounts')}
                 value={globalFilter}
                 onChange={(event) => setGlobalFilter(event.target.value)}
                 className="pl-10"
@@ -389,10 +393,12 @@ export function AccountsDetailListPage() {
             </div>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="Filter by category" />
+                <SelectValue placeholder={t('placeholders.filterByCategory')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="all">
+                  {t('messages.allCategories')}
+                </SelectItem>
                 {Object.values(ACCOUNT_CATEGORIES).map((category) => (
                   <SelectItem key={category} value={category}>
                     {
@@ -410,10 +416,10 @@ export function AccountsDetailListPage() {
           {accounts.length === 0 ? (
             <EmptyState
               type="data"
-              title="No Detail Accounts Found"
-              description="There are no detail accounts to display."
+              title={t('messages.noDetailAccountsFound')}
+              description={t('messages.noDetailAccountsMessage')}
               action={{
-                label: 'Add First Detail Account',
+                label: t('messages.addFirstDetailAccount'),
                 onClick: () => navigate({ to: '/accounts/detail/new' }),
                 icon: <Plus className="w-4 h-4" />,
               }}

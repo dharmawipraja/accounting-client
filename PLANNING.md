@@ -589,7 +589,7 @@ interface Ledger {
   referenceNumber: string
   amount: number
   description: string
-  ledgerType: 'KAS_MASUK' | 'KAS_KELUAR'
+  ledgerType: 'KAS' | 'KAS_MASUK' | 'KAS_KELUAR'
   transactionType: 'DEBIT' | 'CREDIT'
   postingStatus: 'PENDING' | 'POSTED'
   ledgerDate: string
@@ -691,7 +691,7 @@ interface LedgerItem {
   description: string // min: 3 chars, max: 500
   accountDetailAccountNumber: string // UUID
   accountGeneralAccountNumber: string // UUID
-  ledgerType: 'KAS_MASUK' | 'KAS_KELUAR'
+  ledgerType: 'KAS' | 'KAS_MASUK' | 'KAS_KELUAR'
   transactionType: 'DEBIT' | 'CREDIT'
   ledgerDate: string // ISO date string
 }
@@ -705,7 +705,7 @@ interface UpdateLedgerPayload {
   description?: string // min: 3 chars, max: 500
   accountDetailAccountNumber?: string // UUID
   accountGeneralAccountNumber?: string // UUID
-  ledgerType?: 'KAS_MASUK' | 'KAS_KELUAR'
+  ledgerType?: 'KAS' | 'KAS_MASUK' | 'KAS_KELUAR'
   transactionType?: 'DEBIT' | 'CREDIT'
   ledgerDate?: string // ISO date string
   postingStatus?: 'PENDING' | 'POSTED'
@@ -750,7 +750,7 @@ interface LedgerQueryParams extends PaginationParams {
   search?: string // searches description and reference number
   accountDetailAccountNumber?: string
   accountGeneralAccountNumber?: string
-  ledgerType?: 'KAS_MASUK' | 'KAS_KELUAR'
+  ledgerType?: 'KAS' | 'KAS_MASUK' | 'KAS_KELUAR'
   postingStatus?: 'PENDING' | 'POSTED'
   dateFrom?: string // ISO date string
   dateTo?: string // ISO date string

@@ -52,6 +52,7 @@ import {
 } from '@/components/ui/table'
 
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslation } from '@/hooks/useTranslation'
 import { useDeleteUserMutation, useUsersQuery } from '@/hooks/useUsersQuery'
 import type { User } from '@/types'
 
@@ -59,6 +60,7 @@ const columnHelper = createColumnHelper<User>()
 
 export default function UserListPage() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { user: currentUser } = useAuth()
 
   // Table state
@@ -86,7 +88,7 @@ export default function UserListPage() {
   const columns = useMemo(
     () => [
       columnHelper.accessor('name', {
-        header: 'User',
+        header: t('labels.user'),
         cell: ({ row }) => {
           const user = row.original
           return (
@@ -105,7 +107,7 @@ export default function UserListPage() {
         },
       }),
       columnHelper.accessor('role', {
-        header: 'Role',
+        header: t('labels.role'),
         cell: ({ getValue }) => {
           const role = getValue()
           return (
@@ -119,7 +121,7 @@ export default function UserListPage() {
         },
       }),
       columnHelper.accessor('status', {
-        header: 'Status',
+        header: t('labels.status'),
         cell: ({ getValue }) => {
           const status = getValue()
           return (
@@ -133,7 +135,7 @@ export default function UserListPage() {
         },
       }),
       columnHelper.accessor('createdAt', {
-        header: 'Created',
+        header: t('labels.created'),
         cell: ({ getValue }) => (
           <div className="text-sm text-muted-foreground">
             {format(new Date(getValue()), 'MMM dd, yyyy')}
@@ -149,16 +151,16 @@ export default function UserListPage() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-8 h-8 p-0">
-                  <span className="sr-only">Open menu</span>
+                  <span className="sr-only">{t('labels.openMenu')}</span>
                   <MoreHorizontal className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('labels.actions')}</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
                   <Link to="/users/$id" params={{ id: user.id }}>
                     <Eye className="w-4 h-4 mr-2" />
-                    View details
+                    {t('labels.viewDetails')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
@@ -320,7 +322,7 @@ export default function UserListPage() {
               <div className="relative">
                 <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search users..."
+                  placeholder={t('placeholders.searchUsers')}
                   value={globalFilter ?? ''}
                   onChange={(event) =>
                     setGlobalFilter(String(event.target.value))
@@ -378,7 +380,7 @@ export default function UserListPage() {
             <div className="p-6">
               <ErrorState
                 type="server"
-                title="Failed to load users"
+                title={t('messages.failedToLoadUsers')}
                 onRetry={() => refetch()}
               />
             </div>

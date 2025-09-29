@@ -335,6 +335,7 @@
       "minTwoEntries": "At least 2 entries are required for double-entry"
     },
     "types": {
+      "KAS": "Cash",
       "KAS_MASUK": "Cash In",
       "KAS_KELUAR": "Cash Out"
     }

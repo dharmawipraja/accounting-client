@@ -20,7 +20,6 @@ import { Route as PostingNeracaDetailRouteImport } from './routes/posting/neraca
 import { Route as PostingNeracaBalanceRouteImport } from './routes/posting/neraca-balance'
 import { Route as PostingNeracaAkhirRouteImport } from './routes/posting/neraca-akhir'
 import { Route as PostingBukuBesarRouteImport } from './routes/posting/buku-besar'
-import { Route as LedgersNewRouteImport } from './routes/ledgers/new'
 import { Route as LedgersKasMasukRouteImport } from './routes/ledgers/kas-masuk'
 import { Route as LedgersKasKeluarRouteImport } from './routes/ledgers/kas-keluar'
 import { Route as LedgersKasRouteImport } from './routes/ledgers/kas'
@@ -90,11 +89,6 @@ const PostingNeracaAkhirRoute = PostingNeracaAkhirRouteImport.update({
 const PostingBukuBesarRoute = PostingBukuBesarRouteImport.update({
   id: '/posting/buku-besar',
   path: '/posting/buku-besar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LedgersNewRoute = LedgersNewRouteImport.update({
-  id: '/ledgers/new',
-  path: '/ledgers/new',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LedgersKasMasukRoute = LedgersKasMasukRouteImport.update({
@@ -181,7 +175,6 @@ export interface FileRoutesByFullPath {
   '/ledgers/kas': typeof LedgersKasRoute
   '/ledgers/kas-keluar': typeof LedgersKasKeluarRoute
   '/ledgers/kas-masuk': typeof LedgersKasMasukRoute
-  '/ledgers/new': typeof LedgersNewRoute
   '/posting/buku-besar': typeof PostingBukuBesarRoute
   '/posting/neraca-akhir': typeof PostingNeracaAkhirRoute
   '/posting/neraca-balance': typeof PostingNeracaBalanceRoute
@@ -210,7 +203,6 @@ export interface FileRoutesByTo {
   '/ledgers/kas': typeof LedgersKasRoute
   '/ledgers/kas-keluar': typeof LedgersKasKeluarRoute
   '/ledgers/kas-masuk': typeof LedgersKasMasukRoute
-  '/ledgers/new': typeof LedgersNewRoute
   '/posting/buku-besar': typeof PostingBukuBesarRoute
   '/posting/neraca-akhir': typeof PostingNeracaAkhirRoute
   '/posting/neraca-balance': typeof PostingNeracaBalanceRoute
@@ -240,7 +232,6 @@ export interface FileRoutesById {
   '/ledgers/kas': typeof LedgersKasRoute
   '/ledgers/kas-keluar': typeof LedgersKasKeluarRoute
   '/ledgers/kas-masuk': typeof LedgersKasMasukRoute
-  '/ledgers/new': typeof LedgersNewRoute
   '/posting/buku-besar': typeof PostingBukuBesarRoute
   '/posting/neraca-akhir': typeof PostingNeracaAkhirRoute
   '/posting/neraca-balance': typeof PostingNeracaBalanceRoute
@@ -271,7 +262,6 @@ export interface FileRouteTypes {
     | '/ledgers/kas'
     | '/ledgers/kas-keluar'
     | '/ledgers/kas-masuk'
-    | '/ledgers/new'
     | '/posting/buku-besar'
     | '/posting/neraca-akhir'
     | '/posting/neraca-balance'
@@ -300,7 +290,6 @@ export interface FileRouteTypes {
     | '/ledgers/kas'
     | '/ledgers/kas-keluar'
     | '/ledgers/kas-masuk'
-    | '/ledgers/new'
     | '/posting/buku-besar'
     | '/posting/neraca-akhir'
     | '/posting/neraca-balance'
@@ -329,7 +318,6 @@ export interface FileRouteTypes {
     | '/ledgers/kas'
     | '/ledgers/kas-keluar'
     | '/ledgers/kas-masuk'
-    | '/ledgers/new'
     | '/posting/buku-besar'
     | '/posting/neraca-akhir'
     | '/posting/neraca-balance'
@@ -359,7 +347,6 @@ export interface RootRouteChildren {
   LedgersKasRoute: typeof LedgersKasRoute
   LedgersKasKeluarRoute: typeof LedgersKasKeluarRoute
   LedgersKasMasukRoute: typeof LedgersKasMasukRoute
-  LedgersNewRoute: typeof LedgersNewRoute
   PostingBukuBesarRoute: typeof PostingBukuBesarRoute
   PostingNeracaAkhirRoute: typeof PostingNeracaAkhirRoute
   PostingNeracaBalanceRoute: typeof PostingNeracaBalanceRoute
@@ -458,13 +445,6 @@ declare module '@tanstack/react-router' {
       path: '/posting/buku-besar'
       fullPath: '/posting/buku-besar'
       preLoaderRoute: typeof PostingBukuBesarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ledgers/new': {
-      id: '/ledgers/new'
-      path: '/ledgers/new'
-      fullPath: '/ledgers/new'
-      preLoaderRoute: typeof LedgersNewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ledgers/kas-masuk': {
@@ -583,7 +563,6 @@ const rootRouteChildren: RootRouteChildren = {
   LedgersKasRoute: LedgersKasRoute,
   LedgersKasKeluarRoute: LedgersKasKeluarRoute,
   LedgersKasMasukRoute: LedgersKasMasukRoute,
-  LedgersNewRoute: LedgersNewRoute,
   PostingBukuBesarRoute: PostingBukuBesarRoute,
   PostingNeracaAkhirRoute: PostingNeracaAkhirRoute,
   PostingNeracaBalanceRoute: PostingNeracaBalanceRoute,

@@ -12,8 +12,10 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useTranslation } from '@/hooks/useTranslation'
 import { useUsers } from '@/hooks/useUsers'
 import type { User } from '@/types/api'
+import { formatDate } from '@/utils/formatters'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { ArrowLeft, Edit, Shield, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -21,6 +23,7 @@ import { toast } from 'sonner'
 
 export function UserDetailPage() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { id } = useParams({ from: '/users/$id/' })
   const { getUserById, deleteUser } = useUsers()
 
@@ -108,7 +111,7 @@ export function UserDetailPage() {
                   className="flex items-center space-x-1 md:hidden"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  <span>Back to Users</span>
+                  <span>{t('labels.backToUsers')}</span>
                 </Button>
               </div>
 
@@ -135,7 +138,7 @@ export function UserDetailPage() {
                   className="flex items-center space-x-1 md:hidden"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  <span>Back to Users</span>
+                  <span>{t('labels.backToUsers')}</span>
                 </Button>
               </div>
 
@@ -163,7 +166,7 @@ export function UserDetailPage() {
                     className="flex items-center space-x-1 md:hidden"
                   >
                     <ArrowLeft className="w-4 h-4" />
-                    <span>Back to Users</span>
+                    <span>{t('labels.backToUsers')}</span>
                   </Button>
                 </div>
 
@@ -307,14 +310,14 @@ export function UserDetailPage() {
                       <div>
                         <p className="text-sm font-medium">Created</p>
                         <p className="text-sm text-muted-foreground">
-                          {new Date(user.createdAt).toLocaleDateString()}
+                          {formatDate(user.createdAt)}
                         </p>
                       </div>
 
                       <div>
                         <p className="text-sm font-medium">Last Updated</p>
                         <p className="text-sm text-muted-foreground">
-                          {new Date(user.updatedAt).toLocaleDateString()}
+                          {formatDate(user.updatedAt)}
                         </p>
                       </div>
                     </CardContent>

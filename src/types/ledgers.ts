@@ -1,5 +1,5 @@
 // Ledger related types
-export type LedgerType = 'KAS_MASUK' | 'KAS_KELUAR'
+export type LedgerType = 'KAS' | 'KAS_MASUK' | 'KAS_KELUAR'
 export type PostingStatus = 'PENDING' | 'POSTED'
 export type TransactionType = 'DEBIT' | 'CREDIT'
 

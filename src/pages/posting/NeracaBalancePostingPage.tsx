@@ -210,7 +210,7 @@ export function NeracaBalancePostingPage() {
 
                 <p className="text-xs text-gray-500">
                   Calculated on:{' '}
-                  {new Date(balance.calculatedAt).toLocaleString()}
+                  {new Date(balance.calculatedAt).toLocaleString('id-ID')}
                 </p>
               </div>
             )}

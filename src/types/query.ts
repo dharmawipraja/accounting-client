@@ -37,7 +37,7 @@ export interface LedgerQueryParams extends PaginationParams {
   search?: string // searches description and reference number
   accountDetailAccountNumber?: string
   accountGeneralAccountNumber?: string
-  ledgerType?: 'KAS_MASUK' | 'KAS_KELUAR'
+  ledgerType?: 'KAS' | 'KAS_MASUK' | 'KAS_KELUAR'
   postingStatus?: 'PENDING' | 'POSTED'
   dateFrom?: string // ISO date string
   dateTo?: string // ISO date string

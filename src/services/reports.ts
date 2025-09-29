@@ -1,9 +1,10 @@
+import { REPORT } from '@/constants/report'
 import type { AccountDetail, AccountGeneral } from '@/types/accounts'
 import type { PaginatedResponse } from '@/types/api'
+import { formatCurrency, formatDate, formatDateTime } from '@/utils/formatters'
 import { jsPDF } from 'jspdf'
 import * as XLSX from 'xlsx'
 import { api } from './api'
-import { REPORT } from '@/constants/report'
 
 export interface ReportData {
   accountDetail?: AccountDetail[]
@@ -903,11 +904,7 @@ export const reportsService = {
 
     // Add generation info
     doc.setFontSize(12)
-    doc.text(
-      `Generated: ${new Date(data.generatedAt).toLocaleString()}`,
-      20,
-      50,
-    )
+    doc.text(`Generated: ${formatDateTime(data.generatedAt)}`, 20, 50)
     doc.text(`Total Records: ${data.totalRecords}`, 20, 60)
 
     let yPosition = 80
@@ -948,7 +945,7 @@ export const reportsService = {
         doc.setFontSize(9)
         doc.setFont('helvetica', 'normal')
         doc.text(
-          `Category: ${general.accountCategory} | Type: ${general.reportType} | Debit: Rp ${general.amountDebit.toLocaleString('id-ID')} | Credit: Rp ${general.amountCredit.toLocaleString('id-ID')}`,
+          `Category: ${general.accountCategory} | Type: ${general.reportType} | Debit: ${formatCurrency(general.amountDebit)} | Credit: ${formatCurrency(general.amountCredit)}`,
           25,
           yPosition + 8,
         )
@@ -971,7 +968,7 @@ export const reportsService = {
 
           doc.setFontSize(8)
           doc.text(
-            `     Category: ${detail.accountCategory} | Debit: Rp ${detail.amountDebit.toLocaleString('id-ID')} | Credit: Rp ${detail.amountCredit.toLocaleString('id-ID')}`,
+            `     Category: ${detail.accountCategory} | Debit: ${formatCurrency(detail.amountDebit)} | Credit: ${formatCurrency(detail.amountCredit)}`,
             35,
             yPosition + 6,
           )
@@ -1009,7 +1006,7 @@ export const reportsService = {
 
           doc.setFontSize(8)
           doc.text(
-            `Category: ${detail.accountCategory} | General: ${detail.accountGeneral?.accountName || 'N/A'} | Debit: Rp ${detail.amountDebit.toLocaleString('id-ID')} | Credit: Rp ${detail.amountCredit.toLocaleString('id-ID')}`,
+            `Category: ${detail.accountCategory} | General: ${detail.accountGeneral?.accountName || 'N/A'} | Debit: ${formatCurrency(detail.amountDebit)} | Credit: ${formatCurrency(detail.amountCredit)}`,
             25,
             yPosition + 6,
           )
@@ -1041,7 +1038,7 @@ export const reportsService = {
           doc.setFontSize(9)
           doc.setFont('helvetica', 'normal')
           doc.text(
-            `Category: ${account.accountCategory} | Type: ${account.reportType} | Debit: Rp ${account.amountDebit.toLocaleString('id-ID')} | Credit: Rp ${account.amountCredit.toLocaleString('id-ID')}`,
+            `Category: ${account.accountCategory} | Type: ${account.reportType} | Debit: ${formatCurrency(account.amountDebit)} | Credit: ${formatCurrency(account.amountCredit)}`,
             25,
             yPosition + 8,
           )
@@ -1072,7 +1069,7 @@ export const reportsService = {
           doc.setFontSize(9)
           doc.setFont('helvetica', 'normal')
           doc.text(
-            `Category: ${account.accountCategory} | General: ${account.accountGeneral?.accountName || 'N/A'} | Debit: Rp ${account.amountDebit.toLocaleString('id-ID')} | Credit: Rp ${account.amountCredit.toLocaleString('id-ID')}`,
+            `Category: ${account.accountCategory} | General: ${account.accountGeneral?.accountName || 'N/A'} | Debit: ${formatCurrency(account.amountDebit)} | Credit: ${formatCurrency(account.amountCredit)}`,
             25,
             yPosition + 8,
           )
@@ -1123,7 +1120,7 @@ export const reportsService = {
     neracaData.push({ Account: REPORT.NAMA_USAHA, Balance: '' })
     neracaData.push({ Account: 'NERACA', Balance: '' })
     neracaData.push({
-      Account: `s/d Tanggal ${new Date().toLocaleDateString('id-ID')}`,
+      Account: `s/d Tanggal ${formatDate(new Date())}`,
       Balance: '',
     })
     neracaData.push({ Account: '', Balance: '' })
@@ -1243,7 +1240,7 @@ export const reportsService = {
       Balance: '',
     })
     penjelasanNeracaData.push({
-      Account: `s.d Tanggal ${new Date().toLocaleDateString('id-ID')}`,
+      Account: `s.d Tanggal ${formatDate(new Date())}`,
       Description: '',
       Balance: '',
     })
@@ -1505,8 +1502,8 @@ export const reportsService = {
           'General Account': '-',
           'Debit Amount': general.amountDebit,
           'Credit Amount': general.amountCredit,
-          'Created At': new Date(general.createdAt).toLocaleDateString(),
-          'Updated At': new Date(general.updatedAt).toLocaleDateString(),
+          'Created At': formatDate(general.createdAt),
+          'Updated At': formatDate(general.updatedAt),
         })
 
         // Add detail accounts under this general account
@@ -1521,8 +1518,8 @@ export const reportsService = {
             'General Account': detail.accountGeneral?.accountName || 'N/A',
             'Debit Amount': detail.amountDebit,
             'Credit Amount': detail.amountCredit,
-            'Created At': new Date(detail.createdAt).toLocaleDateString(),
-            'Updated At': new Date(detail.updatedAt).toLocaleDateString(),
+            'Created At': formatDate(detail.createdAt),
+            'Updated At': formatDate(detail.updatedAt),
           })
         })
 
@@ -1569,8 +1566,8 @@ export const reportsService = {
             'General Account': detail.accountGeneral?.accountName || 'N/A',
             'Debit Amount': detail.amountDebit,
             'Credit Amount': detail.amountCredit,
-            'Created At': new Date(detail.createdAt).toLocaleDateString(),
-            'Updated At': new Date(detail.updatedAt).toLocaleDateString(),
+            'Created At': formatDate(detail.createdAt),
+            'Updated At': formatDate(detail.updatedAt),
           })
         })
       }
@@ -1593,8 +1590,8 @@ export const reportsService = {
           'Transaction Type': account.transactionType,
           'Debit Amount': account.amountDebit,
           'Credit Amount': account.amountCredit,
-          'Created At': new Date(account.createdAt).toLocaleDateString(),
-          'Updated At': new Date(account.updatedAt).toLocaleDateString(),
+          'Created At': formatDate(account.createdAt),
+          'Updated At': formatDate(account.updatedAt),
         }))
 
       const generalWorksheet = XLSX.utils.json_to_sheet(generalData)
@@ -1617,8 +1614,8 @@ export const reportsService = {
           'General Account Name': account.accountGeneral?.accountName || 'N/A',
           'Debit Amount': account.amountDebit,
           'Credit Amount': account.amountCredit,
-          'Created At': new Date(account.createdAt).toLocaleDateString(),
-          'Updated At': new Date(account.updatedAt).toLocaleDateString(),
+          'Created At': formatDate(account.createdAt),
+          'Updated At': formatDate(account.updatedAt),
         }))
 
       const detailWorksheet = XLSX.utils.json_to_sheet(detailData)
@@ -1629,7 +1626,7 @@ export const reportsService = {
     const summaryData = [
       {
         Field: 'Report Generated',
-        Value: new Date(data.generatedAt).toLocaleString(),
+        Value: formatDateTime(data.generatedAt),
       },
       {
         Field: 'Total General Accounts',

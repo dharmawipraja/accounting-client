@@ -135,11 +135,13 @@ export const LedgersListPage: React.FC = () => {
 
   const getLedgerTypeBadge = (type: string) => {
     const variants = {
-      KAS_MASUK: 'default',
+      KAS: 'default',
+      KAS_MASUK: 'secondary',
       KAS_KELUAR: 'secondary',
     } as const
 
     const labels = {
+      KAS: t('ledgersList.cash'),
       KAS_MASUK: t('ledgersList.cashIn'),
       KAS_KELUAR: t('ledgersList.cashOut'),
     }
@@ -360,7 +362,7 @@ export const LedgersListPage: React.FC = () => {
               }
               action={{
                 label: t('ledgersList.createLedgerEntry'),
-                onClick: () => router.navigate({ to: '/ledgers/new' }),
+                onClick: () => router.navigate({ to: '/ledgers/kas' }),
               }}
             />
           ) : (

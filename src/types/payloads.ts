@@ -77,7 +77,7 @@ export interface LedgerItem {
   description: string // min: 3 chars, max: 500
   accountDetailAccountNumber: string // UUID
   accountGeneralAccountNumber: string // UUID
-  ledgerType: 'KAS_MASUK' | 'KAS_KELUAR'
+  ledgerType: 'KAS' | 'KAS_MASUK' | 'KAS_KELUAR'
   transactionType: 'DEBIT' | 'CREDIT'
   ledgerDate: string // ISO date string
 }
@@ -91,7 +91,7 @@ export interface UpdateLedgerPayload {
   description?: string // min: 3 chars, max: 500
   accountDetailAccountNumber?: string // UUID
   accountGeneralAccountNumber?: string // UUID
-  ledgerType?: 'KAS_MASUK' | 'KAS_KELUAR'
+  ledgerType?: 'KAS' | 'KAS_MASUK' | 'KAS_KELUAR'
   transactionType?: 'DEBIT' | 'CREDIT'
   ledgerDate?: string // ISO date string
   postingStatus?: 'PENDING' | 'POSTED'

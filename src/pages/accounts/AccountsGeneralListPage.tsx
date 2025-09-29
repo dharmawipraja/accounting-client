@@ -55,12 +55,14 @@ import {
   useAccountsGeneralQuery,
   useDeleteAccountGeneralMutation,
 } from '@/hooks/useAccountsQuery'
+import { useTranslation } from '@/hooks/useTranslation'
 import type { AccountGeneral } from '@/types/accounts'
 
 const columnHelper = createColumnHelper<AccountGeneral>()
 
 export default function AccountsGeneralListPage() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   // Table state
   const [sorting, setSorting] = useState<SortingState>([])
@@ -87,7 +89,7 @@ export default function AccountsGeneralListPage() {
   const columns = useMemo(
     () => [
       columnHelper.accessor('accountNumber', {
-        header: 'Account Code',
+        header: t('labels.accountCode'),
         cell: ({ getValue }) => (
           <div className="font-mono text-sm font-medium text-foreground">
             {getValue()}
@@ -95,7 +97,7 @@ export default function AccountsGeneralListPage() {
         ),
       }),
       columnHelper.accessor('accountName', {
-        header: 'Account Name',
+        header: t('labels.accountName'),
         cell: ({ row }) => {
           const account = row.original
           return (
@@ -111,7 +113,7 @@ export default function AccountsGeneralListPage() {
         },
       }),
       columnHelper.accessor('accountCategory', {
-        header: 'Category',
+        header: t('labels.category'),
         cell: ({ getValue }) => {
           const category = getValue()
           const categoryColors = {
@@ -132,7 +134,7 @@ export default function AccountsGeneralListPage() {
         },
       }),
       columnHelper.accessor('reportType', {
-        header: 'Report Type',
+        header: t('labels.reportType'),
         cell: ({ getValue }) => {
           const reportType = getValue()
           return (
@@ -146,7 +148,7 @@ export default function AccountsGeneralListPage() {
         },
       }),
       columnHelper.accessor('createdAt', {
-        header: 'Created',
+        header: t('labels.created'),
         cell: ({ getValue }) => {
           const value = getValue()
           return (
@@ -165,19 +167,19 @@ export default function AccountsGeneralListPage() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-8 h-8 p-0">
-                  <span className="sr-only">Open menu</span>
+                  <span className="sr-only">{t('labels.openMenu')}</span>
                   <MoreHorizontal className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('labels.actions')}</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
                   <Link
                     to="/accounts/general"
                     search={{ view: account.accountNumber }}
                   >
                     <Eye className="w-4 h-4 mr-2" />
-                    View details
+                    {t('labels.viewDetails')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
@@ -348,7 +350,7 @@ export default function AccountsGeneralListPage() {
               <div className="relative">
                 <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search accounts..."
+                  placeholder={t('placeholders.searchAccounts')}
                   value={globalFilter ?? ''}
                   onChange={(event) =>
                     setGlobalFilter(String(event.target.value))
@@ -405,10 +407,13 @@ export default function AccountsGeneralListPage() {
 
           {isError ? (
             <div className="p-6">
-              <ErrorState type="server" title="Failed to load accounts" />
+              <ErrorState
+                type="server"
+                title={t('messages.failedToLoadAccounts')}
+              />
               <div className="mt-4">
                 <Button onClick={() => refetch()} variant="outline">
-                  Retry
+                  {t('messages.retryButton')}
                 </Button>
               </div>
             </div>

@@ -91,7 +91,7 @@ export interface Ledger {
   referenceNumber: string
   amount: number
   description: string
-  ledgerType: 'KAS_MASUK' | 'KAS_KELUAR'
+  ledgerType: 'KAS' | 'KAS_MASUK' | 'KAS_KELUAR'
   transactionType: 'DEBIT' | 'CREDIT'
   postingStatus: 'PENDING' | 'POSTED'
   ledgerDate: string

@@ -2,12 +2,14 @@ import { Button } from '@/components/ui/button'
 import { ErrorState } from '@/components/ui/error-state'
 import { LoadingState } from '@/components/ui/loading-state'
 import { UserForm } from '@/components/users/UserForm'
+import { useTranslation } from '@/hooks/useTranslation'
 import { useUserQuery } from '@/hooks/useUsersQuery'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 
 export function EditUserPage() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { id } = useParams({ from: '/users/$id/edit' })
 
   const {
@@ -40,25 +42,25 @@ export function EditUserPage() {
               className="flex items-center space-x-1 self-start md:hidden"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Back to Users</span>
+              <span>{t('labels.backToUsers')}</span>
             </Button>
           </div>
 
           {isLoading ? (
-            <LoadingState message="Loading user data..." />
+            <LoadingState message={t('messages.loadingUserData')} />
           ) : isError ? (
             <ErrorState
               type="server"
-              title="Error Loading User"
-              message={error?.message || 'Failed to load user data.'}
+              title={t('messages.errorLoadingUser')}
+              message={error?.message || t('messages.failedToLoadUser')}
               onRetry={() => refetch()}
               isRetrying={isLoading}
             />
           ) : !user ? (
             <ErrorState
               type="notFound"
-              title="User Not Found"
-              message="The requested user could not be found."
+              title={t('messages.userNotFound')}
+              message={t('messages.userNotFoundMessage')}
             />
           ) : (
             <>

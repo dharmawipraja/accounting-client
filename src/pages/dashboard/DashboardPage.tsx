@@ -10,6 +10,7 @@ import { APP_CONFIG } from '@/constants'
 import { useAuth } from '@/hooks/useAuth'
 import { useTranslation } from '@/hooks/useTranslation'
 import { getRoleDisplayName } from '@/utils/auth'
+import { formatDate } from '@/utils/formatters'
 import {
   Activity,
   BarChart3,
@@ -316,7 +317,9 @@ export const DashboardPage: React.FC = () => {
               <div className="pt-4 border-t border-border/50">
                 <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                   <Calendar className="w-4 h-4" />
-                  <span>Last login: {new Date().toLocaleDateString()}</span>
+                  <span>
+                    {t('dashboard.lastLogin', { date: formatDate(new Date()) })}
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -328,7 +331,7 @@ export const DashboardPage: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Activity className="w-5 h-5 text-primary" />
-              <span>Recent Activity</span>
+              <span>{t('labels.recentActivity')}</span>
             </CardTitle>
             <CardDescription>
               Overview of your recent actions in the system

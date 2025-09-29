@@ -5,7 +5,10 @@ import { createFileRoute } from '@tanstack/react-router'
 function LedgerKasKeluarPage() {
   return (
     <ProtectedRoute requiredRoles={['ADMIN', 'MANAJER', 'AKUNTAN']}>
-      <BulkLedgerForm />
+      <BulkLedgerForm
+        defaultLedgerType="KAS_KELUAR"
+        isLedgerTypeReadonly={true}
+      />
     </ProtectedRoute>
   )
 }

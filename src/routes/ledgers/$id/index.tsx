@@ -5,7 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ErrorState } from '@/components/ui/error-state'
 import { LoadingState } from '@/components/ui/loading-state'
 import { useLedgerQuery } from '@/hooks/useLedgersQuery'
+import { useTranslation } from '@/hooks/useTranslation'
 import type { RootState } from '@/store'
+import { formatDate, formatDateTime } from '@/utils/formatters'
 import { canManageLedgers } from '@/utils/rolePermissions'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { ArrowLeft, Building2, Calendar, Edit, Hash } from 'lucide-react'
@@ -14,6 +16,7 @@ import { useSelector } from 'react-redux'
 function LedgerDetailPage() {
   const { id } = Route.useParams()
   const router = useRouter()
+  const { t } = useTranslation()
   const user = useSelector((state: RootState) => state.auth.user)
 
   const canManage = user ? canManageLedgers(user.role) : false
@@ -25,8 +28,8 @@ function LedgerDetailPage() {
         <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
           <ErrorState
             type="generic"
-            title="Access Denied"
-            message="You don't have permission to view ledger details."
+            title={t('messages.accessDenied')}
+            message={t('messages.permissionDeniedLedger')}
           />
         </main>
       </div>
@@ -49,8 +52,8 @@ function LedgerDetailPage() {
         <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
           <ErrorState
             type="server"
-            title="Failed to Load Ledger"
-            message="There was an error loading the ledger entry."
+            title={t('messages.failedToLoadLedger')}
+            message={t('messages.errorLoadingLedger')}
           />
         </main>
       </div>
@@ -63,8 +66,8 @@ function LedgerDetailPage() {
         <main className="container px-4 py-6 mx-auto sm:px-6 lg:px-8">
           <ErrorState
             type="notFound"
-            title="Ledger Entry Not Found"
-            message="The requested ledger entry could not be found."
+            title={t('messages.ledgerNotFound')}
+            message={t('messages.ledgerNotFoundMessage')}
           />
         </main>
       </div>
@@ -158,7 +161,7 @@ function LedgerDetailPage() {
             className="hover:bg-gray-100 md:hidden"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Ledgers
+            {t('labels.backToLedgers')}
           </Button>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -208,7 +211,7 @@ function LedgerDetailPage() {
                   <div className="flex items-center gap-2 mt-1">
                     <Calendar className="w-4 h-4 text-gray-400" />
                     <span className="text-lg font-medium">
-                      {new Date(ledgerData.ledgerDate).toLocaleDateString()}
+                      {formatDate(ledgerData.ledgerDate)}
                     </span>
                   </div>
                 </div>
@@ -316,18 +319,14 @@ function LedgerDetailPage() {
                   <label className="text-sm font-medium text-gray-500">
                     Created At
                   </label>
-                  <p className="mt-1">
-                    {new Date(ledgerData.createdAt).toLocaleString()}
-                  </p>
+                  <p className="mt-1">{formatDateTime(ledgerData.createdAt)}</p>
                 </div>
 
                 <div>
                   <label className="text-sm font-medium text-gray-500">
                     Updated At
                   </label>
-                  <p className="mt-1">
-                    {new Date(ledgerData.updatedAt).toLocaleString()}
-                  </p>
+                  <p className="mt-1">{formatDateTime(ledgerData.updatedAt)}</p>
                 </div>
 
                 <div>
@@ -350,7 +349,7 @@ function LedgerDetailPage() {
                       Posted At
                     </label>
                     <p className="mt-1">
-                      {new Date(ledgerData.postingAt).toLocaleString()}
+                      {formatDateTime(ledgerData.postingAt)}
                     </p>
                   </div>
                 )}

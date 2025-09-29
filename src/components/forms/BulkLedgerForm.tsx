@@ -23,6 +23,11 @@ import { useAccountsDetailQuery } from '@/hooks/useAccountsQuery'
 import { useCreateBulkLedgersMutation } from '@/hooks/useLedgersQuery'
 import { useTranslation } from '@/hooks/useTranslation'
 import type { CreateBulkLedgersPayload } from '@/types/payloads'
+import {
+  formatAmountInput,
+  formatCurrency,
+  formatDateShort,
+} from '@/utils/formatters'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from '@tanstack/react-router'
 import {
@@ -30,43 +35,48 @@ import {
   ArrowLeft,
   Calculator,
   CheckCircle,
+  Edit,
   Plus,
   Save,
   Trash2,
 } from 'lucide-react'
-import { useMemo } from 'react'
-import { useFieldArray, useForm, useWatch } from 'react-hook-form'
+import { useMemo, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
 // Individual ledger entry schema (matching API LedgerItem interface)
 // Note: Validation messages will be translated dynamically in the form
 const ledgerEntrySchema = z.object({
-  ledgerDate: z.string().min(1, 'Date is required'),
+  ledgerDate: z.string().min(1, 'Please select a date'),
   description: z
     .string()
-    .min(3, 'Description must be at least 3 characters')
-    .max(500, 'Description must not exceed 500 characters'),
-  transactionType: z.enum(['DEBIT', 'CREDIT']),
-  accountDetailAccountNumber: z.string().min(1, 'Account detail is required'),
+    .min(3, 'Description must be at least 3 characters long')
+    .max(500, 'Description is too long (maximum 500 characters)'),
+  transactionType: z.enum(['DEBIT', 'CREDIT'], {
+    message: 'Please select either Debit or Credit',
+  }),
+  accountDetailAccountNumber: z
+    .string()
+    .min(1, 'Please select an account detail'),
   accountGeneralAccountNumber: z.string().min(1, 'Account general is required'),
-  ledgerType: z.enum(['KAS_MASUK', 'KAS_KELUAR']),
-  amount: z.number().min(0.01, 'Amount must be greater than 0'),
+  ledgerType: z.enum(['KAS', 'KAS_MASUK', 'KAS_KELUAR'], {
+    message: 'Please select a ledger type',
+  }),
+  amount: z.number().min(0.01, 'Please enter an amount greater than Rp 0'),
   // Additional fields for form UI only
   referenceNumber: z
     .string()
-    .min(1, 'Reference number is required')
-    .max(50, 'Reference number must not exceed 50 characters'),
+    .max(50, 'Reference number is too long (maximum 50 characters)')
+    .optional()
+    .or(z.literal('')),
 })
 
-// Bulk form schema
-const bulkLedgerFormSchema = z.object({
-  entries: z
-    .array(ledgerEntrySchema)
-    .min(2, 'At least 2 entries are required for double-entry'),
-})
+// Single entry form schema for adding new entries
+const singleEntryFormSchema = ledgerEntrySchema
 
-type BulkLedgerFormData = z.infer<typeof bulkLedgerFormSchema>
+type SingleEntryFormData = z.infer<typeof singleEntryFormSchema>
+type LedgerEntry = SingleEntryFormData & { id: string }
 
 // These will be translated dynamically
 const transactionTypeOptions = [
@@ -75,14 +85,27 @@ const transactionTypeOptions = [
 ] as const
 
 const ledgerTypeOptions = [
+  { value: 'KAS', labelKey: 'ledgers.types.KAS' },
   { value: 'KAS_MASUK', labelKey: 'ledgers.types.KAS_MASUK' },
   { value: 'KAS_KELUAR', labelKey: 'ledgers.types.KAS_KELUAR' },
 ] as const
 
-export function BulkLedgerForm() {
+interface BulkLedgerFormProps {
+  defaultLedgerType?: 'KAS' | 'KAS_MASUK' | 'KAS_KELUAR'
+  isLedgerTypeReadonly?: boolean
+}
+
+export function BulkLedgerForm({
+  defaultLedgerType = 'KAS_MASUK',
+  isLedgerTypeReadonly = false,
+}: BulkLedgerFormProps = {}) {
   const router = useRouter()
   const { t } = useTranslation()
   const createBulkMutation = useCreateBulkLedgersMutation()
+
+  // State for managing the list of entries
+  const [entries, setEntries] = useState<LedgerEntry[]>([])
+  const [editingEntry, setEditingEntry] = useState<LedgerEntry | null>(null)
 
   // Fetch accounts data for dropdown
   const { data: accountsData, isLoading: isLoadingAccounts } =
@@ -90,73 +113,43 @@ export function BulkLedgerForm() {
       limit: 1000, // Get a large number to include all accounts
     })
 
+  // Form for adding/editing single entry
+  const form = useForm<SingleEntryFormData>({
+    resolver: zodResolver(singleEntryFormSchema),
+    defaultValues: {
+      ledgerDate: new Date().toISOString().split('T')[0],
+      referenceNumber: '',
+      description: '',
+      transactionType: 'DEBIT',
+      accountDetailAccountNumber: '',
+      accountGeneralAccountNumber: '',
+      ledgerType: defaultLedgerType,
+      amount: 0,
+    },
+  })
+
   // Helper function to handle account detail selection
-  const handleAccountDetailChange = (
-    accountNumber: string,
-    entryIndex: number,
-  ) => {
+  const handleAccountDetailChange = (accountNumber: string) => {
     const selectedAccount = accountsData?.data?.find(
       (account) => account.accountNumber === accountNumber,
     )
 
     if (selectedAccount) {
       // Auto-populate the general account number
+      form.setValue('accountDetailAccountNumber', accountNumber)
       form.setValue(
-        `entries.${entryIndex}.accountDetailAccountNumber`,
-        accountNumber,
-      )
-      form.setValue(
-        `entries.${entryIndex}.accountGeneralAccountNumber`,
+        'accountGeneralAccountNumber',
         selectedAccount.accountGeneralAccountNumber,
       )
     }
   }
 
-  const form = useForm<BulkLedgerFormData>({
-    resolver: zodResolver(bulkLedgerFormSchema),
-    defaultValues: {
-      entries: [
-        {
-          ledgerDate: new Date().toISOString().split('T')[0],
-          referenceNumber: '',
-          description: '',
-          transactionType: 'DEBIT',
-          accountDetailAccountNumber: '',
-          accountGeneralAccountNumber: '',
-          ledgerType: 'KAS_MASUK',
-          amount: 0,
-        },
-        {
-          ledgerDate: new Date().toISOString().split('T')[0],
-          referenceNumber: '',
-          description: '',
-          transactionType: 'CREDIT',
-          accountDetailAccountNumber: '',
-          accountGeneralAccountNumber: '',
-          ledgerType: 'KAS_MASUK',
-          amount: 0,
-        },
-      ],
-    },
-  })
-
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: 'entries',
-  })
-
-  // Watch all entries to calculate totals
-  const watchedEntries = useWatch({
-    control: form.control,
-    name: 'entries',
-  })
-
-  // Calculate totals
+  // Calculate totals from entries list
   const { totalDebitAmount, totalCreditAmount, isBalanced } = useMemo(() => {
     let debitTotal = 0
     let creditTotal = 0
 
-    watchedEntries.forEach((entry) => {
+    entries.forEach((entry) => {
       if (entry.transactionType === 'DEBIT') {
         debitTotal += entry.amount || 0
       } else if (entry.transactionType === 'CREDIT') {
@@ -167,38 +160,126 @@ export function BulkLedgerForm() {
     return {
       totalDebitAmount: debitTotal,
       totalCreditAmount: creditTotal,
-      isBalanced: debitTotal === creditTotal && debitTotal > 0,
+      isBalanced:
+        debitTotal === creditTotal && debitTotal > 0 && entries.length >= 2,
     }
-  }, [watchedEntries])
+  }, [entries])
 
-  const handleSubmit = async (data: BulkLedgerFormData) => {
+  // Handle adding new entry
+  const handleAddEntry = (data: SingleEntryFormData) => {
+    console.log('handleAddEntry called with data:', data)
+    if (editingEntry) {
+      // Update existing entry
+      setEntries((prev) =>
+        prev.map((entry) =>
+          entry.id === editingEntry.id
+            ? { ...data, id: editingEntry.id }
+            : entry,
+        ),
+      )
+      setEditingEntry(null)
+      toast.success('Entry updated successfully!')
+    } else {
+      // Add new entry
+      const newEntry: LedgerEntry = {
+        ...data,
+        id: `entry-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      }
+      setEntries((prev) => [...prev, newEntry])
+      toast.success('Entry added successfully!')
+    }
+
+    // Reset form - preserve date and reference number if entries exist
+    const hasEntries = entries.length > 0 || !editingEntry
+    const firstEntry = entries.length > 0 ? entries[0] : data
+
+    form.reset({
+      ledgerDate:
+        hasEntries && !editingEntry
+          ? firstEntry.ledgerDate
+          : new Date().toISOString().split('T')[0],
+      referenceNumber:
+        hasEntries && !editingEntry ? firstEntry.referenceNumber : '',
+      description: '',
+      transactionType: 'DEBIT',
+      accountDetailAccountNumber: '',
+      accountGeneralAccountNumber: '',
+      ledgerType: defaultLedgerType,
+      amount: 0,
+    })
+  }
+
+  // Handle editing entry
+  const handleEditEntry = (entry: LedgerEntry) => {
+    setEditingEntry(entry)
+    form.reset(entry)
+  }
+
+  // Handle removing entry
+  const handleRemoveEntry = (id: string) => {
+    const newEntries = entries.filter((entry) => entry.id !== id)
+    setEntries(newEntries)
+
+    // If all entries are removed, reset form to allow new date and reference number
+    if (newEntries.length === 0) {
+      form.reset({
+        ledgerDate: new Date().toISOString().split('T')[0],
+        referenceNumber: '',
+        description: '',
+        transactionType: 'DEBIT',
+        accountDetailAccountNumber: '',
+        accountGeneralAccountNumber: '',
+        ledgerType: defaultLedgerType,
+        amount: 0,
+      })
+    }
+
+    toast.success('Entry removed successfully!')
+  }
+
+  // Handle canceling edit
+  const handleCancelEdit = () => {
+    setEditingEntry(null)
+
+    // Preserve date and reference number if entries exist
+    const firstEntry = entries.length > 0 ? entries[0] : null
+
+    form.reset({
+      ledgerDate: firstEntry
+        ? firstEntry.ledgerDate
+        : new Date().toISOString().split('T')[0],
+      referenceNumber: firstEntry ? firstEntry.referenceNumber : '',
+      description: '',
+      transactionType: 'DEBIT',
+      accountDetailAccountNumber: '',
+      accountGeneralAccountNumber: '',
+      ledgerType: defaultLedgerType,
+      amount: 0,
+    })
+  }
+
+  // Handle final submission
+  const handleSubmitAll = async () => {
     // Validate double-entry balance
     if (!isBalanced) {
       toast.error(t('ledgers.unbalanced'), {
-        description: `${t('ledgers.totalDebit')} (${totalDebitAmount.toLocaleString(
-          'id-ID',
-          {
-            style: 'currency',
-            currency: 'IDR',
-          },
-        )}) ${t('ledgers.totalCredit')} (${totalCreditAmount.toLocaleString(
-          'id-ID',
-          {
-            style: 'currency',
-            currency: 'IDR',
-          },
-        )})`,
+        description: `${t('ledgers.totalDebit')} (${formatCurrency(totalDebitAmount)}) ${t('ledgers.totalCredit')} (${formatCurrency(totalCreditAmount)})`,
       })
       return
     }
 
+    if (entries.length < 2) {
+      toast.error(t('ledgers.validation.minTwoEntries'))
+      return
+    }
+
     try {
-      // Transform form data to match API payload structure
+      // Transform entries to match API payload structure
       const apiPayload: CreateBulkLedgersPayload = {
-        ledgers: data.entries.map((entry) => ({
+        ledgers: entries.map((entry) => ({
           ledgerDate: entry.ledgerDate,
           description: entry.description,
-          ledgerType: entry.ledgerType, // Use the ledgerType from form field
+          ledgerType: entry.ledgerType,
           transactionType: entry.transactionType,
           accountDetailAccountNumber: entry.accountDetailAccountNumber,
           accountGeneralAccountNumber: entry.accountGeneralAccountNumber,
@@ -215,27 +296,6 @@ export function BulkLedgerForm() {
           error?.message ||
           'An error occurred while creating ledger entries',
       )
-    }
-  }
-
-  const addEntry = () => {
-    append({
-      ledgerDate: new Date().toISOString().split('T')[0],
-      referenceNumber: '',
-      description: '',
-      transactionType: 'DEBIT',
-      accountDetailAccountNumber: '',
-      accountGeneralAccountNumber: '',
-      ledgerType: 'KAS_MASUK',
-      amount: 0,
-    })
-  }
-
-  const removeEntry = (index: number) => {
-    if (fields.length > 2) {
-      remove(index)
-    } else {
-      toast.error(t('ledgers.validation.minTwoEntries'))
     }
   }
 
@@ -279,10 +339,7 @@ export function BulkLedgerForm() {
                 {t('ledgers.totalDebit')}
               </label>
               <div className="text-2xl font-bold text-blue-600">
-                {totalDebitAmount.toLocaleString('id-ID', {
-                  style: 'currency',
-                  currency: 'IDR',
-                })}
+                {formatCurrency(totalDebitAmount)}
               </div>
             </div>
 
@@ -291,10 +348,7 @@ export function BulkLedgerForm() {
                 {t('ledgers.totalCredit')}
               </label>
               <div className="text-2xl font-bold text-purple-600">
-                {totalCreditAmount.toLocaleString('id-ID', {
-                  style: 'currency',
-                  currency: 'IDR',
-                })}
+                {formatCurrency(totalCreditAmount)}
               </div>
             </div>
 
@@ -327,13 +381,10 @@ export function BulkLedgerForm() {
               </div>
               {!isBalanced && totalDebitAmount !== totalCreditAmount && (
                 <div className="text-sm text-orange-600">
-                  Difference:{' '}
-                  {Math.abs(
-                    totalDebitAmount - totalCreditAmount,
-                  ).toLocaleString('id-ID', {
-                    style: 'currency',
-                    currency: 'IDR',
-                  })}
+                  {t('labels.difference')}:{' '}
+                  {formatCurrency(
+                    Math.abs(totalDebitAmount - totalCreditAmount),
+                  )}
                 </div>
               )}
             </div>
@@ -341,168 +392,206 @@ export function BulkLedgerForm() {
         </CardContent>
       </Card>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-          {/* Ledger Entries */}
-          <div className="space-y-4">
-            {fields.map((field, index) => (
-              <Card key={field.id}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">
-                      Entry #{index + 1}
-                    </CardTitle>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeEntry(index)}
-                      disabled={fields.length <= 2}
-                      className="text-red-600 hover:text-red-800 hover:bg-red-50"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    <FormField
-                      control={form.control}
-                      name={`entries.${index}.ledgerDate`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Date</FormLabel>
-                          <FormControl>
-                            <Input type="date" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+      {/* Single Entry Form */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Plus className="w-5 h-5" />
+            {editingEntry ? 'Edit Entry' : 'Add New Entry'}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleAddEntry, (errors) => {
+                console.log('Form validation errors:', errors)
+                toast.error('Please fill in all required fields correctly')
+              })}
+              className="space-y-4"
+            >
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <FormField
+                  control={form.control}
+                  name="ledgerDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {t('labels.date')}{' '}
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="date"
+                          {...field}
+                          disabled={entries.length > 0 && !editingEntry}
+                        />
+                      </FormControl>
+                      <FormMessage className="mt-1 text-xs text-red-600" />
+                    </FormItem>
+                  )}
+                />
 
-                    <FormField
-                      control={form.control}
-                      name={`entries.${index}.referenceNumber`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Reference Number</FormLabel>
-                          <FormControl>
-                            <Input placeholder="REF-001" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                <FormField
+                  control={form.control}
+                  name="referenceNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('labels.referenceOptional')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="REF-001"
+                          {...field}
+                          disabled={entries.length > 0 && !editingEntry}
+                        />
+                      </FormControl>
+                      <FormMessage className="mt-1 text-xs text-red-600" />
+                    </FormItem>
+                  )}
+                />
 
-                    <FormField
-                      control={form.control}
-                      name={`entries.${index}.transactionType`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Transaction Type</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select type" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {transactionTypeOptions.map((option) => (
-                                <SelectItem
-                                  key={option.value}
-                                  value={option.value}
-                                >
-                                  {t(option.labelKey)}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                <FormField
+                  control={form.control}
+                  name="transactionType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {t('labels.transactionType')}{' '}
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={t('ledgers.selectLedgerType')}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {transactionTypeOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {t(option.labelKey)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="mt-1 text-xs text-red-600" />
+                    </FormItem>
+                  )}
+                />
 
-                    <FormField
-                      control={form.control}
-                      name={`entries.${index}.amount`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Amount</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              placeholder="0.00"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(parseFloat(e.target.value) || 0)
+                <FormField
+                  control={form.control}
+                  name="amount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {t('labels.amount')}{' '}
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="Rp 0"
+                          value={
+                            field.value ? formatAmountInput(field.value) : ''
+                          }
+                          onChange={(e) => {
+                            // Remove 'Rp' and format characters, keep only numbers
+                            const numericValue = e.target.value.replace(
+                              /[^\d]/g,
+                              '',
+                            )
+                            field.onChange(
+                              numericValue ? parseFloat(numericValue) : 0,
+                            )
+                          }}
+                          className="[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          style={{
+                            MozAppearance: 'textfield',
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage className="mt-1 text-xs text-red-600" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="accountDetailAccountNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {t('labels.accountDetail')}{' '}
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value)
+                          handleAccountDetailChange(value)
+                        }}
+                        value={field.value}
+                        disabled={isLoadingAccounts}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={
+                                isLoadingAccounts
+                                  ? 'Loading accounts...'
+                                  : 'Select account detail'
                               }
                             />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {accountsData?.data?.map((account) => (
+                            <SelectItem
+                              key={account.accountNumber}
+                              value={account.accountNumber}
+                            >
+                              {account.accountNumber} - {account.accountName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="mt-1 text-xs text-red-600" />
+                    </FormItem>
+                  )}
+                />
 
-                    <FormField
-                      control={form.control}
-                      name={`entries.${index}.accountDetailAccountNumber`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Account Detail</FormLabel>
+                {/* Hidden fields */}
+                <div className="hidden">
+                  <FormField
+                    control={form.control}
+                    name="ledgerType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t('labels.ledgerType')}{' '}
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        {isLedgerTypeReadonly ? (
+                          <div className="flex w-full h-10 px-3 py-2 text-sm border rounded-md opacity-50 border-input bg-background ring-offset-background">
+                            {t(
+                              ledgerTypeOptions.find(
+                                (option) => option.value === field.value,
+                              )?.labelKey || 'ledgers.types.KAS',
+                            )}
+                          </div>
+                        ) : (
                           <Select
-                            onValueChange={(value) => {
-                              field.onChange(value)
-                              handleAccountDetailChange(value, index)
-                            }}
-                            defaultValue={field.value}
-                            disabled={isLoadingAccounts}
+                            onValueChange={field.onChange}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue
-                                  placeholder={
-                                    isLoadingAccounts
-                                      ? 'Loading accounts...'
-                                      : 'Select account detail'
-                                  }
+                                  placeholder={t('ledgers.selectLedgerType')}
                                 />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {accountsData?.data?.map((account) => (
-                                <SelectItem
-                                  key={account.accountNumber}
-                                  value={account.accountNumber}
-                                >
-                                  {account.accountNumber} -{' '}
-                                  {account.accountName}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name={`entries.${index}.ledgerType`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Ledger Type</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select ledger type" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -516,106 +605,325 @@ export function BulkLedgerForm() {
                               ))}
                             </SelectContent>
                           </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="mt-4">
-                    <FormField
-                      control={form.control}
-                      name={`entries.${index}.description`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Description</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Enter description for this entry"
-                              rows={2}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Entry Summary */}
-                  <div className="p-3 mt-4 rounded-lg bg-gray-50">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium">
-                        {watchedEntries[index]?.transactionType || 'DEBIT'}{' '}
-                        Entry
-                      </span>
-                      <span className="font-bold">
-                        {(watchedEntries[index]?.amount || 0).toLocaleString(
-                          'id-ID',
-                          {
-                            style: 'currency',
-                            currency: 'IDR',
-                          },
                         )}
-                      </span>
+                        <FormMessage className="mt-1 text-xs text-red-600" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="accountGeneralAccountNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t('labels.description')}{' '}
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder={t('ledgers.enterDescription')}
+                        rows={2}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="mt-1 text-xs text-red-600" />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex items-center gap-2 pt-4">
+                <Button type="submit" className="flex items-center gap-2">
+                  <Plus className="w-4 h-4" />
+                  {editingEntry ? 'Update Entry' : 'Add Entry'}
+                </Button>
+                {editingEntry && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleCancelEdit}
+                  >
+                    Cancel Edit
+                  </Button>
+                )}
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+
+      {/* Entries List */}
+      {entries.length > 0 && (
+        <Card className="mb-6">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-semibold">
+                Journal Entries ({entries.length})
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                <Badge
+                  variant={entries.length >= 2 ? 'default' : 'secondary'}
+                  className="text-xs"
+                >
+                  {entries.length >= 2
+                    ? '✓ Ready to Submit'
+                    : `Need ${2 - entries.length} more`}
+                </Badge>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-hidden">
+              {/* Header Row */}
+              <div className="grid grid-cols-12 gap-2 px-4 py-2 text-xs font-medium text-gray-500 border-b bg-gray-50">
+                <div className="col-span-1">{t('labels.type')}</div>
+                <div className="col-span-3">{t('labels.description')}</div>
+                <div className="col-span-2">{t('labels.account')}</div>
+                <div className="col-span-2">{t('labels.reference')}</div>
+                <div className="col-span-1">{t('labels.date')}</div>
+                <div className="col-span-2 text-right">
+                  {t('labels.amount')}
+                </div>
+                <div className="col-span-1 text-center">
+                  {t('labels.actions')}
+                </div>
+              </div>
+
+              {/* Entry Rows */}
+              <div className="divide-y divide-gray-100">
+                {entries.map((entry, index) => {
+                  const accountName =
+                    accountsData?.data?.find(
+                      (acc) =>
+                        acc.accountNumber === entry.accountDetailAccountNumber,
+                    )?.accountName || 'Unknown Account'
+
+                  return (
+                    <div
+                      key={entry.id}
+                      className={`grid grid-cols-12 gap-2 px-4 py-3 hover:bg-gray-50 transition-colors ${
+                        editingEntry?.id === entry.id
+                          ? 'bg-blue-50 border-l-4 border-blue-400'
+                          : ''
+                      }`}
+                    >
+                      {/* Transaction Type */}
+                      <div className="flex items-center col-span-1">
+                        <Badge
+                          variant={
+                            entry.transactionType === 'DEBIT'
+                              ? 'default'
+                              : 'secondary'
+                          }
+                          className="text-xs font-medium"
+                        >
+                          {entry.transactionType === 'DEBIT' ? 'DR' : 'CR'}
+                        </Badge>
+                      </div>
+
+                      {/* Description */}
+                      <div className="flex items-center col-span-3">
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {entry.description}
+                          </p>
+                          <p className="text-xs text-gray-500 truncate">
+                            Entry #{index + 1}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Account */}
+                      <div className="flex items-center col-span-2">
+                        <div className="min-w-0">
+                          <p className="text-xs font-medium text-gray-900 truncate">
+                            {entry.accountDetailAccountNumber}
+                          </p>
+                          <p className="text-xs text-gray-500 truncate">
+                            {accountName}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Reference */}
+                      <div className="flex items-center col-span-2">
+                        <span className="font-mono text-xs text-gray-600">
+                          {entry.referenceNumber}
+                        </span>
+                      </div>
+
+                      {/* Date */}
+                      <div className="flex items-center col-span-1">
+                        <span className="text-xs text-gray-600">
+                          {formatDateShort(entry.ledgerDate)}
+                        </span>
+                      </div>
+
+                      {/* Amount */}
+                      <div className="flex items-center justify-end col-span-2">
+                        <div className="text-right">
+                          <p
+                            className={`text-sm font-bold ${
+                              entry.transactionType === 'DEBIT'
+                                ? 'text-blue-600'
+                                : 'text-purple-600'
+                            }`}
+                          >
+                            {formatCurrency(entry.amount)}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center justify-center col-span-1">
+                        <div className="flex items-center gap-1">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditEntry(entry)}
+                            className="w-6 h-6 p-0 text-blue-600 rounded hover:text-blue-800 hover:bg-blue-100"
+                            title={t('common.edit')}
+                          >
+                            <Edit className="w-3 h-3" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemoveEntry(entry.id)}
+                            className="w-6 h-6 p-0 text-red-600 rounded hover:text-red-800 hover:bg-red-100"
+                            title={t('common.delete')}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Summary Row */}
+              <div className="px-4 py-3 border-t-2 border-gray-200 bg-gray-50">
+                <div className="grid grid-cols-12 gap-2">
+                  <div className="flex items-center col-span-9">
+                    <span className="text-sm font-medium text-gray-700">
+                      Total Entries: {entries.length}
+                    </span>
+                  </div>
+                  <div className="col-span-2 text-right">
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-blue-600">
+                          {t('accounts.transactionTypes.DEBIT')}:
+                        </span>
+                        <span className="font-medium text-blue-600">
+                          {formatCurrency(totalDebitAmount)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-purple-600">
+                          {t('accounts.transactionTypes.CREDIT')}:
+                        </span>
+                        <span className="font-medium text-purple-600">
+                          {formatCurrency(totalCreditAmount)}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Add Entry Button */}
-          <div className="flex justify-center">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={addEntry}
-              className="flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Add Another Entry
-            </Button>
-          </div>
-
-          {/* Submit Buttons */}
-          <div className="flex justify-end pt-6 space-x-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
-              disabled={createBulkMutation.isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={createBulkMutation.isPending || !isBalanced}
-              className="flex items-center gap-2"
-            >
-              <Save className="w-4 h-4" />
-              {createBulkMutation.isPending
-                ? 'Creating Entries...'
-                : `Create ${fields.length} Ledger Entries`}
-            </Button>
-          </div>
-
-          {/* Balance Warning */}
-          {!isBalanced && (
-            <div className="p-4 border border-orange-200 rounded-lg bg-orange-50">
-              <div className="flex items-center gap-2 text-orange-800">
-                <AlertTriangle className="w-5 h-5" />
-                <span className="font-medium">Transaction Not Balanced</span>
+                  <div className="flex items-center justify-center col-span-1">
+                    <div
+                      title={
+                        isBalanced
+                          ? t('ledgers.balanced')
+                          : t('ledgers.unbalanced')
+                      }
+                    >
+                      {isBalanced ? (
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                      ) : (
+                        <AlertTriangle className="w-4 h-4 text-orange-500" />
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="mt-1 text-sm text-orange-700">
-                In double-entry bookkeeping, total debit amounts must equal
-                total credit amounts. Please adjust the amounts to balance the
-                transaction before submitting.
-              </p>
             </div>
-          )}
-        </form>
-      </Form>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Submit Section */}
+      <div className="space-y-4">
+        {/* Submit Buttons */}
+        <div className="flex justify-end pt-6 space-x-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleCancel}
+            disabled={createBulkMutation.isPending}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmitAll}
+            disabled={
+              createBulkMutation.isPending || !isBalanced || entries.length < 2
+            }
+            className="flex items-center gap-2"
+          >
+            <Save className="w-4 h-4" />
+            {createBulkMutation.isPending
+              ? 'Creating Entries...'
+              : `Create ${entries.length} Ledger Entries`}
+          </Button>
+        </div>
+
+        {/* Balance Warning */}
+        {entries.length > 0 && !isBalanced && (
+          <div className="p-4 border border-orange-200 rounded-lg bg-orange-50">
+            <div className="flex items-center gap-2 text-orange-800">
+              <AlertTriangle className="w-5 h-5" />
+              <span className="font-medium">
+                {t('labels.transactionNotBalanced')}
+              </span>
+            </div>
+            <p className="mt-1 text-sm text-orange-700">
+              {t('labels.doubleEntryWarning')}
+            </p>
+          </div>
+        )}
+
+        {/* Minimum entries warning */}
+        {entries.length < 2 && entries.length > 0 && (
+          <div className="p-4 border border-blue-200 rounded-lg bg-blue-50">
+            <div className="flex items-center gap-2 text-blue-800">
+              <AlertTriangle className="w-5 h-5" />
+              <span className="font-medium">
+                {t('labels.minimumEntriesRequired')}
+              </span>
+            </div>
+            <p className="mt-1 text-sm text-blue-700">
+              {t('labels.minimumEntriesWarning')}
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

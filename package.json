@@ -4,8 +4,8 @@
   "type": "module",
   "author": "I Made Budi Dharma Wipraja <dharmawipraja@gmail.com>",
   "scripts": {
-    "dev": "vite --port 3000",
-    "start": "vite --port 3000",
+    "dev": "vite",
+    "start": "vite",
     "build": "vite build && tsc",
     "serve": "vite preview",
     "test": "vitest run",

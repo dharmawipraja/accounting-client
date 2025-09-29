@@ -31,6 +31,7 @@ import {
   useCreateAccountDetailMutation,
   useUpdateAccountDetailMutation,
 } from '@/hooks/useAccountsQuery'
+import { useTranslation } from '@/hooks/useTranslation'
 import type { AccountDetail } from '@/types/accounts'
 import type {
   CreateAccountDetailPayload,
@@ -78,6 +79,7 @@ interface AccountDetailFormProps {
 
 export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const createMutation = useCreateAccountDetailMutation()
   const updateMutation = useUpdateAccountDetailMutation()
 
@@ -197,7 +199,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
             className="self-start md:hidden"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Detail Accounts
+            {t('labels.backToDetailAccounts')}
           </Button>
         </div>
 
@@ -233,7 +235,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                     name="accountNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Account Number</FormLabel>
+                        <FormLabel>{t('labels.accountNumber')}</FormLabel>
                         <FormControl>
                           <Input placeholder="e.g., 1001.01" {...field} />
                         </FormControl>
@@ -247,7 +249,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                     name="accountName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Account Name</FormLabel>
+                        <FormLabel>{t('labels.accountName')}</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="e.g., BCA Current Account"
@@ -288,7 +290,9 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select category" />
+                              <SelectValue
+                                placeholder={t('placeholders.selectCategory')}
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -333,7 +337,9 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select report type" />
+                              <SelectValue
+                                placeholder={t('placeholders.selectReportType')}
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -382,7 +388,11 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select transaction type" />
+                              <SelectValue
+                                placeholder={t(
+                                  'placeholders.selectTransactionType',
+                                )}
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -413,7 +423,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                   name="accountGeneralAccountNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>General Account</FormLabel>
+                      <FormLabel>{t('labels.generalAccount')}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -459,7 +469,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                     name="amountDebit"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Debit Amount</FormLabel>
+                        <FormLabel>{t('labels.debitAmount')}</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <span className="absolute transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground">
@@ -485,7 +495,7 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                     name="amountCredit"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Credit Amount</FormLabel>
+                        <FormLabel>{t('labels.creditAmount')}</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <span className="absolute transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground">

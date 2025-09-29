@@ -1,10 +1,12 @@
 import { Button } from '@/components/ui/button'
 import { UserForm } from '@/components/users/UserForm'
+import { useTranslation } from '@/hooks/useTranslation'
 import { useNavigate } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 
 export function CreateUserPage() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const handleSuccess = () => {
     navigate({ to: '/users' })
@@ -26,7 +28,7 @@ export function CreateUserPage() {
               className="flex items-center space-x-1 self-start md:hidden"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Back to Users</span>
+              <span>{t('labels.backToUsers')}</span>
             </Button>
           </div>
 
