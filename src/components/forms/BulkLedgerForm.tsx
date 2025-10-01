@@ -11,6 +11,12 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
+  SearchableSelect,
+  SearchableSelectContent,
+  SearchableSelectItem,
+  SearchableSelectTrigger,
+} from '@/components/ui/searchable-select'
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -293,8 +299,8 @@ export function BulkLedgerForm({
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message ||
-          error?.message ||
-          'An error occurred while creating ledger entries',
+        error?.message ||
+        'An error occurred while creating ledger entries',
       )
     }
   }
@@ -528,36 +534,42 @@ export function BulkLedgerForm({
                         {t('labels.accountDetail')}{' '}
                         <span className="text-red-500">*</span>
                       </FormLabel>
-                      <Select
+                      <SearchableSelect
                         onValueChange={(value) => {
                           field.onChange(value)
                           handleAccountDetailChange(value)
                         }}
                         value={field.value}
-                        disabled={isLoadingAccounts}
                       >
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue
-                              placeholder={
-                                isLoadingAccounts
-                                  ? 'Loading accounts...'
-                                  : 'Select account detail'
-                              }
-                            />
-                          </SelectTrigger>
+                          <SearchableSelectTrigger>
+                            {field.value
+                              ? accountsData?.data?.find(
+                                (account) =>
+                                  account.accountNumber === field.value,
+                              )
+                                ? `${field.value} - ${accountsData.data.find(
+                                  (account) =>
+                                    account.accountNumber === field.value,
+                                )?.accountName
+                                }`
+                                : field.value
+                              : isLoadingAccounts
+                                ? 'Loading accounts...'
+                                : 'Select account detail'}
+                          </SearchableSelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SearchableSelectContent>
                           {accountsData?.data?.map((account) => (
-                            <SelectItem
+                            <SearchableSelectItem
                               key={account.accountNumber}
                               value={account.accountNumber}
                             >
                               {account.accountNumber} - {account.accountName}
-                            </SelectItem>
+                            </SearchableSelectItem>
                           ))}
-                        </SelectContent>
-                      </Select>
+                        </SearchableSelectContent>
+                      </SearchableSelect>
                       <FormMessage className="mt-1 text-xs text-red-600" />
                     </FormItem>
                   )}
@@ -715,11 +727,10 @@ export function BulkLedgerForm({
                   return (
                     <div
                       key={entry.id}
-                      className={`grid grid-cols-12 gap-2 px-4 py-3 hover:bg-gray-50 transition-colors ${
-                        editingEntry?.id === entry.id
+                      className={`grid grid-cols-12 gap-2 px-4 py-3 hover:bg-gray-50 transition-colors ${editingEntry?.id === entry.id
                           ? 'bg-blue-50 border-l-4 border-blue-400'
                           : ''
-                      }`}
+                        }`}
                     >
                       {/* Transaction Type */}
                       <div className="flex items-center col-span-1">
@@ -777,11 +788,10 @@ export function BulkLedgerForm({
                       <div className="flex items-center justify-end col-span-2">
                         <div className="text-right">
                           <p
-                            className={`text-sm font-bold ${
-                              entry.transactionType === 'DEBIT'
+                            className={`text-sm font-bold ${entry.transactionType === 'DEBIT'
                                 ? 'text-blue-600'
                                 : 'text-purple-600'
-                            }`}
+                              }`}
                           >
                             {formatCurrency(entry.amount)}
                           </p>
