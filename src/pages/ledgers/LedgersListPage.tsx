@@ -40,8 +40,8 @@ import {
 } from '@/hooks/useLedgersQuery'
 import { useTranslation } from '@/hooks/useTranslation'
 import type { LedgerQueryParams } from '@/types/ledgers'
-import { formatCurrency } from '@/utils'
 import { formatDate } from '@/utils/date'
+import { formatCurrency } from '@/utils/formatters'
 import { canManageLedgers } from '@/utils/rolePermissions'
 import { useRouter } from '@tanstack/react-router'
 import {

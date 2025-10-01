@@ -19,29 +19,6 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Format currency values
- */
-export function formatCurrency(
-  amount: number,
-  currency = 'IDR',
-  locale = 'id-ID',
-): string {
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(amount)
-}
-
-/**
- * Format numbers with thousand separators
- */
-export function formatNumber(num: number, locale = 'id-ID'): string {
-  return new Intl.NumberFormat(locale).format(num)
-}
-
-/**
  * Capitalize first letter of each word
  */
 export function capitalizeWords(str: string): string {

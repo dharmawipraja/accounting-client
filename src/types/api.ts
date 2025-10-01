@@ -84,32 +84,3 @@ export interface AccountDetail {
     accountName: string
   }
 }
-
-// Ledger types
-export interface Ledger {
-  id: string
-  referenceNumber: string
-  amount: number
-  description: string
-  ledgerType: 'KAS' | 'KAS_MASUK' | 'KAS_KELUAR'
-  transactionType: 'DEBIT' | 'CREDIT'
-  postingStatus: 'PENDING' | 'POSTED'
-  ledgerDate: string
-  postingAt?: string | null
-  accountDetailAccountNumber: string
-  accountGeneralAccountNumber: string
-  createdBy: string
-  updatedBy: string
-  createdAt: string
-  updatedAt: string
-  accountDetail?: {
-    id: string
-    accountNumber: string
-    accountName: string
-  }
-  accountGeneral?: {
-    id: string
-    accountNumber: string
-    accountName: string
-  }
-}

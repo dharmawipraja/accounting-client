@@ -12,7 +12,7 @@ import { LoadingState } from '@/components/ui/loading-state'
 import { usePostNeracaAkhirMutation } from '@/hooks/usePostingQuery'
 import { useTranslation } from '@/hooks/useTranslation'
 // import type { NeracaAkhirFormData } from '@/types/posting'
-import { getCurrentDateForAPI } from '@/utils/date'
+import { formatDateForAPI, getCurrentDateForAPI } from '@/utils/date'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from '@tanstack/react-router'
 import { AlertTriangle, ArrowLeft, Calendar, CheckCircle } from 'lucide-react'
@@ -25,15 +25,6 @@ const neracaAkhirFormSchema = z.object({
 })
 
 type NeracaAkhirFormData = z.infer<typeof neracaAkhirFormSchema>
-
-// Helper function to convert ISO date to DD-MM-YYYY format
-const formatDateForAPI = (isoDate: string): string => {
-  const date = new Date(isoDate)
-  const day = date.getDate().toString().padStart(2, '0')
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const year = date.getFullYear()
-  return `${day}-${month}-${year}`
-}
 
 export function NeracaAkhirPostingPage() {
   const router = useRouter()

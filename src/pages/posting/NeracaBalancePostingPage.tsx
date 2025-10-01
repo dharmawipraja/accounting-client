@@ -15,8 +15,8 @@ import {
 } from '@/hooks/usePostingQuery'
 import { useTranslation } from '@/hooks/useTranslation'
 // import type { NeracaBalanceFormData } from '@/types/posting'
-import { formatCurrency } from '@/utils'
-import { getCurrentDateForAPI } from '@/utils/date'
+import { formatDateForAPI, getCurrentDateForAPI } from '@/utils/date'
+import { formatCurrency } from '@/utils/formatters'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from '@tanstack/react-router'
 import { AlertTriangle, ArrowLeft, Calculator, Calendar } from 'lucide-react'
@@ -31,15 +31,6 @@ const neracaBalanceFormSchema = z.object({
 })
 
 type NeracaBalanceFormData = z.infer<typeof neracaBalanceFormSchema>
-
-// Helper function to convert ISO date to DD-MM-YYYY format
-const formatDateForAPI = (isoDate: string): string => {
-  const date = new Date(isoDate)
-  const day = date.getDate().toString().padStart(2, '0')
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const year = date.getFullYear()
-  return `${day}-${month}-${year}`
-}
 
 export function NeracaBalancePostingPage() {
   const router = useRouter()

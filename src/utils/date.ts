@@ -31,7 +31,15 @@ export function formatDate(
 /**
  * Format date for API (ISO string)
  */
-export function formatDateForAPI(date: Date): string {
+export function formatDateForAPI(date: Date | string): string {
+  if (typeof date === 'string') {
+    // Convert YYYY-MM-DD to DD-MM-YYYY for API
+    const dateObj = new Date(date)
+    const day = dateObj.getDate().toString().padStart(2, '0')
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, '0')
+    const year = dateObj.getFullYear()
+    return `${day}-${month}-${year}`
+  }
   return date.toISOString().split('T')[0]
 }
 

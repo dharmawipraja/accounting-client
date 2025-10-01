@@ -296,7 +296,7 @@ export const reportsService = {
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(10)
       doc.text('TOTAL AKTIVA', 40, yPosition)
-      doc.text(this.formatCurrency(aktivaTotal.total), 170, yPosition, {
+      doc.text(formatCurrency(aktivaTotal.total), 170, yPosition, {
         align: 'right',
       })
       yPosition += 15
@@ -332,7 +332,7 @@ export const reportsService = {
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(10)
       doc.text('TOTAL PASIVA', 40, yPosition)
-      doc.text(this.formatCurrency(pasivaTotal.total), 170, yPosition, {
+      doc.text(formatCurrency(pasivaTotal.total), 170, yPosition, {
         align: 'right',
       })
       yPosition += 20
@@ -450,7 +450,7 @@ export const reportsService = {
       // TOTAL AKTIVA
       doc.setFont('helvetica', 'bold')
       doc.text('TOTAL AKTIVA', 70, yPosition)
-      doc.text(this.formatCurrency(aktivaTotal), 170, yPosition, {
+      doc.text(formatCurrency(aktivaTotal), 170, yPosition, {
         align: 'right',
       })
       yPosition += 15
@@ -470,7 +470,7 @@ export const reportsService = {
       // TOTAL HUTANG
       doc.setFont('helvetica', 'bold')
       doc.text('TOTAL HUTANG', 70, yPosition)
-      doc.text(this.formatCurrency(hutangTotal), 170, yPosition, {
+      doc.text(formatCurrency(hutangTotal), 170, yPosition, {
         align: 'right',
       })
       yPosition += 15
@@ -490,7 +490,7 @@ export const reportsService = {
       // TOTAL MODAL
       doc.setFont('helvetica', 'bold')
       doc.text('TOTAL MODAL', 70, yPosition)
-      doc.text(this.formatCurrency(modalTotal), 170, yPosition, {
+      doc.text(formatCurrency(modalTotal), 170, yPosition, {
         align: 'right',
       })
       yPosition += 10
@@ -498,7 +498,7 @@ export const reportsService = {
       // TOTAL PASIVA (HUTANG + MODAL)
       const totalPasiva = hutangTotal + modalTotal
       doc.text('TOTAL PASIVA', 70, yPosition)
-      doc.text(this.formatCurrency(totalPasiva), 170, yPosition, {
+      doc.text(formatCurrency(totalPasiva), 170, yPosition, {
         align: 'right',
       })
       yPosition += 20
@@ -619,7 +619,7 @@ export const reportsService = {
       // TOTAL AKTIVA
       doc.setFont('helvetica', 'bold')
       doc.text('TOTAL AKTIVA', 70, yPosition)
-      doc.text(this.formatCurrency(totalAktiva), 170, yPosition, {
+      doc.text(formatCurrency(totalAktiva), 170, yPosition, {
         align: 'right',
       })
       yPosition += 15
@@ -645,7 +645,7 @@ export const reportsService = {
       // TOTAL HUTANG
       doc.setFont('helvetica', 'bold')
       doc.text('TOTAL HUTANG', 70, yPosition)
-      doc.text(this.formatCurrency(totalHutang), 170, yPosition, {
+      doc.text(formatCurrency(totalHutang), 170, yPosition, {
         align: 'right',
       })
       yPosition += 15
@@ -671,7 +671,7 @@ export const reportsService = {
       // TOTAL MODAL
       doc.setFont('helvetica', 'bold')
       doc.text('TOTAL MODAL', 70, yPosition)
-      doc.text(this.formatCurrency(totalModal), 170, yPosition, {
+      doc.text(formatCurrency(totalModal), 170, yPosition, {
         align: 'right',
       })
       yPosition += 10
@@ -679,7 +679,7 @@ export const reportsService = {
       // TOTAL PASIVA
       const totalPasiva = totalHutang + totalModal
       doc.text('TOTAL PASIVA', 70, yPosition)
-      doc.text(this.formatCurrency(totalPasiva), 170, yPosition, {
+      doc.text(formatCurrency(totalPasiva), 170, yPosition, {
         align: 'right',
       })
       yPosition += 20
@@ -705,7 +705,7 @@ export const reportsService = {
             ? detail.amountDebit - detail.amountCredit
             : detail.amountCredit - detail.amountDebit
 
-        doc.text(this.formatCurrency(balance), 170, yPosition, {
+        doc.text(formatCurrency(balance), 170, yPosition, {
           align: 'right',
         })
         yPosition += 8
@@ -799,7 +799,7 @@ export const reportsService = {
 
           // Add to general account total
           generalAccountTotal += detailBalance
-          doc.text(this.formatCurrency(detailBalance), 170, yPosition, {
+          doc.text(formatCurrency(detailBalance), 170, yPosition, {
             align: 'right',
           })
           yPosition += 7
@@ -809,7 +809,7 @@ export const reportsService = {
         doc.setFont('helvetica', 'bold')
         doc.setFontSize(9)
         doc.text(`TOTAL ${general.accountName.toUpperCase()}`, 80, yPosition)
-        doc.text(this.formatCurrency(generalAccountTotal), 170, yPosition, {
+        doc.text(formatCurrency(generalAccountTotal), 170, yPosition, {
           align: 'right',
         })
         yPosition += 10
@@ -862,7 +862,7 @@ export const reportsService = {
       sectionTotal += balance
 
       // Amount (right-aligned)
-      doc.text(this.formatCurrency(balance), 170, yPosition, { align: 'right' })
+      doc.text(formatCurrency(balance), 170, yPosition, { align: 'right' })
 
       yPosition += 8
     })
@@ -1156,14 +1156,14 @@ export const reportsService = {
           aktivaTotal += balance
           neracaData.push({
             Account: `      ${account.accountNumber}  ${account.accountName}`,
-            Balance: this.formatCurrency(balance),
+            Balance: formatCurrency(balance),
           })
         })
       })
 
       neracaData.push({
         Account: '   TOTAL AKTIVA',
-        Balance: this.formatCurrency(aktivaTotal),
+        Balance: formatCurrency(aktivaTotal),
       })
       neracaData.push({ Account: '', Balance: '' })
     }
@@ -1198,14 +1198,14 @@ export const reportsService = {
           pasivaTotal += balance
           neracaData.push({
             Account: `      ${account.accountNumber}  ${account.accountName}`,
-            Balance: this.formatCurrency(balance),
+            Balance: formatCurrency(balance),
           })
         })
       })
 
       neracaData.push({
         Account: '   TOTAL PASIVA',
-        Balance: this.formatCurrency(pasivaTotal),
+        Balance: formatCurrency(pasivaTotal),
       })
     }
 
@@ -1305,7 +1305,7 @@ export const reportsService = {
           penjelasanNeracaData.push({
             Account: `  ${detail.accountNumber}`,
             Description: `  ${detail.accountName}`,
-            Balance: this.formatCurrency(detailBalance),
+            Balance: formatCurrency(detailBalance),
           })
         })
 
@@ -1314,7 +1314,7 @@ export const reportsService = {
           penjelasanNeracaData.push({
             Account: '',
             Description: `TOTAL ${general.accountName.toUpperCase()}`,
-            Balance: this.formatCurrency(generalAccountTotal),
+            Balance: formatCurrency(generalAccountTotal),
           })
         }
 
@@ -1325,7 +1325,7 @@ export const reportsService = {
       penjelasanNeracaData.push({
         Account: '',
         Description: 'TOTAL AKTIVA',
-        Balance: this.formatCurrency(totalAktiva),
+        Balance: formatCurrency(totalAktiva),
       })
       penjelasanNeracaData.push({ Account: '', Description: '', Balance: '' })
     }
@@ -1356,7 +1356,7 @@ export const reportsService = {
           penjelasanNeracaData.push({
             Account: `  ${detail.accountNumber}`,
             Description: `  ${detail.accountName}`,
-            Balance: this.formatCurrency(detailBalance),
+            Balance: formatCurrency(detailBalance),
           })
         })
 
@@ -1365,7 +1365,7 @@ export const reportsService = {
           penjelasanNeracaData.push({
             Account: '',
             Description: `TOTAL ${general.accountName.toUpperCase()}`,
-            Balance: this.formatCurrency(generalAccountTotal),
+            Balance: formatCurrency(generalAccountTotal),
           })
         }
 
@@ -1376,7 +1376,7 @@ export const reportsService = {
       penjelasanNeracaData.push({
         Account: '',
         Description: 'TOTAL HUTANG',
-        Balance: this.formatCurrency(totalHutang),
+        Balance: formatCurrency(totalHutang),
       })
       penjelasanNeracaData.push({ Account: '', Description: '', Balance: '' })
     }
@@ -1407,7 +1407,7 @@ export const reportsService = {
           penjelasanNeracaData.push({
             Account: `  ${detail.accountNumber}`,
             Description: `  ${detail.accountName}`,
-            Balance: this.formatCurrency(detailBalance),
+            Balance: formatCurrency(detailBalance),
           })
         })
 
@@ -1416,7 +1416,7 @@ export const reportsService = {
           penjelasanNeracaData.push({
             Account: '',
             Description: `TOTAL ${general.accountName.toUpperCase()}`,
-            Balance: this.formatCurrency(generalAccountTotal),
+            Balance: formatCurrency(generalAccountTotal),
           })
         }
 
@@ -1427,12 +1427,12 @@ export const reportsService = {
       penjelasanNeracaData.push({
         Account: '',
         Description: 'TOTAL MODAL',
-        Balance: this.formatCurrency(totalModal),
+        Balance: formatCurrency(totalModal),
       })
       penjelasanNeracaData.push({
         Account: '',
         Description: 'TOTAL PASIVA',
-        Balance: this.formatCurrency(totalHutang + totalModal),
+        Balance: formatCurrency(totalHutang + totalModal),
       })
     }
 
@@ -1454,7 +1454,7 @@ export const reportsService = {
         penjelasanNeracaData.push({
           Account: detail.accountNumber,
           Description: detail.accountName,
-          Balance: this.formatCurrency(balance),
+          Balance: formatCurrency(balance),
         })
       })
     }
@@ -1799,7 +1799,7 @@ export const reportsService = {
 
         // Right-align the currency amount
         doc.setTextColor(0, 0, 100) // Dark blue for amounts
-        doc.text(this.formatCurrency(balance), 170, yPosition, {
+        doc.text(formatCurrency(balance), 170, yPosition, {
           align: 'right',
         })
         doc.setTextColor(0, 0, 0) // Reset to black
@@ -1816,15 +1816,5 @@ export const reportsService = {
     })
 
     return { yPosition, total }
-  },
-
-  /**
-   * Helper method to format currency values
-   */
-  formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('id-ID', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount)
   },
 }
