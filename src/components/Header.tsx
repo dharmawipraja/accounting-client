@@ -10,10 +10,10 @@ import { ROUTES } from '@/constants'
 import { useAuth } from '@/hooks/useAuth'
 import { useTranslation } from '@/hooks/useTranslation'
 import {
+  canAccessReports,
   canAccessUserManagement,
   canManageAccounts,
   canManageLedgers,
-  canAccessReports,
 } from '@/utils/rolePermissions'
 import { Link } from '@tanstack/react-router'
 import {
@@ -170,6 +170,15 @@ export default function Header() {
                   >
                     <BookOpen className="w-4 h-4" />
                     <span>{t('navigation.viewAllLedgers')}</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/buku-besar"
+                    className="flex items-center w-full space-x-2"
+                  >
+                    <FileText className="w-4 h-4" />
+                    <span>{t('navigation.viewBukuBesar')}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -449,6 +458,13 @@ export default function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <span>View All Ledgers</span>
+                  </Link>
+                  <Link
+                    to="/buku-besar"
+                    className="flex items-center w-full p-2 space-x-3 text-sm nav-link"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span>View Buku Besar</span>
                   </Link>
                 </div>
               </div>

@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
 import { Route as PostingIndexRouteImport } from './routes/posting/index'
 import { Route as LedgersIndexRouteImport } from './routes/ledgers/index'
+import { Route as BukuBesarIndexRouteImport } from './routes/buku-besar/index'
 import { Route as UsersNewRouteImport } from './routes/users/new'
 import { Route as PostingNeracaDetailRouteImport } from './routes/posting/neraca-detail'
 import { Route as PostingNeracaBalanceRouteImport } from './routes/posting/neraca-balance'
@@ -64,6 +65,11 @@ const PostingIndexRoute = PostingIndexRouteImport.update({
 const LedgersIndexRoute = LedgersIndexRouteImport.update({
   id: '/ledgers/',
   path: '/ledgers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BukuBesarIndexRoute = BukuBesarIndexRouteImport.update({
+  id: '/buku-besar/',
+  path: '/buku-besar/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UsersNewRoute = UsersNewRouteImport.update({
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/posting/neraca-balance': typeof PostingNeracaBalanceRoute
   '/posting/neraca-detail': typeof PostingNeracaDetailRoute
   '/users/new': typeof UsersNewRoute
+  '/buku-besar': typeof BukuBesarIndexRoute
   '/ledgers': typeof LedgersIndexRoute
   '/posting': typeof PostingIndexRoute
   '/users': typeof UsersIndexRoute
@@ -208,6 +215,7 @@ export interface FileRoutesByTo {
   '/posting/neraca-balance': typeof PostingNeracaBalanceRoute
   '/posting/neraca-detail': typeof PostingNeracaDetailRoute
   '/users/new': typeof UsersNewRoute
+  '/buku-besar': typeof BukuBesarIndexRoute
   '/ledgers': typeof LedgersIndexRoute
   '/posting': typeof PostingIndexRoute
   '/users': typeof UsersIndexRoute
@@ -237,6 +245,7 @@ export interface FileRoutesById {
   '/posting/neraca-balance': typeof PostingNeracaBalanceRoute
   '/posting/neraca-detail': typeof PostingNeracaDetailRoute
   '/users/new': typeof UsersNewRoute
+  '/buku-besar/': typeof BukuBesarIndexRoute
   '/ledgers/': typeof LedgersIndexRoute
   '/posting/': typeof PostingIndexRoute
   '/users/': typeof UsersIndexRoute
@@ -267,6 +276,7 @@ export interface FileRouteTypes {
     | '/posting/neraca-balance'
     | '/posting/neraca-detail'
     | '/users/new'
+    | '/buku-besar'
     | '/ledgers'
     | '/posting'
     | '/users'
@@ -295,6 +305,7 @@ export interface FileRouteTypes {
     | '/posting/neraca-balance'
     | '/posting/neraca-detail'
     | '/users/new'
+    | '/buku-besar'
     | '/ledgers'
     | '/posting'
     | '/users'
@@ -323,6 +334,7 @@ export interface FileRouteTypes {
     | '/posting/neraca-balance'
     | '/posting/neraca-detail'
     | '/users/new'
+    | '/buku-besar/'
     | '/ledgers/'
     | '/posting/'
     | '/users/'
@@ -352,6 +364,7 @@ export interface RootRouteChildren {
   PostingNeracaBalanceRoute: typeof PostingNeracaBalanceRoute
   PostingNeracaDetailRoute: typeof PostingNeracaDetailRoute
   UsersNewRoute: typeof UsersNewRoute
+  BukuBesarIndexRoute: typeof BukuBesarIndexRoute
   LedgersIndexRoute: typeof LedgersIndexRoute
   PostingIndexRoute: typeof PostingIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
@@ -410,6 +423,13 @@ declare module '@tanstack/react-router' {
       path: '/ledgers'
       fullPath: '/ledgers'
       preLoaderRoute: typeof LedgersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buku-besar/': {
+      id: '/buku-besar/'
+      path: '/buku-besar'
+      fullPath: '/buku-besar'
+      preLoaderRoute: typeof BukuBesarIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/users/new': {
@@ -568,6 +588,7 @@ const rootRouteChildren: RootRouteChildren = {
   PostingNeracaBalanceRoute: PostingNeracaBalanceRoute,
   PostingNeracaDetailRoute: PostingNeracaDetailRoute,
   UsersNewRoute: UsersNewRoute,
+  BukuBesarIndexRoute: BukuBesarIndexRoute,
   LedgersIndexRoute: LedgersIndexRoute,
   PostingIndexRoute: PostingIndexRoute,
   UsersIndexRoute: UsersIndexRoute,

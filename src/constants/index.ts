@@ -119,6 +119,7 @@ export const ROUTES = {
   LEDGERS_KAS: '/ledgers/kas',
   LEDGERS_KAS_MASUK: '/ledgers/kas-masuk',
   LEDGERS_KAS_KELUAR: '/ledgers/kas-keluar',
+  BUKU_BESAR: '/buku-besar',
   REPORTS: '/reports',
 } as const
 
