@@ -40,11 +40,18 @@ import {
 } from '@/hooks/useLedgersQuery'
 import { useTranslation } from '@/hooks/useTranslation'
 import type { LedgerQueryParams } from '@/types/ledgers'
-import { formatDate } from '@/utils/date'
+import {
+  formatDate,
+  formatDateForAPI,
+  getDateRange,
+  getDateRangeForInput,
+} from '@/utils/date'
 import { formatCurrency } from '@/utils/formatters'
 import { canManageLedgers } from '@/utils/rolePermissions'
 import { useRouter } from '@tanstack/react-router'
 import {
+  ArrowLeft,
+  ArrowRight,
   Calendar,
   ChevronDown,
   Edit,
@@ -63,9 +70,22 @@ export const LedgersListPage: React.FC = () => {
   const { t } = useTranslation()
   const { user } = useAuth()
   const [searchTerm, setSearchTerm] = useState('')
+
+  // Get current month date range for display
+  const currentMonthRangeForInput = getDateRangeForInput('month')
+  const currentMonthRangeForAPI = getDateRange('month')
+
   const [filters, setFilters] = useState<Partial<LedgerQueryParams>>({
     page: 1,
     limit: 10,
+    dateFrom: currentMonthRangeForAPI.start,
+    dateTo: currentMonthRangeForAPI.end,
+  })
+
+  // State for date inputs (HTML format)
+  const [dateInputs, setDateInputs] = useState({
+    dateFrom: currentMonthRangeForInput.start,
+    dateTo: currentMonthRangeForInput.end,
   })
 
   const canManage = user?.role ? canManageLedgers(user.role) : false
@@ -108,6 +128,22 @@ export const LedgersListPage: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       [key]: value === '' || value === 'all' ? undefined : value,
+      page: 1, // Reset to first page when filtering
+    }))
+  }
+
+  const handleDateChange = (key: 'dateFrom' | 'dateTo', value: string) => {
+    // Update the display state
+    setDateInputs((prev) => ({
+      ...prev,
+      [key]: value,
+    }))
+
+    // Convert to API format and update filters
+    const apiValue = value ? formatDateForAPI(value) : undefined
+    setFilters((prev) => ({
+      ...prev,
+      [key]: apiValue,
       page: 1, // Reset to first page when filtering
     }))
   }
@@ -234,7 +270,7 @@ export const LedgersListPage: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
             <div className="space-y-2">
               <label className="text-sm font-medium">
                 {t('ledgersList.search')}
@@ -252,29 +288,24 @@ export const LedgersListPage: React.FC = () => {
 
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                {t('ledgersList.ledgerType')}
+                {t('ledgersList.fromDate')}
               </label>
-              <Select
-                value={filters.ledgerType || 'all'}
-                onValueChange={(value) =>
-                  handleFilterChange('ledgerType', value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('ledgersList.allTypes')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {t('ledgersList.allTypes')}
-                  </SelectItem>
-                  <SelectItem value="KAS_MASUK">
-                    {t('ledgersList.cashIn')}
-                  </SelectItem>
-                  <SelectItem value="KAS_KELUAR">
-                    {t('ledgersList.cashOut')}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <Input
+                type="date"
+                value={dateInputs.dateFrom}
+                onChange={(e) => handleDateChange('dateFrom', e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                {t('ledgersList.toDate')}
+              </label>
+              <Input
+                type="date"
+                value={dateInputs.dateTo}
+                onChange={(e) => handleDateChange('dateTo', e.target.value)}
+              />
             </div>
 
             <div className="space-y-2">
@@ -464,54 +495,48 @@ export const LedgersListPage: React.FC = () => {
               </div>
 
               {/* Pagination */}
-              {ledgersResponse.pagination &&
-                ledgersResponse.pagination.pages > 1 && (
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm text-muted-foreground">
-                      {t('ledgersList.showing')}{' '}
-                      {(ledgersResponse.pagination.page - 1) *
-                        ledgersResponse.pagination.limit +
-                        1}{' '}
-                      {t('ledgersList.to')}{' '}
-                      {Math.min(
-                        ledgersResponse.pagination.page *
-                          ledgersResponse.pagination.limit,
-                        ledgersResponse.pagination.total,
-                      )}{' '}
-                      {t('ledgersList.of')} {ledgersResponse.pagination.total}{' '}
-                      {t('ledgersList.entries')}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          handlePageChange(ledgersResponse.pagination.page - 1)
-                        }
-                        disabled={ledgersResponse.pagination.page <= 1}
-                      >
-                        {t('ledgersList.previous')}
-                      </Button>
-                      <span className="text-sm">
-                        {t('table.page')} {ledgersResponse.pagination.page}{' '}
-                        {t('ledgersList.of')} {ledgersResponse.pagination.pages}
-                      </span>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          handlePageChange(ledgersResponse.pagination.page + 1)
-                        }
-                        disabled={
-                          ledgersResponse.pagination.page >=
-                          ledgersResponse.pagination.pages
-                        }
-                      >
-                        {t('ledgersList.next')}
-                      </Button>
-                    </div>
+              {ledgersResponse?.pagination && (
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-muted-foreground">
+                    {t('ledgersList.showing')}{' '}
+                    {((filters.page || 1) - 1) * (filters.limit || 10) + 1}{' '}
+                    {t('ledgersList.to')}{' '}
+                    {Math.min(
+                      (filters.page || 1) * (filters.limit || 10),
+                      ledgersResponse.pagination.total,
+                    )}{' '}
+                    {t('ledgersList.of')} {ledgersResponse.pagination.total}{' '}
+                    {t('ledgersList.entries')}
                   </div>
-                )}
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange((filters.page || 1) - 1)}
+                      disabled={
+                        !filters.page ||
+                        filters.page <= 1 ||
+                        !ledgersResponse.pagination?.hasPrev
+                      }
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-1" />
+                      {t('ledgersList.previous')}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange((filters.page || 1) + 1)}
+                      disabled={
+                        !ledgersResponse.pagination?.hasNext ||
+                        (filters.page || 1) >= ledgersResponse.pagination.pages
+                      }
+                    >
+                      {t('ledgersList.next')}
+                      <ArrowRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </CardContent>

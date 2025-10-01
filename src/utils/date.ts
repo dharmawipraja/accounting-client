@@ -44,6 +44,20 @@ export function formatDateForAPI(date: Date | string): string {
 }
 
 /**
+ * Format date for HTML date input (YYYY-MM-DD)
+ */
+export function formatDateForInput(date: Date | string): string {
+  if (typeof date === 'string') {
+    return date
+  }
+  // Use local date to avoid timezone issues
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+/**
  * Format datetime for API (ISO string with time)
  */
 export function formatDateTimeForAPI(date: Date): string {
@@ -116,6 +130,59 @@ export function getDateRange(
       return {
         start: formatDateForAPI(now),
         end: formatDateForAPI(now),
+      }
+  }
+}
+
+/**
+ * Get date range for HTML date inputs (YYYY-MM-DD format)
+ */
+export function getDateRangeForInput(
+  period: 'today' | 'week' | 'month' | 'year' | 'custom',
+  customStart?: Date,
+  customEnd?: Date,
+) {
+  const now = new Date()
+
+  switch (period) {
+    case 'today':
+      return {
+        start: formatDateForInput(now),
+        end: formatDateForInput(now),
+      }
+
+    case 'week':
+      return {
+        start: formatDateForInput(subDays(now, 7)),
+        end: formatDateForInput(now),
+      }
+
+    case 'month':
+      return {
+        start: formatDateForInput(startOfMonth(now)),
+        end: formatDateForInput(endOfMonth(now)),
+      }
+
+    case 'year':
+      return {
+        start: formatDateForInput(startOfYear(now)),
+        end: formatDateForInput(endOfYear(now)),
+      }
+
+    case 'custom':
+      return {
+        start: customStart
+          ? formatDateForInput(customStart)
+          : formatDateForInput(now),
+        end: customEnd
+          ? formatDateForInput(customEnd)
+          : formatDateForInput(now),
+      }
+
+    default:
+      return {
+        start: formatDateForInput(now),
+        end: formatDateForInput(now),
       }
   }
 }
