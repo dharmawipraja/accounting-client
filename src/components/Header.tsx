@@ -211,7 +211,7 @@ export default function Header() {
                 align="start"
                 className="w-64 animate-fade-in-scale"
               >
-                <DropdownMenuItem asChild>
+                {/* <DropdownMenuItem asChild>
                   <Link
                     to="/posting"
                     className="flex items-center w-full space-x-2"
@@ -220,7 +220,7 @@ export default function Header() {
                     <span>Posting Dashboard</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator /> */}
                 <DropdownMenuItem asChild>
                   <Link
                     to="/posting/buku-besar"
@@ -286,12 +286,12 @@ export default function Header() {
                     <span className="text-sm font-medium leading-none">
                       {user?.name}
                     </span>
-                    <span className="text-xs text-muted-foreground leading-none mt-1">
+                    <span className="mt-1 text-xs leading-none text-muted-foreground">
                       {user?.role || 'User'}
                     </span>
                   </div>
                   <div className="relative">
-                    <div className="flex items-center justify-center w-10 h-10 text-sm font-semibold rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-md ring-2 ring-background">
+                    <div className="flex items-center justify-center w-10 h-10 text-sm font-semibold rounded-full shadow-md bg-gradient-to-br from-primary to-primary/80 text-primary-foreground ring-2 ring-background">
                       {user?.name?.charAt(0)?.toUpperCase()}
                     </div>
                     <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-background rounded-full"></div>
@@ -312,7 +312,7 @@ export default function Header() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium truncate">{user?.name}</div>
-                  <div className="text-sm text-muted-foreground capitalize">
+                  <div className="text-sm capitalize text-muted-foreground">
                     {user?.role?.toLowerCase() || 'User'}
                   </div>
                 </div>
@@ -323,10 +323,10 @@ export default function Header() {
               {/* Profile Action */}
               <DropdownMenuItem asChild>
                 <div
-                  className="flex items-center gap-3 p-3 rounded-md cursor-pointer hover:bg-muted/50 transition-colors"
+                  className="flex items-center gap-3 p-3 transition-colors rounded-md cursor-pointer hover:bg-muted/50"
                   onClick={() => toast.info('Profile settings coming soon!')}
                 >
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-600">
+                  <div className="flex items-center justify-center w-8 h-8 text-blue-600 rounded-lg bg-blue-50">
                     <User className="w-4 h-4" />
                   </div>
                   <div className="flex-1">
@@ -341,10 +341,10 @@ export default function Header() {
               {/* Settings Action */}
               <DropdownMenuItem asChild>
                 <div
-                  className="flex items-center gap-3 p-3 rounded-md cursor-pointer hover:bg-muted/50 transition-colors"
+                  className="flex items-center gap-3 p-3 transition-colors rounded-md cursor-pointer hover:bg-muted/50"
                   onClick={() => toast.info('App preferences coming soon!')}
                 >
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 text-gray-600">
+                  <div className="flex items-center justify-center w-8 h-8 text-gray-600 rounded-lg bg-gray-50">
                     <Settings className="w-4 h-4" />
                   </div>
                   <div className="flex-1">
@@ -362,9 +362,9 @@ export default function Header() {
               <DropdownMenuItem asChild>
                 <button
                   onClick={logout}
-                  className="flex items-center gap-3 p-3 w-full rounded-md cursor-pointer hover:bg-destructive/10 text-destructive transition-colors"
+                  className="flex items-center w-full gap-3 p-3 transition-colors rounded-md cursor-pointer hover:bg-destructive/10 text-destructive"
                 >
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-600">
+                  <div className="flex items-center justify-center w-8 h-8 text-red-600 rounded-lg bg-red-50">
                     <LogOut className="w-4 h-4" />
                   </div>
                   <div className="flex-1 text-left">
@@ -396,7 +396,7 @@ export default function Header() {
 
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
-        <div className="border-t md:hidden border-border/40 bg-background/95 backdrop-blur-md animate-slide-in-up shadow-lg">
+        <div className="border-t shadow-lg md:hidden border-border/40 bg-background/95 backdrop-blur-md animate-slide-in-up">
           <nav className="container px-4 py-6 mx-auto space-y-2 max-h-[calc(100vh-4rem)] overflow-y-auto">
             <Link
               to="/dashboard"
@@ -530,21 +530,21 @@ export default function Header() {
 
             <div className="pt-6 mt-6 border-t border-border/40">
               {/* Mobile User Profile Header */}
-              <div className="flex items-center p-4 mb-4 rounded-xl bg-gradient-to-r from-muted/50 to-muted/30 border border-border/50">
+              <div className="flex items-center p-4 mb-4 border rounded-xl bg-gradient-to-r from-muted/50 to-muted/30 border-border/50">
                 <div className="relative mr-4">
-                  <div className="flex items-center justify-center w-14 h-14 text-lg font-semibold rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg ring-2 ring-background">
+                  <div className="flex items-center justify-center text-lg font-semibold rounded-full shadow-lg w-14 h-14 bg-gradient-to-br from-primary to-primary/80 text-primary-foreground ring-2 ring-background">
                     {user?.name?.charAt(0)?.toUpperCase()}
                   </div>
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-background rounded-full"></div>
+                  <div className="absolute w-4 h-4 bg-green-500 border-2 rounded-full -bottom-1 -right-1 border-background"></div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-lg truncate">
+                  <div className="text-lg font-semibold truncate">
                     {user?.name}
                   </div>
-                  <div className="text-sm text-muted-foreground capitalize">
+                  <div className="text-sm capitalize text-muted-foreground">
                     {user?.role?.toLowerCase() || 'User'}
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">
+                  <div className="mt-1 text-xs text-muted-foreground">
                     Welcome back to PRSM
                   </div>
                 </div>
@@ -554,13 +554,13 @@ export default function Header() {
               <div className="space-y-2">
                 {/* Profile Link */}
                 <div
-                  className="flex items-center w-full p-3 space-x-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+                  className="flex items-center w-full p-3 space-x-3 transition-colors rounded-lg cursor-pointer hover:bg-muted/50"
                   onClick={() => {
                     toast.info('Profile settings coming soon!')
                     setIsMobileMenuOpen(false)
                   }}
                 >
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-50 text-blue-600">
+                  <div className="flex items-center justify-center w-10 h-10 text-blue-600 rounded-lg bg-blue-50">
                     <User className="w-5 h-5" />
                   </div>
                   <div className="flex-1">
@@ -573,13 +573,13 @@ export default function Header() {
 
                 {/* Settings */}
                 <div
-                  className="flex items-center w-full p-3 space-x-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+                  className="flex items-center w-full p-3 space-x-3 transition-colors rounded-lg cursor-pointer hover:bg-muted/50"
                   onClick={() => {
                     toast.info('App preferences coming soon!')
                     setIsMobileMenuOpen(false)
                   }}
                 >
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-50 text-gray-600">
+                  <div className="flex items-center justify-center w-10 h-10 text-gray-600 rounded-lg bg-gray-50">
                     <Settings className="w-5 h-5" />
                   </div>
                   <div className="flex-1">
@@ -596,9 +596,9 @@ export default function Header() {
                     logout()
                     setIsMobileMenuOpen(false)
                   }}
-                  className="flex items-center w-full p-3 space-x-3 rounded-lg hover:bg-destructive/10 text-destructive transition-colors"
+                  className="flex items-center w-full p-3 space-x-3 transition-colors rounded-lg hover:bg-destructive/10 text-destructive"
                 >
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-red-50 text-red-600">
+                  <div className="flex items-center justify-center w-10 h-10 text-red-600 rounded-lg bg-red-50">
                     <LogOut className="w-5 h-5" />
                   </div>
                   <div className="flex-1 text-left">

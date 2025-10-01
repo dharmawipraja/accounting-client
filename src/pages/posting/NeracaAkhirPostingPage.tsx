@@ -80,7 +80,7 @@ export function NeracaAkhirPostingPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
+      <div className="max-w-2xl mx-auto">
         {/* Posting Form */}
         <Card>
           <CardHeader>
@@ -131,85 +131,6 @@ export function NeracaAkhirPostingPage() {
               </div>
               <p className="mt-1 text-sm text-red-700">
                 {t('posting.neracaAkhirPosting.finalWarning')}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Information Panel */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-amber-500" />
-              {t('posting.bukuBesarPosting.operationInfo')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">
-                {t('posting.neracaAkhirPosting.whatIs')}
-              </h4>
-              <p className="text-sm text-gray-600">
-                {t('posting.neracaAkhirPosting.explanation')}
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">
-                {t('posting.bukuBesarPosting.whatHappens')}
-              </h4>
-              <ul className="space-y-1 text-sm text-gray-600">
-                <li>• {t('posting.neracaAkhirPosting.step1')}</li>
-                <li>• {t('posting.neracaAkhirPosting.step2')}</li>
-                <li>• {t('posting.neracaAkhirPosting.step3')}</li>
-                <li>• {t('posting.neracaAkhirPosting.step4')}</li>
-                <li>• {t('posting.neracaAkhirPosting.step5')}</li>
-              </ul>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">
-                {t('posting.neracaDetailPosting.prerequisites')}
-              </h4>
-              <ul className="space-y-1 text-sm text-gray-600">
-                <li>• {t('posting.neracaAkhirPosting.prereq1')}</li>
-                <li>• {t('posting.neracaAkhirPosting.prereq2')}</li>
-                <li>• {t('posting.neracaAkhirPosting.prereq3')}</li>
-                <li>• {t('posting.neracaAkhirPosting.prereq4')}</li>
-                <li>• {t('posting.neracaAkhirPosting.prereq5')}</li>
-              </ul>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">
-                {t('posting.neracaAkhirPosting.afterPosting')}
-              </h4>
-              <p className="text-sm text-gray-600">
-                {t('posting.neracaAkhirPosting.afterNote')}
-              </p>
-            </div>
-
-            <div className="p-4 border rounded-lg bg-amber-50 border-amber-200">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-amber-600" />
-                <span className="font-medium text-amber-800">
-                  {t('posting.neracaAkhirPosting.periodClosure')}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-amber-700">
-                {t('posting.neracaAkhirPosting.closureNote')}
-              </p>
-            </div>
-
-            <div className="p-4 border border-green-200 rounded-lg bg-green-50">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                <span className="font-medium text-green-800">
-                  {t('posting.neracaAkhirPosting.bestPractice')}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-green-700">
-                {t('posting.neracaAkhirPosting.practiceNote')}
               </p>
             </div>
           </CardContent>

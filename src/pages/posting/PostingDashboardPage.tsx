@@ -173,26 +173,6 @@ export function PostingDashboardPage() {
           )
         })}
       </div>
-
-      {/* Important Notes */}
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertCircle className="w-5 h-5 text-amber-500" />
-            {t('posting.importantNotes')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <p className="text-sm text-gray-600">• {t('posting.sequenceNote')}</p>
-          <p className="text-sm text-gray-600">• {t('posting.verifyNote')}</p>
-          <p className="text-sm text-gray-600">
-            • {t('posting.unpostingNote')}
-          </p>
-          <p className="text-sm text-gray-600">
-            • {t('posting.completenessNote')}
-          </p>
-        </CardContent>
-      </Card>
     </div>
   )
 }

@@ -19,7 +19,7 @@ import { formatDateForAPI, getCurrentDateForAPI } from '@/utils/date'
 import { formatCurrency } from '@/utils/formatters'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from '@tanstack/react-router'
-import { AlertTriangle, ArrowLeft, Calculator, Calendar } from 'lucide-react'
+import { ArrowLeft, Calculator, Calendar } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -107,7 +107,7 @@ export function NeracaBalancePostingPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
+      <div className="max-w-2xl mx-auto">
         {/* Balance Calculation */}
         {/* <Card>
           <CardHeader>
@@ -291,18 +291,6 @@ export function NeracaBalancePostingPage() {
                 )}
               </Button>
             </form>
-
-            <div className="p-4 border rounded-lg bg-amber-50 border-amber-200">
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-600" />
-                <span className="font-medium text-amber-800">
-                  {t('posting.neracaBalancePosting.reminder')}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-amber-700">
-                {t('posting.neracaBalancePosting.reminderText')}
-              </p>
-            </div>
           </CardContent>
         </Card>
       </div>

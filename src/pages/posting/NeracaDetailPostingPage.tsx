@@ -18,7 +18,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { formatDateForAPI, getCurrentDateForAPI } from '@/utils/date'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from '@tanstack/react-router'
-import { AlertTriangle, ArrowLeft, BarChart3, Calendar } from 'lucide-react'
+import { ArrowLeft, BarChart3, Calendar } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -98,7 +98,7 @@ export function NeracaDetailPostingPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
+      <div className="max-w-2xl mx-auto">
         {/* Posting Form */}
         <Card>
           <CardHeader>
@@ -155,70 +155,6 @@ export function NeracaDetailPostingPage() {
                 </Button>
               </div>
             </form>
-          </CardContent>
-        </Card>
-
-        {/* Information Panel */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-amber-500" />
-              {t('posting.neracaDetailPosting.operationInfo')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">
-                {t('posting.neracaDetailPosting.whatIs')}
-              </h4>
-              <p className="text-sm text-gray-600">
-                {t('posting.neracaDetailPosting.explanation')}
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">
-                {t('posting.bukuBesarPosting.whatHappens')}
-              </h4>
-              <ul className="space-y-1 text-sm text-gray-600">
-                <li>• {t('posting.neracaDetailPosting.step1')}</li>
-                <li>• {t('posting.neracaDetailPosting.step2')}</li>
-                <li>• {t('posting.neracaDetailPosting.step3')}</li>
-                <li>• {t('posting.neracaDetailPosting.step4')}</li>
-              </ul>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">
-                {t('posting.neracaDetailPosting.prerequisites')}
-              </h4>
-              <ul className="space-y-1 text-sm text-gray-600">
-                <li>• {t('posting.neracaDetailPosting.prereq1')}</li>
-                <li>• {t('posting.neracaDetailPosting.prereq2')}</li>
-                <li>• {t('posting.neracaDetailPosting.prereq3')}</li>
-              </ul>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">
-                {t('posting.bukuBesarPosting.whenUnpost')}
-              </h4>
-              <p className="text-sm text-gray-600">
-                {t('posting.neracaDetailPosting.unpostExplanation')}
-              </p>
-            </div>
-
-            <div className="p-4 border border-blue-200 rounded-lg bg-blue-50">
-              <div className="flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-blue-600" />
-                <span className="font-medium text-blue-800">
-                  {t('posting.neracaDetailPosting.processingOrder')}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-blue-700">
-                {t('posting.neracaDetailPosting.orderNote')}
-              </p>
-            </div>
           </CardContent>
         </Card>
       </div>

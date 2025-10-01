@@ -18,7 +18,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { getCurrentDateForAPI } from '@/utils/date'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from '@tanstack/react-router'
-import { AlertTriangle, ArrowLeft, Calendar, FileText } from 'lucide-react'
+import { ArrowLeft, Calendar, FileText } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -80,7 +80,7 @@ export function BukuBesarPostingPage() {
           variant="outline"
           size="sm"
           onClick={() => router.navigate({ to: '/posting' })}
-          className="flex items-center gap-2 self-start md:hidden"
+          className="flex items-center self-start gap-2 md:hidden"
         >
           <ArrowLeft className="w-4 h-4" />
           {t('posting.backToPosting')}
@@ -98,7 +98,7 @@ export function BukuBesarPostingPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
+      <div className="max-w-2xl mx-auto">
         {/* Posting Form */}
         <Card>
           <CardHeader>
@@ -155,59 +155,6 @@ export function BukuBesarPostingPage() {
                 </Button>
               </div>
             </form>
-          </CardContent>
-        </Card>
-
-        {/* Information Panel */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-amber-500" />
-              {t('posting.bukuBesarPosting.operationInfo')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">
-                {t('posting.bukuBesarPosting.whatIs')}
-              </h4>
-              <p className="text-sm text-gray-600">
-                {t('posting.bukuBesarPosting.explanation')}
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">
-                {t('posting.bukuBesarPosting.whatHappens')}
-              </h4>
-              <ul className="space-y-1 text-sm text-gray-600">
-                <li>• {t('posting.bukuBesarPosting.step1')}</li>
-                <li>• {t('posting.bukuBesarPosting.step2')}</li>
-                <li>• {t('posting.bukuBesarPosting.step3')}</li>
-                <li>• {t('posting.bukuBesarPosting.step4')}</li>
-              </ul>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">
-                {t('posting.bukuBesarPosting.whenUnpost')}
-              </h4>
-              <p className="text-sm text-gray-600">
-                {t('posting.bukuBesarPosting.unpostExplanation')}
-              </p>
-            </div>
-
-            <div className="p-4 border rounded-lg bg-amber-50 border-amber-200">
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-600" />
-                <span className="font-medium text-amber-800">
-                  {t('posting.bukuBesarPosting.importantWarning')}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-amber-700">
-                {t('posting.bukuBesarPosting.warning')}
-              </p>
-            </div>
           </CardContent>
         </Card>
       </div>
