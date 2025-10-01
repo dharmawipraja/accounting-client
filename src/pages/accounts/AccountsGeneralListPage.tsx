@@ -244,14 +244,14 @@ export default function AccountsGeneralListPage() {
     const accounts = accountsData?.data || []
     return [
       {
-        title: 'Total Accounts',
+        title: t('stats.totalAccounts'),
         value: paginationInfo.total,
         icon: Building2,
         color: 'text-blue-600',
         bgColor: 'bg-blue-50 dark:bg-blue-950/20',
       },
       {
-        title: 'Asset Accounts',
+        title: t('stats.assetAccounts'),
         value: accounts.filter(
           (a: AccountGeneral) => a.accountCategory === 'ASSET',
         ).length,
@@ -260,7 +260,7 @@ export default function AccountsGeneralListPage() {
         bgColor: 'bg-green-50 dark:bg-green-950/20',
       },
       {
-        title: 'Income Accounts',
+        title: t('stats.incomeAccounts'),
         value: accounts.filter(
           (a: AccountGeneral) => a.accountCategory === 'PENDAPATAN',
         ).length,
@@ -481,8 +481,8 @@ export default function AccountsGeneralListPage() {
                           type={globalFilter ? 'search' : 'create'}
                           title={
                             globalFilter
-                              ? 'No accounts found'
-                              : 'No accounts yet'
+                              ? t('emptyStates.noAccountsFound')
+                              : t('emptyStates.noAccountsYet')
                           }
                           description={
                             globalFilter
@@ -491,8 +491,8 @@ export default function AccountsGeneralListPage() {
                           }
                           action={{
                             label: globalFilter
-                              ? 'Clear search'
-                              : 'Add Account',
+                              ? t('emptyStates.clearSearch')
+                              : t('emptyStates.addAccount'),
                             onClick: globalFilter
                               ? () => setGlobalFilter('')
                               : () => navigate({ to: '/accounts/general/new' }),

@@ -123,23 +123,6 @@
       "createAccount": "Buat Akun",
       "updateAccount": "Perbarui Akun",
       "backTo": "Kembali ke {{type}}"
-    },
-    "validation": {
-      "accountNumberRequired": "Nomor akun wajib diisi",
-      "accountNumberLength": "Nomor akun tidak boleh melebihi 20 karakter",
-      "accountNumberFormat": "Nomor akun hanya boleh berisi angka dan tanda hubung",
-      "accountNameRequired": "Nama akun minimal 3 karakter",
-      "accountNameLength": "Nama akun tidak boleh melebihi 100 karakter",
-      "creditAmountValid": "Jumlah kredit harus berupa angka yang valid dan tidak negatif",
-      "debitAmountValid": "Jumlah debit harus berupa angka yang valid dan tidak negatif"
-    },
-    "messages": {
-      "generalCreated": "Akun umum berhasil dibuat",
-      "generalUpdated": "Akun umum berhasil diperbarui",
-      "detailCreated": "Akun detail berhasil dibuat",
-      "detailUpdated": "Akun detail berhasil diperbarui",
-      "createFailed": "Gagal membuat {{type}}",
-      "updateFailed": "Gagal memperbarui {{type}}"
     }
   },
   "reports": {
@@ -186,7 +169,17 @@
     "information": "Informasi Laporan",
     "neracaDetailInfo": "Hanya mencakup data akun detail dengan JenisLaporan NERACA, menampilkan informasi akun neraca yang detail.",
     "neracaInfo": "Hanya mencakup data akun umum dengan JenisLaporan NERACA, menampilkan struktur akun neraca utama.",
-    "penjelasanNeracaInfo": "Menggabungkan data akun umum dan detail dengan JenisLaporan NERACA, memberikan ringkasan neraca yang komprehensif."
+    "penjelasanNeracaInfo": "Menggabungkan data akun umum dan detail dengan JenisLaporan NERACA, memberikan ringkasan neraca yang komprehensif.",
+    "accountReport": "Laporan Akun",
+    "completeAccountReport": "Laporan Akun Lengkap",
+    "standaloneDetailAccounts": "Akun Detail Mandiri",
+    "generalAccounts": "Akun Umum",
+    "detailAccounts": "Akun Detail",
+    "hierarchicalReport": "Laporan Hierarkis",
+    "reportGenerated": "Laporan Dibuat",
+    "totalGeneralAccounts": "Total Akun Umum",
+    "totalDetailAccounts": "Total Akun Detail",
+    "totalRecords": "Total Rekaman"
   },
   "user": {
     "profile": "Profil",
@@ -246,7 +239,18 @@
     "email": "Harus berupa alamat email yang valid",
     "number": "Harus berupa angka yang valid",
     "positive": "Harus berupa angka positif",
-    "nonNegative": "Harus berupa angka non-negatif"
+    "nonNegative": "Harus berupa angka non-negatif",
+    "pleaseSelectDate": "Silakan pilih tanggal",
+    "pleaseSelectDebitOrKredit": "Silakan pilih Debit atau Kredit",
+    "pleaseSelectAccountDetail": "Silakan pilih akun detail",
+    "accountGeneralRequired": "Akun umum wajib diisi",
+    "pleaseSelectLedgerType": "Silakan pilih jenis jurnal",
+    "dateRequired": "Tanggal wajib diisi",
+    "amountMustBePositive": "Jumlah harus positif",
+    "accountNumberRequired": "Nomor akun wajib diisi",
+    "accountNameRequired": "Nama akun wajib diisi",
+    "generalAccountRequired": "Akun umum wajib diisi",
+    "ledgerDateRequired": "Tanggal jurnal wajib diisi"
   },
   "table": {
     "noData": "Tidak ada data tersedia",
@@ -323,17 +327,6 @@
     "saving": "Menyimpan...",
     "balanceSummary": "Ringkasan Saldo Transaksi",
     "balanceStatus": "Status Saldo",
-    "validation": {
-      "dateRequired": "Tanggal wajib diisi",
-      "descriptionMin": "Deskripsi minimal 3 karakter",
-      "descriptionMax": "Deskripsi tidak boleh melebihi 500 karakter",
-      "accountDetailRequired": "Akun detail wajib diisi",
-      "accountGeneralRequired": "Akun umum wajib diisi",
-      "amountGreaterThanZero": "Jumlah harus lebih besar dari 0",
-      "referenceRequired": "Nomor referensi wajib diisi",
-      "referenceMax": "Nomor referensi tidak boleh melebihi 50 karakter",
-      "minTwoEntries": "Minimal 2 entri diperlukan untuk double-entry"
-    },
     "types": {
       "KAS": "Kas",
       "KAS_MASUK": "Kas Masuk",
@@ -579,7 +572,13 @@
     "addFirstDetailAccount": "Tambah Akun Detail Pertama",
     "addFirstGeneralAccount": "Tambah Akun Umum Pertama",
     "retryButton": "Coba Lagi",
-    "allCategories": "Semua Kategori"
+    "allCategories": "Semua Kategori",
+    "generalCreated": "Akun umum berhasil dibuat",
+    "generalUpdated": "Akun umum berhasil diperbarui",
+    "detailCreated": "Akun detail berhasil dibuat",
+    "detailUpdated": "Akun detail berhasil diperbarui",
+    "createFailed": "Gagal membuat {{type}}",
+    "updateFailed": "Gagal memperbarui {{type}}"
   },
   "placeholders": {
     "searchAccounts": "Cari akun...",
@@ -633,5 +632,88 @@
     "recentActivity": "Aktivitas Terkini",
     "doubleEntryWarning": "Dalam pembukuan double-entry, total jumlah debit harus sama dengan total jumlah kredit. Silakan sesuaikan jumlah untuk menyeimbangkan transaksi sebelum mengirim.",
     "minimumEntriesWarning": "Setidaknya 2 entri diperlukan untuk pembukuan double-entry. Silakan tambahkan lebih banyak entri."
+  },
+  "errors": {
+    "errorLoadingAccount": "Kesalahan Memuat Akun",
+    "accountNotFound": "Akun Tidak Ditemukan",
+    "accountNotFoundMessage": "Akun yang diminta tidak dapat ditemukan.",
+    "failedToLoadAccountDetails": "Gagal memuat detail akun.",
+    "permissionDeniedEditAccounts": "Anda tidak memiliki izin untuk mengedit akun",
+    "loadingAccountDetails": "Memuat detail akun...",
+    "anErrorOccurredCreatingLedgerEntries": "Terjadi kesalahan saat membuat entri jurnal",
+    "pleaseFillRequiredFields": "Silakan isi semua field yang wajib diisi dengan benar",
+    "failedToLoadUserDetails": "Gagal memuat detail pengguna",
+    "failedToDeleteUser": "Gagal menghapus pengguna",
+    "failedToDeleteAccount": "Gagal menghapus akun",
+    "failedToLoadUser": "Gagal memuat pengguna",
+    "invalidDate": "Tanggal Tidak Valid",
+    "invalidDateShort": "Tanggal tidak valid"
+  },
+  "forms": {
+    "editEntry": "Edit Entri",
+    "addNewEntry": "Tambah Entri Baru",
+    "updateEntry": "Perbarui Entri",
+    "addEntry": "Tambah Entri",
+    "selectAccountDetail": "Pilih akun detail",
+    "unknownAccount": "Akun Tidak Diketahui",
+    "deleting": "Menghapus...",
+    "deleteUser": "Hapus Pengguna",
+    "createDetailAccount": "Buat Akun Detail",
+    "editDetailAccount": "Edit Akun Detail",
+    "addNewDetailAccount": "Tambah akun detail baru yang terhubung ke akun umum",
+    "updateDetailAccountInfo": "Perbarui informasi akun detail",
+    "selectGeneralAccount": "Pilih akun umum",
+    "pleaseSelectCategoryFirst": "Silakan pilih kategori terlebih dahulu",
+    "createAccount": "Buat Akun",
+    "updateAccount": "Perbarui Akun",
+    "calculationDate": "Tanggal Perhitungan",
+    "calculate": "Hitung",
+    "balanced": "Seimbang",
+    "notBalanced": "Tidak Seimbang"
+  },
+  "toasts": {
+    "detailAccountCreatedSuccessfully": "Akun detail berhasil dibuat",
+    "detailAccountUpdatedSuccessfully": "Akun detail berhasil diperbarui",
+    "failedToCreateDetailAccount": "Gagal membuat akun detail",
+    "failedToUpdateDetailAccount": "Gagal memperbarui akun detail",
+    "bukuBesarPostedSuccessfully": "Buku Besar berhasil diposting",
+    "failedToPostBukuBesar": "Gagal memposting Buku Besar",
+    "neracaDetailPostedSuccessfully": "Neraca Detail berhasil diposting",
+    "failedToPostNeracaDetail": "Gagal memposting Neraca Detail",
+    "neracaBalancePostedSuccessfully": "Neraca Balance berhasil diposting",
+    "failedToPostNeracaBalance": "Gagal memposting Neraca Balance",
+    "neracaAkhirPostedSuccessfully": "Neraca Akhir berhasil diposting",
+    "failedToPostNeracaAkhir": "Gagal memposting Neraca Akhir"
+  },
+  "stats": {
+    "totalUsers": "Total Pengguna",
+    "activeUsers": "Pengguna Aktif",
+    "administrators": "Administrator",
+    "totalAccounts": "Total Akun",
+    "assetAccounts": "Akun Aset",
+    "incomeAccounts": "Akun Pendapatan"
+  },
+  "emptyStates": {
+    "noUsersFound": "Tidak ada pengguna ditemukan",
+    "noUsersYet": "Belum ada pengguna",
+    "clearSearch": "Bersihkan pencarian",
+    "addUser": "Tambah Pengguna",
+    "noAccountsFound": "Tidak ada akun ditemukan",
+    "noAccountsYet": "Belum ada akun",
+    "addAccount": "Tambah Akun"
+  },
+  "activities": {
+    "createdNewUserAccount": "Membuat akun pengguna baru",
+    "updatedGeneralAccountSettings": "Memperbarui pengaturan akun umum",
+    "generatedMonthlyReport": "Membuat laporan bulanan",
+    "addedNewLedgerEntry": "Menambahkan entri jurnal baru"
+  },
+  "constants": {
+    "tanstackRouter": "Tanstack Router",
+    "accountingSystem": "Sistem Akuntansi",
+    "koperasiSimpanPinjam": "Koperasi Simpan Pinjam",
+    "mandiriSejahtera": "Mandiri Sejahtera",
+    "namaBendahara": "NAMA BENDAHARA",
+    "administrator": "Administrator"
   }
 }

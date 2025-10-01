@@ -221,21 +221,21 @@ export default function UserListPage() {
     const users = usersData?.data || []
     return [
       {
-        title: 'Total Users',
+        title: t('stats.totalUsers'),
         value: paginationInfo.total,
         icon: Users,
         color: 'text-blue-600',
         bgColor: 'bg-blue-50 dark:bg-blue-950/20',
       },
       {
-        title: 'Active Users',
+        title: t('stats.activeUsers'),
         value: users.filter((u) => u.status === 'ACTIVE').length,
         icon: Activity,
         color: 'text-green-600',
         bgColor: 'bg-green-50 dark:bg-green-950/20',
       },
       {
-        title: 'Administrators',
+        title: t('stats.administrators'),
         value: users.filter((u) => u.role === 'ADMIN').length,
         icon: Shield,
         color: 'text-purple-600',
@@ -450,7 +450,9 @@ export default function UserListPage() {
                         <EmptyState
                           type={globalFilter ? 'search' : 'create'}
                           title={
-                            globalFilter ? 'No users found' : 'No users yet'
+                            globalFilter
+                              ? t('emptyStates.noUsersFound')
+                              : t('emptyStates.noUsersYet')
                           }
                           description={
                             globalFilter
@@ -458,7 +460,9 @@ export default function UserListPage() {
                               : 'Get started by creating your first user account.'
                           }
                           action={{
-                            label: globalFilter ? 'Clear search' : 'Add User',
+                            label: globalFilter
+                              ? t('emptyStates.clearSearch')
+                              : t('emptyStates.addUser'),
                             onClick: globalFilter
                               ? () => setGlobalFilter('')
                               : () => navigate({ to: '/users/new' }),

@@ -119,7 +119,7 @@ export function NeracaBalancePostingPage() {
           <CardContent className="space-y-4">
             <div className="flex gap-2">
               <div className="flex-1">
-                <Label htmlFor="calculationDate">Calculation Date</Label>
+                <Label htmlFor="calculationDate">{t('forms.calculationDate')}</Label>
                 <div className="relative mt-1">
                   <Calendar className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <Input
@@ -136,7 +136,7 @@ export function NeracaBalancePostingPage() {
                   onClick={handleCalculate}
                   variant="outline"
                 >
-                  Calculate
+                  {t('forms.calculate')}
                 </Button>
               </div>
             </div>
@@ -195,7 +195,7 @@ export function NeracaBalancePostingPage() {
                     }`}
                   >
                     Balance Status:{' '}
-                    {balance.isBalanced ? 'Balanced' : 'Not Balanced'}
+                    {balance.isBalanced ? t('forms.balanced') : t('forms.notBalanced')}
                   </span>
                 </div>
 

@@ -553,5 +553,113 @@
     "failedToLoad": "Failed to Load Ledgers",
     "errorLoading": "There was an error loading the ledger entries. Please try again.",
     "deleteConfirm": "Are you sure you want to delete the ledger entry \"{{description}}\"? This action cannot be undone."
+  },
+  "errors": {
+    "errorLoadingAccount": "Error Loading Account",
+    "accountNotFound": "Account Not Found",
+    "accountNotFoundMessage": "The requested account could not be found.",
+    "failedToLoadAccountDetails": "Failed to load account details.",
+    "permissionDeniedEditAccounts": "You do not have permission to edit accounts",
+    "loadingAccountDetails": "Loading account details...",
+    "anErrorOccurredCreatingLedgerEntries": "An error occurred while creating ledger entries",
+    "pleaseFillRequiredFields": "Please fill in all required fields correctly",
+    "failedToLoadUserDetails": "Failed to load user details",
+    "failedToDeleteUser": "Failed to delete user",
+    "failedToDeleteAccount": "Failed to delete account",
+    "failedToLoadUser": "Failed to load user",
+    "invalidDate": "Invalid Date",
+    "invalidDateShort": "Invalid date"
+  },
+  "validation": {
+    "pleaseSelectDate": "Please select a date",
+    "pleaseSelectDebitOrKredit": "Please select either Debit or Kredit",
+    "pleaseSelectAccountDetail": "Please select an account detail",
+    "accountGeneralRequired": "Account general is required",
+    "pleaseSelectLedgerType": "Please select a ledger type",
+    "dateRequired": "Date is required",
+    "amountMustBePositive": "Amount must be positive",
+    "accountNumberRequired": "Account number is required",
+    "accountNameRequired": "Account name is required",
+    "generalAccountRequired": "General account is required",
+    "ledgerDateRequired": "Ledger date is required"
+  },
+  "forms": {
+    "editEntry": "Edit Entry",
+    "addNewEntry": "Add New Entry",
+    "updateEntry": "Update Entry",
+    "addEntry": "Add Entry",
+    "selectAccountDetail": "Select account detail",
+    "unknownAccount": "Unknown Account",
+    "deleting": "Deleting...",
+    "deleteUser": "Delete User",
+    "createDetailAccount": "Create Detail Account",
+    "editDetailAccount": "Edit Detail Account",
+    "addNewDetailAccount": "Add a new detail account linked to a general account",
+    "updateDetailAccountInfo": "Update the detail account information",
+    "selectGeneralAccount": "Select general account",
+    "pleaseSelectCategoryFirst": "Please select a category first",
+    "createAccount": "Create Account",
+    "updateAccount": "Update Account",
+    "calculationDate": "Calculation Date",
+    "calculate": "Calculate",
+    "balanced": "Balanced",
+    "notBalanced": "Not Balanced"
+  },
+  "toasts": {
+    "detailAccountCreatedSuccessfully": "Detail account created successfully",
+    "detailAccountUpdatedSuccessfully": "Detail account updated successfully",
+    "failedToCreateDetailAccount": "Failed to create detail account",
+    "failedToUpdateDetailAccount": "Failed to update detail account",
+    "bukuBesarPostedSuccessfully": "Buku Besar posted successfully",
+    "failedToPostBukuBesar": "Failed to post Buku Besar",
+    "neracaDetailPostedSuccessfully": "Neraca Detail posted successfully",
+    "failedToPostNeracaDetail": "Failed to post Neraca Detail",
+    "neracaBalancePostedSuccessfully": "Neraca Balance posted successfully",
+    "failedToPostNeracaBalance": "Failed to post Neraca Balance",
+    "neracaAkhirPostedSuccessfully": "Neraca Akhir posted successfully",
+    "failedToPostNeracaAkhir": "Failed to post Neraca Akhir"
+  },
+  "stats": {
+    "totalUsers": "Total Users",
+    "activeUsers": "Active Users",
+    "administrators": "Administrators",
+    "totalAccounts": "Total Accounts",
+    "assetAccounts": "Asset Accounts",
+    "incomeAccounts": "Income Accounts"
+  },
+  "emptyStates": {
+    "noUsersFound": "No users found",
+    "noUsersYet": "No users yet",
+    "clearSearch": "Clear search",
+    "addUser": "Add User",
+    "noAccountsFound": "No accounts found",
+    "noAccountsYet": "No accounts yet",
+    "addAccount": "Add Account"
+  },
+  "activities": {
+    "createdNewUserAccount": "Created new user account",
+    "updatedGeneralAccountSettings": "Updated general account settings",
+    "generatedMonthlyReport": "Generated monthly report",
+    "addedNewLedgerEntry": "Added new ledger entry"
+  },
+  "reports": {
+    "accountReport": "Account Report",
+    "completeAccountReport": "Complete Account Report",
+    "standaloneDetailAccounts": "Standalone Detail Accounts",
+    "generalAccounts": "General Accounts",
+    "detailAccounts": "Detail Accounts",
+    "hierarchicalReport": "Hierarchical Report",
+    "reportGenerated": "Report Generated",
+    "totalGeneralAccounts": "Total General Accounts",
+    "totalDetailAccounts": "Total Detail Accounts",
+    "totalRecords": "Total Records"
+  },
+  "constants": {
+    "tanstackRouter": "Tanstack Router",
+    "accountingSystem": "Accounting System",
+    "koperasiSimpanPinjam": "Koperasi Simpan Pinjam",
+    "mandiriSejahtera": "Mandiri Sejahtera",
+    "namaBendahara": "NAMA BENDAHARA",
+    "administrator": "Administrator"
   }
 }

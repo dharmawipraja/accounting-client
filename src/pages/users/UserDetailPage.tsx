@@ -37,7 +37,7 @@ export function UserDetailPage() {
         const response = await getUserById(id)
         setUser(response.data)
       } catch {
-        toast.error('Failed to load user details')
+        toast.error(t('errors.failedToLoadUserDetails'))
         navigate({ to: '/users' })
       } finally {
         setLoading(false)
@@ -53,7 +53,7 @@ export function UserDetailPage() {
       await deleteUser(id)
       navigate({ to: '/users' })
     } catch {
-      toast.error('Failed to delete user')
+      toast.error(t('errors.failedToDeleteUser'))
     } finally {
       setDeleteLoading(false)
     }
@@ -205,7 +205,9 @@ export function UserDetailPage() {
                           disabled={deleteLoading}
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         >
-                          {deleteLoading ? 'Deleting...' : 'Delete User'}
+                          {deleteLoading
+                            ? t('forms.deleting')
+                            : t('forms.deleteUser')}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>

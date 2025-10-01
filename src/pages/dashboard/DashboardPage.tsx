@@ -341,22 +341,22 @@ export const DashboardPage: React.FC = () => {
             <div className="space-y-4">
               {[
                 {
-                  action: 'Created new user account',
+                  action: t('activities.createdNewUserAccount'),
                   time: '2 hours ago',
                   type: 'user',
                 },
                 {
-                  action: 'Updated general account settings',
+                  action: t('activities.updatedGeneralAccountSettings'),
                   time: '4 hours ago',
                   type: 'account',
                 },
                 {
-                  action: 'Generated monthly report',
+                  action: t('activities.generatedMonthlyReport'),
                   time: '1 day ago',
                   type: 'report',
                 },
                 {
-                  action: 'Added new ledger entry',
+                  action: t('activities.addedNewLedgerEntry'),
                   time: '2 days ago',
                   type: 'ledger',
                 },

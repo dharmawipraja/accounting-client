@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
+import { useTranslation } from '@/hooks/useTranslation'
 import { postingService } from '@/services/posting'
 import type {
   PostBukuBesarPayload,
@@ -30,6 +31,7 @@ export const useNeracaBalanceQuery = (date: string) => {
 // Post Buku Besar mutation
 export const usePostBukuBesarMutation = () => {
   const queryClient = useQueryClient()
+  const { t } = useTranslation()
 
   return useMutation({
     mutationFn: (payload: PostBukuBesarPayload) =>
@@ -37,10 +39,12 @@ export const usePostBukuBesarMutation = () => {
     onSuccess: () => {
       // Invalidate ledger queries since posting affects ledger status
       queryClient.invalidateQueries({ queryKey: ['ledgers'] })
-      toast.success('Buku Besar posted successfully')
+      toast.success(t('toasts.bukuBesarPostedSuccessfully'))
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Failed to post Buku Besar')
+      toast.error(
+        error?.response?.data?.message || t('toasts.failedToPostBukuBesar'),
+      )
     },
   })
 }
@@ -48,6 +52,7 @@ export const usePostBukuBesarMutation = () => {
 // Post Neraca Detail mutation
 export const usePostNeracaDetailMutation = () => {
   const queryClient = useQueryClient()
+  const { t } = useTranslation()
 
   return useMutation({
     mutationFn: (payload: PostNeracaDetailPayload) =>
@@ -55,11 +60,11 @@ export const usePostNeracaDetailMutation = () => {
     onSuccess: () => {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: postingQueryKeys.all })
-      toast.success('Neraca Detail posted successfully')
+      toast.success(t('toasts.neracaDetailPostedSuccessfully'))
     },
     onError: (error: any) => {
       toast.error(
-        error?.response?.data?.message || 'Failed to post Neraca Detail',
+        error?.response?.data?.message || t('toasts.failedToPostNeracaDetail'),
       )
     },
   })
@@ -68,6 +73,7 @@ export const usePostNeracaDetailMutation = () => {
 // Post Neraca Balance mutation
 export const usePostNeracaBalanceMutation = () => {
   const queryClient = useQueryClient()
+  const { t } = useTranslation()
 
   return useMutation({
     mutationFn: (payload: PostNeracaBalancePayload) =>
@@ -75,11 +81,11 @@ export const usePostNeracaBalanceMutation = () => {
     onSuccess: () => {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: postingQueryKeys.all })
-      toast.success('Neraca Balance posted successfully')
+      toast.success(t('toasts.neracaBalancePostedSuccessfully'))
     },
     onError: (error: any) => {
       toast.error(
-        error?.response?.data?.message || 'Failed to post Neraca Balance',
+        error?.response?.data?.message || t('toasts.failedToPostNeracaBalance'),
       )
     },
   })
@@ -88,6 +94,7 @@ export const usePostNeracaBalanceMutation = () => {
 // Post Neraca Akhir mutation
 export const usePostNeracaAkhirMutation = () => {
   const queryClient = useQueryClient()
+  const { t } = useTranslation()
 
   return useMutation({
     mutationFn: (payload: PostNeracaAkhirPayload) =>
@@ -95,11 +102,11 @@ export const usePostNeracaAkhirMutation = () => {
     onSuccess: () => {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: postingQueryKeys.all })
-      toast.success('Neraca Akhir posted successfully')
+      toast.success(t('toasts.neracaAkhirPostedSuccessfully'))
     },
     onError: (error: any) => {
       toast.error(
-        error?.response?.data?.message || 'Failed to post Neraca Akhir',
+        error?.response?.data?.message || t('toasts.failedToPostNeracaAkhir'),
       )
     },
   })

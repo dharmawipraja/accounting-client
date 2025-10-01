@@ -45,32 +45,37 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-const accountDetailSchema = z.object({
-  accountNumber: z.string().min(1, 'Account number is required'),
-  accountName: z.string().min(1, 'Account name is required'),
-  accountCategory: z.enum(
-    Object.values(ACCOUNT_CATEGORIES) as [string, ...string[]],
-  ),
-  reportType: z.enum(Object.values(REPORT_TYPES) as [string, ...string[]]),
-  transactionType: z.enum(
-    Object.values(TRANSACTION_TYPES) as [string, ...string[]],
-  ),
-  accountGeneralAccountNumber: z.string().min(1, 'General account is required'),
-  amountDebit: z
-    .string()
-    .refine(
-      (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
-      'Debit amount must be a valid non-negative number',
+const createAccountDetailSchema = (t: (key: string) => string) =>
+  z.object({
+    accountNumber: z.string().min(1, t('validation.accountNumberRequired')),
+    accountName: z.string().min(1, t('validation.accountNameRequired')),
+    accountCategory: z.enum(
+      Object.values(ACCOUNT_CATEGORIES) as [string, ...string[]],
     ),
-  amountCredit: z
-    .string()
-    .refine(
-      (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
-      'Credit amount must be a valid non-negative number',
+    reportType: z.enum(Object.values(REPORT_TYPES) as [string, ...string[]]),
+    transactionType: z.enum(
+      Object.values(TRANSACTION_TYPES) as [string, ...string[]],
     ),
-})
+    accountGeneralAccountNumber: z
+      .string()
+      .min(1, t('validation.generalAccountRequired')),
+    amountDebit: z
+      .string()
+      .refine(
+        (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
+        t('accounts.validation.debitAmountValid'),
+      ),
+    amountCredit: z
+      .string()
+      .refine(
+        (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
+        t('accounts.validation.creditAmountValid'),
+      ),
+  })
 
-type AccountDetailFormData = z.infer<typeof accountDetailSchema>
+type AccountDetailFormData = z.infer<
+  ReturnType<typeof createAccountDetailSchema>
+>
 
 interface AccountDetailFormProps {
   account?: AccountDetail
@@ -82,6 +87,9 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
   const { t } = useTranslation()
   const createMutation = useCreateAccountDetailMutation()
   const updateMutation = useUpdateAccountDetailMutation()
+
+  // Create schema with translations
+  const accountDetailSchema = useMemo(() => createAccountDetailSchema(t), [t])
 
   const form = useForm<AccountDetailFormData>({
     resolver: zodResolver(accountDetailSchema),
@@ -136,21 +144,21 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
 
       if (mode === 'create') {
         await createMutation.mutateAsync(payload as CreateAccountDetailPayload)
-        toast.success('Detail account created successfully')
+        toast.success(t('toasts.detailAccountCreatedSuccessfully'))
       } else if (account) {
         await updateMutation.mutateAsync({
           accountNumber: account.accountNumber,
           data: payload as UpdateAccountDetailPayload,
         })
-        toast.success('Detail account updated successfully')
+        toast.success(t('toasts.detailAccountUpdatedSuccessfully'))
       }
 
       router.navigate({ to: '/accounts/detail' })
     } catch {
       toast.error(
         mode === 'create'
-          ? 'Failed to create detail account'
-          : 'Failed to update detail account',
+          ? t('toasts.failedToCreateDetailAccount')
+          : t('toasts.failedToUpdateDetailAccount'),
       )
     }
   }
@@ -206,13 +214,13 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
             {mode === 'create'
-              ? 'Create Detail Account'
-              : 'Edit Detail Account'}
+              ? t('forms.createDetailAccount')
+              : t('forms.editDetailAccount')}
           </h1>
           <p className="text-muted-foreground">
             {mode === 'create'
-              ? 'Add a new detail account linked to a general account'
-              : 'Update the detail account information'}
+              ? t('forms.addNewDetailAccount')
+              : t('forms.updateDetailAccountInfo')}
           </p>
         </div>
 
@@ -434,8 +442,8 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                             <SelectValue
                               placeholder={
                                 selectedCategory
-                                  ? 'Select general account'
-                                  : 'Please select a category first'
+                                  ? t('forms.selectGeneralAccount')
+                                  : t('forms.pleaseSelectCategoryFirst')
                               }
                             />
                           </SelectTrigger>
@@ -528,7 +536,9 @@ export function AccountDetailForm({ account, mode }: AccountDetailFormProps) {
                   </Button>
                   <Button type="submit" disabled={isSubmitting}>
                     <Save className="w-4 h-4 mr-2" />
-                    {mode === 'create' ? 'Create Account' : 'Update Account'}
+                    {mode === 'create'
+                      ? t('forms.createAccount')
+                      : t('forms.updateAccount')}
                   </Button>
                 </div>
               </form>

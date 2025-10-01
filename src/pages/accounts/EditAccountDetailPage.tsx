@@ -3,6 +3,7 @@ import { ErrorState } from '@/components/ui/error-state'
 import { LoadingState } from '@/components/ui/loading-state'
 import { useAccountDetailByIdQuery } from '@/hooks/useAccountsQuery'
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslation } from '@/hooks/useTranslation'
 import { canManageAccounts } from '@/utils/rolePermissions'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useEffect } from 'react'
@@ -12,6 +13,7 @@ export function EditAccountDetailPage() {
   const navigate = useNavigate()
   const { id } = useParams({ from: '/accounts/detail/$id/edit' })
   const { user } = useAuth()
+  const { t } = useTranslation()
 
   const {
     data: account,
@@ -23,10 +25,10 @@ export function EditAccountDetailPage() {
 
   useEffect(() => {
     if (!canManageAccounts(user?.role)) {
-      toast.error('You do not have permission to edit accounts')
+      toast.error(t('errors.permissionDeniedEditAccounts'))
       navigate({ to: '/accounts/detail' })
     }
-  }, [user?.role, navigate])
+  }, [user?.role, navigate, t])
 
   if (!canManageAccounts(user?.role)) {
     return null
@@ -36,7 +38,7 @@ export function EditAccountDetailPage() {
     return (
       <div>
         <div className="container px-4 py-8 mx-auto">
-          <LoadingState message="Loading account details..." />
+          <LoadingState message={t('errors.loadingAccountDetails')} />
         </div>
       </div>
     )
@@ -48,8 +50,8 @@ export function EditAccountDetailPage() {
         <div className="container px-4 py-8 mx-auto">
           <ErrorState
             type="server"
-            title="Error Loading Account"
-            message={error?.message || 'Failed to load account details.'}
+            title={t('errors.errorLoadingAccount')}
+            message={error?.message || t('errors.failedToLoadAccountDetails')}
             onRetry={() => refetch()}
           />
         </div>
@@ -63,8 +65,8 @@ export function EditAccountDetailPage() {
         <div className="container px-4 py-8 mx-auto">
           <ErrorState
             type="notFound"
-            title="Account Not Found"
-            message="The requested account could not be found."
+            title={t('errors.accountNotFound')}
+            message={t('errors.accountNotFoundMessage')}
             onRetry={() => navigate({ to: '/accounts/detail' })}
           />
         </div>

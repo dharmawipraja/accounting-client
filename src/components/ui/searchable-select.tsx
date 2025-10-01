@@ -38,9 +38,9 @@ const SearchableSelectContext = React.createContext<{
   setSearchTerm: (term: string) => void
 }>({
   isOpen: false,
-  setIsOpen: () => { },
+  setIsOpen: () => {},
   searchTerm: '',
-  setSearchTerm: () => { },
+  setSearchTerm: () => {},
 })
 
 function SearchableSelect({
@@ -245,6 +245,5 @@ export {
   SearchableSelect,
   SearchableSelectContent,
   SearchableSelectItem,
-  SearchableSelectTrigger
+  SearchableSelectTrigger,
 }
-

@@ -39,7 +39,6 @@ import { useRouter } from '@tanstack/react-router'
 import {
   AlertTriangle,
   ArrowLeft,
-  Calculator,
   CheckCircle,
   Edit,
   Plus,
@@ -53,35 +52,36 @@ import { z } from 'zod'
 
 // Individual ledger entry schema (matching API LedgerItem interface)
 // Note: Validation messages will be translated dynamically in the form
-const ledgerEntrySchema = z.object({
-  ledgerDate: z.string().min(1, 'Please select a date'),
-  description: z
-    .string()
-    .min(3, 'Description must be at least 3 characters long')
-    .max(500, 'Description is too long (maximum 500 characters)'),
-  transactionType: z.enum(['DEBIT', 'KREDIT'], {
-    message: 'Please select either Debit or Kredit',
-  }),
-  accountDetailAccountNumber: z
-    .string()
-    .min(1, 'Please select an account detail'),
-  accountGeneralAccountNumber: z.string().min(1, 'Account general is required'),
-  ledgerType: z.enum(['KAS', 'KAS_MASUK', 'KAS_KELUAR'], {
-    message: 'Please select a ledger type',
-  }),
-  amount: z.number().min(0.01, 'Please enter an amount greater than Rp 0'),
-  // Additional fields for form UI only
-  referenceNumber: z
-    .string()
-    .max(50, 'Reference number is too long (maximum 50 characters)')
-    .optional()
-    .or(z.literal('')),
-})
+const createLedgerEntrySchema = (t: (key: string) => string) =>
+  z.object({
+    ledgerDate: z.string().min(1, t('validation.pleaseSelectDate')),
+    description: z
+      .string()
+      .min(3, t('ledgers.validation.descriptionMin'))
+      .max(500, t('ledgers.validation.descriptionMax')),
+    transactionType: z.enum(['DEBIT', 'KREDIT'], {
+      message: t('validation.pleaseSelectDebitOrKredit'),
+    }),
+    accountDetailAccountNumber: z
+      .string()
+      .min(1, t('validation.pleaseSelectAccountDetail')),
+    accountGeneralAccountNumber: z
+      .string()
+      .min(1, t('validation.accountGeneralRequired')),
+    ledgerType: z.enum(['KAS', 'KAS_MASUK', 'KAS_KELUAR'], {
+      message: t('validation.pleaseSelectLedgerType'),
+    }),
+    amount: z.number().min(0.01, t('ledgers.validation.amountGreaterThanZero')),
+    // Additional fields for form UI only
+    referenceNumber: z
+      .string()
+      .max(50, t('ledgers.validation.referenceMax'))
+      .optional()
+      .or(z.literal('')),
+  })
 
-// Single entry form schema for adding new entries
-const singleEntryFormSchema = ledgerEntrySchema
-
-type SingleEntryFormData = z.infer<typeof singleEntryFormSchema>
+// Single entry form schema for adding new entries - will be created dynamically
+type SingleEntryFormData = z.infer<ReturnType<typeof createLedgerEntrySchema>>
 type LedgerEntry = SingleEntryFormData & { id: string }
 
 // These will be translated dynamically
@@ -118,6 +118,9 @@ export function BulkLedgerForm({
     useAccountsDetailQuery({
       limit: 1000, // Get a large number to include all accounts
     })
+
+  // Create schema with translations
+  const singleEntryFormSchema = useMemo(() => createLedgerEntrySchema(t), [t])
 
   // Form for adding/editing single entry
   const form = useForm<SingleEntryFormData>({
@@ -299,8 +302,8 @@ export function BulkLedgerForm({
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message ||
-        error?.message ||
-        'An error occurred while creating ledger entries',
+          error?.message ||
+          t('errors.anErrorOccurredCreatingLedgerEntries'),
       )
     }
   }
@@ -331,7 +334,7 @@ export function BulkLedgerForm({
       </div>
 
       {/* Balance Summary Card */}
-      <Card className="mb-4 sm:mb-6">
+      {/* <Card className="mb-4 sm:mb-6">
         <CardHeader className="pb-3 sm:pb-6">
           <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <Calculator className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -396,14 +399,14 @@ export function BulkLedgerForm({
             </div>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Single Entry Form */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Plus className="w-5 h-5" />
-            {editingEntry ? 'Edit Entry' : 'Add New Entry'}
+            {editingEntry ? t('forms.editEntry') : t('forms.addNewEntry')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -411,7 +414,7 @@ export function BulkLedgerForm({
             <form
               onSubmit={form.handleSubmit(handleAddEntry, (errors) => {
                 console.log('Form validation errors:', errors)
-                toast.error('Please fill in all required fields correctly')
+                toast.error(t('errors.pleaseFillRequiredFields'))
               })}
               className="space-y-4"
             >
@@ -545,18 +548,19 @@ export function BulkLedgerForm({
                           <SearchableSelectTrigger>
                             {field.value
                               ? accountsData?.data?.find(
-                                (account) =>
-                                  account.accountNumber === field.value,
-                              )
-                                ? `${field.value} - ${accountsData.data.find(
                                   (account) =>
                                     account.accountNumber === field.value,
-                                )?.accountName
-                                }`
+                                )
+                                ? `${field.value} - ${
+                                    accountsData.data.find(
+                                      (account) =>
+                                        account.accountNumber === field.value,
+                                    )?.accountName
+                                  }`
                                 : field.value
                               : isLoadingAccounts
                                 ? 'Loading accounts...'
-                                : 'Select account detail'}
+                                : t('forms.selectAccountDetail')}
                           </SearchableSelectTrigger>
                         </FormControl>
                         <SearchableSelectContent>
@@ -658,10 +662,10 @@ export function BulkLedgerForm({
                 )}
               />
 
-              <div className="flex items-center gap-2 pt-4">
+              <div className="flex items-center justify-end gap-2">
                 <Button type="submit" className="flex items-center gap-2">
                   <Plus className="w-4 h-4" />
-                  {editingEntry ? 'Update Entry' : 'Add Entry'}
+                  {editingEntry ? t('forms.updateEntry') : t('forms.addEntry')}
                 </Button>
                 {editingEntry && (
                   <Button
@@ -722,15 +726,16 @@ export function BulkLedgerForm({
                     accountsData?.data?.find(
                       (acc) =>
                         acc.accountNumber === entry.accountDetailAccountNumber,
-                    )?.accountName || 'Unknown Account'
+                    )?.accountName || t('forms.unknownAccount')
 
                   return (
                     <div
                       key={entry.id}
-                      className={`grid grid-cols-12 gap-2 px-4 py-3 hover:bg-gray-50 transition-colors ${editingEntry?.id === entry.id
+                      className={`grid grid-cols-12 gap-2 px-4 py-3 hover:bg-gray-50 transition-colors ${
+                        editingEntry?.id === entry.id
                           ? 'bg-blue-50 border-l-4 border-blue-400'
                           : ''
-                        }`}
+                      }`}
                     >
                       {/* Transaction Type */}
                       <div className="flex items-center col-span-1">
@@ -788,10 +793,11 @@ export function BulkLedgerForm({
                       <div className="flex items-center justify-end col-span-2">
                         <div className="text-right">
                           <p
-                            className={`text-sm font-bold ${entry.transactionType === 'DEBIT'
+                            className={`text-sm font-bold ${
+                              entry.transactionType === 'DEBIT'
                                 ? 'text-blue-600'
                                 : 'text-purple-600'
-                              }`}
+                            }`}
                           >
                             {formatCurrency(entry.amount)}
                           </p>
@@ -900,7 +906,7 @@ export function BulkLedgerForm({
             <Save className="w-4 h-4" />
             {createBulkMutation.isPending
               ? 'Creating Entries...'
-              : `Create ${entries.length} Ledger Entries`}
+              : `Create ${entries.length} Jurnal Entries`}
           </Button>
         </div>
 
@@ -920,7 +926,7 @@ export function BulkLedgerForm({
         )}
 
         {/* Minimum entries warning */}
-        {entries.length < 2 && entries.length > 0 && (
+        {/* {entries.length < 2 && entries.length > 0 && (
           <div className="p-4 border border-blue-200 rounded-lg bg-blue-50">
             <div className="flex items-center gap-2 text-blue-800">
               <AlertTriangle className="w-5 h-5" />
@@ -932,7 +938,7 @@ export function BulkLedgerForm({
               {t('labels.minimumEntriesWarning')}
             </p>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   )
