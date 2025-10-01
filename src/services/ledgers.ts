@@ -9,7 +9,9 @@ import api from './api'
 // Ledgers API Service
 export const ledgersService = {
   // Get all ledger entries with pagination and filtering
-  async getAll(params?: LedgerQueryParams): Promise<PaginatedResponse<Ledger>> {
+  async getAll(
+    params?: LedgerQueryParams,
+  ): Promise<PaginatedResponse<Ledger[]>> {
     const response = await api.get('/ledgers', { params })
     return response.data
   },

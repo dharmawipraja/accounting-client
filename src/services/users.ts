@@ -15,8 +15,8 @@ export const userService = {
   /**
    * Get paginated list of users with optional filtering
    */
-  async getUsers(params?: UserQueryParams): Promise<PaginatedResponse<User>> {
-    const response = await api.get<PaginatedResponse<User>>('/users', {
+  async getUsers(params?: UserQueryParams): Promise<PaginatedResponse<User[]>> {
+    const response = await api.get<PaginatedResponse<User[]>>('/users', {
       params,
     })
     return response.data

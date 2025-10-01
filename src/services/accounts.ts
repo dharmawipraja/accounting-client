@@ -17,7 +17,7 @@ export const accountsGeneralService = {
   // Get all general accounts with pagination and filtering
   async getAll(
     params?: AccountQueryParams,
-  ): Promise<PaginatedResponse<AccountGeneral>> {
+  ): Promise<PaginatedResponse<AccountGeneral[]>> {
     const response = await api.get('/accounts/general', { params })
     return response.data
   },
@@ -57,7 +57,7 @@ export const accountsDetailService = {
   // Get all detail accounts with pagination and filtering
   async getAll(
     params?: AccountQueryParams,
-  ): Promise<PaginatedResponse<AccountDetail>> {
+  ): Promise<PaginatedResponse<AccountDetail[]>> {
     const response = await api.get('/accounts/detail', { params })
     return response.data
   },

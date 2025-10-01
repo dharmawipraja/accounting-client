@@ -2,34 +2,38 @@ import type { LedgerType, PostingStatus, TransactionType } from './ledgers'
 
 // Journal Ledger interface (API response)
 export interface JournalLedger {
-  id: string
-  referenceNumber: string
-  amount: number
-  amountDebit: number
-  amountCredit: number
-  description: string
-  ledgerType: LedgerType
-  transactionType: TransactionType
-  postingStatus: PostingStatus
-  ledgerDate: string
-  postingAt?: string | null
-  accountDetailAccountNumber: string
-  accountGeneralAccountNumber: string
-  createdBy: string
-  updatedBy: string
-  createdAt: string
-  updatedAt: string
-  accountDetail?: {
+  journalLedgers: {
     id: string
-    accountNumber: string
-    accountName: string
+    referenceNumber: string
+    amount: number
+    amountDebit: number
+    amountCredit: number
+    description: string
+    ledgerType: LedgerType
     transactionType: TransactionType
-  }
-  accountGeneral?: {
-    id: string
-    accountNumber: string
-    accountName: string
-  }
+    postingStatus: PostingStatus
+    ledgerDate: string
+    postingAt?: string | null
+    accountDetailAccountNumber: string
+    accountGeneralAccountNumber: string
+    createdBy: string
+    updatedBy: string
+    createdAt: string
+    updatedAt: string
+    accountDetail?: {
+      id: string
+      accountNumber: string
+      accountName: string
+      transactionType: TransactionType
+    }
+    accountGeneral?: {
+      id: string
+      accountNumber: string
+      accountName: string
+    }
+  }[]
+  totalDebit: number
+  totalCredit: number
 }
 
 // Query parameters for journal ledgers

@@ -109,22 +109,21 @@ export const reportsService = {
     try {
       if (needsDetail) {
         // Fetch detail accounts with NERACA report type
-        const detailResponse = await api.get<PaginatedResponse<AccountDetail>>(
-          '/accounts/detail',
-          {
-            params: {
-              limit: 9999,
-              reportType: 'NERACA',
-            },
+        const detailResponse = await api.get<
+          PaginatedResponse<AccountDetail[]>
+        >('/accounts/detail', {
+          params: {
+            limit: 9999,
+            reportType: 'NERACA',
           },
-        )
+        })
         accountDetail = detailResponse.data.data
       }
 
       if (needsGeneral) {
         // Fetch general accounts with NERACA report type
         const generalResponse = await api.get<
-          PaginatedResponse<AccountGeneral>
+          PaginatedResponse<AccountGeneral[]>
         >('/accounts/general', {
           params: {
             limit: 9999,
@@ -153,14 +152,14 @@ export const reportsService = {
 
     // Fetch all detail accounts
     promises.push(
-      api.get<PaginatedResponse<AccountDetail>>('/accounts/detail', {
+      api.get<PaginatedResponse<AccountDetail[]>>('/accounts/detail', {
         params: { limit: 9999 }, // Large limit to get all records
       }),
     )
 
     // Fetch all general accounts
     promises.push(
-      api.get<PaginatedResponse<AccountGeneral>>('/accounts/general', {
+      api.get<PaginatedResponse<AccountGeneral[]>>('/accounts/general', {
         params: { limit: 9999 }, // Large limit to get all records
       }),
     )

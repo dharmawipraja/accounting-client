@@ -11,7 +11,7 @@ export interface ApiResponse<T> {
 
 export interface PaginatedResponse<T> {
   success: boolean
-  data: T[]
+  data: T
   pagination: {
     page: number
     limit: number

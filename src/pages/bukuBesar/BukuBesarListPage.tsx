@@ -297,7 +297,7 @@ export const BukuBesarListPage: React.FC = () => {
             {isLoading ? (
               <LoadingState variant="card" />
             ) : !journalLedgersResponse?.data ||
-              journalLedgersResponse.data.length === 0 ? (
+              journalLedgersResponse.data.journalLedgers.length === 0 ? (
               <EmptyState
                 type={
                   searchTerm || Object.keys(filters).length > 2
@@ -340,35 +340,37 @@ export const BukuBesarListPage: React.FC = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {journalLedgersResponse.data.map((entry) => (
-                          <TableRow
-                            key={entry.id}
-                            className="hover:bg-muted/50"
-                          >
-                            <TableCell className="font-medium">
-                              {entry.accountDetail?.accountNumber ||
-                                entry.accountDetailAccountNumber}
-                            </TableCell>
-                            <TableCell className="max-w-[200px] truncate">
-                              {entry.accountDetail?.accountName || 'N/A'}
-                            </TableCell>
-                            <TableCell className="font-mono text-right">
-                              {formatCurrency(entry.amountDebit || 0)}
-                            </TableCell>
-                            <TableCell className="font-mono text-right">
-                              {formatCurrency(entry.amountCredit || 0)}
-                            </TableCell>
-                            <TableCell>
-                              {getPostingStatusBadge(entry.postingStatus)}
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                        {journalLedgersResponse.data.journalLedgers.map(
+                          (entry) => (
+                            <TableRow
+                              key={entry.id}
+                              className="hover:bg-muted/50"
+                            >
+                              <TableCell className="font-medium">
+                                {entry.accountDetail?.accountNumber ||
+                                  entry.accountDetailAccountNumber}
+                              </TableCell>
+                              <TableCell className="max-w-[200px] truncate">
+                                {entry.accountDetail?.accountName || 'N/A'}
+                              </TableCell>
+                              <TableCell className="font-mono text-right">
+                                {formatCurrency(entry.amountDebit || 0)}
+                              </TableCell>
+                              <TableCell className="font-mono text-right">
+                                {formatCurrency(entry.amountCredit || 0)}
+                              </TableCell>
+                              <TableCell>
+                                {getPostingStatusBadge(entry.postingStatus)}
+                              </TableCell>
+                            </TableRow>
+                          ),
+                        )}
                       </TableBody>
                     </Table>
                   </div>
 
                   {/* Summary Totals */}
-                  {journalLedgersResponse.data.length > 0 && (
+                  {journalLedgersResponse.data.journalLedgers.length > 0 && (
                     <div className="border-t bg-muted/30">
                       <div className="flex justify-end p-4">
                         <div className="flex space-x-8 text-sm font-medium">
@@ -378,11 +380,7 @@ export const BukuBesarListPage: React.FC = () => {
                             </span>
                             <span className="font-mono font-semibold text-green-700">
                               {formatCurrency(
-                                journalLedgersResponse.data.reduce(
-                                  (sum, entry) =>
-                                    sum + (entry.amountDebit || 0),
-                                  0,
-                                ),
+                                journalLedgersResponse.data.totalDebit,
                               )}
                             </span>
                           </div>
@@ -392,11 +390,7 @@ export const BukuBesarListPage: React.FC = () => {
                             </span>
                             <span className="font-mono font-semibold text-red-700">
                               {formatCurrency(
-                                journalLedgersResponse.data.reduce(
-                                  (sum, entry) =>
-                                    sum + (entry.amountCredit || 0),
-                                  0,
-                                ),
+                                journalLedgersResponse.data.totalCredit,
                               )}
                             </span>
                           </div>
