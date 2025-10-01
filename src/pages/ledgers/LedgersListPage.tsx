@@ -75,6 +75,7 @@ export const LedgersListPage: React.FC = () => {
     const params: LedgerQueryParams = {
       ...filters,
       ...(searchTerm && { search: searchTerm }),
+      includeAccounts: true,
     }
     return params
   }, [filters, searchTerm])
@@ -133,25 +134,27 @@ export const LedgersListPage: React.FC = () => {
     }
   }
 
-  const getLedgerTypeBadge = (type: string) => {
-    const variants = {
-      KAS: 'default',
-      KAS_MASUK: 'secondary',
-      KAS_KELUAR: 'secondary',
-    } as const
+  // const getLedgerTypeBadge = (type: string) => {
+  //   const variants = {
+  //     KAS: 'default',
+  //     KAS_MASUK: 'secondary',
+  //     KAS_KELUAR: 'secondary',
+  //   } as const
 
-    const labels = {
-      KAS: t('ledgersList.cash'),
-      KAS_MASUK: t('ledgersList.cashIn'),
-      KAS_KELUAR: t('ledgersList.cashOut'),
-    }
+  //   const labels = {
+  //     KAS: t('ledgersList.cash'),
+  //     KAS_MASUK: t('ledgersList.cashIn'),
+  //     KAS_KELUAR: t('ledgersList.cashOut'),
+  //   }
 
-    return (
-      <Badge variant={variants[type as keyof typeof variants] || 'outline'}>
-        {labels[type as keyof typeof labels] || type}
-      </Badge>
-    )
-  }
+  //   return (
+  //     <Badge variant={variants[type as keyof typeof variants] || 'outline'}>
+  //       {labels[type as keyof typeof labels] || type}
+  //     </Badge>
+  //   )
+  // }
+
+  console.log('ledgersResponse', ledgersResponse)
 
   const getPostingStatusBadge = (status: string) => {
     const variants = {
@@ -168,8 +171,8 @@ export const LedgersListPage: React.FC = () => {
 
   const getTransactionTypeBadge = (type: string) => {
     const variants = {
-      DEBIT: 'destructive',
-      CREDIT: 'default',
+      DEBIT: 'outline',
+      KREDIT: 'outline',
     } as const
 
     return (
@@ -374,7 +377,7 @@ export const LedgersListPage: React.FC = () => {
                       <TableHead>{t('ledgersList.reference')}</TableHead>
                       <TableHead>{t('ledgersList.description')}</TableHead>
                       <TableHead>{t('ledgersList.amount')}</TableHead>
-                      <TableHead>{t('ledgersList.type')}</TableHead>
+                      {/* <TableHead>{t('ledgersList.type')}</TableHead> */}
                       <TableHead>{t('ledgersList.transaction')}</TableHead>
                       <TableHead>{t('common.status')}</TableHead>
                       <TableHead>{t('ledgersList.date')}</TableHead>
@@ -400,9 +403,9 @@ export const LedgersListPage: React.FC = () => {
                             {formatCurrency(ledger.amount)}
                           </div>
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                           {getLedgerTypeBadge(ledger.ledgerType)}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell>
                           {getTransactionTypeBadge(ledger.transactionType)}
                         </TableCell>
@@ -420,6 +423,9 @@ export const LedgersListPage: React.FC = () => {
                             {ledger.accountDetail?.accountName || 'N/A'}
                             <div className="text-xs text-muted-foreground">
                               {ledger.accountDetail?.accountNumber}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {ledger.accountDetail?.transactionType}
                             </div>
                           </div>
                         </TableCell>

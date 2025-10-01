@@ -24,6 +24,7 @@ export interface Ledger {
     id: string
     accountNumber: string
     accountName: string
+    transactionType: TransactionType
   }
   accountGeneral?: {
     id: string
@@ -45,6 +46,7 @@ export interface LedgerQueryParams {
   dateTo?: string // ISO date string
   amountMin?: number
   amountMax?: number
+  includeAccounts?: boolean
 }
 
 // Form data (for React Hook Form)
