@@ -1,7 +1,7 @@
 // Ledger related types
 export type LedgerType = 'KAS' | 'KAS_MASUK' | 'KAS_KELUAR'
 export type PostingStatus = 'PENDING' | 'POSTED'
-export type TransactionType = 'DEBIT' | 'CREDIT'
+export type TransactionType = 'DEBIT' | 'KREDIT'
 
 // Ledger interface (API response)
 export interface Ledger {

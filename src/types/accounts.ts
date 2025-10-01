@@ -6,7 +6,7 @@ export type AccountCategory =
   | 'PENDAPATAN'
   | 'BIAYA'
 export type ReportType = 'NERACA' | 'LABA_RUGI'
-export type TransactionType = 'DEBIT' | 'CREDIT'
+export type TransactionType = 'DEBIT' | 'KREDIT'
 export type AccountType = 'GENERAL' | 'DETAIL'
 
 // General Account interface

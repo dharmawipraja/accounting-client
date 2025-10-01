@@ -95,7 +95,7 @@
     },
     "transactionTypes": {
       "DEBIT": "Debit",
-      "CREDIT": "Kredit"
+      "KREDIT": "Kredit"
     },
     "form": {
       "create": "Buat",

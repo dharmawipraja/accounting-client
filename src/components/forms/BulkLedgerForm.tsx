@@ -53,8 +53,8 @@ const ledgerEntrySchema = z.object({
     .string()
     .min(3, 'Description must be at least 3 characters long')
     .max(500, 'Description is too long (maximum 500 characters)'),
-  transactionType: z.enum(['DEBIT', 'CREDIT'], {
-    message: 'Please select either Debit or Credit',
+  transactionType: z.enum(['DEBIT', 'KREDIT'], {
+    message: 'Please select either Debit or Kredit',
   }),
   accountDetailAccountNumber: z
     .string()
@@ -81,7 +81,7 @@ type LedgerEntry = SingleEntryFormData & { id: string }
 // These will be translated dynamically
 const transactionTypeOptions = [
   { value: 'DEBIT', labelKey: 'accounts.transactionTypes.DEBIT' },
-  { value: 'CREDIT', labelKey: 'accounts.transactionTypes.CREDIT' },
+  { value: 'KREDIT', labelKey: 'accounts.transactionTypes.KREDIT' },
 ] as const
 
 const ledgerTypeOptions = [
@@ -152,7 +152,7 @@ export function BulkLedgerForm({
     entries.forEach((entry) => {
       if (entry.transactionType === 'DEBIT') {
         debitTotal += entry.amount || 0
-      } else if (entry.transactionType === 'CREDIT') {
+      } else if (entry.transactionType === 'KREDIT') {
         creditTotal += entry.amount || 0
       }
     })
@@ -838,7 +838,7 @@ export function BulkLedgerForm({
                       </div>
                       <div className="flex justify-between text-xs">
                         <span className="text-purple-600">
-                          {t('accounts.transactionTypes.CREDIT')}:
+                          {t('accounts.transactionTypes.KREDIT')}:
                         </span>
                         <span className="font-medium text-purple-600">
                           {formatCurrency(totalCreditAmount)}

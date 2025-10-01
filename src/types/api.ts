@@ -52,7 +52,7 @@ export interface AccountGeneral {
   accountType: 'GENERAL'
   accountCategory: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
   reportType: 'NERACA' | 'LABA_RUGI'
-  transactionType: 'DEBIT' | 'CREDIT'
+  transactionType: 'DEBIT' | 'KREDIT'
   amountCredit: number
   amountDebit: number
   createdBy: string
@@ -69,7 +69,7 @@ export interface AccountDetail {
   accountType: 'DETAIL'
   accountCategory: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
   reportType: 'NERACA' | 'LABA_RUGI'
-  transactionType: 'DEBIT' | 'CREDIT'
+  transactionType: 'DEBIT' | 'KREDIT'
   amountCredit: number
   amountDebit: number
   accountGeneralAccountNumber: string

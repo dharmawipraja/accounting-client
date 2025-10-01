@@ -137,13 +137,13 @@ function LedgerDetailPage() {
             Debit
           </Badge>
         )
-      case 'CREDIT':
+      case 'KREDIT':
         return (
           <Badge
             variant="outline"
             className="text-purple-700 border-purple-200 bg-purple-50"
           >
-            Credit
+            Kredit
           </Badge>
         )
       default:

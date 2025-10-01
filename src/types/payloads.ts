@@ -37,7 +37,7 @@ export interface CreateAccountGeneralPayload {
   accountName: string // min: 3 chars, max: 100
   accountCategory: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
   reportType: 'NERACA' | 'LABA_RUGI'
-  transactionType: 'DEBIT' | 'CREDIT'
+  transactionType: 'DEBIT' | 'KREDIT'
   amountCredit?: number // default: 0, positive decimal
   amountDebit?: number // default: 0, positive decimal
 }
@@ -46,7 +46,7 @@ export interface UpdateAccountGeneralPayload {
   accountName: string // min: 3 chars, max: 100
   accountCategory: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
   reportType: 'NERACA' | 'LABA_RUGI'
-  transactionType: 'DEBIT' | 'CREDIT'
+  transactionType: 'DEBIT' | 'KREDIT'
   amountCredit: number // positive decimal
   amountDebit: number // positive decimal
 }
@@ -57,7 +57,7 @@ export interface CreateAccountDetailPayload {
   accountGeneralAccountNumber: string // UUID
   accountCategory: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
   reportType: 'NERACA' | 'LABA_RUGI'
-  transactionType: 'DEBIT' | 'CREDIT'
+  transactionType: 'DEBIT' | 'KREDIT'
   amountCredit?: number // default: 0, positive decimal
   amountDebit?: number // default: 0, positive decimal
 }
@@ -66,7 +66,7 @@ export interface UpdateAccountDetailPayload {
   accountName: string // min: 3 chars, max: 100
   accountCategory: 'ASSET' | 'HUTANG' | 'MODAL' | 'PENDAPATAN' | 'BIAYA'
   reportType: 'NERACA' | 'LABA_RUGI'
-  transactionType: 'DEBIT' | 'CREDIT'
+  transactionType: 'DEBIT' | 'KREDIT'
   amountCredit: number // positive decimal
   amountDebit: number // positive decimal
 }
@@ -78,7 +78,7 @@ export interface LedgerItem {
   accountDetailAccountNumber: string // UUID
   accountGeneralAccountNumber: string // UUID
   ledgerType: 'KAS' | 'KAS_MASUK' | 'KAS_KELUAR'
-  transactionType: 'DEBIT' | 'CREDIT'
+  transactionType: 'DEBIT' | 'KREDIT'
   ledgerDate: string // ISO date string
 }
 
@@ -92,7 +92,7 @@ export interface UpdateLedgerPayload {
   accountDetailAccountNumber?: string // UUID
   accountGeneralAccountNumber?: string // UUID
   ledgerType?: 'KAS' | 'KAS_MASUK' | 'KAS_KELUAR'
-  transactionType?: 'DEBIT' | 'CREDIT'
+  transactionType?: 'DEBIT' | 'KREDIT'
   ledgerDate?: string // ISO date string
   postingStatus?: 'PENDING' | 'POSTED'
 }

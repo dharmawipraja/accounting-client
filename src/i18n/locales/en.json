@@ -95,7 +95,7 @@
     },
     "transactionTypes": {
       "DEBIT": "Debit",
-      "CREDIT": "Credit"
+      "KREDIT": "Credit"
     },
     "form": {
       "create": "Create",

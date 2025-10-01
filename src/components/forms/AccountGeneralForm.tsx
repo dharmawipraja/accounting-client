@@ -60,7 +60,7 @@ const createAccountGeneralFormSchema = (t: any) =>
       'BIAYA',
     ]),
     reportType: z.enum(['NERACA', 'LABA_RUGI']),
-    transactionType: z.enum(['DEBIT', 'CREDIT']),
+    transactionType: z.enum(['DEBIT', 'KREDIT']),
     amountCredit: z
       .string()
       .refine(
@@ -100,7 +100,7 @@ const reportTypeOptions = [
 
 const transactionTypeOptions = [
   { value: 'DEBIT', labelKey: 'accounts.transactionTypes.DEBIT' },
-  { value: 'CREDIT', labelKey: 'accounts.transactionTypes.CREDIT' },
+  { value: 'KREDIT', labelKey: 'accounts.transactionTypes.KREDIT' },
 ] as const
 
 export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
@@ -185,14 +185,14 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
   const isSubmitting = createMutation.isPending || updateMutation.isPending
 
   return (
-    <div className="container mx-auto max-w-2xl py-6">
+    <div className="container max-w-2xl py-6 mx-auto">
       <div className="mb-6">
         <Button
           variant="ghost"
           onClick={() => router.navigate({ to: '/accounts/general' })}
           className="mb-4 md:hidden"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="w-4 h-4 mr-2" />
           {t('accounts.form.backTo', { type: t('accounts.general') })}
         </Button>
         <h1 className="text-3xl font-bold">
@@ -215,7 +215,7 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
       <Card>
         <CardHeader className="pb-4 sm:pb-6">
           <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-            <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
+            <Calculator className="w-4 h-4 sm:h-5 sm:w-5" />
             {t('accounts.form.accountInformation')}
           </CardTitle>
           <CardDescription className="text-sm sm:text-base">
@@ -231,7 +231,7 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
               className="space-y-6"
             >
               {/* Basic Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="accountNumber"
@@ -281,7 +281,7 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
               <hr className="my-4" />
 
               {/* Account Classification */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <FormField
                   control={form.control}
                   name="accountCategory"
@@ -390,7 +390,7 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
               <hr className="my-4" />
 
               {/* Balance Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="amountCredit"
@@ -433,7 +433,7 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
               </div>
 
               {/* Submit Button */}
-              <div className="flex justify-end space-x-4 pt-6">
+              <div className="flex justify-end pt-6 space-x-4">
                 <Button
                   type="button"
                   variant="outline"
@@ -443,7 +443,7 @@ export function AccountGeneralForm({ mode, account }: AccountGeneralFormProps) {
                   {t('accounts.form.cancel')}
                 </Button>
                 <Button type="submit" disabled={isSubmitting}>
-                  <Save className="mr-2 h-4 w-4" />
+                  <Save className="w-4 h-4 mr-2" />
                   {isSubmitting
                     ? mode === 'create'
                       ? t('accounts.form.creating')

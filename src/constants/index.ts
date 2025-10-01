@@ -70,7 +70,7 @@ export const REPORT_TYPES = {
 
 export const TRANSACTION_TYPES = {
   DEBIT: 'DEBIT',
-  CREDIT: 'CREDIT',
+  KREDIT: 'KREDIT',
 } as const
 
 // Ledger Types
@@ -167,7 +167,7 @@ export const REPORT_TYPE_LABELS = {
 
 export const TRANSACTION_TYPE_LABELS = {
   [TRANSACTION_TYPES.DEBIT]: 'Debit',
-  [TRANSACTION_TYPES.CREDIT]: 'Credit',
+  [TRANSACTION_TYPES.KREDIT]: 'Kredit',
 } as const
 
 export const ACCOUNT_TYPES = {

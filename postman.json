@@ -706,7 +706,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"ledgers\": [\n    {\n      \"description\": \"Cash payment received\",\n      \"amount\": 1000.00,\n      \"transactionType\": \"DEBIT\",\n      \"accountDetailId\": \"detail_account_id_1\",\n      \"accountGeneralId\": \"general_account_id_1\"\n    },\n    {\n      \"description\": \"Revenue recognition\",\n      \"amount\": 1000.00,\n      \"transactionType\": \"CREDIT\",\n      \"accountDetailId\": \"detail_account_id_2\",\n      \"accountGeneralId\": \"general_account_id_2\"\n    }\n  ]\n}"
+                  "raw": "{\n  \"ledgers\": [\n    {\n      \"description\": \"Cash payment received\",\n      \"amount\": 1000.00,\n      \"transactionType\": \"DEBIT\",\n      \"accountDetailId\": \"detail_account_id_1\",\n      \"accountGeneralId\": \"general_account_id_1\"\n    },\n    {\n      \"description\": \"Revenue recognition\",\n      \"amount\": 1000.00,\n      \"transactionType\": \"KREDIT\",\n      \"accountDetailId\": \"detail_account_id_2\",\n      \"accountGeneralId\": \"general_account_id_2\"\n    }\n  ]\n}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/{{apiVersion}}/ledgers",
