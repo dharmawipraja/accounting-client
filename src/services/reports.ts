@@ -18,6 +18,7 @@ export interface ReportGenerationOptions {
   includeGeneral: boolean
   format: 'pdf' | 'xlsx'
   fileName?: string
+  viewInNewTab?: boolean
 }
 
 export type NeracaReportType = 'neraca' | 'neraca-detail' | 'penjelasan-neraca'
@@ -198,8 +199,27 @@ export const reportsService = {
       await this.generateStandardPDF(doc, data, options)
     }
 
-    // Save the PDF
-    doc.save(fileName)
+    // Either save the PDF or view in new tab
+    if (options.viewInNewTab) {
+      const pdfBlob = doc.output('blob')
+      const pdfUrl = URL.createObjectURL(pdfBlob)
+      window.open(pdfUrl, '_blank')
+      // Clean up the URL after a short delay to free memory
+      setTimeout(() => URL.revokeObjectURL(pdfUrl), 1000)
+    } else {
+      doc.save(fileName)
+    }
+  },
+
+  /**
+   * View PDF report in new tab
+   */
+  async viewPDFInNewTab(
+    data: ReportData,
+    options: ReportGenerationOptions,
+  ): Promise<void> {
+    const viewOptions = { ...options, viewInNewTab: true }
+    await this.generatePDF(data, viewOptions)
   },
 
   /**
@@ -1660,6 +1680,28 @@ export const reportsService = {
     } catch (error) {
       throw new Error(
         'Failed to generate NERACA report: ' + (error as Error).message,
+      )
+    }
+  },
+
+  /**
+   * View NERACA report in new tab (PDF only)
+   */
+  async viewReportByTypeInNewTab(
+    reportType: NeracaReportType,
+    options: ReportGenerationOptions,
+  ): Promise<void> {
+    try {
+      const data = await this.fetchNeracaAccountData(reportType)
+
+      if (options.format === 'pdf') {
+        await this.viewPDFInNewTab(data, options)
+      } else {
+        throw new Error('View in new tab is only supported for PDF format')
+      }
+    } catch (error) {
+      throw new Error(
+        'Failed to view NERACA report: ' + (error as Error).message,
       )
     }
   },
