@@ -179,9 +179,9 @@ export function ReportsPage() {
           </p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="max-w-3xl mx-auto">
           {/* Main Configuration Card */}
-          <div className="lg:col-span-2">
+          <div>
             <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
               <CardHeader className="pb-6">
                 <CardTitle className="text-xl font-semibold text-gray-900">
@@ -361,74 +361,6 @@ export function ReportsPage() {
                       ? t('reports.viewingPdf')
                       : t('reports.viewPdf')}
                   </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Information Sidebar */}
-          <div className="space-y-6">
-            {/* Report Types Info */}
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg font-semibold text-gray-900">
-                  {t('reports.information')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {reportOptions.map((option) => {
-                  const Icon = option.icon
-                  return (
-                    <div key={option.id} className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${option.bgColor}`}>
-                          <Icon className={`w-4 h-4 ${option.color}`} />
-                        </div>
-                        <h4 className="text-sm font-semibold text-gray-900">
-                          {option.title}
-                        </h4>
-                      </div>
-                      <p className="text-xs leading-relaxed text-gray-600">
-                        {option.description}
-                      </p>
-                    </div>
-                  )
-                })}
-              </CardContent>
-            </Card>
-
-            {/* Quick Tips */}
-            <Card className="border-0 border-green-200 shadow-lg bg-gradient-to-br from-green-50 to-emerald-50">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg font-semibold text-green-900">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  Tips
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="text-sm text-green-800">
-                  <p className="mb-1 font-medium">
-                    • Pilih jenis laporan terlebih dahulu
-                  </p>
-                  <p className="text-xs text-green-700">
-                    Tentukan jenis laporan yang Anda butuhkan
-                  </p>
-                </div>
-                <div className="text-sm text-green-800">
-                  <p className="mb-1 font-medium">
-                    • Download untuk menyimpan file
-                  </p>
-                  <p className="text-xs text-green-700">
-                    File akan diunduh ke perangkat Anda
-                  </p>
-                </div>
-                <div className="text-sm text-green-800">
-                  <p className="mb-1 font-medium">
-                    • Lihat untuk preview langsung
-                  </p>
-                  <p className="text-xs text-green-700">
-                    Buka PDF di tab baru untuk melihat
-                  </p>
                 </div>
               </CardContent>
             </Card>
