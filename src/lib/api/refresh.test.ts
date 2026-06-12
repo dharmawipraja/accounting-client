@@ -5,7 +5,37 @@ import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
 import { apiFetch } from './client';
 
-afterEach(() => { useSession.getState().clear(); vi.restoreAllMocks(); });
+afterEach(() => { useSession.getState().clear(); vi.restoreAllMocks(); vi.useRealTimers(); });
+
+describe('429 rate-limit backoff', () => {
+  it('retries once after Retry-After backoff and returns the successful result', async () => {
+    let callCount = 0;
+    server.use(
+      http.get(`${API}/limited`, () => {
+        callCount += 1;
+        if (callCount === 1) {
+          return new HttpResponse(null, {
+            status: 429,
+            headers: { 'Retry-After': '2' },
+          });
+        }
+        return HttpResponse.json({ ok: true });
+      }),
+    );
+
+    vi.useFakeTimers();
+    try {
+      const promise = apiFetch<{ ok: boolean }>('/limited', { auth: false });
+      // Advance past the 2-second Retry-After backoff
+      await vi.advanceTimersByTimeAsync(2000);
+      const data = await promise;
+      expect(data.ok).toBe(true);
+      expect(callCount).toBe(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
 
 describe('401 refresh', () => {
   it('refreshes once on 401, then retries and succeeds', async () => {

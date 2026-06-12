@@ -32,11 +32,16 @@ async function toApiError(res: Response): Promise<ApiError> {
   } catch {
     /* non-JSON error body */
   }
+  const retryAfterHeader = res.headers.get('Retry-After');
+  const retryAfterNum = retryAfterHeader !== null ? Number(retryAfterHeader) : NaN;
+  const extraDetails = Number.isFinite(retryAfterNum)
+    ? { retryAfter: retryAfterNum }
+    : undefined;
   return new ApiError({
     status: res.status,
     code: body.code ?? `HTTP_${res.status}`,
     message: body.message ?? res.statusText,
-    details: body.details,
+    details: extraDetails ? { ...body.details, ...extraDetails } : body.details,
     traceId: body.traceId ?? traceId,
   });
 }
@@ -73,7 +78,8 @@ export async function apiFetch<T>(path: string, opts: RequestOptions<T> = {}): P
     const { data } = await rawFetch<T>(path, opts);
     return data;
   } catch (err) {
-    const e = err as ApiError;
+    if (!(err instanceof ApiError)) throw err;
+    const e = err;
     // 401 -> single-flight refresh, then retry once.
     if (e.status === 401 && auth) {
       const fresh = await refreshAccessToken();
