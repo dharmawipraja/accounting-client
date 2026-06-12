@@ -3,8 +3,7 @@ import { useSession } from '@/stores/session';
 import { fetchMe } from './useMe';
 
 /** On mount, if a token exists but no user yet, fetch /auth/me to hydrate. */
-export function useHydrateSession() {
-  const status = useSession((s) => s.status);
+export function useHydrateSession(): void {
   const accessToken = useSession((s) => s.accessToken);
   useEffect(() => {
     if (accessToken && !useSession.getState().user) {
@@ -15,5 +14,4 @@ export function useHydrateSession() {
       useSession.getState().setStatus('anonymous');
     }
   }, [accessToken]);
-  return status;
 }

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import {
   BookText,
   LayoutDashboard,
@@ -17,6 +17,7 @@ import { ThemeToggle } from './ThemeToggle';
 
 export function AppShell({ children }: { children: ReactNode }) {
   const t = useT();
+  const navigate = useNavigate();
   const user = useSession((s) => s.user);
   const clear = useSession((s) => s.clear);
 
@@ -57,7 +58,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <header className="flex h-14 items-center justify-end gap-3 border-b px-6">
           <span className="text-sm text-muted-foreground">{user?.email}</span>
           <ThemeToggle />
-          <Button variant="ghost" size="icon" aria-label={t.auth.signOut} onClick={clear}>
+          <Button variant="ghost" size="icon" aria-label={t.auth.signOut} onClick={() => { clear(); void navigate({ to: '/login' }); }}>
             <LogOut className="size-4" />
           </Button>
         </header>
