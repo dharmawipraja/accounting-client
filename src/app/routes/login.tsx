@@ -1,5 +1,18 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { LoginForm } from '@/features/auth/LoginForm';
 
 export const Route = createFileRoute('/login')({
-  component: () => <div data-testid="login-route">Login</div>,
+  component: LoginRoute,
 });
+
+function LoginRoute() {
+  const navigate = useNavigate();
+  return (
+    <LoginForm
+      onSuccess={() =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        navigate({ to: '/dashboard' as any })
+      }
+    />
+  );
+}
