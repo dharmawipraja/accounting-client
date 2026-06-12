@@ -7,12 +7,5 @@ export const Route = createFileRoute('/login')({
 
 function LoginRoute() {
   const navigate = useNavigate();
-  return (
-    <LoginForm
-      onSuccess={() =>
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        navigate({ to: '/dashboard' as any })
-      }
-    />
-  );
+  return <LoginForm onSuccess={() => navigate({ to: '/dashboard' })} />;
 }
