@@ -2,6 +2,7 @@ import type { ZodType } from 'zod';
 import { useSession } from '@/stores/session';
 import { API_BASE_URL } from './config';
 import { ApiError } from './errors';
+import { refreshAccessToken } from './refresh';
 
 export interface RequestOptions<T> {
   method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
@@ -64,7 +65,30 @@ export async function rawFetch<T>(
   return { res, data };
 }
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 export async function apiFetch<T>(path: string, opts: RequestOptions<T> = {}): Promise<T> {
-  const { data } = await rawFetch<T>(path, opts);
-  return data;
+  const auth = opts.auth ?? true;
+  try {
+    const { data } = await rawFetch<T>(path, opts);
+    return data;
+  } catch (err) {
+    const e = err as ApiError;
+    // 401 -> single-flight refresh, then retry once.
+    if (e.status === 401 && auth) {
+      const fresh = await refreshAccessToken();
+      if (fresh) {
+        const { data } = await rawFetch<T>(path, opts);
+        return data;
+      }
+    }
+    // 429 -> back off once, honoring Retry-After (seconds), then retry once.
+    if (e.status === 429) {
+      const retryAfter = Number(e.details?.['retryAfter']) || 1;
+      await sleep(retryAfter * 1000);
+      const { data } = await rawFetch<T>(path, opts);
+      return data;
+    }
+    throw err;
+  }
 }
