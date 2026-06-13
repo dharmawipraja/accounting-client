@@ -1,9 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { PageHeader } from '@/components/common/PageHeader';
-import { useT } from '@/lib/i18n/useT';
+import { AccountsPage } from '@/features/accounts/AccountsPage';
 
 export const Route = createFileRoute('/_app/accounts')({
-  component: function AccountsRoute() {
-    return <PageHeader title={useT().nav.accounts} />;
-  },
+  component: AccountsPage,
 });
