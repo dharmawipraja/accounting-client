@@ -15,7 +15,11 @@ export type SalesInvoiceLine = z.infer<typeof salesInvoiceLineSchema>;
 
 export const salesInvoiceSchema = z.object({
   id: z.string(),
-  invoiceNumber: z.string().nullish(),
+  invoiceNumber: z.number().nullish(),
+  invoiceRef: z.string().nullish(),
+  postedBy: z.string().nullish(),
+  postedAt: z.string().nullish(),
+  journalEntryId: z.string().nullish(),
   partnerId: z.string(),
   date: z.string(),
   dueDate: z.string().nullish(),

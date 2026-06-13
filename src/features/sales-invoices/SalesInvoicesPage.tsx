@@ -41,7 +41,7 @@ export function SalesInvoicesPage() {
     const q = search.toLowerCase();
     return (list.data ?? []).filter((inv) => {
       if (status !== 'ALL' && inv.status !== status && !(status === 'VOID' && inv.status.startsWith('VOID'))) return false;
-      return !q || (inv.invoiceNumber ?? '').toLowerCase().includes(q) || partnerName(inv.partnerId).toLowerCase().includes(q);
+      return !q || (inv.invoiceRef ?? '').toLowerCase().includes(q) || partnerName(inv.partnerId).toLowerCase().includes(q);
     });
   }, [list.data, search, status, partnerName]);
 

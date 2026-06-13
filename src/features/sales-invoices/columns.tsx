@@ -22,7 +22,7 @@ export function buildInvoiceColumns(
   onDelete: (inv: SalesInvoice) => void,
 ) {
   return [
-    col.accessor('invoiceNumber', { header: t.salesInvoices.number, cell: (c) => c.getValue() ?? '—' }),
+    col.accessor('invoiceRef', { header: t.salesInvoices.number, cell: (c) => c.getValue() ?? '—' }),
     col.accessor('partnerId', { header: t.salesInvoices.partner, cell: (c) => partnerName(c.getValue()) }),
     col.accessor('date', { header: t.salesInvoices.date, cell: (c) => formatDateID(c.getValue().slice(0, 10)) }),
     col.accessor('status', {

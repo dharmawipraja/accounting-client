@@ -16,6 +16,13 @@ describe('salesInvoiceSchema', () => {
     expect(r.lines[0].amount).toBe('1000000.0000');
     expect(r.invoiceNumber).toBeNull();
   });
+
+  it('parses a POSTED invoice (numeric invoiceNumber + invoiceRef)', () => {
+    const r = salesInvoiceSchema.parse({ ...sample, status: 'POSTED', invoiceNumber: 1, invoiceRef: 'INV/2026/000001', postedBy: 'u', postedAt: '2026-06-15T00:00:00.000Z', journalEntryId: 'j1' });
+    expect(r.status).toBe('POSTED');
+    expect(r.invoiceNumber).toBe(1);
+    expect(r.invoiceRef).toBe('INV/2026/000001');
+  });
 });
 
 describe('invoiceFormSchema', () => {
