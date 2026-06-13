@@ -21,7 +21,7 @@ export const accountSchema = z.object({
   cashFlowCategory: cashFlowCategorySchema.nullish(),
   isPostable: z.boolean(),
   isActive: z.boolean(),
-  parentCode: z.string().nullish(),
+  parentId: z.string().nullish(),
 });
 export type Account = z.infer<typeof accountSchema>;
 

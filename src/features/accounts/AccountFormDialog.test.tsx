@@ -30,7 +30,7 @@ it('auto-derives type + normal balance from the chosen subtype', async () => {
   server.use(
     http.post(`${API}/ledger/accounts`, async ({ request }) => {
       posted = (await request.json()) as Record<string, unknown>;
-      return HttpResponse.json({ id: 'a9', isActive: true, parentCode: null, ...posted });
+      return HttpResponse.json({ id: 'a9', isActive: true, parentId: null, ...posted });
     }),
   );
   renderDialog(<AccountFormDialog open onOpenChange={vi.fn()} mode="create" />);
@@ -67,13 +67,13 @@ it('edit form shows cash flow category and submits the updated value', async () 
       patched = (await request.json()) as Record<string, unknown>;
       return HttpResponse.json({
         id: 'a1', code: '1-1000', name: 'Kas', type: 'ASSET', subtype: 'CURRENT_ASSET',
-        normalBalance: 'DEBIT', isPostable: true, isActive: true, parentCode: null, ...patched,
+        normalBalance: 'DEBIT', isPostable: true, isActive: true, parentId: null, ...patched,
       });
     }),
   );
   const account: Account = {
     id: 'a1', code: '1-1000', name: 'Kas', type: 'ASSET', subtype: 'CURRENT_ASSET',
-    normalBalance: 'DEBIT', cashFlowCategory: 'NONE', isPostable: true, isActive: true, parentCode: null,
+    normalBalance: 'DEBIT', cashFlowCategory: 'NONE', isPostable: true, isActive: true, parentId: null,
   };
   renderDialog(<AccountFormDialog open onOpenChange={vi.fn()} mode="edit" account={account} />);
   // the cash flow category field is visible
