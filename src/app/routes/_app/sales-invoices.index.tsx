@@ -1,9 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { PageHeader } from '@/components/common/PageHeader';
-import { useT } from '@/lib/i18n/useT';
+import { SalesInvoicesPage } from '@/features/sales-invoices/SalesInvoicesPage';
 
 export const Route = createFileRoute('/_app/sales-invoices/')({
-  component: function SalesInvoicesIndex() {
-    return <PageHeader title={useT().salesInvoices.title} />;
-  },
+  component: SalesInvoicesPage,
 });
