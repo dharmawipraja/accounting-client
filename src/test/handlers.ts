@@ -22,6 +22,32 @@ export const salesInvoiceFixtures = () => [
   { id: 'i1', invoiceNumber: null, partnerId: 'p1', date: '2026-06-13T00:00:00.000Z', dueDate: '2026-07-13T00:00:00.000Z', description: 'Inv 1', status: 'DRAFT', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [{ id: 'l1', lineNo: 1, description: 'Jasa', accountId: 'a2', quantity: '2.0000', unitPrice: '500000.0000', amount: '1000000.0000', taxCodeIds: ['t1'] }] },
 ];
 
+// --- reports (Plan 4b dashboard) ---
+export const balanceSheetFixture = (asOf: string) => ({
+  asOf,
+  assets: { groups: [], total: '0.0000' },
+  liabilities: { groups: [], total: '0.0000' },
+  equity: { groups: [], total: '0.0000' },
+  totalAssets: '1500000.0000',
+  totalLiabilities: '600000.0000',
+  totalEquity: '900000.0000',
+  currentYearEarnings: '0.0000',
+  balanced: true,
+});
+export const incomeStatementFixture = (from: string, to: string) => ({
+  from, to,
+  revenue: '2000000.0000', cogs: '0.0000', grossProfit: '2000000.0000',
+  operatingExpense: '0.0000', operatingProfit: '2000000.0000', otherIncome: '0.0000',
+  otherExpense: '0.0000', profitBeforeTax: '2000000.0000', taxExpense: '0.0000',
+  netIncome: '1750000.0000',
+});
+export const cashFlowFixture = (from: string, to: string) => ({
+  from, to, netIncome: '1750000.0000',
+  operating: { adjustments: [], total: '0.0000' }, investing: { lines: [], total: '0.0000' },
+  financing: { lines: [], total: '0.0000' }, netChange: '750000.0000',
+  kasAwal: '250000.0000', kasAkhir: '1234000.0000', reconciles: true,
+});
+
 // --- payments (Plan 4a) ---
 export const paymentFixtures = () => [
   { id: 'pay1', number: null, ref: null, fiscalYear: null, direction: 'RECEIPT', partnerId: 'p1', date: '2026-06-16T00:00:00.000Z', cashAccountId: 'a1', description: 'Terima', status: 'DRAFT', amount: '1110000.0000', journalEntryId: null, allocations: [{ id: 'al1', salesInvoiceId: 'i1', purchaseBillId: null, amount: '1110000.0000' }] },
@@ -130,4 +156,23 @@ export const handlers = [
   http.delete(`${API}/payments/:id`, () => HttpResponse.json({})),
   http.post(`${API}/payments/:id/post`, ({ params }) => HttpResponse.json({ ...paymentFixtures()[0], id: params.id, status: 'POSTED', number: 1, ref: 'PAY-RCV/2026/000001', fiscalYear: 2026 })),
   http.post(`${API}/payments/:id/void`, ({ params }) => HttpResponse.json({ ...paymentFixtures()[0], id: params.id, status: 'VOID' })),
+
+  // --- reports (Plan 4b dashboard) ---
+  http.get(`${API}/reports/balance-sheet`, ({ request }) => {
+    const asOf = new URL(request.url).searchParams.get('asOf') ?? '';
+    return HttpResponse.json(balanceSheetFixture(asOf));
+  }),
+  http.get(`${API}/reports/income-statement`, ({ request }) => {
+    const u = new URL(request.url).searchParams;
+    return HttpResponse.json(incomeStatementFixture(u.get('from') ?? '', u.get('to') ?? ''));
+  }),
+  http.get(`${API}/reports/cash-flow`, ({ request }) => {
+    const u = new URL(request.url).searchParams;
+    return HttpResponse.json(cashFlowFixture(u.get('from') ?? '', u.get('to') ?? ''));
+  }),
+  http.get(`${API}/ledger/journal-entries`, ({ request }) => {
+    const status = new URL(request.url).searchParams.get('status');
+    const total = status === 'DRAFT' ? 3 : 0;
+    return HttpResponse.json({ data: [], total, limit: 1, offset: 0 });
+  }),
 ];
