@@ -92,6 +92,12 @@ export const handlers = [
     return HttpResponse.json({ ...salesInvoiceFixtures()[0], id: params.id, ...body });
   }),
   http.delete(`${API}/sales-invoices/:id`, () => HttpResponse.json({})),
+  http.post(`${API}/sales-invoices/:id/post`, ({ params }) =>
+    HttpResponse.json({ ...salesInvoiceFixtures()[0], id: params.id, status: 'POSTED', invoiceNumber: 1, invoiceRef: 'INV/2026/000001', postedBy: 'u', postedAt: '2026-06-15T00:00:00.000Z', journalEntryId: 'j1' }),
+  ),
+  http.post(`${API}/sales-invoices/:id/void`, ({ params }) =>
+    HttpResponse.json({ ...salesInvoiceFixtures()[0], id: params.id, status: 'VOID', invoiceNumber: 1, invoiceRef: 'INV/2026/000001', journalEntryId: 'j1' }),
+  ),
   http.post(`${API}/tax/calculate`, async ({ request }) => {
     const body = (await request.json()) as { lines: { amount: string }[] };
     const subtotal = body.lines.reduce((s, l) => s + Number(l.amount), 0);
