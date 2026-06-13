@@ -127,11 +127,11 @@ Extend `src/lib/i18n/messages.id.ts`:
 
 ### 4.6 Response schemas — reconcile against the live API
 
-First implementation task: with `VITE_API_BASE_URL` pointed at a running API (or recorded fixtures),
-`GET` each list, capture the real item shape, and write/adjust the Zod item schemas accordingly
-(e.g. `parentCode` vs `parentId`, timestamps, nested `taxAccount`, the `rate` scale). Schemas stay
-strict on the fields we use; unknown extra fields are tolerated. No money fields here except the
-account balance endpoint, which is out of scope (§5.1).
+`VITE_API_BASE_URL` is already set in `.env` to a reachable live API. First implementation task:
+`GET` each list against it, capture the real item shape, and write/adjust the Zod item schemas
+accordingly (e.g. `parentCode` vs `parentId`, timestamps, nested `taxAccount`). Schemas stay strict
+on the fields we use; unknown extra fields are tolerated. No money fields here except the account
+balance endpoint, which is out of scope (§5.1).
 
 ## 5. Features
 
@@ -166,11 +166,11 @@ account balance endpoint, which is out of scope (§5.1).
   **Rate as %**, Tax account (name), Status. Search by code/name.
 - **Form:** code, name, kind, **rate**, taxAccountId (`AccountSelect`). Create-only: code/kind/
   taxAccountId; edit allows name/rate/isActive.
-- **Rate handling:** the API stores `rate` as a decimal-fraction string. The form shows a **percent**
-  input (user types `11`) and stores the fraction (`"0.11"`), displaying `11%`. **The exact scale is
-  verified at build** by creating a PPN 11% code and checking `POST /tax/calculate` output; if the API
-  expects `"11"`, the one conversion in the rate helper is adjusted. Rate is a string end-to-end (no
-  float; a small `rate.ts` helper does percent⇄fraction on strings).
+- **Rate handling (confirmed):** `rate` is a `Decimal(9,6)` **fraction** string — e.g. `"0.110000"`
+  for 11% PPN — alongside `code`, `name`, `kind`. The form shows a **percent** input (user types `11`),
+  stores the fraction at 6 dp (`"0.110000"`), and displays `11%`. A small `rate.ts` helper does
+  percent⇄fraction on strings at 6 dp (decimal.js, no float); round-trip sanity-checked against
+  `POST /tax/calculate`.
 - **Roles:** create/edit ACCOUNTANT+; deactivate + delete ADMIN.
 
 ### 5.4 Inactive visibility
@@ -198,8 +198,8 @@ is omitted and that is noted in the feature.
 
 - `/accounts`, `/partners`, `/tax-codes` live with role-gated create/edit + ADMIN deactivate/delete.
 - `createResourceHooks` + `applyApiErrorToForm` implemented, tested, and used by all three features.
-- Zod item schemas reconciled against the live API (or recorded fixtures); rate scale verified via
-  `/tax/calculate`.
+- Zod item schemas reconciled against the live API (`VITE_API_BASE_URL` in `.env`); tax `rate` stored
+  as a `Decimal(9,6)` fraction string via the percent⇄fraction helper.
 - COA grouped table + subtype-driven form; partner customer/vendor validation; tax rate as percent.
 - Defensive `403 FORBIDDEN` handled on every mutation; UI role-gated throughout.
 - Green test suite (units + per-feature integration); `pnpm lint && pnpm build` clean.
