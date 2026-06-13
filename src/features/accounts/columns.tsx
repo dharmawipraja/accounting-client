@@ -1,0 +1,46 @@
+import { createColumnHelper } from '@tanstack/react-table';
+import { Badge } from '@/components/ui/badge';
+import { StatusBadge } from '@/components/common/StatusBadge';
+import { RowActions } from '@/components/common/RowActions';
+import type { Messages } from '@/lib/i18n/messages.id';
+import { SUBTYPE_META } from './account-meta';
+import type { Account } from './schema';
+
+const col = createColumnHelper<Account>();
+
+export function buildAccountColumns(
+  t: Messages,
+  handlers: { onEdit: (a: Account) => void; onDeactivate: (a: Account) => void; onDelete: (a: Account) => void },
+) {
+  return [
+    col.accessor('code', { header: t.accounts.code }),
+    col.accessor('name', { header: t.accounts.name }),
+    col.accessor('subtype', {
+      header: t.accounts.subtype,
+      cell: (c) => SUBTYPE_META[c.getValue()]?.label ?? c.getValue(),
+    }),
+    col.accessor('normalBalance', {
+      header: t.accounts.normalBalance,
+      cell: (c) => (
+        <Badge variant="outline">
+          {c.getValue() === 'DEBIT' ? t.accounts.debit : t.accounts.credit}
+        </Badge>
+      ),
+    }),
+    col.accessor('isActive', {
+      header: '',
+      cell: (c) => <StatusBadge active={c.getValue()} />,
+    }),
+    col.display({
+      id: 'actions',
+      header: '',
+      cell: (c) => (
+        <RowActions
+          onEdit={() => handlers.onEdit(c.row.original)}
+          onDeactivate={() => handlers.onDeactivate(c.row.original)}
+          onDelete={() => handlers.onDelete(c.row.original)}
+        />
+      ),
+    }),
+  ];
+}
