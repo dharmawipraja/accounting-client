@@ -170,6 +170,17 @@ function EditForm({ account, open, onOpenChange }: { account: Account; open: boo
       <Field label={t.accounts.name} htmlFor="ename">
         <Input id="ename" {...form.register('name')} />
       </Field>
+      <Field label={t.accounts.cashFlowCategory} htmlFor="ecf">
+        <Select
+          value={form.watch('cashFlowCategory')}
+          onValueChange={(v) => form.setValue('cashFlowCategory', v as AccountEditValues['cashFlowCategory'])}
+        >
+          <SelectTrigger id="ecf" aria-label={t.accounts.cashFlowCategory}><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {CASH_FLOW_OPTIONS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </Field>
       <label className="flex items-center gap-2 text-sm">
         <Checkbox checked={form.watch('isActive')} onCheckedChange={(v) => form.setValue('isActive', v === true)} />
         {t.crud.active}

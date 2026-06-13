@@ -7,6 +7,7 @@ import { API } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
 import { AccountFormDialog } from './AccountFormDialog';
+import type { Account } from './schema';
 
 afterEach(() => useSession.getState().clear());
 
@@ -55,4 +56,31 @@ it('shows a duplicate-code field error on 409', async () => {
   await pickSubtype(user);
   await user.click(screen.getByRole('button', { name: /simpan/i }));
   expect(await screen.findByText(/kode sudah dipakai/i)).toBeInTheDocument();
+});
+
+it('edit form shows cash flow category and submits the updated value', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  let patched: Record<string, unknown> | null = null;
+  server.use(
+    http.patch(`${API}/ledger/accounts/:id`, async ({ request }) => {
+      patched = (await request.json()) as Record<string, unknown>;
+      return HttpResponse.json({
+        id: 'a1', code: '1-1000', name: 'Kas', type: 'ASSET', subtype: 'CURRENT_ASSET',
+        normalBalance: 'DEBIT', isPostable: true, isActive: true, parentCode: null, ...patched,
+      });
+    }),
+  );
+  const account: Account = {
+    id: 'a1', code: '1-1000', name: 'Kas', type: 'ASSET', subtype: 'CURRENT_ASSET',
+    normalBalance: 'DEBIT', cashFlowCategory: 'NONE', isPostable: true, isActive: true, parentCode: null,
+  };
+  renderDialog(<AccountFormDialog open onOpenChange={vi.fn()} mode="edit" account={account} />);
+  // the cash flow category field is visible
+  expect(screen.getByLabelText(/kategori arus kas/i)).toBeInTheDocument();
+  await user.click(screen.getByLabelText(/kategori arus kas/i));
+  await user.click(await screen.findByRole('option', { name: /operating/i }));
+  await user.click(screen.getByRole('button', { name: /simpan/i }));
+  await waitFor(() => expect(patched).toBeTruthy());
+  expect(patched).toMatchObject({ cashFlowCategory: 'OPERATING' });
 });
