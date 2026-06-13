@@ -34,7 +34,7 @@ it('allocates via Lunasi and posts the RECEIPT payload', async () => {
   let posted: Record<string, unknown> | null = null;
   server.use(http.post(`${API}/payments`, async ({ request }) => {
     posted = (await request.json()) as Record<string, unknown>;
-    return HttpResponse.json({ id: 'pay9', paymentNumber: null, paymentRef: null, direction: 'RECEIPT', partnerId: 'p1', date: '2026-06-16T00:00:00.000Z', cashAccountId: 'a1', description: null, status: 'DRAFT', total: '1110000.0000', allocations: [{ salesInvoiceId: 'i1', amount: '1110000.0000' }] });
+    return HttpResponse.json({ id: 'pay9', number: null, ref: null, fiscalYear: null, direction: 'RECEIPT', partnerId: 'p1', date: '2026-06-16T00:00:00.000Z', cashAccountId: 'a1', description: null, status: 'DRAFT', amount: '1110000.0000', allocations: [{ salesInvoiceId: 'i1', amount: '1110000.0000' }] });
   }));
   const onSaved = vi.fn();
   renderForm(<PaymentForm mode="create" onSaved={onSaved} />);
@@ -93,9 +93,9 @@ it('renders a posted payment read-only', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
   commonHandlers();
   const posted: Payment = {
-    id: 'pay1', paymentNumber: 1, paymentRef: 'PAY/2026/000001', direction: 'RECEIPT',
+    id: 'pay1', number: 1, ref: 'PAY-RCV/2026/000001', fiscalYear: 2026, direction: 'RECEIPT',
     partnerId: 'p1', date: '2026-06-16T00:00:00.000Z', cashAccountId: 'a1', description: null,
-    status: 'POSTED', total: '1110000.0000', allocations: [{ salesInvoiceId: 'i1', amount: '1110000.0000' }],
+    status: 'POSTED', amount: '1110000.0000', allocations: [{ salesInvoiceId: 'i1', amount: '1110000.0000' }],
   };
   renderForm(<PaymentForm mode="edit" payment={posted} onSaved={vi.fn()} readOnly />);
 

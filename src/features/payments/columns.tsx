@@ -29,7 +29,7 @@ export function buildPaymentColumns(
   handlers: { onDelete: (p: Payment) => void; onPost: (p: Payment) => void; onVoid: (p: Payment) => void },
 ) {
   return [
-    col.accessor('paymentRef', { header: t.payments.number, cell: (c) => c.getValue() ?? '—' }),
+    col.accessor('ref', { header: t.payments.number, cell: (c) => c.getValue() ?? '—' }),
     col.accessor('partnerId', { header: t.payments.partner, cell: (c) => partnerName(c.getValue()) }),
     col.accessor('date', { header: t.payments.date, cell: (c) => formatDateID(c.getValue().slice(0, 10)) }),
     col.accessor('cashAccountId', { header: t.payments.cashAccount, cell: (c) => accountName(c.getValue()) }),

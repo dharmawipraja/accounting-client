@@ -55,7 +55,7 @@ export function PaymentsPage() {
     const q = search.toLowerCase();
     return (list.data ?? []).filter((p) => {
       if (status !== 'ALL' && p.status !== status && !(status === 'VOID' && p.status.startsWith('VOID'))) return false;
-      return !q || (p.paymentRef ?? '').toLowerCase().includes(q) || partnerName(p.partnerId).toLowerCase().includes(q);
+      return !q || (p.ref ?? '').toLowerCase().includes(q) || partnerName(p.partnerId).toLowerCase().includes(q);
     });
   }, [list.data, search, status, partnerName]);
 
