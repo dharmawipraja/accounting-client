@@ -3,13 +3,21 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { afterEach, expect, it } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
+import { toast } from 'sonner';
 import { API } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
+import { id as messages } from '@/lib/i18n/messages.id';
 import { SalesInvoicesPage } from './SalesInvoicesPage';
 
+vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
+
 afterEach(() => useSession.getState().clear());
+
+const onePartner = [{ id: 'p1', code: 'CUST-1', name: 'Toko A', isCustomer: true, isVendor: false, isActive: true }];
+const draftInvoice = { id: 'i1', invoiceNumber: null, invoiceRef: null, partnerId: 'p1', date: '2026-06-13T00:00:00.000Z', dueDate: null, description: 'x', status: 'DRAFT', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [] };
+const postedInvoice = { ...draftInvoice, id: 'i2', invoiceNumber: 1, invoiceRef: 'INV/2026/000001', status: 'POSTED' };
 
 function renderPage() {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -52,6 +60,66 @@ it('deletes a draft after confirm (ACCOUNTANT)', async () => {
   const dialog = await screen.findByRole('alertdialog');
   await user.click(within(dialog).getByRole('button', { name: /hapus/i })); // confirm
   await waitFor(() => expect(deleted).toBe(true));
+});
+
+it('APPROVER can post a draft (idempotency key sent); ACCOUNTANT cannot post', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  server.use(
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json([draftInvoice])),
+    http.get(`${API}/partners`, () => HttpResponse.json(onePartner)),
+  );
+  const { unmount } = renderPage();
+  await screen.findByText('Toko A');
+  expect(screen.queryByRole('button', { name: 'Posting' })).not.toBeInTheDocument();
+  unmount();
+
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  let seenKey: string | null = null;
+  server.use(
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json([draftInvoice])),
+    http.get(`${API}/partners`, () => HttpResponse.json(onePartner)),
+    http.post(`${API}/sales-invoices/i1/post`, ({ request }) => { seenKey = request.headers.get('Idempotency-Key'); return HttpResponse.json({ ...draftInvoice, status: 'POSTED', invoiceNumber: 1, invoiceRef: 'INV/2026/000001' }); }),
+  );
+  renderPage();
+  await screen.findByText('Toko A');
+  await user.click(screen.getByRole('button', { name: 'Posting' }));
+  const dialog = await screen.findByRole('alertdialog');
+  await user.click(within(dialog).getByRole('button', { name: 'Posting' }));
+  await waitFor(() => expect(seenKey).toBeTruthy());
+});
+
+it('shows the SoD message when post returns 403 SEGREGATION_OF_DUTIES', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  server.use(
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json([draftInvoice])),
+    http.get(`${API}/partners`, () => HttpResponse.json(onePartner)),
+    http.post(`${API}/sales-invoices/i1/post`, () => HttpResponse.json({ code: 'SEGREGATION_OF_DUTIES', message: 'no self-approve' }, { status: 403 })),
+  );
+  renderPage();
+  await screen.findByText('Toko A');
+  await user.click(screen.getByRole('button', { name: 'Posting' }));
+  const dialog = await screen.findByRole('alertdialog');
+  await user.click(within(dialog).getByRole('button', { name: 'Posting' }));
+  await waitFor(() => expect(toast.error).toHaveBeenCalledWith(messages.roles.segregationOfDuties));
+});
+
+it('APPROVER can void a posted invoice', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  let voided = false;
+  server.use(
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json([postedInvoice])),
+    http.get(`${API}/partners`, () => HttpResponse.json(onePartner)),
+    http.post(`${API}/sales-invoices/i2/void`, () => { voided = true; return HttpResponse.json({ ...postedInvoice, status: 'VOID' }); }),
+  );
+  renderPage();
+  await screen.findByText('Toko A');
+  await user.click(screen.getByRole('button', { name: 'Batalkan' }));
+  const dialog = await screen.findByRole('alertdialog');
+  await user.click(within(dialog).getByRole('button', { name: 'Batalkan' }));
+  await waitFor(() => expect(voided).toBe(true));
 });
 
 it('hides New for VIEWER', async () => {

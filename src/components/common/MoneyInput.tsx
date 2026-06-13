@@ -6,6 +6,7 @@ interface MoneyInputProps {
   'aria-label'?: string;
   id?: string;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 /** Keeps the raw decimal string; only allows digits, one dot, and a leading minus. */

@@ -22,10 +22,11 @@ export function InvoiceEditorPage({ id }: { id?: string }) {
   }
   if (item.isLoading) return <Skeleton className="h-96 w-full" />;
   if (item.isError || !item.data) return <ErrorState error={item.error} />;
+  const readOnly = item.data.status !== 'DRAFT';
   return (
     <div>
-      <PageHeader title={t.salesInvoices.editInvoice} />
-      <InvoiceForm mode="edit" invoice={item.data} onSaved={goList} />
+      <PageHeader title={readOnly ? t.salesInvoices.view : t.salesInvoices.editInvoice} />
+      <InvoiceForm mode="edit" invoice={item.data} onSaved={goList} readOnly={readOnly} />
     </div>
   );
 }

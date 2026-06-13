@@ -34,9 +34,10 @@ interface Props {
   invoice?: SalesInvoice;
   onSaved: () => void;
   startEmpty?: boolean;
+  readOnly?: boolean;
 }
 
-export function InvoiceForm({ mode, invoice, onSaved, startEmpty }: Props) {
+export function InvoiceForm({ mode, invoice, onSaved, startEmpty, readOnly }: Props) {
   const t = useT();
   const create = salesInvoicesApi.useCreate();
   const update = salesInvoicesApi.useUpdate();
@@ -78,22 +79,28 @@ export function InvoiceForm({ mode, invoice, onSaved, startEmpty }: Props) {
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
+      {readOnly ? (
+        <div className="rounded-md border border-muted bg-muted/40 px-4 py-2 text-sm text-muted-foreground">
+          {invoice?.status === 'VOID' ? t.salesInvoices.readOnlyVoid : t.salesInvoices.readOnlyPosted}
+          {invoice?.invoiceRef ? ` (${invoice.invoiceRef})` : ''}
+        </div>
+      ) : null}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <div className="space-y-1.5">
           <Label>{t.salesInvoices.partner}</Label>
-          <PartnerSelect value={form.watch('partnerId')} onChange={(id) => form.setValue('partnerId', id, { shouldValidate: true })} filter="customer" aria-label={t.salesInvoices.partner} placeholder={t.salesInvoices.selectPartner} />
+          <PartnerSelect value={form.watch('partnerId')} onChange={(id) => form.setValue('partnerId', id, { shouldValidate: true })} filter="customer" aria-label={t.salesInvoices.partner} placeholder={t.salesInvoices.selectPartner} disabled={readOnly} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="date">{t.salesInvoices.date}</Label>
-          <Input id="date" type="date" aria-label={t.salesInvoices.date} {...form.register('date')} />
+          <Input id="date" type="date" aria-label={t.salesInvoices.date} disabled={readOnly} {...form.register('date')} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="dueDate">{t.salesInvoices.dueDate}</Label>
-          <Input id="dueDate" type="date" aria-label={t.salesInvoices.dueDate} {...form.register('dueDate')} />
+          <Input id="dueDate" type="date" aria-label={t.salesInvoices.dueDate} disabled={readOnly} {...form.register('dueDate')} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="desc">{t.salesInvoices.description}</Label>
-          <Input id="desc" aria-label={t.salesInvoices.description} {...form.register('description')} />
+          <Input id="desc" aria-label={t.salesInvoices.description} disabled={readOnly} {...form.register('description')} />
         </div>
       </div>
 
@@ -112,16 +119,18 @@ export function InvoiceForm({ mode, invoice, onSaved, startEmpty }: Props) {
           </TableHeader>
           <TableBody>
             {lines.fields.map((f, i) => (
-              <InvoiceLineRow key={f.id} form={form} index={i} onRemove={() => lines.remove(i)} />
+              <InvoiceLineRow key={f.id} form={form} index={i} onRemove={() => lines.remove(i)} readOnly={readOnly} />
             ))}
           </TableBody>
         </Table>
       </div>
 
       <div className="flex items-start justify-between gap-4">
-        <Button type="button" variant="outline" onClick={() => lines.append({ ...EMPTY_LINE })}>
-          <Plus className="size-4" /> {t.salesInvoices.addLine}
-        </Button>
+        {readOnly ? <div /> : (
+          <Button type="button" variant="outline" onClick={() => lines.append({ ...EMPTY_LINE })}>
+            <Plus className="size-4" /> {t.salesInvoices.addLine}
+          </Button>
+        )}
         <InvoiceTotals settlementAccountId={arAccountId} lines={previewLines} />
       </div>
 
@@ -140,7 +149,9 @@ export function InvoiceForm({ mode, invoice, onSaved, startEmpty }: Props) {
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onSaved}>{t.common.cancel}</Button>
-        <Button type="submit" disabled={create.isPending || update.isPending}>{t.salesInvoices.saveDraft}</Button>
+        {readOnly ? null : (
+          <Button type="submit" disabled={create.isPending || update.isPending}>{t.salesInvoices.saveDraft}</Button>
+        )}
       </div>
     </form>
   );

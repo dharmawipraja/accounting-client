@@ -12,7 +12,7 @@ import type { InvoiceFormValues } from './schema';
 
 const SALE_KINDS = ['PPN_OUTPUT', 'PPH_PREPAID'];
 
-export function InvoiceLineRow({ form, index, onRemove }: { form: UseFormReturn<InvoiceFormValues>; index: number; onRemove: () => void }) {
+export function InvoiceLineRow({ form, index, onRemove, readOnly }: { form: UseFormReturn<InvoiceFormValues>; index: number; onRemove: () => void; readOnly?: boolean }) {
   const t = useT();
   const line = form.watch(`lines.${index}`);
   const amount = (() => {
@@ -22,19 +22,19 @@ export function InvoiceLineRow({ form, index, onRemove }: { form: UseFormReturn<
 
   return (
     <TableRow>
-      <TableCell><Input aria-label={t.salesInvoices.lineDescription} {...form.register(`lines.${index}.description`)} /></TableCell>
+      <TableCell><Input aria-label={t.salesInvoices.lineDescription} disabled={readOnly} {...form.register(`lines.${index}.description`)} /></TableCell>
       <TableCell className="min-w-48">
-        <AccountSelect value={line.accountId} onChange={(id) => form.setValue(`lines.${index}.accountId`, id, { shouldValidate: true })} aria-label={t.salesInvoices.account} placeholder={t.salesInvoices.selectAccount} />
+        <AccountSelect value={line.accountId} onChange={(id) => form.setValue(`lines.${index}.accountId`, id, { shouldValidate: true })} aria-label={t.salesInvoices.account} placeholder={t.salesInvoices.selectAccount} disabled={readOnly} />
       </TableCell>
-      <TableCell className="w-20"><Input className="text-right" inputMode="decimal" aria-label={t.salesInvoices.quantity} {...form.register(`lines.${index}.quantity`)} /></TableCell>
+      <TableCell className="w-20"><Input className="text-right" inputMode="decimal" aria-label={t.salesInvoices.quantity} disabled={readOnly} {...form.register(`lines.${index}.quantity`)} /></TableCell>
       <TableCell className="w-32">
-        <MoneyInput value={line.unitPrice} onChange={(v) => form.setValue(`lines.${index}.unitPrice`, v)} aria-label={t.salesInvoices.unitPrice} />
+        <MoneyInput value={line.unitPrice} onChange={(v) => form.setValue(`lines.${index}.unitPrice`, v)} aria-label={t.salesInvoices.unitPrice} disabled={readOnly} />
       </TableCell>
       <TableCell className="min-w-40">
-        <TaxCodeMultiSelect value={line.taxCodeIds} onChange={(ids) => form.setValue(`lines.${index}.taxCodeIds`, ids)} allowedKinds={SALE_KINDS} aria-label={t.salesInvoices.taxes} />
+        <TaxCodeMultiSelect value={line.taxCodeIds} onChange={(ids) => form.setValue(`lines.${index}.taxCodeIds`, ids)} allowedKinds={SALE_KINDS} aria-label={t.salesInvoices.taxes} disabled={readOnly} />
       </TableCell>
       <TableCell className="text-right font-mono tabular-nums">{amount}</TableCell>
-      <TableCell><Button type="button" variant="ghost" size="icon" aria-label={t.salesInvoices.removeLine} onClick={onRemove}><Trash2 className="size-4" /></Button></TableCell>
+      <TableCell>{readOnly ? null : <Button type="button" variant="ghost" size="icon" aria-label={t.salesInvoices.removeLine} onClick={onRemove}><Trash2 className="size-4" /></Button>}</TableCell>
     </TableRow>
   );
 }

@@ -47,6 +47,8 @@ export const id = {
     confirmDeleteDesc: 'Tindakan ini tidak dapat dibatalkan.',
     duplicateCode: 'Kode sudah dipakai',
     includeInactive: 'Tampilkan nonaktif',
+    closedPeriod: 'Periode sudah ditutup',
+    closedYear: 'Tahun buku sudah ditutup',
   },
   accounts: {
     title: 'Bagan Akun',
@@ -135,6 +137,17 @@ export const id = {
     required: 'Wajib diisi',
     draft: 'Draf',
     saveDraft: 'Simpan Draf',
+    post: 'Posting',
+    void: 'Batalkan',
+    view: 'Lihat',
+    confirmPostTitle: 'Posting faktur ini?',
+    confirmPostDesc: 'Faktur akan diposting ke buku besar dan tidak bisa diubah lagi.',
+    confirmVoidTitle: 'Batalkan faktur ini?',
+    confirmVoidDesc: 'Posting akan dibalik (jurnal pembalik dibuat).',
+    posted: 'Faktur diposting',
+    voided: 'Faktur dibatalkan',
+    readOnlyPosted: 'Faktur sudah diposting — hanya-baca.',
+    readOnlyVoid: 'Faktur dibatalkan — hanya-baca.',
   },
 } as const;
 
