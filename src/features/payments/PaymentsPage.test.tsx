@@ -16,8 +16,8 @@ afterEach(() => useSession.getState().clear());
 
 const partners = [{ id: 'p1', code: 'CUST-1', name: 'Toko A', isCustomer: true, isVendor: false, isActive: true }];
 const accounts = [{ id: 'a1', code: '1-1000', name: 'Kas', type: 'ASSET', subtype: 'CURRENT_ASSET', normalBalance: 'DEBIT', isPostable: true, isActive: true, parentId: null }];
-const draftPayment = { id: 'pay1', paymentNumber: null, paymentRef: null, direction: 'RECEIPT', partnerId: 'p1', date: '2026-06-16T00:00:00.000Z', cashAccountId: 'a1', description: 'x', status: 'DRAFT', total: '1110000.0000', allocations: [{ salesInvoiceId: 'i1', amount: '1110000.0000' }] };
-const postedPayment = { ...draftPayment, status: 'POSTED', paymentNumber: 1, paymentRef: 'PAY/2026/000001' };
+const draftPayment = { id: 'pay1', number: null, ref: null, fiscalYear: null, direction: 'RECEIPT', partnerId: 'p1', date: '2026-06-16T00:00:00.000Z', cashAccountId: 'a1', description: 'x', status: 'DRAFT', amount: '1110000.0000', allocations: [{ salesInvoiceId: 'i1', amount: '1110000.0000' }] };
+const postedPayment = { ...draftPayment, status: 'POSTED', number: 1, ref: 'PAY-RCV/2026/000001', fiscalYear: 2026 };
 
 function renderPage() {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -50,7 +50,7 @@ it('APPROVER posts a draft payment with an idempotency key', async () => {
     http.get(`${API}/payments`, () => HttpResponse.json([draftPayment])),
     http.get(`${API}/partners`, () => HttpResponse.json(partners)),
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
-    http.post(`${API}/payments/pay1/post`, ({ request }) => { seenKey = request.headers.get('Idempotency-Key'); return HttpResponse.json({ ...draftPayment, status: 'POSTED', paymentNumber: 1, paymentRef: 'PAY/2026/000001' }); }),
+    http.post(`${API}/payments/pay1/post`, ({ request }) => { seenKey = request.headers.get('Idempotency-Key'); return HttpResponse.json({ ...draftPayment, status: 'POSTED', number: 1, ref: 'PAY-RCV/2026/000001', fiscalYear: 2026 }); }),
   );
   renderPage();
   await screen.findByText('Toko A');

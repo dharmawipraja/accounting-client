@@ -87,7 +87,7 @@ export function PaymentForm({ mode, payment, onSaved, readOnly }: Props) {
       {readOnly ? (
         <div className="rounded-md border border-muted bg-muted/40 px-4 py-2 text-sm text-muted-foreground">
           {payment?.status === 'VOID' ? t.payments.readOnlyVoid : t.payments.readOnlyPosted}
-          {payment?.paymentRef ? ` (${payment.paymentRef})` : ''}
+          {payment?.ref ? ` (${payment.ref})` : ''}
         </div>
       ) : null}
 
