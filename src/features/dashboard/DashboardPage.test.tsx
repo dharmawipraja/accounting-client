@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { startOfMonth } from 'date-fns';
 import { http, HttpResponse } from 'msw';
@@ -66,4 +66,25 @@ it('shows an error + retry when cash-flow fails, leaving other cards intact', as
   expect(screen.getByText('Rp 1.500.000')).toBeInTheDocument(); // totalAssets unaffected
   await user.click(screen.getByRole('button', { name: /coba lagi/i }));
   expect(await screen.findByText('Rp 1.234.000')).toBeInTheDocument(); // Kas Akhir after retry
+});
+
+it('disables the period queries and shows a hint when the custom range is invalid', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  const seenFrom: string[] = [];
+  server.use(
+    http.get(`${API}/reports/income-statement`, ({ request }) => {
+      const from = new URL(request.url).searchParams.get('from') ?? '';
+      seenFrom.push(from);
+      return HttpResponse.json({ from, to: '2026-06-30', revenue: '2000000.0000', netIncome: '1750000.0000' });
+    }),
+  );
+  renderPage();
+  await screen.findByText('Rp 1.750.000'); // initial (valid) load fired
+  await user.click(screen.getByRole('button', { name: 'Kustom' }));
+  // 'Dari' after the current 'Sampai' (today) makes the range invalid.
+  fireEvent.change(screen.getByLabelText('Dari'), { target: { value: '2026-12-01' } });
+  expect(await screen.findByText(/harus sebelum/i)).toBeInTheDocument();
+  // The disabled query must never have requested the invalid 'from'.
+  expect(seenFrom).not.toContain('2026-12-01');
 });
