@@ -4,7 +4,9 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
 import { DataTable } from '@/components/common/DataTable';
+import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { ErrorState } from '@/components/common/ErrorState';
 import { PageHeader } from '@/components/common/PageHeader';
 import { RoleGate } from '@/components/common/RoleGate';
@@ -12,6 +14,7 @@ import { useT } from '@/lib/i18n/useT';
 import { partnersApi } from '@/features/partners/hooks';
 import { buildInvoiceColumns } from './columns';
 import { salesInvoicesApi } from './hooks';
+import type { SalesInvoice } from './schema';
 
 const STATUSES = ['ALL', 'DRAFT', 'POSTED', 'VOID'] as const;
 
@@ -19,15 +22,20 @@ export function SalesInvoicesPage() {
   const t = useT();
   const list = salesInvoicesApi.useList();
   const partners = partnersApi.useList();
+  const remove = salesInvoicesApi.useRemove();
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<(typeof STATUSES)[number]>('ALL');
+  const [toDelete, setToDelete] = useState<SalesInvoice | null>(null);
 
   const partnerName = useMemo(() => {
     const map = new Map((partners.data ?? []).map((p) => [p.id, p.name]));
     return (id: string) => map.get(id) ?? id;
   }, [partners.data]);
 
-  const columns = useMemo(() => buildInvoiceColumns(t, partnerName), [t, partnerName]);
+  const columns = useMemo(
+    () => buildInvoiceColumns(t, partnerName, (inv) => setToDelete(inv)),
+    [t, partnerName],
+  );
 
   const rows = useMemo(() => {
     const q = search.toLowerCase();
@@ -59,6 +67,23 @@ export function SalesInvoicesPage() {
       {list.isLoading ? <Skeleton className="h-40 w-full" />
         : list.isError ? <ErrorState error={list.error} />
         : <DataTable columns={columns} data={rows} />}
+
+      <ConfirmDialog
+        open={!!toDelete}
+        onOpenChange={(o) => !o && setToDelete(null)}
+        title={t.crud.confirmDeleteTitle}
+        description={t.crud.confirmDeleteDesc}
+        confirmLabel={t.common.delete}
+        destructive
+        pending={remove.isPending}
+        onConfirm={() => {
+          if (!toDelete) return;
+          remove.mutate(toDelete.id, {
+            onSuccess: () => { toast.success(t.crud.deleted); setToDelete(null); },
+            onError: () => toast.error(t.common.error),
+          });
+        }}
+      />
     </div>
   );
 }

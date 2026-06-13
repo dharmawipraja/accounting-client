@@ -16,7 +16,11 @@ function statusLabel(t: Messages, status: string): string {
   return t.salesInvoices.statusVoid;
 }
 
-export function buildInvoiceColumns(t: Messages, partnerName: (id: string) => string) {
+export function buildInvoiceColumns(
+  t: Messages,
+  partnerName: (id: string) => string,
+  onDelete: (inv: SalesInvoice) => void,
+) {
   return [
     col.accessor('invoiceNumber', { header: t.salesInvoices.number, cell: (c) => c.getValue() ?? '—' }),
     col.accessor('partnerId', { header: t.salesInvoices.partner, cell: (c) => partnerName(c.getValue()) }),
@@ -29,13 +33,18 @@ export function buildInvoiceColumns(t: Messages, partnerName: (id: string) => st
     col.display({
       id: 'actions',
       header: '',
-      // 3a: draft Edit link (ACCOUNTANT+). Delete/Post/Void row actions are added in Plan 3b.
+      // 3a: draft Edit + Delete (ACCOUNTANT+). Post/Void row actions are added in Plan 3b.
       cell: (c) =>
         c.row.original.status === 'DRAFT' ? (
           <RoleGate allow={['ACCOUNTANT', 'APPROVER', 'ADMIN']}>
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/sales-invoices/$id/edit" params={{ id: c.row.original.id }}>{t.common.edit}</Link>
-            </Button>
+            <div className="flex justify-end gap-1">
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/sales-invoices/$id/edit" params={{ id: c.row.original.id }}>{t.common.edit}</Link>
+              </Button>
+              <Button variant="ghost" size="sm" className="text-destructive" onClick={() => onDelete(c.row.original)}>
+                {t.common.delete}
+              </Button>
+            </div>
           </RoleGate>
         ) : null,
     }),
