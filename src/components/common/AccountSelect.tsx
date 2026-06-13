@@ -14,9 +14,10 @@ interface AccountSelectProps {
   onChange: (id: string) => void;
   disabled?: boolean;
   placeholder?: string;
+  'aria-label'?: string;
 }
 
-export function AccountSelect({ value, onChange, disabled, placeholder }: AccountSelectProps) {
+export function AccountSelect({ value, onChange, disabled, placeholder, 'aria-label': ariaLabel }: AccountSelectProps) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const list = accountsApi.useList();
@@ -38,6 +39,7 @@ export function AccountSelect({ value, onChange, disabled, placeholder }: Accoun
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          aria-label={ariaLabel}
           disabled={disabled}
           className="w-full justify-between font-normal"
         >
