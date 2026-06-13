@@ -1,9 +1,2 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { PageHeader } from '@/components/common/PageHeader';
-import { useT } from '@/lib/i18n/useT';
-
-export const Route = createFileRoute('/_app/payments')({
-  component: function PaymentsRoute() {
-    return <PageHeader title={useT().nav.payments} />;
-  },
-});
+import { createFileRoute, Outlet } from '@tanstack/react-router';
+export const Route = createFileRoute('/_app/payments')({ component: () => <Outlet /> });
