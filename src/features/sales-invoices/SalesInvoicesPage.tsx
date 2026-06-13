@@ -11,21 +11,26 @@ import { ErrorState } from '@/components/common/ErrorState';
 import { PageHeader } from '@/components/common/PageHeader';
 import { RoleGate } from '@/components/common/RoleGate';
 import { useT } from '@/lib/i18n/useT';
+import { toastApiError } from '@/lib/api/toastApiError';
 import { partnersApi } from '@/features/partners/hooks';
 import { buildInvoiceColumns } from './columns';
-import { salesInvoicesApi } from './hooks';
+import { salesInvoicesApi, usePostInvoice, useVoidInvoice } from './hooks';
 import type { SalesInvoice } from './schema';
 
 const STATUSES = ['ALL', 'DRAFT', 'POSTED', 'VOID'] as const;
+
+type PendingAction = { kind: 'delete' | 'post' | 'void'; invoice: SalesInvoice; idempotencyKey?: string };
 
 export function SalesInvoicesPage() {
   const t = useT();
   const list = salesInvoicesApi.useList();
   const partners = partnersApi.useList();
   const remove = salesInvoicesApi.useRemove();
+  const post = usePostInvoice();
+  const voidInvoice = useVoidInvoice();
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<(typeof STATUSES)[number]>('ALL');
-  const [toDelete, setToDelete] = useState<SalesInvoice | null>(null);
+  const [action, setAction] = useState<PendingAction | null>(null);
 
   const partnerName = useMemo(() => {
     const map = new Map((partners.data ?? []).map((p) => [p.id, p.name]));
@@ -33,9 +38,31 @@ export function SalesInvoicesPage() {
   }, [partners.data]);
 
   const columns = useMemo(
-    () => buildInvoiceColumns(t, partnerName, (inv) => setToDelete(inv)),
+    () => buildInvoiceColumns(t, partnerName, {
+      onDelete: (inv) => setAction({ kind: 'delete', invoice: inv }),
+      onPost: (inv) => setAction({ kind: 'post', invoice: inv, idempotencyKey: crypto.randomUUID() }),
+      onVoid: (inv) => setAction({ kind: 'void', invoice: inv, idempotencyKey: crypto.randomUUID() }),
+    }),
     [t, partnerName],
   );
+
+  function runAction() {
+    if (!action) return;
+    const close = () => setAction(null);
+    if (action.kind === 'delete') {
+      remove.mutate(action.invoice.id, { onSuccess: () => { toast.success(t.crud.deleted); close(); }, onError: () => toast.error(t.common.error) });
+    } else if (action.kind === 'post') {
+      post.mutate({ id: action.invoice.id, idempotencyKey: action.idempotencyKey! }, { onSuccess: () => { toast.success(t.salesInvoices.posted); close(); }, onError: (e) => { toastApiError(e, t); close(); } });
+    } else {
+      voidInvoice.mutate({ id: action.invoice.id, idempotencyKey: action.idempotencyKey! }, { onSuccess: () => { toast.success(t.salesInvoices.voided); close(); }, onError: (e) => { toastApiError(e, t); close(); } });
+    }
+  }
+
+  const confirmCopy = {
+    delete: { title: t.crud.confirmDeleteTitle, desc: t.crud.confirmDeleteDesc, label: t.common.delete },
+    post: { title: t.salesInvoices.confirmPostTitle, desc: t.salesInvoices.confirmPostDesc, label: t.salesInvoices.post },
+    void: { title: t.salesInvoices.confirmVoidTitle, desc: t.salesInvoices.confirmVoidDesc, label: t.salesInvoices.void },
+  } as const;
 
   const rows = useMemo(() => {
     const q = search.toLowerCase();
@@ -69,20 +96,14 @@ export function SalesInvoicesPage() {
         : <DataTable columns={columns} data={rows} />}
 
       <ConfirmDialog
-        open={!!toDelete}
-        onOpenChange={(o) => !o && setToDelete(null)}
-        title={t.crud.confirmDeleteTitle}
-        description={t.crud.confirmDeleteDesc}
-        confirmLabel={t.common.delete}
-        destructive
-        pending={remove.isPending}
-        onConfirm={() => {
-          if (!toDelete) return;
-          remove.mutate(toDelete.id, {
-            onSuccess: () => { toast.success(t.crud.deleted); setToDelete(null); },
-            onError: () => toast.error(t.common.error),
-          });
-        }}
+        open={!!action}
+        onOpenChange={(o) => !o && setAction(null)}
+        title={action ? confirmCopy[action.kind].title : ''}
+        description={action ? confirmCopy[action.kind].desc : undefined}
+        confirmLabel={action ? confirmCopy[action.kind].label : ''}
+        destructive={action?.kind !== 'post'}
+        pending={remove.isPending || post.isPending || voidInvoice.isPending}
+        onConfirm={runAction}
       />
     </div>
   );

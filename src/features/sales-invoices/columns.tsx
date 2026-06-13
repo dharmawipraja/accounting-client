@@ -19,7 +19,7 @@ function statusLabel(t: Messages, status: string): string {
 export function buildInvoiceColumns(
   t: Messages,
   partnerName: (id: string) => string,
-  onDelete: (inv: SalesInvoice) => void,
+  handlers: { onDelete: (inv: SalesInvoice) => void; onPost: (inv: SalesInvoice) => void; onVoid: (inv: SalesInvoice) => void },
 ) {
   return [
     col.accessor('invoiceRef', { header: t.salesInvoices.number, cell: (c) => c.getValue() ?? '—' }),
@@ -33,20 +33,37 @@ export function buildInvoiceColumns(
     col.display({
       id: 'actions',
       header: '',
-      // 3a: draft Edit + Delete (ACCOUNTANT+). Post/Void row actions are added in Plan 3b.
-      cell: (c) =>
-        c.row.original.status === 'DRAFT' ? (
-          <RoleGate allow={['ACCOUNTANT', 'APPROVER', 'ADMIN']}>
-            <div className="flex justify-end gap-1">
-              <Button asChild variant="ghost" size="sm">
-                <Link to="/sales-invoices/$id/edit" params={{ id: c.row.original.id }}>{t.common.edit}</Link>
-              </Button>
-              <Button variant="ghost" size="sm" className="text-destructive" onClick={() => onDelete(c.row.original)}>
-                {t.common.delete}
-              </Button>
-            </div>
-          </RoleGate>
-        ) : null,
+      cell: (c) => {
+        const inv = c.row.original;
+        return (
+          <div className="flex justify-end gap-1">
+            {inv.status === 'DRAFT' ? (
+              <>
+                <RoleGate allow={['ACCOUNTANT', 'APPROVER', 'ADMIN']}>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link to="/sales-invoices/$id/edit" params={{ id: inv.id }}>{t.common.edit}</Link>
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-destructive" onClick={() => handlers.onDelete(inv)}>{t.common.delete}</Button>
+                </RoleGate>
+                <RoleGate allow={['APPROVER', 'ADMIN']}>
+                  <Button variant="ghost" size="sm" onClick={() => handlers.onPost(inv)}>{t.salesInvoices.post}</Button>
+                </RoleGate>
+              </>
+            ) : (
+              <>
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/sales-invoices/$id/edit" params={{ id: inv.id }}>{t.salesInvoices.view}</Link>
+                </Button>
+                {inv.status === 'POSTED' ? (
+                  <RoleGate allow={['APPROVER', 'ADMIN']}>
+                    <Button variant="ghost" size="sm" className="text-destructive" onClick={() => handlers.onVoid(inv)}>{t.salesInvoices.void}</Button>
+                  </RoleGate>
+                ) : null}
+              </>
+            )}
+          </div>
+        );
+      },
     }),
   ];
 }
