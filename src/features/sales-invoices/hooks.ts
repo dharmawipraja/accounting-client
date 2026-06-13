@@ -1,4 +1,5 @@
 import { createResourceHooks } from '@/lib/crud/createResourceHooks';
+import { useDocumentAction } from '@/lib/crud/useDocumentAction';
 import {
   salesInvoiceSchema,
   type SalesInvoice,
@@ -15,3 +16,6 @@ export const salesInvoicesApi = createResourceHooks<
   basePath: '/sales-invoices',
   itemSchema: salesInvoiceSchema,
 });
+
+export const usePostInvoice = () => useDocumentAction({ key: 'salesInvoices', basePath: '/sales-invoices', action: 'post' });
+export const useVoidInvoice = () => useDocumentAction({ key: 'salesInvoices', basePath: '/sales-invoices', action: 'void' });
