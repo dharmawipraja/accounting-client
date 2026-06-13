@@ -18,6 +18,9 @@ import { Route as AppPaymentsRouteImport } from './app/routes/_app/payments'
 import { Route as AppPartnersRouteImport } from './app/routes/_app/partners'
 import { Route as AppDashboardRouteImport } from './app/routes/_app/dashboard'
 import { Route as AppAccountsRouteImport } from './app/routes/_app/accounts'
+import { Route as AppSalesInvoicesIndexRouteImport } from './app/routes/_app/sales-invoices.index'
+import { Route as AppSalesInvoicesNewRouteImport } from './app/routes/_app/sales-invoices.new'
+import { Route as AppSalesInvoicesIdEditRouteImport } from './app/routes/_app/sales-invoices.$id.edit'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -63,6 +66,21 @@ const AppAccountsRoute = AppAccountsRouteImport.update({
   path: '/accounts',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSalesInvoicesIndexRoute = AppSalesInvoicesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppSalesInvoicesRoute,
+} as any)
+const AppSalesInvoicesNewRoute = AppSalesInvoicesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppSalesInvoicesRoute,
+} as any)
+const AppSalesInvoicesIdEditRoute = AppSalesInvoicesIdEditRouteImport.update({
+  id: '/$id/edit',
+  path: '/$id/edit',
+  getParentRoute: () => AppSalesInvoicesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -71,8 +89,11 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AppDashboardRoute
   '/partners': typeof AppPartnersRoute
   '/payments': typeof AppPaymentsRoute
-  '/sales-invoices': typeof AppSalesInvoicesRoute
+  '/sales-invoices': typeof AppSalesInvoicesRouteWithChildren
   '/tax-codes': typeof AppTaxCodesRoute
+  '/sales-invoices/new': typeof AppSalesInvoicesNewRoute
+  '/sales-invoices/': typeof AppSalesInvoicesIndexRoute
+  '/sales-invoices/$id/edit': typeof AppSalesInvoicesIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -81,8 +102,10 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AppDashboardRoute
   '/partners': typeof AppPartnersRoute
   '/payments': typeof AppPaymentsRoute
-  '/sales-invoices': typeof AppSalesInvoicesRoute
   '/tax-codes': typeof AppTaxCodesRoute
+  '/sales-invoices/new': typeof AppSalesInvoicesNewRoute
+  '/sales-invoices': typeof AppSalesInvoicesIndexRoute
+  '/sales-invoices/$id/edit': typeof AppSalesInvoicesIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -93,8 +116,11 @@ export interface FileRoutesById {
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/partners': typeof AppPartnersRoute
   '/_app/payments': typeof AppPaymentsRoute
-  '/_app/sales-invoices': typeof AppSalesInvoicesRoute
+  '/_app/sales-invoices': typeof AppSalesInvoicesRouteWithChildren
   '/_app/tax-codes': typeof AppTaxCodesRoute
+  '/_app/sales-invoices/new': typeof AppSalesInvoicesNewRoute
+  '/_app/sales-invoices/': typeof AppSalesInvoicesIndexRoute
+  '/_app/sales-invoices/$id/edit': typeof AppSalesInvoicesIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -107,6 +133,9 @@ export interface FileRouteTypes {
     | '/payments'
     | '/sales-invoices'
     | '/tax-codes'
+    | '/sales-invoices/new'
+    | '/sales-invoices/'
+    | '/sales-invoices/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -115,8 +144,10 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/partners'
     | '/payments'
-    | '/sales-invoices'
     | '/tax-codes'
+    | '/sales-invoices/new'
+    | '/sales-invoices'
+    | '/sales-invoices/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -128,6 +159,9 @@ export interface FileRouteTypes {
     | '/_app/payments'
     | '/_app/sales-invoices'
     | '/_app/tax-codes'
+    | '/_app/sales-invoices/new'
+    | '/_app/sales-invoices/'
+    | '/_app/sales-invoices/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -201,15 +235,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAccountsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/sales-invoices/': {
+      id: '/_app/sales-invoices/'
+      path: '/'
+      fullPath: '/sales-invoices/'
+      preLoaderRoute: typeof AppSalesInvoicesIndexRouteImport
+      parentRoute: typeof AppSalesInvoicesRoute
+    }
+    '/_app/sales-invoices/new': {
+      id: '/_app/sales-invoices/new'
+      path: '/new'
+      fullPath: '/sales-invoices/new'
+      preLoaderRoute: typeof AppSalesInvoicesNewRouteImport
+      parentRoute: typeof AppSalesInvoicesRoute
+    }
+    '/_app/sales-invoices/$id/edit': {
+      id: '/_app/sales-invoices/$id/edit'
+      path: '/$id/edit'
+      fullPath: '/sales-invoices/$id/edit'
+      preLoaderRoute: typeof AppSalesInvoicesIdEditRouteImport
+      parentRoute: typeof AppSalesInvoicesRoute
+    }
   }
 }
+
+interface AppSalesInvoicesRouteChildren {
+  AppSalesInvoicesNewRoute: typeof AppSalesInvoicesNewRoute
+  AppSalesInvoicesIndexRoute: typeof AppSalesInvoicesIndexRoute
+  AppSalesInvoicesIdEditRoute: typeof AppSalesInvoicesIdEditRoute
+}
+
+const AppSalesInvoicesRouteChildren: AppSalesInvoicesRouteChildren = {
+  AppSalesInvoicesNewRoute: AppSalesInvoicesNewRoute,
+  AppSalesInvoicesIndexRoute: AppSalesInvoicesIndexRoute,
+  AppSalesInvoicesIdEditRoute: AppSalesInvoicesIdEditRoute,
+}
+
+const AppSalesInvoicesRouteWithChildren =
+  AppSalesInvoicesRoute._addFileChildren(AppSalesInvoicesRouteChildren)
 
 interface AppRouteChildren {
   AppAccountsRoute: typeof AppAccountsRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppPartnersRoute: typeof AppPartnersRoute
   AppPaymentsRoute: typeof AppPaymentsRoute
-  AppSalesInvoicesRoute: typeof AppSalesInvoicesRoute
+  AppSalesInvoicesRoute: typeof AppSalesInvoicesRouteWithChildren
   AppTaxCodesRoute: typeof AppTaxCodesRoute
 }
 
@@ -218,7 +288,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
   AppPartnersRoute: AppPartnersRoute,
   AppPaymentsRoute: AppPaymentsRoute,
-  AppSalesInvoicesRoute: AppSalesInvoicesRoute,
+  AppSalesInvoicesRoute: AppSalesInvoicesRouteWithChildren,
   AppTaxCodesRoute: AppTaxCodesRoute,
 }
 

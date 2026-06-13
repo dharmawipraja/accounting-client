@@ -5,4 +5,5 @@ export const queryKeys = {
   accounts: createResourceKeys('accounts'),
   partners: createResourceKeys('partners'),
   taxCodes: createResourceKeys('taxCodes'),
+  salesInvoices: createResourceKeys('salesInvoices'),
 };

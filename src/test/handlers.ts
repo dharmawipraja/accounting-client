@@ -17,6 +17,11 @@ export const taxCodeFixtures = () => [
   { id: 't1', code: 'PPN-OUT', name: 'PPN Keluaran 11%', kind: 'PPN_OUTPUT', rate: '0.11', taxAccountId: 'a1', isActive: true },
 ];
 
+// --- sales invoices (Plan 3a) ---
+export const salesInvoiceFixtures = () => [
+  { id: 'i1', invoiceNumber: null, partnerId: 'p1', date: '2026-06-13T00:00:00.000Z', dueDate: '2026-07-13T00:00:00.000Z', description: 'Inv 1', status: 'DRAFT', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [{ id: 'l1', lineNo: 1, description: 'Jasa', accountId: 'a2', quantity: '2.0000', unitPrice: '500000.0000', amount: '1000000.0000', taxCodeIds: ['t1'] }] },
+];
+
 export const handlers = [
   http.post(`${API}/auth/login`, async ({ request }) => {
     const body = (await request.json()) as { email: string; password: string };
@@ -75,4 +80,26 @@ export const handlers = [
   }),
   http.post(`${API}/tax/codes/:id/deactivate`, () => HttpResponse.json({})),
   http.delete(`${API}/tax/codes/:id`, () => HttpResponse.json({})),
+
+  http.get(`${API}/sales-invoices`, () => HttpResponse.json(salesInvoiceFixtures())),
+  http.get(`${API}/sales-invoices/:id`, ({ params }) => HttpResponse.json({ ...salesInvoiceFixtures()[0], id: params.id })),
+  http.post(`${API}/sales-invoices`, async ({ request }) => {
+    const body = (await request.json()) as Record<string, unknown>;
+    return HttpResponse.json({ ...salesInvoiceFixtures()[0], id: 'i9', ...body, status: 'DRAFT' });
+  }),
+  http.patch(`${API}/sales-invoices/:id`, async ({ request, params }) => {
+    const body = (await request.json()) as Record<string, unknown>;
+    return HttpResponse.json({ ...salesInvoiceFixtures()[0], id: params.id, ...body });
+  }),
+  http.delete(`${API}/sales-invoices/:id`, () => HttpResponse.json({})),
+  http.post(`${API}/tax/calculate`, async ({ request }) => {
+    const body = (await request.json()) as { lines: { amount: string }[] };
+    const subtotal = body.lines.reduce((s, l) => s + Number(l.amount), 0);
+    return HttpResponse.json({
+      subtotal: subtotal.toFixed(4),
+      taxes: [{ taxCodeId: 't1', code: 'PPN-OUT-11', kind: 'PPN_OUTPUT', base: subtotal.toFixed(4), amount: (subtotal * 0.11).toFixed(4), accountId: 'ppn' }],
+      settlementAmount: (subtotal * 1.11).toFixed(4),
+      journalLines: [],
+    });
+  }),
 ];
