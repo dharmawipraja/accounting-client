@@ -17,6 +17,7 @@ afterEach(() => useSession.getState().clear());
 const partners = [{ id: 'p1', code: 'CUST-1', name: 'Toko A', isCustomer: true, isVendor: false, isActive: true }];
 const accounts = [{ id: 'a1', code: '1-1000', name: 'Kas', type: 'ASSET', subtype: 'CURRENT_ASSET', normalBalance: 'DEBIT', isPostable: true, isActive: true, parentId: null }];
 const draftPayment = { id: 'pay1', paymentNumber: null, paymentRef: null, direction: 'RECEIPT', partnerId: 'p1', date: '2026-06-16T00:00:00.000Z', cashAccountId: 'a1', description: 'x', status: 'DRAFT', total: '1110000.0000', allocations: [{ salesInvoiceId: 'i1', amount: '1110000.0000' }] };
+const postedPayment = { ...draftPayment, status: 'POSTED', paymentNumber: 1, paymentRef: 'PAY/2026/000001' };
 
 function renderPage() {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -57,6 +58,25 @@ it('APPROVER posts a draft payment with an idempotency key', async () => {
   const dialog = await screen.findByRole('alertdialog');
   await user.click(within(dialog).getByRole('button', { name: 'Posting' }));
   await waitFor(() => expect(seenKey).toBeTruthy());
+});
+
+it('APPROVER voids a posted payment with an idempotency key', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  let seenKey: string | null = null;
+  server.use(
+    http.get(`${API}/payments`, () => HttpResponse.json([postedPayment])),
+    http.get(`${API}/partners`, () => HttpResponse.json(partners)),
+    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
+    http.post(`${API}/payments/pay1/void`, ({ request }) => { seenKey = request.headers.get('Idempotency-Key'); return HttpResponse.json({ ...postedPayment, status: 'VOID' }); }),
+  );
+  renderPage();
+  await screen.findByText('Toko A');
+  await user.click(screen.getByRole('button', { name: 'Batalkan' }));
+  const dialog = await screen.findByRole('alertdialog');
+  await user.click(within(dialog).getByRole('button', { name: 'Batalkan' }));
+  await waitFor(() => expect(seenKey).toBeTruthy());
+  await waitFor(() => expect(toast.success).toHaveBeenCalledWith(messages.payments.voided));
 });
 
 it('shows the SoD message when post returns 403 SEGREGATION_OF_DUTIES', async () => {

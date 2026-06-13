@@ -7,6 +7,7 @@ import { API, openInvoiceFixture } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
 import { PaymentForm } from './PaymentForm';
+import type { Payment } from './schema';
 
 afterEach(() => useSession.getState().clear());
 
@@ -63,4 +64,43 @@ it('blocks save when nothing is allocated', async () => {
   await user.click(await screen.findByRole('option', { name: /1-1000/i }));
   await user.click(screen.getByRole('button', { name: /simpan/i }));
   expect(await screen.findByText(/minimal satu faktur/i)).toBeInTheDocument();
+});
+
+it('blocks save when an allocation exceeds the invoice outstanding', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  commonHandlers();
+  const onSaved = vi.fn();
+  renderForm(<PaymentForm mode="create" onSaved={onSaved} />);
+
+  await user.click(screen.getByRole('combobox', { name: /pelanggan/i }));
+  await user.click(await screen.findByRole('option', { name: /CUST-1/i }));
+  await user.type(screen.getByLabelText(/tanggal/i), '2026-06-16');
+  await user.click(screen.getByRole('combobox', { name: /akun kas/i }));
+  await user.click(await screen.findByRole('option', { name: /1-1000/i }));
+
+  // Outstanding is 1.110.000 — allocate more than that.
+  await user.type(await screen.findByLabelText(/dialokasikan/i), '2000000');
+  // Inline over-allocation error renders immediately.
+  expect(await screen.findByText(/melebihi sisa tagihan/i)).toBeInTheDocument();
+
+  await user.click(screen.getByRole('button', { name: /simpan/i }));
+  await waitFor(() => expect(screen.getAllByText(/melebihi sisa tagihan/i).length).toBeGreaterThanOrEqual(1));
+  expect(onSaved).not.toHaveBeenCalled();
+});
+
+it('renders a posted payment read-only', async () => {
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  commonHandlers();
+  const posted: Payment = {
+    id: 'pay1', paymentNumber: 1, paymentRef: 'PAY/2026/000001', direction: 'RECEIPT',
+    partnerId: 'p1', date: '2026-06-16T00:00:00.000Z', cashAccountId: 'a1', description: null,
+    status: 'POSTED', total: '1110000.0000', allocations: [{ salesInvoiceId: 'i1', amount: '1110000.0000' }],
+  };
+  renderForm(<PaymentForm mode="edit" payment={posted} onSaved={vi.fn()} readOnly />);
+
+  expect(await screen.findByText(/hanya-baca/i)).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /simpan/i })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /lunasi/i })).not.toBeInTheDocument();
+  expect(screen.getByLabelText(/tanggal/i)).toBeDisabled();
 });
