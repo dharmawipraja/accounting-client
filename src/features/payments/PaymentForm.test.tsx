@@ -89,6 +89,38 @@ it('blocks save when an allocation exceeds the invoice outstanding', async () =>
   expect(onSaved).not.toHaveBeenCalled();
 });
 
+it('allocates via Lunasi and posts the DISBURSEMENT payload', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  const vendor = [{ id: 'v1', code: 'VEND-1', name: 'PT Pemasok', isCustomer: false, isVendor: true, isActive: true }];
+  const openBill = { id: 'b1', billNumber: 1, billRef: 'BILL/2026/000001', fiscalYear: 2026, vendorInvoiceNo: null, partnerId: 'v1', date: '2026-06-15T00:00:00.000Z', dueDate: '2026-07-15T00:00:00.000Z', description: null, status: 'POSTED', subtotal: '1000000.0000', taxTotal: '0.0000', withholdingTotal: '0.0000', total: '1000000.0000', amountPaid: '0.0000', outstanding: '1000000.0000', paymentStatus: 'UNPAID', lines: [] };
+  server.use(
+    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
+    http.get(`${API}/partners`, () => HttpResponse.json(vendor)),
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json([])),
+    http.get(`${API}/purchase-bills`, () => HttpResponse.json([openBill])),
+  );
+  let posted: Record<string, unknown> | null = null;
+  server.use(http.post(`${API}/payments`, async ({ request }) => {
+    posted = (await request.json()) as Record<string, unknown>;
+    return HttpResponse.json({ id: 'pay9', number: null, ref: null, fiscalYear: null, direction: 'DISBURSEMENT', partnerId: 'v1', date: '2026-06-16T00:00:00.000Z', cashAccountId: 'a1', description: null, status: 'DRAFT', amount: '1000000.0000', allocations: [{ purchaseBillId: 'b1', amount: '1000000.0000' }] });
+  }));
+  const onSaved = vi.fn();
+  renderForm(<PaymentForm mode="create" direction="DISBURSEMENT" onSaved={onSaved} />);
+
+  await user.click(screen.getByRole('combobox', { name: /vendor/i }));
+  await user.click(await screen.findByRole('option', { name: /VEND-1/i }));
+  await user.type(screen.getByLabelText(/tanggal/i), '2026-06-16');
+  await user.click(screen.getByRole('combobox', { name: /akun kas/i }));
+  await user.click(await screen.findByRole('option', { name: /1-1000/i }));
+  await user.click(await screen.findByRole('button', { name: /lunasi/i }));
+  await user.click(screen.getByRole('button', { name: /simpan/i }));
+
+  await waitFor(() => expect(posted).toBeTruthy());
+  expect(posted).toMatchObject({ direction: 'DISBURSEMENT', partnerId: 'v1', cashAccountId: 'a1', allocations: [{ purchaseBillId: 'b1', amount: '1000000.0000' }] });
+  await waitFor(() => expect(onSaved).toHaveBeenCalled());
+});
+
 it('renders a posted payment read-only', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
   commonHandlers();
