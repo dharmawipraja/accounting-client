@@ -48,6 +48,11 @@ export const cashFlowFixture = (from: string, to: string) => ({
   kasAwal: '250000.0000', kasAkhir: '1234000.0000', reconciles: true,
 });
 
+// --- purchase bills (Plan 5a) ---
+export const purchaseBillFixtures = () => [
+  { id: 'b1', billNumber: null, billRef: null, fiscalYear: null, vendorInvoiceNo: 'VINV-77', partnerId: 'p1', date: '2026-06-15T00:00:00.000Z', dueDate: '2026-07-15T00:00:00.000Z', description: 'Bill 1', status: 'DRAFT', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [{ id: 'l1', purchaseBillId: 'b1', lineNo: 1, description: 'Jasa', accountId: 'a2', quantity: '1.0000', unitPrice: '1000000.0000', amount: '1000000.0000', taxCodeIds: ['t1'] }] },
+];
+
 // --- payments (Plan 4a) ---
 export const paymentFixtures = () => [
   { id: 'pay1', number: null, ref: null, fiscalYear: null, direction: 'RECEIPT', partnerId: 'p1', date: '2026-06-16T00:00:00.000Z', cashAccountId: 'a1', description: 'Terima', status: 'DRAFT', amount: '1110000.0000', journalEntryId: null, allocations: [{ id: 'al1', salesInvoiceId: 'i1', purchaseBillId: null, amount: '1110000.0000' }] },
@@ -156,6 +161,25 @@ export const handlers = [
   http.delete(`${API}/payments/:id`, () => HttpResponse.json({})),
   http.post(`${API}/payments/:id/post`, ({ params }) => HttpResponse.json({ ...paymentFixtures()[0], id: params.id, status: 'POSTED', number: 1, ref: 'PAY-RCV/2026/000001', fiscalYear: 2026 })),
   http.post(`${API}/payments/:id/void`, ({ params }) => HttpResponse.json({ ...paymentFixtures()[0], id: params.id, status: 'VOID' })),
+
+  // --- purchase bills (Plan 5a) ---
+  http.get(`${API}/purchase-bills`, () => HttpResponse.json(purchaseBillFixtures())),
+  http.get(`${API}/purchase-bills/:id`, ({ params }) => HttpResponse.json({ ...purchaseBillFixtures()[0], id: params.id })),
+  http.post(`${API}/purchase-bills`, async ({ request }) => {
+    const body = (await request.json()) as Record<string, unknown>;
+    return HttpResponse.json({ ...purchaseBillFixtures()[0], id: 'b9', ...body, status: 'DRAFT' });
+  }),
+  http.patch(`${API}/purchase-bills/:id`, async ({ request, params }) => {
+    const body = (await request.json()) as Record<string, unknown>;
+    return HttpResponse.json({ ...purchaseBillFixtures()[0], id: params.id, ...body });
+  }),
+  http.delete(`${API}/purchase-bills/:id`, () => HttpResponse.json({})),
+  http.post(`${API}/purchase-bills/:id/post`, ({ params }) =>
+    HttpResponse.json({ ...purchaseBillFixtures()[0], id: params.id, status: 'POSTED', billNumber: 1, billRef: 'BILL/2026/000001', fiscalYear: 2026, postedBy: 'u', postedAt: '2026-06-15T00:00:00.000Z', journalEntryId: 'j1' }),
+  ),
+  http.post(`${API}/purchase-bills/:id/void`, ({ params }) =>
+    HttpResponse.json({ ...purchaseBillFixtures()[0], id: params.id, status: 'VOID', billNumber: 1, billRef: 'BILL/2026/000001', fiscalYear: 2026, journalEntryId: 'j1' }),
+  ),
 
   // --- reports (Plan 4b dashboard) ---
   http.get(`${API}/reports/balance-sheet`, ({ request }) => {
