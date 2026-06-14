@@ -8,6 +8,11 @@ export const queryKeys = {
   salesInvoices: createResourceKeys('salesInvoices'),
   payments: createResourceKeys('payments'),
   purchaseBills: createResourceKeys('purchaseBills'),
+  journalEntries: {
+    all: ['journalEntries'] as const,
+    list: (params: unknown) => ['journalEntries', 'list', params] as const,
+    item: (id: string) => ['journalEntries', 'item', id] as const,
+  },
   reports: {
     all: ['reports'] as const,
     balanceSheet: (asOf: string) => ['reports', 'balance-sheet', asOf] as const,

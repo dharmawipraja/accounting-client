@@ -48,6 +48,23 @@ export const cashFlowFixture = (from: string, to: string) => ({
   kasAwal: '250000.0000', kasAkhir: '1234000.0000', reconciles: true,
 });
 
+// --- journal entries (Plan 6) ---
+export const journalEntryListFixture = () => [
+  { id: 'jed1', entryRef: null, entryNumber: null, fiscalYear: null, date: '2026-06-16T00:00:00.000Z', description: 'Draf 1', status: 'DRAFT', sourceType: 'MANUAL', sourceId: null, totalDebit: '100000.0000', lineCount: 2 },
+  { id: 'jed2', entryRef: null, entryNumber: null, fiscalYear: null, date: '2026-06-16T00:00:00.000Z', description: 'Draf 2', status: 'DRAFT', sourceType: 'MANUAL', sourceId: null, totalDebit: '200000.0000', lineCount: 2 },
+  { id: 'jed3', entryRef: null, entryNumber: null, fiscalYear: null, date: '2026-06-16T00:00:00.000Z', description: 'Draf 3', status: 'DRAFT', sourceType: 'MANUAL', sourceId: null, totalDebit: '300000.0000', lineCount: 2 },
+  { id: 'jep1', entryRef: 'JE/2026/000002', entryNumber: 2, fiscalYear: 2026, date: '2026-06-15T00:00:00.000Z', description: 'Penjualan diposting', status: 'POSTED', sourceType: 'SALE', sourceId: 'inv1', totalDebit: '1110000.0000', lineCount: 2 },
+  { id: 'jep2', entryRef: 'JE/2026/000003', entryNumber: 3, fiscalYear: 2026, date: '2026-06-15T00:00:00.000Z', description: 'Jurnal manual diposting', status: 'POSTED', sourceType: 'MANUAL', sourceId: null, totalDebit: '500000.0000', lineCount: 2 },
+];
+export const journalEntryDetailFixture = () => ({
+  id: 'jed1', entryNumber: null, entryRef: null, fiscalYear: null, date: '2026-06-16T00:00:00.000Z', periodId: null,
+  description: 'Draf 1', sourceType: 'MANUAL', sourceId: null, status: 'DRAFT', reversalOfId: null, reversedById: null,
+  lines: [
+    { id: 'jl1', journalEntryId: 'jed1', lineNo: 1, accountId: 'a1', debit: '100000', credit: '0', description: 'sisi debit' },
+    { id: 'jl2', journalEntryId: 'jed1', lineNo: 2, accountId: 'a2', debit: '0', credit: '100000', description: 'sisi kredit' },
+  ],
+});
+
 // --- purchase bills (Plan 5a) ---
 export const purchaseBillFixtures = () => [
   { id: 'b1', billNumber: null, billRef: null, fiscalYear: null, vendorInvoiceNo: 'VINV-77', partnerId: 'p1', date: '2026-06-15T00:00:00.000Z', dueDate: '2026-07-15T00:00:00.000Z', description: 'Bill 1', status: 'DRAFT', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [{ id: 'l1', purchaseBillId: 'b1', lineNo: 1, description: 'Jasa', accountId: 'a2', quantity: '1.0000', unitPrice: '1000000.0000', amount: '1000000.0000', taxCodeIds: ['t1'] }] },
@@ -195,8 +212,26 @@ export const handlers = [
     return HttpResponse.json(cashFlowFixture(u.get('from') ?? '', u.get('to') ?? ''));
   }),
   http.get(`${API}/ledger/journal-entries`, ({ request }) => {
-    const status = new URL(request.url).searchParams.get('status');
-    const total = status === 'DRAFT' ? 3 : 0;
-    return HttpResponse.json({ data: [], total, limit: 1, offset: 0 });
+    const u = new URL(request.url).searchParams;
+    const status = u.get('status');
+    const sourceType = u.get('sourceType');
+    const limit = Number(u.get('limit') ?? '20');
+    const offset = Number(u.get('offset') ?? '0');
+    let data = journalEntryListFixture();
+    if (status) data = data.filter((e) => e.status === status);
+    if (sourceType) data = data.filter((e) => e.sourceType === sourceType);
+    return HttpResponse.json({ data: data.slice(offset, offset + limit), total: data.length, limit, offset });
   }),
+  http.get(`${API}/ledger/journal-entries/:id`, ({ params }) => HttpResponse.json({ ...journalEntryDetailFixture(), id: params.id })),
+  http.post(`${API}/ledger/journal-entries`, async ({ request }) => {
+    const body = (await request.json()) as Record<string, unknown>;
+    return HttpResponse.json({ ...journalEntryDetailFixture(), id: 'je9', status: 'DRAFT', ...body, lines: undefined });
+  }),
+  http.delete(`${API}/ledger/journal-entries/:id`, () => HttpResponse.json({})),
+  http.post(`${API}/ledger/journal-entries/:id/post`, ({ params }) =>
+    HttpResponse.json({ ...journalEntryDetailFixture(), id: params.id, status: 'POSTED', entryNumber: 13, entryRef: 'JE/2026/000013', fiscalYear: 2026, lines: undefined }),
+  ),
+  http.post(`${API}/ledger/journal-entries/:id/reverse`, ({ params }) =>
+    HttpResponse.json({ ...journalEntryDetailFixture(), id: 'rev1', status: 'POSTED', sourceType: 'REVERSAL', reversalOfId: params.id, entryNumber: 14, entryRef: 'JE/2026/000014', lines: undefined }),
+  ),
 ];
