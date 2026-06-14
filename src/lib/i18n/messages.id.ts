@@ -236,7 +236,7 @@ export const id = {
     payFull: 'Lunasi',
     totalReceived: 'Total Diterima',
     noOpenInvoices: 'Tidak ada faktur terbuka untuk pelanggan ini',
-    selectPartnerFirst: 'Pilih pelanggan untuk melihat faktur terbuka',
+    selectPartnerFirst: 'Pilih mitra untuk melihat dokumen terbuka',
     overAllocated: 'Melebihi sisa tagihan',
     atLeastOneAllocation: 'Alokasikan minimal satu faktur',
     savePayment: 'Simpan',
