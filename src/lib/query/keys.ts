@@ -7,6 +7,7 @@ export const queryKeys = {
   taxCodes: createResourceKeys('taxCodes'),
   salesInvoices: createResourceKeys('salesInvoices'),
   payments: createResourceKeys('payments'),
+  purchaseBills: createResourceKeys('purchaseBills'),
   reports: {
     all: ['reports'] as const,
     balanceSheet: (asOf: string) => ['reports', 'balance-sheet', asOf] as const,
