@@ -254,6 +254,16 @@ export const id = {
     statusDraft: 'Draf',
     statusPosted: 'Diposting',
     statusVoid: 'Dibatalkan',
+    directionReceipt: 'Terima',
+    directionDisbursement: 'Bayar',
+    direction: 'Jenis',
+    directionAll: 'Semua',
+    newReceiptTitle: 'Terima Pembayaran',
+    newDisbursementTitle: 'Bayar Tagihan',
+    documentRef: 'Dokumen',
+    noOpenDocuments: 'Tidak ada dokumen terbuka',
+    amount: 'Jumlah',
+    partnerVendor: 'Vendor',
   },
 } as const;
 
