@@ -1,0 +1,64 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
+import { afterEach, expect, it, vi } from 'vitest';
+import { API } from '@/test/handlers';
+import { server } from '@/test/server';
+import { useSession } from '@/stores/session';
+import { JournalEntryForm } from './JournalEntryForm';
+
+afterEach(() => useSession.getState().clear());
+
+const accounts = [
+  { id: 'a1', code: '1-1000', name: 'Kas', type: 'ASSET', subtype: 'CURRENT_ASSET', normalBalance: 'DEBIT', isPostable: true, isActive: true, parentId: null },
+  { id: 'a2', code: '4-1000', name: 'Pendapatan', type: 'REVENUE', subtype: 'REVENUE', normalBalance: 'CREDIT', isPostable: true, isActive: true, parentId: null },
+];
+
+function renderForm(ui: React.ReactNode) {
+  const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+  return render(<QueryClientProvider client={qc}>{ui}</QueryClientProvider>);
+}
+
+it('creates a balanced entry: debit + credit across two accounts → posts the payload', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)));
+  let posted: Record<string, unknown> | null = null;
+  server.use(http.post(`${API}/ledger/journal-entries`, async ({ request }) => {
+    posted = (await request.json()) as Record<string, unknown>;
+    return HttpResponse.json({ id: 'je9', entryNumber: null, entryRef: null, fiscalYear: null, date: '2026-06-16T00:00:00.000Z', periodId: null, description: 'Jurnal uji', sourceType: 'MANUAL', sourceId: null, status: 'DRAFT', reversalOfId: null, reversedById: null });
+  }));
+  const onSaved = vi.fn();
+  renderForm(<JournalEntryForm onSaved={onSaved} />);
+
+  await user.type(screen.getByLabelText(/tanggal/i), '2026-06-16');
+  await user.type(screen.getByLabelText(/keterangan/i), 'Jurnal uji');
+  const combos = screen.getAllByRole('combobox', { name: /akun/i });
+  await user.click(combos[0]);
+  await user.click(await screen.findByRole('option', { name: /1-1000/i }));
+  await user.type(screen.getAllByLabelText('Debit')[0], '100000');
+  await user.click(screen.getAllByRole('combobox', { name: /akun/i })[1]);
+  await user.click(await screen.findByRole('option', { name: /4-1000/i }));
+  await user.type(screen.getAllByLabelText('Kredit')[1], '100000');
+
+  const save = screen.getByRole('button', { name: /simpan/i });
+  await waitFor(() => expect(save).toBeEnabled());
+  await user.click(save);
+
+  await waitFor(() => expect(posted).toBeTruthy());
+  expect(posted).toMatchObject({ date: '2026-06-16', description: 'Jurnal uji', lines: [{ accountId: 'a1', debit: '100000.0000' }, { accountId: 'a2', credit: '100000.0000' }] });
+  await waitFor(() => expect(onSaved).toHaveBeenCalled());
+});
+
+it('keeps Save disabled while unbalanced', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)));
+  renderForm(<JournalEntryForm onSaved={vi.fn()} />);
+  expect(screen.getByRole('button', { name: /simpan/i })).toBeDisabled();
+  await user.click(screen.getAllByRole('combobox', { name: /akun/i })[0]);
+  await user.click(await screen.findByRole('option', { name: /1-1000/i }));
+  await user.type(screen.getAllByLabelText('Debit')[0], '100000');
+  expect(screen.getByRole('button', { name: /simpan/i })).toBeDisabled();
+});
