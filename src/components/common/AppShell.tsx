@@ -3,6 +3,7 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import {
   BookText,
   LayoutDashboard,
+  NotebookText,
   Users,
   Receipt,
   ReceiptText,
@@ -28,6 +29,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const nav = [
     { to: '/dashboard', label: t.nav.dashboard, icon: LayoutDashboard },
     { to: '/accounts', label: t.nav.accounts, icon: BookText },
+    { to: '/journals', label: t.nav.journals, icon: NotebookText },
     { to: '/partners', label: t.nav.partners, icon: Users },
     { to: '/tax-codes', label: t.nav.taxCodes, icon: Percent },
     { to: '/sales-invoices', label: t.nav.salesInvoices, icon: Receipt },

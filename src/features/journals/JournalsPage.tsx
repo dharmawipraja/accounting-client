@@ -94,12 +94,12 @@ export function JournalsPage() {
 
       {page.isLoading ? <Skeleton className="h-40 w-full" />
         : page.isError ? <ErrorState error={page.error} />
-        : (
+        : page.data ? (
           <>
             <DataTable columns={columns} data={page.data.data} />
             <Pagination offset={offset} limit={LIMIT} total={page.data.total} onChange={setOffset} />
           </>
-        )}
+        ) : null}
 
       <ConfirmDialog
         open={!!action}
