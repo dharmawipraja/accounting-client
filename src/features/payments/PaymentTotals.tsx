@@ -10,7 +10,7 @@ export function PaymentTotals({ amounts }: { amounts: Record<string, string> }) 
   return (
     <div className="ml-auto w-full max-w-xs rounded-lg border p-4 text-sm">
       <div className="flex justify-between font-semibold">
-        <span className="text-muted-foreground">{t.payments.totalReceived}</span>
+        <span className="text-muted-foreground">{t.payments.amount}</span>
         <span className="font-mono tabular-nums">{total.toRupiah()}</span>
       </div>
     </div>

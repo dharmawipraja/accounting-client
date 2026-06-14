@@ -28,13 +28,14 @@ export const paymentSchema = z.object({
 });
 export type Payment = z.infer<typeof paymentSchema>;
 
+export type PaymentAllocationInput = { salesInvoiceId?: string; purchaseBillId?: string; amount: string };
 export type PaymentCreatePayload = {
-  direction: 'RECEIPT';
+  direction: 'RECEIPT' | 'DISBURSEMENT';
   partnerId: string;
   date: string;
   cashAccountId: string;
   description?: string;
-  allocations: { salesInvoiceId: string; amount: string }[];
+  allocations: PaymentAllocationInput[];
 };
 export type PaymentUpdatePayload = Partial<PaymentCreatePayload>;
 export type PaymentHeaderValues = { partnerId: string; date: string; cashAccountId: string; description: string };

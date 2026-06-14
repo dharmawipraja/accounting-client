@@ -11,7 +11,7 @@ import { AccountSelect } from '@/components/common/AccountSelect';
 import { applyApiErrorToForm } from '@/lib/api/form-errors';
 import { Money } from '@/lib/money/money';
 import { useT } from '@/lib/i18n/useT';
-import { useOpenInvoices } from './useOpenInvoices';
+import { useOpenDocuments } from './useOpenDocuments';
 import { AllocationTable } from './AllocationTable';
 import { PaymentTotals } from './PaymentTotals';
 import { paymentsApi } from './hooks';
@@ -29,10 +29,12 @@ interface Props {
   payment?: Payment;
   onSaved: () => void;
   readOnly?: boolean;
+  direction?: 'RECEIPT' | 'DISBURSEMENT';
 }
 
-export function PaymentForm({ mode, payment, onSaved, readOnly }: Props) {
+export function PaymentForm({ mode, payment, onSaved, readOnly, direction: directionProp = 'RECEIPT' }: Props) {
   const t = useT();
+  const direction = payment?.direction ?? directionProp;
   const create = paymentsApi.useCreate();
   const update = paymentsApi.useUpdate();
 
@@ -44,11 +46,14 @@ export function PaymentForm({ mode, payment, onSaved, readOnly }: Props) {
   });
 
   const partnerId = form.watch('partnerId');
-  const openInvoices = useOpenInvoices(partnerId);
+  const openDocuments = useOpenDocuments(direction, partnerId);
 
   const [amounts, setAmounts] = useState<Record<string, string>>(() => {
     const seed: Record<string, string> = {};
-    payment?.allocations.forEach((a) => { if (a.salesInvoiceId) seed[a.salesInvoiceId] = a.amount; });
+    payment?.allocations.forEach((a) => {
+      const docId = direction === 'RECEIPT' ? a.salesInvoiceId : a.purchaseBillId;
+      if (docId) seed[docId] = a.amount;
+    });
     return seed;
   });
   const [allocError, setAllocError] = useState<string | null>(null);
@@ -56,15 +61,17 @@ export function PaymentForm({ mode, payment, onSaved, readOnly }: Props) {
   function buildAllocations() {
     return Object.entries(amounts)
       .filter(([, v]) => { try { return Money.from(v || '0').gt(Money.zero()); } catch { return false; } })
-      .map(([salesInvoiceId, amount]) => ({ salesInvoiceId, amount: Money.from(amount).toApi() }));
+      .map(([id, amount]) => direction === 'RECEIPT'
+        ? { salesInvoiceId: id, amount: Money.from(amount).toApi() }
+        : { purchaseBillId: id, amount: Money.from(amount).toApi() });
   }
 
   function validateAllocations(): boolean {
     const allocs = buildAllocations();
     if (allocs.length === 0) { setAllocError(t.payments.atLeastOneAllocation); return false; }
-    const over = openInvoices.some((inv) => {
-      const v = amounts[inv.id];
-      try { return v ? Money.from(v).gt(Money.from(inv.outstanding)) : false; } catch { return false; }
+    const over = openDocuments.some((doc) => {
+      const v = amounts[doc.id];
+      try { return v ? Money.from(v).gt(Money.from(doc.outstanding)) : false; } catch { return false; }
     });
     if (over) { setAllocError(t.payments.overAllocated); return false; }
     setAllocError(null);
@@ -73,7 +80,7 @@ export function PaymentForm({ mode, payment, onSaved, readOnly }: Props) {
 
   function onSubmit(values: PaymentHeaderValues) {
     if (!validateAllocations()) return;
-    const payload = { direction: 'RECEIPT' as const, partnerId: values.partnerId, date: values.date, cashAccountId: values.cashAccountId, description: values.description || undefined, allocations: buildAllocations() };
+    const payload = { direction, partnerId: values.partnerId, date: values.date, cashAccountId: values.cashAccountId, description: values.description || undefined, allocations: buildAllocations() };
     const onError = (err: unknown) => applyApiErrorToForm(err, form, t);
     if (mode === 'edit' && payment) {
       update.mutate({ id: payment.id, data: payload }, { onSuccess: () => { toast.success(t.crud.saved); onSaved(); }, onError });
@@ -81,6 +88,8 @@ export function PaymentForm({ mode, payment, onSaved, readOnly }: Props) {
       create.mutate(payload, { onSuccess: () => { toast.success(t.crud.saved); onSaved(); }, onError });
     }
   }
+
+  const partnerLabel = direction === 'RECEIPT' ? t.payments.partner : t.payments.partnerVendor;
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
@@ -93,8 +102,8 @@ export function PaymentForm({ mode, payment, onSaved, readOnly }: Props) {
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <div className="space-y-1.5">
-          <Label>{t.payments.partner}</Label>
-          <PartnerSelect value={form.watch('partnerId')} onChange={(id) => form.setValue('partnerId', id, { shouldValidate: true })} filter="customer" aria-label={t.payments.partner} placeholder={t.payments.partner} disabled={readOnly} />
+          <Label>{partnerLabel}</Label>
+          <PartnerSelect value={form.watch('partnerId')} onChange={(id) => form.setValue('partnerId', id, { shouldValidate: true })} filter={direction === 'RECEIPT' ? 'customer' : 'vendor'} aria-label={partnerLabel} placeholder={partnerLabel} disabled={readOnly} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="pdate">{t.payments.date}</Label>
@@ -111,7 +120,7 @@ export function PaymentForm({ mode, payment, onSaved, readOnly }: Props) {
       </div>
 
       <AllocationTable
-        invoices={openInvoices}
+        documents={openDocuments}
         amounts={amounts}
         onAmountChange={(id, raw) => setAmounts((prev) => ({ ...prev, [id]: raw }))}
         readOnly={readOnly}
