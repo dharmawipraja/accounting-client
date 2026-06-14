@@ -5,7 +5,7 @@ import { afterEach, expect, it } from 'vitest';
 import { API } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
-import { InvoiceTotals } from './InvoiceTotals';
+import { DocumentTotals } from './DocumentTotals';
 
 afterEach(() => useSession.getState().clear());
 
@@ -25,7 +25,7 @@ it('shows subtotal, PPN, PPh, and total from the tax preview', async () => {
     settlementAmount: '1090000.0000',
     journalLines: [],
   })));
-  renderTotals(<InvoiceTotals settlementAccountId="ar" lines={[{ accountId: 'rev', amount: '1000000.0000', taxCodeIds: ['t1', 't2'] }]} />);
+  renderTotals(<DocumentTotals nature="SALE" settlementAccountId="ar" lines={[{ accountId: 'rev', amount: '1000000.0000', taxCodeIds: ['t1', 't2'] }]} />);
   expect(await screen.findByText(/Rp\s?1\.090\.000/)).toBeInTheDocument(); // total (settlementAmount)
   expect(screen.getByText(/Rp\s?110\.000/)).toBeInTheDocument(); // PPN
   expect(screen.getByText(/Rp\s?20\.000/)).toBeInTheDocument();  // PPh

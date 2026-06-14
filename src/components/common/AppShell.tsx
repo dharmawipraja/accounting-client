@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   Users,
   Receipt,
+  ReceiptText,
   Percent,
   Wallet,
   LogOut,
@@ -30,6 +31,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     { to: '/partners', label: t.nav.partners, icon: Users },
     { to: '/tax-codes', label: t.nav.taxCodes, icon: Percent },
     { to: '/sales-invoices', label: t.nav.salesInvoices, icon: Receipt },
+    { to: '/purchase-bills', label: t.nav.purchaseBills, icon: ReceiptText },
     { to: '/payments', label: t.nav.payments, icon: Wallet },
   ] as const;
 

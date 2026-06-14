@@ -14,15 +14,19 @@ import { Route as AppRouteImport } from './app/routes/_app'
 import { Route as IndexRouteImport } from './app/routes/index'
 import { Route as AppTaxCodesRouteImport } from './app/routes/_app/tax-codes'
 import { Route as AppSalesInvoicesRouteImport } from './app/routes/_app/sales-invoices'
+import { Route as AppPurchaseBillsRouteImport } from './app/routes/_app/purchase-bills'
 import { Route as AppPaymentsRouteImport } from './app/routes/_app/payments'
 import { Route as AppPartnersRouteImport } from './app/routes/_app/partners'
 import { Route as AppDashboardRouteImport } from './app/routes/_app/dashboard'
 import { Route as AppAccountsRouteImport } from './app/routes/_app/accounts'
 import { Route as AppSalesInvoicesIndexRouteImport } from './app/routes/_app/sales-invoices.index'
+import { Route as AppPurchaseBillsIndexRouteImport } from './app/routes/_app/purchase-bills.index'
 import { Route as AppPaymentsIndexRouteImport } from './app/routes/_app/payments.index'
 import { Route as AppSalesInvoicesNewRouteImport } from './app/routes/_app/sales-invoices.new'
+import { Route as AppPurchaseBillsNewRouteImport } from './app/routes/_app/purchase-bills.new'
 import { Route as AppPaymentsNewRouteImport } from './app/routes/_app/payments.new'
 import { Route as AppSalesInvoicesIdEditRouteImport } from './app/routes/_app/sales-invoices.$id.edit'
+import { Route as AppPurchaseBillsIdEditRouteImport } from './app/routes/_app/purchase-bills.$id.edit'
 import { Route as AppPaymentsIdEditRouteImport } from './app/routes/_app/payments.$id.edit'
 
 const LoginRoute = LoginRouteImport.update({
@@ -47,6 +51,11 @@ const AppTaxCodesRoute = AppTaxCodesRouteImport.update({
 const AppSalesInvoicesRoute = AppSalesInvoicesRouteImport.update({
   id: '/sales-invoices',
   path: '/sales-invoices',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPurchaseBillsRoute = AppPurchaseBillsRouteImport.update({
+  id: '/purchase-bills',
+  path: '/purchase-bills',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPaymentsRoute = AppPaymentsRouteImport.update({
@@ -74,6 +83,11 @@ const AppSalesInvoicesIndexRoute = AppSalesInvoicesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppSalesInvoicesRoute,
 } as any)
+const AppPurchaseBillsIndexRoute = AppPurchaseBillsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppPurchaseBillsRoute,
+} as any)
 const AppPaymentsIndexRoute = AppPaymentsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -84,6 +98,11 @@ const AppSalesInvoicesNewRoute = AppSalesInvoicesNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AppSalesInvoicesRoute,
 } as any)
+const AppPurchaseBillsNewRoute = AppPurchaseBillsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppPurchaseBillsRoute,
+} as any)
 const AppPaymentsNewRoute = AppPaymentsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -93,6 +112,11 @@ const AppSalesInvoicesIdEditRoute = AppSalesInvoicesIdEditRouteImport.update({
   id: '/$id/edit',
   path: '/$id/edit',
   getParentRoute: () => AppSalesInvoicesRoute,
+} as any)
+const AppPurchaseBillsIdEditRoute = AppPurchaseBillsIdEditRouteImport.update({
+  id: '/$id/edit',
+  path: '/$id/edit',
+  getParentRoute: () => AppPurchaseBillsRoute,
 } as any)
 const AppPaymentsIdEditRoute = AppPaymentsIdEditRouteImport.update({
   id: '/$id/edit',
@@ -107,13 +131,17 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AppDashboardRoute
   '/partners': typeof AppPartnersRoute
   '/payments': typeof AppPaymentsRouteWithChildren
+  '/purchase-bills': typeof AppPurchaseBillsRouteWithChildren
   '/sales-invoices': typeof AppSalesInvoicesRouteWithChildren
   '/tax-codes': typeof AppTaxCodesRoute
   '/payments/new': typeof AppPaymentsNewRoute
+  '/purchase-bills/new': typeof AppPurchaseBillsNewRoute
   '/sales-invoices/new': typeof AppSalesInvoicesNewRoute
   '/payments/': typeof AppPaymentsIndexRoute
+  '/purchase-bills/': typeof AppPurchaseBillsIndexRoute
   '/sales-invoices/': typeof AppSalesInvoicesIndexRoute
   '/payments/$id/edit': typeof AppPaymentsIdEditRoute
+  '/purchase-bills/$id/edit': typeof AppPurchaseBillsIdEditRoute
   '/sales-invoices/$id/edit': typeof AppSalesInvoicesIdEditRoute
 }
 export interface FileRoutesByTo {
@@ -124,10 +152,13 @@ export interface FileRoutesByTo {
   '/partners': typeof AppPartnersRoute
   '/tax-codes': typeof AppTaxCodesRoute
   '/payments/new': typeof AppPaymentsNewRoute
+  '/purchase-bills/new': typeof AppPurchaseBillsNewRoute
   '/sales-invoices/new': typeof AppSalesInvoicesNewRoute
   '/payments': typeof AppPaymentsIndexRoute
+  '/purchase-bills': typeof AppPurchaseBillsIndexRoute
   '/sales-invoices': typeof AppSalesInvoicesIndexRoute
   '/payments/$id/edit': typeof AppPaymentsIdEditRoute
+  '/purchase-bills/$id/edit': typeof AppPurchaseBillsIdEditRoute
   '/sales-invoices/$id/edit': typeof AppSalesInvoicesIdEditRoute
 }
 export interface FileRoutesById {
@@ -139,13 +170,17 @@ export interface FileRoutesById {
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/partners': typeof AppPartnersRoute
   '/_app/payments': typeof AppPaymentsRouteWithChildren
+  '/_app/purchase-bills': typeof AppPurchaseBillsRouteWithChildren
   '/_app/sales-invoices': typeof AppSalesInvoicesRouteWithChildren
   '/_app/tax-codes': typeof AppTaxCodesRoute
   '/_app/payments/new': typeof AppPaymentsNewRoute
+  '/_app/purchase-bills/new': typeof AppPurchaseBillsNewRoute
   '/_app/sales-invoices/new': typeof AppSalesInvoicesNewRoute
   '/_app/payments/': typeof AppPaymentsIndexRoute
+  '/_app/purchase-bills/': typeof AppPurchaseBillsIndexRoute
   '/_app/sales-invoices/': typeof AppSalesInvoicesIndexRoute
   '/_app/payments/$id/edit': typeof AppPaymentsIdEditRoute
+  '/_app/purchase-bills/$id/edit': typeof AppPurchaseBillsIdEditRoute
   '/_app/sales-invoices/$id/edit': typeof AppSalesInvoicesIdEditRoute
 }
 export interface FileRouteTypes {
@@ -157,13 +192,17 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/partners'
     | '/payments'
+    | '/purchase-bills'
     | '/sales-invoices'
     | '/tax-codes'
     | '/payments/new'
+    | '/purchase-bills/new'
     | '/sales-invoices/new'
     | '/payments/'
+    | '/purchase-bills/'
     | '/sales-invoices/'
     | '/payments/$id/edit'
+    | '/purchase-bills/$id/edit'
     | '/sales-invoices/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -174,10 +213,13 @@ export interface FileRouteTypes {
     | '/partners'
     | '/tax-codes'
     | '/payments/new'
+    | '/purchase-bills/new'
     | '/sales-invoices/new'
     | '/payments'
+    | '/purchase-bills'
     | '/sales-invoices'
     | '/payments/$id/edit'
+    | '/purchase-bills/$id/edit'
     | '/sales-invoices/$id/edit'
   id:
     | '__root__'
@@ -188,13 +230,17 @@ export interface FileRouteTypes {
     | '/_app/dashboard'
     | '/_app/partners'
     | '/_app/payments'
+    | '/_app/purchase-bills'
     | '/_app/sales-invoices'
     | '/_app/tax-codes'
     | '/_app/payments/new'
+    | '/_app/purchase-bills/new'
     | '/_app/sales-invoices/new'
     | '/_app/payments/'
+    | '/_app/purchase-bills/'
     | '/_app/sales-invoices/'
     | '/_app/payments/$id/edit'
+    | '/_app/purchase-bills/$id/edit'
     | '/_app/sales-invoices/$id/edit'
   fileRoutesById: FileRoutesById
 }
@@ -241,6 +287,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSalesInvoicesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/purchase-bills': {
+      id: '/_app/purchase-bills'
+      path: '/purchase-bills'
+      fullPath: '/purchase-bills'
+      preLoaderRoute: typeof AppPurchaseBillsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/payments': {
       id: '/_app/payments'
       path: '/payments'
@@ -276,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSalesInvoicesIndexRouteImport
       parentRoute: typeof AppSalesInvoicesRoute
     }
+    '/_app/purchase-bills/': {
+      id: '/_app/purchase-bills/'
+      path: '/'
+      fullPath: '/purchase-bills/'
+      preLoaderRoute: typeof AppPurchaseBillsIndexRouteImport
+      parentRoute: typeof AppPurchaseBillsRoute
+    }
     '/_app/payments/': {
       id: '/_app/payments/'
       path: '/'
@@ -290,6 +350,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSalesInvoicesNewRouteImport
       parentRoute: typeof AppSalesInvoicesRoute
     }
+    '/_app/purchase-bills/new': {
+      id: '/_app/purchase-bills/new'
+      path: '/new'
+      fullPath: '/purchase-bills/new'
+      preLoaderRoute: typeof AppPurchaseBillsNewRouteImport
+      parentRoute: typeof AppPurchaseBillsRoute
+    }
     '/_app/payments/new': {
       id: '/_app/payments/new'
       path: '/new'
@@ -303,6 +370,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/sales-invoices/$id/edit'
       preLoaderRoute: typeof AppSalesInvoicesIdEditRouteImport
       parentRoute: typeof AppSalesInvoicesRoute
+    }
+    '/_app/purchase-bills/$id/edit': {
+      id: '/_app/purchase-bills/$id/edit'
+      path: '/$id/edit'
+      fullPath: '/purchase-bills/$id/edit'
+      preLoaderRoute: typeof AppPurchaseBillsIdEditRouteImport
+      parentRoute: typeof AppPurchaseBillsRoute
     }
     '/_app/payments/$id/edit': {
       id: '/_app/payments/$id/edit'
@@ -330,6 +404,21 @@ const AppPaymentsRouteWithChildren = AppPaymentsRoute._addFileChildren(
   AppPaymentsRouteChildren,
 )
 
+interface AppPurchaseBillsRouteChildren {
+  AppPurchaseBillsNewRoute: typeof AppPurchaseBillsNewRoute
+  AppPurchaseBillsIndexRoute: typeof AppPurchaseBillsIndexRoute
+  AppPurchaseBillsIdEditRoute: typeof AppPurchaseBillsIdEditRoute
+}
+
+const AppPurchaseBillsRouteChildren: AppPurchaseBillsRouteChildren = {
+  AppPurchaseBillsNewRoute: AppPurchaseBillsNewRoute,
+  AppPurchaseBillsIndexRoute: AppPurchaseBillsIndexRoute,
+  AppPurchaseBillsIdEditRoute: AppPurchaseBillsIdEditRoute,
+}
+
+const AppPurchaseBillsRouteWithChildren =
+  AppPurchaseBillsRoute._addFileChildren(AppPurchaseBillsRouteChildren)
+
 interface AppSalesInvoicesRouteChildren {
   AppSalesInvoicesNewRoute: typeof AppSalesInvoicesNewRoute
   AppSalesInvoicesIndexRoute: typeof AppSalesInvoicesIndexRoute
@@ -350,6 +439,7 @@ interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
   AppPartnersRoute: typeof AppPartnersRoute
   AppPaymentsRoute: typeof AppPaymentsRouteWithChildren
+  AppPurchaseBillsRoute: typeof AppPurchaseBillsRouteWithChildren
   AppSalesInvoicesRoute: typeof AppSalesInvoicesRouteWithChildren
   AppTaxCodesRoute: typeof AppTaxCodesRoute
 }
@@ -359,6 +449,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
   AppPartnersRoute: AppPartnersRoute,
   AppPaymentsRoute: AppPaymentsRouteWithChildren,
+  AppPurchaseBillsRoute: AppPurchaseBillsRouteWithChildren,
   AppSalesInvoicesRoute: AppSalesInvoicesRouteWithChildren,
   AppTaxCodesRoute: AppTaxCodesRoute,
 }
