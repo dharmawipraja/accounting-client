@@ -7,22 +7,21 @@ function sumByKind(taxes: { kind: string; amount: string }[], prefix: string): M
   return taxes.filter((x) => x.kind.startsWith(prefix)).reduce((acc, x) => acc.plus(Money.from(x.amount)), Money.zero());
 }
 
-export function InvoiceTotals({ settlementAccountId, lines }: { settlementAccountId?: string; lines: TaxPreviewLine[] }) {
+export function DocumentTotals({ nature, settlementAccountId, lines }: { nature: 'SALE' | 'PURCHASE'; settlementAccountId?: string; lines: TaxPreviewLine[] }) {
   const t = useT();
-  const { data, isLoading, error } = useTaxPreview({ nature: 'SALE', settlementAccountId, lines });
-
+  const { data, isLoading, error } = useTaxPreview({ nature, settlementAccountId, lines });
   const ppn = data ? sumByKind(data.taxes, 'PPN') : Money.zero();
   const pph = data ? sumByKind(data.taxes, 'PPH') : Money.zero();
 
   return (
     <div className="ml-auto w-full max-w-xs space-y-1 rounded-lg border p-4 text-sm">
-      {isLoading ? <p className="text-muted-foreground">{t.salesInvoices.calculating}</p> : null}
+      {isLoading ? <p className="text-muted-foreground">{t.documents.calculating}</p> : null}
       {error instanceof ApiError ? <p role="alert" className="text-destructive">{error.message}</p> : null}
-      <Row label={t.salesInvoices.subtotal} value={data ? Money.from(data.subtotal).toRupiah() : Money.zero().toRupiah()} />
-      <Row label={`+ ${t.salesInvoices.ppn}`} value={ppn.toRupiah()} />
-      <Row label={`− ${t.salesInvoices.pphWithheld}`} value={pph.toRupiah()} />
+      <Row label={t.documents.subtotal} value={data ? Money.from(data.subtotal).toRupiah() : Money.zero().toRupiah()} />
+      <Row label={`+ ${t.documents.ppn}`} value={ppn.toRupiah()} />
+      <Row label={`− ${t.documents.pphWithheld}`} value={pph.toRupiah()} />
       <div className="border-t pt-1">
-        <Row label={t.salesInvoices.total} value={data ? Money.from(data.settlementAmount).toRupiah() : Money.zero().toRupiah()} bold />
+        <Row label={t.documents.total} value={data ? Money.from(data.settlementAmount).toRupiah() : Money.zero().toRupiah()} bold />
       </div>
     </div>
   );

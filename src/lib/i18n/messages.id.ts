@@ -121,6 +121,13 @@ export const id = {
     kindPphPayable: 'PPh Terutang',
     kindPphPrepaid: 'PPh Dibayar di Muka',
   },
+  documents: {
+    subtotal: 'Subtotal (DPP)',
+    ppn: 'PPN',
+    pphWithheld: 'PPh Dipotong',
+    total: 'Total Tagihan',
+    calculating: 'Menghitung…',
+  },
   salesInvoices: {
     title: 'Faktur Penjualan',
     newInvoice: 'Faktur Baru',

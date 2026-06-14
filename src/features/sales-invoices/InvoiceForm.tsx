@@ -13,7 +13,7 @@ import { Money } from '@/lib/money/money';
 import { useT } from '@/lib/i18n/useT';
 import { accountsApi } from '@/features/accounts/hooks';
 import { InvoiceLineRow } from './InvoiceLineRow';
-import { InvoiceTotals } from './InvoiceTotals';
+import { DocumentTotals } from '@/features/documents/DocumentTotals';
 import { salesInvoicesApi } from './hooks';
 import { invoiceFormSchema, type InvoiceFormValues, type SalesInvoice } from './schema';
 
@@ -131,7 +131,7 @@ export function InvoiceForm({ mode, invoice, onSaved, startEmpty, readOnly }: Pr
             <Plus className="size-4" /> {t.salesInvoices.addLine}
           </Button>
         )}
-        <InvoiceTotals settlementAccountId={arAccountId} lines={previewLines} />
+        <DocumentTotals nature="SALE" settlementAccountId={arAccountId} lines={previewLines} />
       </div>
 
       {form.formState.errors.lines ? (
