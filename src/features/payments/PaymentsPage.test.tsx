@@ -95,3 +95,24 @@ it('shows the SoD message when post returns 403 SEGREGATION_OF_DUTIES', async ()
   await user.click(within(dialog).getByRole('button', { name: 'Posting' }));
   await waitFor(() => expect(toast.error).toHaveBeenCalledWith(messages.roles.segregationOfDuties));
 });
+
+it('filters by direction and shows both create buttons', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  const disb = { ...draftPayment, id: 'pay2', direction: 'DISBURSEMENT', partnerId: 'v1', ref: 'PAY-DSB/2026/000001', allocations: [{ purchaseBillId: 'b1', amount: '1000000.0000' }] };
+  server.use(
+    http.get(`${API}/payments`, () => HttpResponse.json([draftPayment, disb])),
+    http.get(`${API}/partners`, () => HttpResponse.json([...partners, { id: 'v1', code: 'VEND-1', name: 'PT Pemasok', isCustomer: false, isVendor: true, isActive: true }])),
+    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
+  );
+  renderPage();
+  expect(await screen.findByText('Toko A')).toBeInTheDocument();        // receipt row
+  expect(screen.getByText('PT Pemasok')).toBeInTheDocument();          // disbursement row
+  // two gated create buttons (rendered as links via Button asChild)
+  expect(screen.getByRole('link', { name: /terima/i })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /bayar/i })).toBeInTheDocument();
+  // filter to disbursements only (the filter is a <button>, distinct from the create <a>)
+  await user.click(screen.getByRole('button', { name: 'Bayar' }));
+  await waitFor(() => expect(screen.queryByText('Toko A')).not.toBeInTheDocument());
+  expect(screen.getByText('PT Pemasok')).toBeInTheDocument();
+});

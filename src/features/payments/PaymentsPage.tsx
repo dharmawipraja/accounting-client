@@ -19,6 +19,7 @@ import { paymentsApi, usePostPayment, useVoidPayment } from './hooks';
 import type { Payment } from './schema';
 
 const STATUSES = ['ALL', 'DRAFT', 'POSTED', 'VOID'] as const;
+const DIRECTIONS = ['ALL', 'RECEIPT', 'DISBURSEMENT'] as const;
 type PendingAction = { kind: 'delete' | 'post' | 'void'; payment: Payment; idempotencyKey?: string };
 
 export function PaymentsPage() {
@@ -31,6 +32,7 @@ export function PaymentsPage() {
   const voidPayment = useVoidPayment();
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<(typeof STATUSES)[number]>('ALL');
+  const [direction, setDirection] = useState<(typeof DIRECTIONS)[number]>('ALL');
   const [action, setAction] = useState<PendingAction | null>(null);
 
   const partnerName = useMemo(() => {
@@ -55,9 +57,10 @@ export function PaymentsPage() {
     const q = search.toLowerCase();
     return (list.data ?? []).filter((p) => {
       if (status !== 'ALL' && p.status !== status && !(status === 'VOID' && p.status.startsWith('VOID'))) return false;
+      if (direction !== 'ALL' && p.direction !== direction) return false;
       return !q || (p.ref ?? '').toLowerCase().includes(q) || partnerName(p.partnerId).toLowerCase().includes(q);
     });
-  }, [list.data, search, status, partnerName]);
+  }, [list.data, search, status, direction, partnerName]);
 
   function runAction() {
     if (!action) return;
@@ -81,7 +84,10 @@ export function PaymentsPage() {
     <div>
       <PageHeader title={t.payments.title} actions={
         <RoleGate allow={['ACCOUNTANT', 'APPROVER', 'ADMIN']}>
-          <Button asChild><Link to="/payments/new"><Plus className="size-4" /> {t.payments.newPayment}</Link></Button>
+          <div className="flex gap-2">
+            <Button asChild variant="outline"><Link to="/payments/new" search={{ direction: 'RECEIPT' }}><Plus className="size-4" /> {t.payments.directionReceipt}</Link></Button>
+            <Button asChild><Link to="/payments/new" search={{ direction: 'DISBURSEMENT' }}><Plus className="size-4" /> {t.payments.directionDisbursement}</Link></Button>
+          </div>
         </RoleGate>
       } />
 
@@ -91,6 +97,13 @@ export function PaymentsPage() {
           {STATUSES.map((s) => (
             <Button key={s} size="sm" variant={status === s ? 'default' : 'outline'} onClick={() => setStatus(s)}>
               {s === 'ALL' ? t.payments.statusAll : s === 'DRAFT' ? t.payments.statusDraft : s === 'POSTED' ? t.payments.statusPosted : t.payments.statusVoid}
+            </Button>
+          ))}
+        </div>
+        <div className="flex gap-1">
+          {DIRECTIONS.map((d) => (
+            <Button key={d} size="sm" variant={direction === d ? 'default' : 'outline'} onClick={() => setDirection(d)}>
+              {d === 'ALL' ? t.payments.directionAll : d === 'RECEIPT' ? t.payments.directionReceipt : t.payments.directionDisbursement}
             </Button>
           ))}
         </div>
