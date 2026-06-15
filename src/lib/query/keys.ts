@@ -20,4 +20,12 @@ export const queryKeys = {
     cashFlow: (from: string, to: string) => ['reports', 'cash-flow', from, to] as const,
     draftCount: () => ['reports', 'draft-count'] as const,
   },
+  periods: {
+    all: ['periods'] as const,
+    list: (fiscalYear: number) => ['periods', 'list', fiscalYear] as const,
+  },
+  yearEnd: {
+    all: ['year-end'] as const,
+    status: (fiscalYear: number) => ['year-end', 'status', fiscalYear] as const,
+  },
 };
