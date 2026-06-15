@@ -77,6 +77,12 @@ export const paymentFixtures = () => [
 // a POSTED open invoice to allocate against (used by the payment editor test)
 export const openInvoiceFixture = () => ({ id: 'i1', invoiceNumber: 1, invoiceRef: 'INV/2026/000001', partnerId: 'p1', date: '2026-06-15T00:00:00.000Z', dueDate: '2026-07-15T00:00:00.000Z', description: null, status: 'POSTED', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [] });
 
+// --- audit log (Plan 9) ---
+export const auditFixtures = () => [
+  { id: 'audit-1', timestamp: '2026-06-15T13:18:25.590Z', userId: 'u1', userRole: 'ADMIN', method: 'POST', path: '/ledger/periods/p1/close', params: { id: 'p1' }, body: {}, statusCode: 200, durationMs: 42, ip: '::1' },
+  { id: 'audit-2', timestamp: '2026-06-15T13:10:00.000Z', userId: null, userRole: null, method: 'POST', path: '/auth/login', params: {}, body: { email: 'admin@mail.com', password: '[REDACTED]' }, statusCode: 401, durationMs: 88, ip: '::1' },
+];
+
 // --- periods + year-end (Plan 8) ---
 export const periodFixtures = (fiscalYear = 2026) =>
   Array.from({ length: 12 }, (_, i) => {
@@ -266,4 +272,7 @@ export const handlers = [
     return HttpResponse.json({ fiscalYear: body.fiscalYear, status: 'CLOSED', closedAt: '2026-12-31T00:00:00Z' });
   }),
   http.post(`${API}/close/year-end/:fy/reopen`, ({ params }) => HttpResponse.json({ fiscalYear: Number(params.fy), status: 'OPEN' })),
+
+  // --- audit log (Plan 9) ---
+  http.get(`${API}/audit`, () => HttpResponse.json(auditFixtures())),
 ];
