@@ -11,6 +11,8 @@ export function ReportsIndexPage() {
     { to: '/reports/cash-flow', title: t.reports.cashFlow, desc: t.reports.cashFlowDesc },
     { to: '/reports/trial-balance', title: t.reports.trialBalance, desc: t.reports.trialBalanceDesc },
     { to: '/reports/general-ledger', title: t.reports.generalLedger, desc: t.reports.generalLedgerDesc },
+    { to: '/reports/ar-aging', title: t.reports.arAging, desc: t.reports.arAgingDesc },
+    { to: '/reports/ap-aging', title: t.reports.apAging, desc: t.reports.apAgingDesc },
   ] as const;
   return (
     <div>

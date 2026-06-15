@@ -32,6 +32,8 @@ import { Route as AppReportsIncomeStatementRouteImport } from './app/routes/_app
 import { Route as AppReportsGeneralLedgerRouteImport } from './app/routes/_app/reports.general-ledger'
 import { Route as AppReportsCashFlowRouteImport } from './app/routes/_app/reports.cash-flow'
 import { Route as AppReportsBalanceSheetRouteImport } from './app/routes/_app/reports.balance-sheet'
+import { Route as AppReportsArAgingRouteImport } from './app/routes/_app/reports.ar-aging'
+import { Route as AppReportsApAgingRouteImport } from './app/routes/_app/reports.ap-aging'
 import { Route as AppPurchaseBillsNewRouteImport } from './app/routes/_app/purchase-bills.new'
 import { Route as AppPaymentsNewRouteImport } from './app/routes/_app/payments.new'
 import { Route as AppJournalsNewRouteImport } from './app/routes/_app/journals.new'
@@ -155,6 +157,16 @@ const AppReportsBalanceSheetRoute = AppReportsBalanceSheetRouteImport.update({
   path: '/balance-sheet',
   getParentRoute: () => AppReportsRoute,
 } as any)
+const AppReportsArAgingRoute = AppReportsArAgingRouteImport.update({
+  id: '/ar-aging',
+  path: '/ar-aging',
+  getParentRoute: () => AppReportsRoute,
+} as any)
+const AppReportsApAgingRoute = AppReportsApAgingRouteImport.update({
+  id: '/ap-aging',
+  path: '/ap-aging',
+  getParentRoute: () => AppReportsRoute,
+} as any)
 const AppPurchaseBillsNewRoute = AppPurchaseBillsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -207,6 +219,8 @@ export interface FileRoutesByFullPath {
   '/journals/new': typeof AppJournalsNewRoute
   '/payments/new': typeof AppPaymentsNewRoute
   '/purchase-bills/new': typeof AppPurchaseBillsNewRoute
+  '/reports/ap-aging': typeof AppReportsApAgingRoute
+  '/reports/ar-aging': typeof AppReportsArAgingRoute
   '/reports/balance-sheet': typeof AppReportsBalanceSheetRoute
   '/reports/cash-flow': typeof AppReportsCashFlowRoute
   '/reports/general-ledger': typeof AppReportsGeneralLedgerRoute
@@ -233,6 +247,8 @@ export interface FileRoutesByTo {
   '/journals/new': typeof AppJournalsNewRoute
   '/payments/new': typeof AppPaymentsNewRoute
   '/purchase-bills/new': typeof AppPurchaseBillsNewRoute
+  '/reports/ap-aging': typeof AppReportsApAgingRoute
+  '/reports/ar-aging': typeof AppReportsArAgingRoute
   '/reports/balance-sheet': typeof AppReportsBalanceSheetRoute
   '/reports/cash-flow': typeof AppReportsCashFlowRoute
   '/reports/general-ledger': typeof AppReportsGeneralLedgerRoute
@@ -266,6 +282,8 @@ export interface FileRoutesById {
   '/_app/journals/new': typeof AppJournalsNewRoute
   '/_app/payments/new': typeof AppPaymentsNewRoute
   '/_app/purchase-bills/new': typeof AppPurchaseBillsNewRoute
+  '/_app/reports/ap-aging': typeof AppReportsApAgingRoute
+  '/_app/reports/ar-aging': typeof AppReportsArAgingRoute
   '/_app/reports/balance-sheet': typeof AppReportsBalanceSheetRoute
   '/_app/reports/cash-flow': typeof AppReportsCashFlowRoute
   '/_app/reports/general-ledger': typeof AppReportsGeneralLedgerRoute
@@ -299,6 +317,8 @@ export interface FileRouteTypes {
     | '/journals/new'
     | '/payments/new'
     | '/purchase-bills/new'
+    | '/reports/ap-aging'
+    | '/reports/ar-aging'
     | '/reports/balance-sheet'
     | '/reports/cash-flow'
     | '/reports/general-ledger'
@@ -325,6 +345,8 @@ export interface FileRouteTypes {
     | '/journals/new'
     | '/payments/new'
     | '/purchase-bills/new'
+    | '/reports/ap-aging'
+    | '/reports/ar-aging'
     | '/reports/balance-sheet'
     | '/reports/cash-flow'
     | '/reports/general-ledger'
@@ -357,6 +379,8 @@ export interface FileRouteTypes {
     | '/_app/journals/new'
     | '/_app/payments/new'
     | '/_app/purchase-bills/new'
+    | '/_app/reports/ap-aging'
+    | '/_app/reports/ar-aging'
     | '/_app/reports/balance-sheet'
     | '/_app/reports/cash-flow'
     | '/_app/reports/general-ledger'
@@ -542,6 +566,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppReportsBalanceSheetRouteImport
       parentRoute: typeof AppReportsRoute
     }
+    '/_app/reports/ar-aging': {
+      id: '/_app/reports/ar-aging'
+      path: '/ar-aging'
+      fullPath: '/reports/ar-aging'
+      preLoaderRoute: typeof AppReportsArAgingRouteImport
+      parentRoute: typeof AppReportsRoute
+    }
+    '/_app/reports/ap-aging': {
+      id: '/_app/reports/ap-aging'
+      path: '/ap-aging'
+      fullPath: '/reports/ap-aging'
+      preLoaderRoute: typeof AppReportsApAgingRouteImport
+      parentRoute: typeof AppReportsRoute
+    }
     '/_app/purchase-bills/new': {
       id: '/_app/purchase-bills/new'
       path: '/new'
@@ -642,6 +680,8 @@ const AppPurchaseBillsRouteWithChildren =
   AppPurchaseBillsRoute._addFileChildren(AppPurchaseBillsRouteChildren)
 
 interface AppReportsRouteChildren {
+  AppReportsApAgingRoute: typeof AppReportsApAgingRoute
+  AppReportsArAgingRoute: typeof AppReportsArAgingRoute
   AppReportsBalanceSheetRoute: typeof AppReportsBalanceSheetRoute
   AppReportsCashFlowRoute: typeof AppReportsCashFlowRoute
   AppReportsGeneralLedgerRoute: typeof AppReportsGeneralLedgerRoute
@@ -651,6 +691,8 @@ interface AppReportsRouteChildren {
 }
 
 const AppReportsRouteChildren: AppReportsRouteChildren = {
+  AppReportsApAgingRoute: AppReportsApAgingRoute,
+  AppReportsArAgingRoute: AppReportsArAgingRoute,
   AppReportsBalanceSheetRoute: AppReportsBalanceSheetRoute,
   AppReportsCashFlowRoute: AppReportsCashFlowRoute,
   AppReportsGeneralLedgerRoute: AppReportsGeneralLedgerRoute,
