@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { MONTHS_ID } from '@/lib/format/months';
 
 export const periodSchema = z.object({
   id: z.string(),
@@ -34,10 +35,7 @@ export function isYearClosed(s: YearEndStatus | null | undefined): boolean {
   return !!s && (s.status === 'CLOSED' || s.isClosed === true);
 }
 
-export const MONTHS_ID = [
-  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
-] as const;
+export { MONTHS_ID };
 
 export function monthLabel(p: Period): string {
   const m = p.sequence ?? p.month ?? (p.startDate ? new Date(p.startDate).getUTCMonth() + 1 : 0);
