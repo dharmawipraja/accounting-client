@@ -36,6 +36,7 @@ export const id = {
     reports: 'Laporan',
     periods: 'Tutup Buku',
     audit: 'Audit',
+    settings: 'Pengaturan',
   },
   dashboard: {
     totalAssets: 'Total Aset',
@@ -453,6 +454,22 @@ export const id = {
     empty: 'Tidak ada aktivitas',
     prev: 'Sebelumnya',
     next: 'Berikutnya',
+  },
+  settings: {
+    title: 'Pengaturan Perusahaan',
+    legalName: 'Nama Resmi',
+    npwp: 'NPWP',
+    address: 'Alamat',
+    fiscalYearStart: 'Awal Tahun Fiskal',
+    currency: 'Mata Uang',
+    sod: 'Segregasi Tugas',
+    sodHelp: 'Pembuat dokumen tidak boleh menyetujui atau posting dokumennya sendiri.',
+    pkp: 'PKP (Pengusaha Kena Pajak)',
+    pkpHelp: 'Perusahaan terdaftar sebagai pemungut PPN.',
+    save: 'Simpan',
+    saved: 'Pengaturan tersimpan',
+    adminOnly: 'Hanya admin yang dapat mengubah pengaturan.',
+    confirmDisableSod: 'Menonaktifkan segregasi tugas menghapus kontrol bahwa pembuat dokumen tidak boleh menyetujui sendiri. Lanjutkan?',
   },
 } as const;
 
