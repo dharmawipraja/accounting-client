@@ -28,4 +28,8 @@ export const queryKeys = {
     all: ['year-end'] as const,
     status: (fiscalYear: number) => ['year-end', 'status', fiscalYear] as const,
   },
+  audit: {
+    all: ['audit'] as const,
+    list: (filters: unknown) => ['audit', 'list', filters] as const,
+  },
 };
