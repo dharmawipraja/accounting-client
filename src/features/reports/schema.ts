@@ -102,3 +102,35 @@ export const generalLedgerSchema = z.object({
   closingBalance: moneyString,
 });
 export type GeneralLedger = z.infer<typeof generalLedgerSchema>;
+
+export const agingDocumentSchema = z.object({
+  ref: z.string(),
+  date: z.string(),
+  dueDate: z.string().nullish(),
+  total: moneyString,
+  paidAsOf: moneyString.nullish(),
+  outstanding: moneyString,
+  bucket: z.string(),
+});
+export type AgingDocument = z.infer<typeof agingDocumentSchema>;
+
+const agingBucketsSchema = z.record(z.string(), moneyString);
+
+export const agingPartnerSchema = z.object({
+  partnerId: z.string(),
+  partnerName: z.string(),
+  documents: z.array(agingDocumentSchema).default([]),
+  buckets: agingBucketsSchema,
+});
+export type AgingPartner = z.infer<typeof agingPartnerSchema>;
+
+export const agingReportSchema = z.object({
+  kind: z.string().nullish(),
+  asOf: z.string().nullish(),
+  partners: z.array(agingPartnerSchema),
+  totalsByBucket: agingBucketsSchema,
+  totalOutstanding: moneyString,
+});
+export type AgingReport = z.infer<typeof agingReportSchema>;
+
+export const AGING_BUCKETS = ['Current', '1-30', '31-60', '61-90', '>90'] as const;

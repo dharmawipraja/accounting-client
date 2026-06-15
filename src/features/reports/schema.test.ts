@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { balanceSheetReportSchema, incomeStatementReportSchema, cashFlowReportSchema, trialBalanceSchema, generalLedgerSchema } from './schema';
+import { balanceSheetReportSchema, incomeStatementReportSchema, cashFlowReportSchema, trialBalanceSchema, generalLedgerSchema, agingReportSchema } from './schema';
 
 describe('report schemas', () => {
   it('balance sheet parses sections → subtype groups → lines + totals', () => {
@@ -62,5 +62,24 @@ describe('trial balance + general ledger schemas', () => {
     expect(r.account.code).toBe('1-1000');
     expect(r.lines[0].entryRef).toBe('JE/2026/000004');
     expect(r.closingBalance).toBe('1000000.0000');
+  });
+});
+
+describe('aging report schema', () => {
+  it('parses partners with buckets + documents, totals, and grand total', () => {
+    const r = agingReportSchema.parse({
+      kind: 'AR', asOf: '2026-06-30',
+      partners: [{
+        partnerId: 'p1', partnerName: 'PT Pelanggan',
+        documents: [{ ref: 'INV/2026/000012', date: '2026-04-01', dueDate: '2026-05-01', total: '1000000.0000', paidAsOf: '0.0000', outstanding: '1000000.0000', bucket: '31-60' }],
+        buckets: { Current: '0.0000', '1-30': '0.0000', '31-60': '1000000.0000', '61-90': '0.0000', '>90': '0.0000' },
+      }],
+      totalsByBucket: { Current: '0.0000', '1-30': '0.0000', '31-60': '1000000.0000', '61-90': '0.0000', '>90': '0.0000' },
+      totalOutstanding: '1000000.0000',
+    });
+    expect(r.partners[0].partnerName).toBe('PT Pelanggan');
+    expect(r.partners[0].buckets['31-60']).toBe('1000000.0000');
+    expect(r.partners[0].documents[0].ref).toBe('INV/2026/000012');
+    expect(r.totalOutstanding).toBe('1000000.0000');
   });
 });
