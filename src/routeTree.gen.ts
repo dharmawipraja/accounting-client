@@ -21,6 +21,7 @@ import { Route as AppPaymentsRouteImport } from './app/routes/_app/payments'
 import { Route as AppPartnersRouteImport } from './app/routes/_app/partners'
 import { Route as AppJournalsRouteImport } from './app/routes/_app/journals'
 import { Route as AppDashboardRouteImport } from './app/routes/_app/dashboard'
+import { Route as AppAuditRouteImport } from './app/routes/_app/audit'
 import { Route as AppAccountsRouteImport } from './app/routes/_app/accounts'
 import { Route as AppSalesInvoicesIndexRouteImport } from './app/routes/_app/sales-invoices.index'
 import { Route as AppReportsIndexRouteImport } from './app/routes/_app/reports.index'
@@ -100,6 +101,11 @@ const AppJournalsRoute = AppJournalsRouteImport.update({
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAuditRoute = AppAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAccountsRoute = AppAccountsRouteImport.update({
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/accounts': typeof AppAccountsRoute
+  '/audit': typeof AppAuditRoute
   '/dashboard': typeof AppDashboardRoute
   '/journals': typeof AppJournalsRouteWithChildren
   '/partners': typeof AppPartnersRoute
@@ -247,6 +254,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/accounts': typeof AppAccountsRoute
+  '/audit': typeof AppAuditRoute
   '/dashboard': typeof AppDashboardRoute
   '/partners': typeof AppPartnersRoute
   '/periods': typeof AppPeriodsRoute
@@ -278,6 +286,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/_app/accounts': typeof AppAccountsRoute
+  '/_app/audit': typeof AppAuditRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/journals': typeof AppJournalsRouteWithChildren
   '/_app/partners': typeof AppPartnersRoute
@@ -314,6 +323,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/accounts'
+    | '/audit'
     | '/dashboard'
     | '/journals'
     | '/partners'
@@ -348,6 +358,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/accounts'
+    | '/audit'
     | '/dashboard'
     | '/partners'
     | '/periods'
@@ -378,6 +389,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/login'
     | '/_app/accounts'
+    | '/_app/audit'
     | '/_app/dashboard'
     | '/_app/journals'
     | '/_app/partners'
@@ -499,6 +511,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/audit': {
+      id: '/_app/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AppAuditRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/accounts': {
@@ -741,6 +760,7 @@ const AppSalesInvoicesRouteWithChildren =
 
 interface AppRouteChildren {
   AppAccountsRoute: typeof AppAccountsRoute
+  AppAuditRoute: typeof AppAuditRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppJournalsRoute: typeof AppJournalsRouteWithChildren
   AppPartnersRoute: typeof AppPartnersRoute
@@ -754,6 +774,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAccountsRoute: AppAccountsRoute,
+  AppAuditRoute: AppAuditRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppJournalsRoute: AppJournalsRouteWithChildren,
   AppPartnersRoute: AppPartnersRoute,
