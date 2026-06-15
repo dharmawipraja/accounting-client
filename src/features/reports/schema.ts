@@ -59,3 +59,46 @@ export const cashFlowReportSchema = z.object({
 });
 export type CashFlowReport = z.infer<typeof cashFlowReportSchema>;
 export type CashFlowItem = z.infer<typeof cashFlowItemSchema>;
+
+export const trialBalanceRowSchema = z.object({
+  accountId: z.string(),
+  code: z.string(),
+  name: z.string(),
+  debit: moneyString,
+  credit: moneyString,
+  balance: moneyString,
+});
+export type TrialBalanceRow = z.infer<typeof trialBalanceRowSchema>;
+
+export const trialBalanceSchema = z.object({
+  asOf: z.string().nullish(),
+  rows: z.array(trialBalanceRowSchema),
+  totalDebit: moneyString,
+  totalCredit: moneyString,
+});
+export type TrialBalance = z.infer<typeof trialBalanceSchema>;
+
+export const generalLedgerLineSchema = z.object({
+  date: z.string(),
+  entryRef: z.string(),
+  description: z.string().nullish(),
+  debit: moneyString,
+  credit: moneyString,
+  runningBalance: moneyString,
+});
+export type GeneralLedgerLine = z.infer<typeof generalLedgerLineSchema>;
+
+export const generalLedgerSchema = z.object({
+  account: z.object({
+    id: z.string(),
+    code: z.string(),
+    name: z.string(),
+    normalBalance: z.string(),
+  }),
+  from: z.string().nullish(),
+  to: z.string().nullish(),
+  openingBalance: moneyString,
+  lines: z.array(generalLedgerLineSchema),
+  closingBalance: moneyString,
+});
+export type GeneralLedger = z.infer<typeof generalLedgerSchema>;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { balanceSheetReportSchema, incomeStatementReportSchema, cashFlowReportSchema } from './schema';
+import { balanceSheetReportSchema, incomeStatementReportSchema, cashFlowReportSchema, trialBalanceSchema, generalLedgerSchema } from './schema';
 
 describe('report schemas', () => {
   it('balance sheet parses sections → subtype groups → lines + totals', () => {
@@ -34,5 +34,33 @@ describe('report schemas', () => {
     });
     expect(r.kasAkhir).toBe('1000000.0000');
     expect(r.operating.adjustments).toEqual([]);
+  });
+});
+
+describe('trial balance + general ledger schemas', () => {
+  it('trial balance parses rows + grand totals', () => {
+    const r = trialBalanceSchema.parse({
+      asOf: '2026-06-30',
+      rows: [
+        { accountId: 'a1', code: '1-1000', name: 'Kas', debit: '500000.0000', credit: '0.0000', balance: '500000.0000' },
+        { accountId: 'a2', code: '3-1000', name: 'Modal', debit: '0.0000', credit: '500000.0000', balance: '-500000.0000' },
+      ],
+      totalDebit: '500000.0000', totalCredit: '500000.0000',
+    });
+    expect(r.rows[0].name).toBe('Kas');
+    expect(r.totalDebit).toBe('500000.0000');
+  });
+
+  it('general ledger parses account + lines + opening/closing', () => {
+    const r = generalLedgerSchema.parse({
+      account: { id: 'a1', code: '1-1000', name: 'Kas', normalBalance: 'DEBIT' },
+      from: '2026-01-01', to: '2026-06-30',
+      openingBalance: '0.0000',
+      lines: [{ date: '2026-03-01', entryRef: 'JE/2026/000004', description: 'Setoran modal', debit: '1000000.0000', credit: '0.0000', runningBalance: '1000000.0000' }],
+      closingBalance: '1000000.0000',
+    });
+    expect(r.account.code).toBe('1-1000');
+    expect(r.lines[0].entryRef).toBe('JE/2026/000004');
+    expect(r.closingBalance).toBe('1000000.0000');
   });
 });
