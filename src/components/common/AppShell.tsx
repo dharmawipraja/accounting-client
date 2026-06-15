@@ -13,6 +13,7 @@ import {
   Wallet,
   LogOut,
   ScrollText,
+  Settings,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useHydrateSession } from '@/features/auth/useHydrateSession';
@@ -40,6 +41,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     { to: '/sales-invoices', label: t.nav.salesInvoices, icon: Receipt },
     { to: '/purchase-bills', label: t.nav.purchaseBills, icon: ReceiptText },
     { to: '/payments', label: t.nav.payments, icon: Wallet },
+    { to: '/settings', label: t.nav.settings, icon: Settings },
   ] as const;
 
   return (

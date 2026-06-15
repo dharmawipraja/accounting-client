@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -30,7 +30,7 @@ export function SettingsPage() {
       ) : query.isError ? (
         <ErrorState error={query.error} />
       ) : (
-        <SettingsForm settings={query.data} />
+        <SettingsForm settings={query.data!} />
       )}
     </div>
   );
@@ -41,7 +41,7 @@ function SettingsForm({ settings }: { settings: CompanySettings }) {
   const isAdmin = useRole() === 'ADMIN';
   const update = useUpdateCompanySettings();
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const pending = useRef<CompanySettingsForm | null>(null);
+  const [pending, setPending] = useState<CompanySettingsForm | null>(null);
   const form = useForm<CompanySettingsForm>({
     resolver: zodResolver(companySettingsFormSchema),
     defaultValues: toFormValues(settings),
@@ -56,7 +56,7 @@ function SettingsForm({ settings }: { settings: CompanySettings }) {
 
   const onSubmit = (values: CompanySettingsForm) => {
     if (!values.segregationOfDutiesEnabled && settings.segregationOfDutiesEnabled) {
-      pending.current = values;
+      setPending(values);
       setConfirmOpen(true);
     } else {
       save(values);
@@ -131,7 +131,7 @@ function SettingsForm({ settings }: { settings: CompanySettings }) {
         confirmLabel={t.settings.save}
         destructive
         pending={update.isPending}
-        onConfirm={() => { setConfirmOpen(false); if (pending.current) save(pending.current); }}
+        onConfirm={() => { setConfirmOpen(false); if (pending) save(pending); }}
       />
     </form>
   );
