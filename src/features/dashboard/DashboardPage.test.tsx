@@ -1,3 +1,4 @@
+import { RouterProvider, createMemoryHistory, createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -14,11 +15,18 @@ afterEach(() => useSession.getState().clear());
 
 function renderPage() {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return render(
-    <QueryClientProvider client={qc}>
-      <DashboardPage />
-    </QueryClientProvider>,
-  );
+  const root = createRootRoute();
+  const index = createRoute({ getParentRoute: () => root, path: '/', component: () => <DashboardPage /> });
+  const journals = createRoute({
+    getParentRoute: () => root,
+    path: '/journals',
+    validateSearch: (s: Record<string, unknown>): { status?: 'DRAFT' | 'POSTED' } => ({
+      status: s.status === 'DRAFT' || s.status === 'POSTED' ? s.status : undefined,
+    }),
+    component: () => null,
+  });
+  const router = createRouter({ routeTree: root.addChildren([index, journals]), history: createMemoryHistory({ initialEntries: ['/'] }) });
+  return render(<QueryClientProvider client={qc}><RouterProvider router={router} /></QueryClientProvider>);
 }
 
 it('renders the seven summary cards from the reports', async () => {
@@ -87,4 +95,14 @@ it('disables the period queries and shows a hint when the custom range is invali
   expect(await screen.findByText(/harus sebelum/i)).toBeInTheDocument();
   // The disabled query must never have requested the invalid 'from'.
   expect(seenFrom).not.toContain('2026-12-01');
+});
+
+it('the Jurnal Draft card links to /journals filtered to DRAFT', async () => {
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  renderPage();
+  const draftValue = await screen.findByText('3'); // draft count
+  const link = draftValue.closest('a');
+  expect(link).not.toBeNull();
+  expect(link?.getAttribute('href')).toContain('/journals');
+  expect(link?.getAttribute('href')).toContain('status=DRAFT');
 });
