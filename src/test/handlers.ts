@@ -77,6 +77,13 @@ export const paymentFixtures = () => [
 // a POSTED open invoice to allocate against (used by the payment editor test)
 export const openInvoiceFixture = () => ({ id: 'i1', invoiceNumber: 1, invoiceRef: 'INV/2026/000001', partnerId: 'p1', date: '2026-06-15T00:00:00.000Z', dueDate: '2026-07-15T00:00:00.000Z', description: null, status: 'POSTED', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [] });
 
+// --- company settings (Plan 10) ---
+export const companySettingsFixture = () => ({
+  id: 'company-1', singleton: true, legalName: 'My Company', npwp: null, address: null,
+  fiscalYearStartMonth: 1, baseCurrency: 'IDR', segregationOfDutiesEnabled: true, isPkp: true,
+  createdAt: '2026-06-12T16:26:01.120Z', updatedAt: '2026-06-14T15:06:57.559Z',
+});
+
 // --- audit log (Plan 9) ---
 export const auditFixtures = () => [
   { id: 'audit-1', timestamp: '2026-06-15T13:18:25.590Z', userId: 'u1', userRole: 'ADMIN', method: 'POST', path: '/ledger/periods/p1/close', params: { id: 'p1' }, body: {}, statusCode: 200, durationMs: 42, ip: '::1' },
@@ -275,4 +282,11 @@ export const handlers = [
 
   // --- audit log (Plan 9) ---
   http.get(`${API}/audit`, () => HttpResponse.json(auditFixtures())),
+
+  // --- company settings (Plan 10) ---
+  http.get(`${API}/company/settings`, () => HttpResponse.json(companySettingsFixture())),
+  http.patch(`${API}/company/settings`, async ({ request }) => {
+    const body = (await request.json()) as Record<string, unknown>;
+    return HttpResponse.json({ ...companySettingsFixture(), ...body });
+  }),
 ];
