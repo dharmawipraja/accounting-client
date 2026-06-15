@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import {
   BookText,
+  CalendarCheck,
   FileChartColumn,
   LayoutDashboard,
   NotebookText,
@@ -32,6 +33,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     { to: '/accounts', label: t.nav.accounts, icon: BookText },
     { to: '/journals', label: t.nav.journals, icon: NotebookText },
     { to: '/reports', label: t.nav.reports, icon: FileChartColumn },
+    { to: '/periods', label: t.nav.periods, icon: CalendarCheck },
     { to: '/partners', label: t.nav.partners, icon: Users },
     { to: '/tax-codes', label: t.nav.taxCodes, icon: Percent },
     { to: '/sales-invoices', label: t.nav.salesInvoices, icon: Receipt },
