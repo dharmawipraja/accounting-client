@@ -14,6 +14,7 @@ import { Route as AppRouteImport } from './app/routes/_app'
 import { Route as IndexRouteImport } from './app/routes/index'
 import { Route as AppTaxCodesRouteImport } from './app/routes/_app/tax-codes'
 import { Route as AppSalesInvoicesRouteImport } from './app/routes/_app/sales-invoices'
+import { Route as AppReportsRouteImport } from './app/routes/_app/reports'
 import { Route as AppPurchaseBillsRouteImport } from './app/routes/_app/purchase-bills'
 import { Route as AppPaymentsRouteImport } from './app/routes/_app/payments'
 import { Route as AppPartnersRouteImport } from './app/routes/_app/partners'
@@ -21,10 +22,14 @@ import { Route as AppJournalsRouteImport } from './app/routes/_app/journals'
 import { Route as AppDashboardRouteImport } from './app/routes/_app/dashboard'
 import { Route as AppAccountsRouteImport } from './app/routes/_app/accounts'
 import { Route as AppSalesInvoicesIndexRouteImport } from './app/routes/_app/sales-invoices.index'
+import { Route as AppReportsIndexRouteImport } from './app/routes/_app/reports.index'
 import { Route as AppPurchaseBillsIndexRouteImport } from './app/routes/_app/purchase-bills.index'
 import { Route as AppPaymentsIndexRouteImport } from './app/routes/_app/payments.index'
 import { Route as AppJournalsIndexRouteImport } from './app/routes/_app/journals.index'
 import { Route as AppSalesInvoicesNewRouteImport } from './app/routes/_app/sales-invoices.new'
+import { Route as AppReportsIncomeStatementRouteImport } from './app/routes/_app/reports.income-statement'
+import { Route as AppReportsCashFlowRouteImport } from './app/routes/_app/reports.cash-flow'
+import { Route as AppReportsBalanceSheetRouteImport } from './app/routes/_app/reports.balance-sheet'
 import { Route as AppPurchaseBillsNewRouteImport } from './app/routes/_app/purchase-bills.new'
 import { Route as AppPaymentsNewRouteImport } from './app/routes/_app/payments.new'
 import { Route as AppJournalsNewRouteImport } from './app/routes/_app/journals.new'
@@ -55,6 +60,11 @@ const AppTaxCodesRoute = AppTaxCodesRouteImport.update({
 const AppSalesInvoicesRoute = AppSalesInvoicesRouteImport.update({
   id: '/sales-invoices',
   path: '/sales-invoices',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReportsRoute = AppReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPurchaseBillsRoute = AppPurchaseBillsRouteImport.update({
@@ -92,6 +102,11 @@ const AppSalesInvoicesIndexRoute = AppSalesInvoicesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppSalesInvoicesRoute,
 } as any)
+const AppReportsIndexRoute = AppReportsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppReportsRoute,
+} as any)
 const AppPurchaseBillsIndexRoute = AppPurchaseBillsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -111,6 +126,22 @@ const AppSalesInvoicesNewRoute = AppSalesInvoicesNewRouteImport.update({
   id: '/new',
   path: '/new',
   getParentRoute: () => AppSalesInvoicesRoute,
+} as any)
+const AppReportsIncomeStatementRoute =
+  AppReportsIncomeStatementRouteImport.update({
+    id: '/income-statement',
+    path: '/income-statement',
+    getParentRoute: () => AppReportsRoute,
+  } as any)
+const AppReportsCashFlowRoute = AppReportsCashFlowRouteImport.update({
+  id: '/cash-flow',
+  path: '/cash-flow',
+  getParentRoute: () => AppReportsRoute,
+} as any)
+const AppReportsBalanceSheetRoute = AppReportsBalanceSheetRouteImport.update({
+  id: '/balance-sheet',
+  path: '/balance-sheet',
+  getParentRoute: () => AppReportsRoute,
 } as any)
 const AppPurchaseBillsNewRoute = AppPurchaseBillsNewRouteImport.update({
   id: '/new',
@@ -157,16 +188,21 @@ export interface FileRoutesByFullPath {
   '/partners': typeof AppPartnersRoute
   '/payments': typeof AppPaymentsRouteWithChildren
   '/purchase-bills': typeof AppPurchaseBillsRouteWithChildren
+  '/reports': typeof AppReportsRouteWithChildren
   '/sales-invoices': typeof AppSalesInvoicesRouteWithChildren
   '/tax-codes': typeof AppTaxCodesRoute
   '/journals/$id': typeof AppJournalsIdRoute
   '/journals/new': typeof AppJournalsNewRoute
   '/payments/new': typeof AppPaymentsNewRoute
   '/purchase-bills/new': typeof AppPurchaseBillsNewRoute
+  '/reports/balance-sheet': typeof AppReportsBalanceSheetRoute
+  '/reports/cash-flow': typeof AppReportsCashFlowRoute
+  '/reports/income-statement': typeof AppReportsIncomeStatementRoute
   '/sales-invoices/new': typeof AppSalesInvoicesNewRoute
   '/journals/': typeof AppJournalsIndexRoute
   '/payments/': typeof AppPaymentsIndexRoute
   '/purchase-bills/': typeof AppPurchaseBillsIndexRoute
+  '/reports/': typeof AppReportsIndexRoute
   '/sales-invoices/': typeof AppSalesInvoicesIndexRoute
   '/payments/$id/edit': typeof AppPaymentsIdEditRoute
   '/purchase-bills/$id/edit': typeof AppPurchaseBillsIdEditRoute
@@ -183,10 +219,14 @@ export interface FileRoutesByTo {
   '/journals/new': typeof AppJournalsNewRoute
   '/payments/new': typeof AppPaymentsNewRoute
   '/purchase-bills/new': typeof AppPurchaseBillsNewRoute
+  '/reports/balance-sheet': typeof AppReportsBalanceSheetRoute
+  '/reports/cash-flow': typeof AppReportsCashFlowRoute
+  '/reports/income-statement': typeof AppReportsIncomeStatementRoute
   '/sales-invoices/new': typeof AppSalesInvoicesNewRoute
   '/journals': typeof AppJournalsIndexRoute
   '/payments': typeof AppPaymentsIndexRoute
   '/purchase-bills': typeof AppPurchaseBillsIndexRoute
+  '/reports': typeof AppReportsIndexRoute
   '/sales-invoices': typeof AppSalesInvoicesIndexRoute
   '/payments/$id/edit': typeof AppPaymentsIdEditRoute
   '/purchase-bills/$id/edit': typeof AppPurchaseBillsIdEditRoute
@@ -203,16 +243,21 @@ export interface FileRoutesById {
   '/_app/partners': typeof AppPartnersRoute
   '/_app/payments': typeof AppPaymentsRouteWithChildren
   '/_app/purchase-bills': typeof AppPurchaseBillsRouteWithChildren
+  '/_app/reports': typeof AppReportsRouteWithChildren
   '/_app/sales-invoices': typeof AppSalesInvoicesRouteWithChildren
   '/_app/tax-codes': typeof AppTaxCodesRoute
   '/_app/journals/$id': typeof AppJournalsIdRoute
   '/_app/journals/new': typeof AppJournalsNewRoute
   '/_app/payments/new': typeof AppPaymentsNewRoute
   '/_app/purchase-bills/new': typeof AppPurchaseBillsNewRoute
+  '/_app/reports/balance-sheet': typeof AppReportsBalanceSheetRoute
+  '/_app/reports/cash-flow': typeof AppReportsCashFlowRoute
+  '/_app/reports/income-statement': typeof AppReportsIncomeStatementRoute
   '/_app/sales-invoices/new': typeof AppSalesInvoicesNewRoute
   '/_app/journals/': typeof AppJournalsIndexRoute
   '/_app/payments/': typeof AppPaymentsIndexRoute
   '/_app/purchase-bills/': typeof AppPurchaseBillsIndexRoute
+  '/_app/reports/': typeof AppReportsIndexRoute
   '/_app/sales-invoices/': typeof AppSalesInvoicesIndexRoute
   '/_app/payments/$id/edit': typeof AppPaymentsIdEditRoute
   '/_app/purchase-bills/$id/edit': typeof AppPurchaseBillsIdEditRoute
@@ -229,16 +274,21 @@ export interface FileRouteTypes {
     | '/partners'
     | '/payments'
     | '/purchase-bills'
+    | '/reports'
     | '/sales-invoices'
     | '/tax-codes'
     | '/journals/$id'
     | '/journals/new'
     | '/payments/new'
     | '/purchase-bills/new'
+    | '/reports/balance-sheet'
+    | '/reports/cash-flow'
+    | '/reports/income-statement'
     | '/sales-invoices/new'
     | '/journals/'
     | '/payments/'
     | '/purchase-bills/'
+    | '/reports/'
     | '/sales-invoices/'
     | '/payments/$id/edit'
     | '/purchase-bills/$id/edit'
@@ -255,10 +305,14 @@ export interface FileRouteTypes {
     | '/journals/new'
     | '/payments/new'
     | '/purchase-bills/new'
+    | '/reports/balance-sheet'
+    | '/reports/cash-flow'
+    | '/reports/income-statement'
     | '/sales-invoices/new'
     | '/journals'
     | '/payments'
     | '/purchase-bills'
+    | '/reports'
     | '/sales-invoices'
     | '/payments/$id/edit'
     | '/purchase-bills/$id/edit'
@@ -274,16 +328,21 @@ export interface FileRouteTypes {
     | '/_app/partners'
     | '/_app/payments'
     | '/_app/purchase-bills'
+    | '/_app/reports'
     | '/_app/sales-invoices'
     | '/_app/tax-codes'
     | '/_app/journals/$id'
     | '/_app/journals/new'
     | '/_app/payments/new'
     | '/_app/purchase-bills/new'
+    | '/_app/reports/balance-sheet'
+    | '/_app/reports/cash-flow'
+    | '/_app/reports/income-statement'
     | '/_app/sales-invoices/new'
     | '/_app/journals/'
     | '/_app/payments/'
     | '/_app/purchase-bills/'
+    | '/_app/reports/'
     | '/_app/sales-invoices/'
     | '/_app/payments/$id/edit'
     | '/_app/purchase-bills/$id/edit'
@@ -331,6 +390,13 @@ declare module '@tanstack/react-router' {
       path: '/sales-invoices'
       fullPath: '/sales-invoices'
       preLoaderRoute: typeof AppSalesInvoicesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/reports': {
+      id: '/_app/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AppReportsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/purchase-bills': {
@@ -382,6 +448,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSalesInvoicesIndexRouteImport
       parentRoute: typeof AppSalesInvoicesRoute
     }
+    '/_app/reports/': {
+      id: '/_app/reports/'
+      path: '/'
+      fullPath: '/reports/'
+      preLoaderRoute: typeof AppReportsIndexRouteImport
+      parentRoute: typeof AppReportsRoute
+    }
     '/_app/purchase-bills/': {
       id: '/_app/purchase-bills/'
       path: '/'
@@ -409,6 +482,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/sales-invoices/new'
       preLoaderRoute: typeof AppSalesInvoicesNewRouteImport
       parentRoute: typeof AppSalesInvoicesRoute
+    }
+    '/_app/reports/income-statement': {
+      id: '/_app/reports/income-statement'
+      path: '/income-statement'
+      fullPath: '/reports/income-statement'
+      preLoaderRoute: typeof AppReportsIncomeStatementRouteImport
+      parentRoute: typeof AppReportsRoute
+    }
+    '/_app/reports/cash-flow': {
+      id: '/_app/reports/cash-flow'
+      path: '/cash-flow'
+      fullPath: '/reports/cash-flow'
+      preLoaderRoute: typeof AppReportsCashFlowRouteImport
+      parentRoute: typeof AppReportsRoute
+    }
+    '/_app/reports/balance-sheet': {
+      id: '/_app/reports/balance-sheet'
+      path: '/balance-sheet'
+      fullPath: '/reports/balance-sheet'
+      preLoaderRoute: typeof AppReportsBalanceSheetRouteImport
+      parentRoute: typeof AppReportsRoute
     }
     '/_app/purchase-bills/new': {
       id: '/_app/purchase-bills/new'
@@ -509,6 +603,24 @@ const AppPurchaseBillsRouteChildren: AppPurchaseBillsRouteChildren = {
 const AppPurchaseBillsRouteWithChildren =
   AppPurchaseBillsRoute._addFileChildren(AppPurchaseBillsRouteChildren)
 
+interface AppReportsRouteChildren {
+  AppReportsBalanceSheetRoute: typeof AppReportsBalanceSheetRoute
+  AppReportsCashFlowRoute: typeof AppReportsCashFlowRoute
+  AppReportsIncomeStatementRoute: typeof AppReportsIncomeStatementRoute
+  AppReportsIndexRoute: typeof AppReportsIndexRoute
+}
+
+const AppReportsRouteChildren: AppReportsRouteChildren = {
+  AppReportsBalanceSheetRoute: AppReportsBalanceSheetRoute,
+  AppReportsCashFlowRoute: AppReportsCashFlowRoute,
+  AppReportsIncomeStatementRoute: AppReportsIncomeStatementRoute,
+  AppReportsIndexRoute: AppReportsIndexRoute,
+}
+
+const AppReportsRouteWithChildren = AppReportsRoute._addFileChildren(
+  AppReportsRouteChildren,
+)
+
 interface AppSalesInvoicesRouteChildren {
   AppSalesInvoicesNewRoute: typeof AppSalesInvoicesNewRoute
   AppSalesInvoicesIndexRoute: typeof AppSalesInvoicesIndexRoute
@@ -531,6 +643,7 @@ interface AppRouteChildren {
   AppPartnersRoute: typeof AppPartnersRoute
   AppPaymentsRoute: typeof AppPaymentsRouteWithChildren
   AppPurchaseBillsRoute: typeof AppPurchaseBillsRouteWithChildren
+  AppReportsRoute: typeof AppReportsRouteWithChildren
   AppSalesInvoicesRoute: typeof AppSalesInvoicesRouteWithChildren
   AppTaxCodesRoute: typeof AppTaxCodesRoute
 }
@@ -542,6 +655,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPartnersRoute: AppPartnersRoute,
   AppPaymentsRoute: AppPaymentsRouteWithChildren,
   AppPurchaseBillsRoute: AppPurchaseBillsRouteWithChildren,
+  AppReportsRoute: AppReportsRouteWithChildren,
   AppSalesInvoicesRoute: AppSalesInvoicesRouteWithChildren,
   AppTaxCodesRoute: AppTaxCodesRoute,
 }
