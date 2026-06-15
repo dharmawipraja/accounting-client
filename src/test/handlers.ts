@@ -79,15 +79,20 @@ export const openInvoiceFixture = () => ({ id: 'i1', invoiceNumber: 1, invoiceRe
 
 // --- periods + year-end (Plan 8) ---
 export const periodFixtures = (fiscalYear = 2026) =>
-  Array.from({ length: 12 }, (_, i) => ({
-    id: `period-${fiscalYear}-${i + 1}`,
-    fiscalYear,
-    month: i + 1,
-    status: 'OPEN',
-    startDate: `${fiscalYear}-${String(i + 1).padStart(2, '0')}-01`,
-    endDate: `${fiscalYear}-${String(i + 1).padStart(2, '0')}-28`,
-    closedAt: null,
-  }));
+  Array.from({ length: 12 }, (_, i) => {
+    const mm = String(i + 1).padStart(2, '0');
+    return {
+      id: `period-${fiscalYear}-${i + 1}`,
+      fiscalYear,
+      sequence: i + 1,
+      name: `${fiscalYear}-${mm}`,
+      status: 'OPEN',
+      startDate: `${fiscalYear}-${mm}-01T00:00:00.000Z`,
+      endDate: `${fiscalYear}-${mm}-28T00:00:00.000Z`,
+      closedAt: null,
+      closedBy: null,
+    };
+  });
 
 export const handlers = [
   http.post(`${API}/auth/login`, async ({ request }) => {

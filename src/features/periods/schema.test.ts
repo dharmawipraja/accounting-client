@@ -3,10 +3,11 @@ import { periodSchema, yearEndStatusSchema, isPeriodClosed, isYearClosed, monthL
 
 describe('period schema + helpers', () => {
   it('parses a period; derives open + month label', () => {
-    const p = periodSchema.parse({ id: 'p1', fiscalYear: 2026, month: 1, status: 'OPEN', startDate: '2026-01-01', endDate: '2026-01-31', closedAt: null });
+    const p = periodSchema.parse({ id: 'p1', fiscalYear: 2026, sequence: 1, name: '2026-01', status: 'OPEN', startDate: '2026-01-01T00:00:00.000Z', endDate: '2026-01-31T00:00:00.000Z', closedAt: null, closedBy: null });
     expect(p.fiscalYear).toBe(2026);
+    expect(p.sequence).toBe(1);
     expect(isPeriodClosed(p)).toBe(false);
-    expect(monthLabel(p)).toBe('Januari');
+    expect(monthLabel(p)).toBe('Januari'); // from sequence
   });
   it('treats status CLOSED or isClosed true as closed', () => {
     expect(isPeriodClosed(periodSchema.parse({ id: 'p', fiscalYear: 2026, month: 3, status: 'CLOSED' }))).toBe(true);

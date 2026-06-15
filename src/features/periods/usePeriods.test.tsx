@@ -19,7 +19,7 @@ it('usePeriods lists the fiscal year periods', async () => {
   const { result } = renderHook(() => usePeriods(2026), { wrapper });
   await waitFor(() => expect(result.current.isSuccess).toBe(true));
   expect(result.current.data).toHaveLength(12);
-  expect(result.current.data?.[0].month).toBe(1);
+  expect(result.current.data?.[0].sequence).toBe(1);
 });
 
 it('useYearEndStatus maps a 404 to null (not closed)', async () => {
