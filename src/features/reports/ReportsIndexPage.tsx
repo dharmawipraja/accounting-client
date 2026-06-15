@@ -9,6 +9,8 @@ export function ReportsIndexPage() {
     { to: '/reports/balance-sheet', title: t.reports.balanceSheet, desc: t.reports.balanceSheetDesc },
     { to: '/reports/income-statement', title: t.reports.incomeStatement, desc: t.reports.incomeStatementDesc },
     { to: '/reports/cash-flow', title: t.reports.cashFlow, desc: t.reports.cashFlowDesc },
+    { to: '/reports/trial-balance', title: t.reports.trialBalance, desc: t.reports.trialBalanceDesc },
+    { to: '/reports/general-ledger', title: t.reports.generalLedger, desc: t.reports.generalLedgerDesc },
   ] as const;
   return (
     <div>

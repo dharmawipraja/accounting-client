@@ -27,7 +27,9 @@ import { Route as AppPurchaseBillsIndexRouteImport } from './app/routes/_app/pur
 import { Route as AppPaymentsIndexRouteImport } from './app/routes/_app/payments.index'
 import { Route as AppJournalsIndexRouteImport } from './app/routes/_app/journals.index'
 import { Route as AppSalesInvoicesNewRouteImport } from './app/routes/_app/sales-invoices.new'
+import { Route as AppReportsTrialBalanceRouteImport } from './app/routes/_app/reports.trial-balance'
 import { Route as AppReportsIncomeStatementRouteImport } from './app/routes/_app/reports.income-statement'
+import { Route as AppReportsGeneralLedgerRouteImport } from './app/routes/_app/reports.general-ledger'
 import { Route as AppReportsCashFlowRouteImport } from './app/routes/_app/reports.cash-flow'
 import { Route as AppReportsBalanceSheetRouteImport } from './app/routes/_app/reports.balance-sheet'
 import { Route as AppPurchaseBillsNewRouteImport } from './app/routes/_app/purchase-bills.new'
@@ -127,12 +129,22 @@ const AppSalesInvoicesNewRoute = AppSalesInvoicesNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AppSalesInvoicesRoute,
 } as any)
+const AppReportsTrialBalanceRoute = AppReportsTrialBalanceRouteImport.update({
+  id: '/trial-balance',
+  path: '/trial-balance',
+  getParentRoute: () => AppReportsRoute,
+} as any)
 const AppReportsIncomeStatementRoute =
   AppReportsIncomeStatementRouteImport.update({
     id: '/income-statement',
     path: '/income-statement',
     getParentRoute: () => AppReportsRoute,
   } as any)
+const AppReportsGeneralLedgerRoute = AppReportsGeneralLedgerRouteImport.update({
+  id: '/general-ledger',
+  path: '/general-ledger',
+  getParentRoute: () => AppReportsRoute,
+} as any)
 const AppReportsCashFlowRoute = AppReportsCashFlowRouteImport.update({
   id: '/cash-flow',
   path: '/cash-flow',
@@ -197,7 +209,9 @@ export interface FileRoutesByFullPath {
   '/purchase-bills/new': typeof AppPurchaseBillsNewRoute
   '/reports/balance-sheet': typeof AppReportsBalanceSheetRoute
   '/reports/cash-flow': typeof AppReportsCashFlowRoute
+  '/reports/general-ledger': typeof AppReportsGeneralLedgerRoute
   '/reports/income-statement': typeof AppReportsIncomeStatementRoute
+  '/reports/trial-balance': typeof AppReportsTrialBalanceRoute
   '/sales-invoices/new': typeof AppSalesInvoicesNewRoute
   '/journals/': typeof AppJournalsIndexRoute
   '/payments/': typeof AppPaymentsIndexRoute
@@ -221,7 +235,9 @@ export interface FileRoutesByTo {
   '/purchase-bills/new': typeof AppPurchaseBillsNewRoute
   '/reports/balance-sheet': typeof AppReportsBalanceSheetRoute
   '/reports/cash-flow': typeof AppReportsCashFlowRoute
+  '/reports/general-ledger': typeof AppReportsGeneralLedgerRoute
   '/reports/income-statement': typeof AppReportsIncomeStatementRoute
+  '/reports/trial-balance': typeof AppReportsTrialBalanceRoute
   '/sales-invoices/new': typeof AppSalesInvoicesNewRoute
   '/journals': typeof AppJournalsIndexRoute
   '/payments': typeof AppPaymentsIndexRoute
@@ -252,7 +268,9 @@ export interface FileRoutesById {
   '/_app/purchase-bills/new': typeof AppPurchaseBillsNewRoute
   '/_app/reports/balance-sheet': typeof AppReportsBalanceSheetRoute
   '/_app/reports/cash-flow': typeof AppReportsCashFlowRoute
+  '/_app/reports/general-ledger': typeof AppReportsGeneralLedgerRoute
   '/_app/reports/income-statement': typeof AppReportsIncomeStatementRoute
+  '/_app/reports/trial-balance': typeof AppReportsTrialBalanceRoute
   '/_app/sales-invoices/new': typeof AppSalesInvoicesNewRoute
   '/_app/journals/': typeof AppJournalsIndexRoute
   '/_app/payments/': typeof AppPaymentsIndexRoute
@@ -283,7 +301,9 @@ export interface FileRouteTypes {
     | '/purchase-bills/new'
     | '/reports/balance-sheet'
     | '/reports/cash-flow'
+    | '/reports/general-ledger'
     | '/reports/income-statement'
+    | '/reports/trial-balance'
     | '/sales-invoices/new'
     | '/journals/'
     | '/payments/'
@@ -307,7 +327,9 @@ export interface FileRouteTypes {
     | '/purchase-bills/new'
     | '/reports/balance-sheet'
     | '/reports/cash-flow'
+    | '/reports/general-ledger'
     | '/reports/income-statement'
+    | '/reports/trial-balance'
     | '/sales-invoices/new'
     | '/journals'
     | '/payments'
@@ -337,7 +359,9 @@ export interface FileRouteTypes {
     | '/_app/purchase-bills/new'
     | '/_app/reports/balance-sheet'
     | '/_app/reports/cash-flow'
+    | '/_app/reports/general-ledger'
     | '/_app/reports/income-statement'
+    | '/_app/reports/trial-balance'
     | '/_app/sales-invoices/new'
     | '/_app/journals/'
     | '/_app/payments/'
@@ -483,11 +507,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSalesInvoicesNewRouteImport
       parentRoute: typeof AppSalesInvoicesRoute
     }
+    '/_app/reports/trial-balance': {
+      id: '/_app/reports/trial-balance'
+      path: '/trial-balance'
+      fullPath: '/reports/trial-balance'
+      preLoaderRoute: typeof AppReportsTrialBalanceRouteImport
+      parentRoute: typeof AppReportsRoute
+    }
     '/_app/reports/income-statement': {
       id: '/_app/reports/income-statement'
       path: '/income-statement'
       fullPath: '/reports/income-statement'
       preLoaderRoute: typeof AppReportsIncomeStatementRouteImport
+      parentRoute: typeof AppReportsRoute
+    }
+    '/_app/reports/general-ledger': {
+      id: '/_app/reports/general-ledger'
+      path: '/general-ledger'
+      fullPath: '/reports/general-ledger'
+      preLoaderRoute: typeof AppReportsGeneralLedgerRouteImport
       parentRoute: typeof AppReportsRoute
     }
     '/_app/reports/cash-flow': {
@@ -606,14 +644,18 @@ const AppPurchaseBillsRouteWithChildren =
 interface AppReportsRouteChildren {
   AppReportsBalanceSheetRoute: typeof AppReportsBalanceSheetRoute
   AppReportsCashFlowRoute: typeof AppReportsCashFlowRoute
+  AppReportsGeneralLedgerRoute: typeof AppReportsGeneralLedgerRoute
   AppReportsIncomeStatementRoute: typeof AppReportsIncomeStatementRoute
+  AppReportsTrialBalanceRoute: typeof AppReportsTrialBalanceRoute
   AppReportsIndexRoute: typeof AppReportsIndexRoute
 }
 
 const AppReportsRouteChildren: AppReportsRouteChildren = {
   AppReportsBalanceSheetRoute: AppReportsBalanceSheetRoute,
   AppReportsCashFlowRoute: AppReportsCashFlowRoute,
+  AppReportsGeneralLedgerRoute: AppReportsGeneralLedgerRoute,
   AppReportsIncomeStatementRoute: AppReportsIncomeStatementRoute,
+  AppReportsTrialBalanceRoute: AppReportsTrialBalanceRoute,
   AppReportsIndexRoute: AppReportsIndexRoute,
 }
 
