@@ -13,10 +13,10 @@ import { JournalsPage } from './JournalsPage';
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 afterEach(() => useSession.getState().clear());
 
-function renderPage() {
+function renderPage(initialStatus?: 'DRAFT' | 'POSTED') {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const root = createRootRoute();
-  const index = createRoute({ getParentRoute: () => root, path: '/', component: () => <JournalsPage /> });
+  const index = createRoute({ getParentRoute: () => root, path: '/', component: () => <JournalsPage initialStatus={initialStatus} /> });
   const newR = createRoute({ getParentRoute: () => root, path: '/journals/new', component: () => null });
   const view = createRoute({ getParentRoute: () => root, path: '/journals/$id', component: () => null });
   const router = createRouter({ routeTree: root.addChildren([index, newR, view]), history: createMemoryHistory({ initialEntries: ['/'] }) });
@@ -29,6 +29,17 @@ it('lists the paginated register; ACCOUNTANT no Posting; range shown', async () 
   expect(await screen.findByText('Penjualan diposting')).toBeInTheDocument();
   expect(screen.getByText(/Menampilkan 1–5 dari 5/)).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Posting' })).not.toBeInTheDocument();
+});
+
+it('seeds the status filter from initialStatus (deep-link to DRAFT)', async () => {
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'APPROVER' });
+  let seenStatus: string | null = null;
+  server.use(http.get(`${API}/ledger/journal-entries`, ({ request }) => {
+    seenStatus = new URL(request.url).searchParams.get('status');
+    return HttpResponse.json(journalEntryListFixture());
+  }));
+  renderPage('DRAFT');
+  await waitFor(() => expect(seenStatus).toBe('DRAFT'));
 });
 
 it('APPROVER posts a draft with an idempotency key', async () => {

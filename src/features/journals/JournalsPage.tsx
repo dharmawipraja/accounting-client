@@ -21,9 +21,9 @@ const STATUSES = ['ALL', 'DRAFT', 'POSTED'] as const;
 const SOURCES = ['ALL', 'MANUAL'] as const;
 type PendingAction = { kind: 'delete' | 'post' | 'reverse'; entry: JournalEntryListItem; idempotencyKey?: string };
 
-export function JournalsPage() {
+export function JournalsPage({ initialStatus }: { initialStatus?: 'DRAFT' | 'POSTED' } = {}) {
   const t = useT();
-  const [status, setStatus] = useState<(typeof STATUSES)[number]>('ALL');
+  const [status, setStatus] = useState<(typeof STATUSES)[number]>(initialStatus ?? 'ALL');
   const [source, setSource] = useState<(typeof SOURCES)[number]>('ALL');
   const [offset, setOffset] = useState(0);
   const [action, setAction] = useState<PendingAction | null>(null);
