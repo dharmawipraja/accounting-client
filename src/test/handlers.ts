@@ -77,6 +77,18 @@ export const paymentFixtures = () => [
 // a POSTED open invoice to allocate against (used by the payment editor test)
 export const openInvoiceFixture = () => ({ id: 'i1', invoiceNumber: 1, invoiceRef: 'INV/2026/000001', partnerId: 'p1', date: '2026-06-15T00:00:00.000Z', dueDate: '2026-07-15T00:00:00.000Z', description: null, status: 'POSTED', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [] });
 
+// --- periods + year-end (Plan 8) ---
+export const periodFixtures = (fiscalYear = 2026) =>
+  Array.from({ length: 12 }, (_, i) => ({
+    id: `period-${fiscalYear}-${i + 1}`,
+    fiscalYear,
+    month: i + 1,
+    status: 'OPEN',
+    startDate: `${fiscalYear}-${String(i + 1).padStart(2, '0')}-01`,
+    endDate: `${fiscalYear}-${String(i + 1).padStart(2, '0')}-28`,
+    closedAt: null,
+  }));
+
 export const handlers = [
   http.post(`${API}/auth/login`, async ({ request }) => {
     const body = (await request.json()) as { email: string; password: string };
@@ -234,4 +246,19 @@ export const handlers = [
   http.post(`${API}/ledger/journal-entries/:id/reverse`, ({ params }) =>
     HttpResponse.json({ ...journalEntryDetailFixture(), id: 'rev1', status: 'POSTED', sourceType: 'REVERSAL', reversalOfId: params.id, entryNumber: 14, entryRef: 'JE/2026/000014', lines: undefined }),
   ),
+
+  // --- periods + year-end (Plan 8) ---
+  http.get(`${API}/ledger/periods`, ({ request }) => {
+    const fy = Number(new URL(request.url).searchParams.get('fiscalYear')) || 2026;
+    return HttpResponse.json(periodFixtures(fy));
+  }),
+  http.post(`${API}/ledger/periods/generate`, () => HttpResponse.json(periodFixtures())),
+  http.post(`${API}/ledger/periods/:id/close`, ({ params }) => HttpResponse.json({ id: params.id, status: 'CLOSED' })),
+  http.post(`${API}/ledger/periods/:id/reopen`, ({ params }) => HttpResponse.json({ id: params.id, status: 'OPEN' })),
+  http.get(`${API}/close/year-end/:fy`, () => HttpResponse.json({ code: 'NOT_FOUND', message: 'Not found' }, { status: 404 })),
+  http.post(`${API}/close/year-end`, async ({ request }) => {
+    const body = (await request.json()) as { fiscalYear: number };
+    return HttpResponse.json({ fiscalYear: body.fiscalYear, status: 'CLOSED', closedAt: '2026-12-31T00:00:00Z' });
+  }),
+  http.post(`${API}/close/year-end/:fy/reopen`, ({ params }) => HttpResponse.json({ fiscalYear: Number(params.fy), status: 'OPEN' })),
 ];
