@@ -32,4 +32,5 @@ export const queryKeys = {
     all: ['audit'] as const,
     list: (filters: unknown) => ['audit', 'list', filters] as const,
   },
+  companySettings: ['company-settings'] as const,
 };
