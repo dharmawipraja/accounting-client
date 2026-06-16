@@ -9,13 +9,23 @@ import { QueryState } from './QueryState';
 const q = (over: Record<string, unknown>) =>
   ({ isPending: false, isError: false, data: undefined, error: null, refetch: vi.fn(), ...over }) as unknown as UseQueryResult<{ name: string }, ApiError>;
 
-it('renders the loading node while pending', () => {
+it('renders the loading node while fetching', () => {
   render(
-    <QueryState query={q({ isPending: true })} loading={<p>loading…</p>}>
+    <QueryState query={q({ isPending: true, fetchStatus: 'fetching' })} loading={<p>loading…</p>}>
       {(d) => <p>{d.name}</p>}
     </QueryState>,
   );
   expect(screen.getByText('loading…')).toBeInTheDocument();
+});
+
+it('renders nothing for a disabled/idle query (no perpetual skeleton)', () => {
+  const { container } = render(
+    <QueryState query={q({ isPending: true, fetchStatus: 'idle' })} loading={<p>loading…</p>}>
+      {(d) => <p>{d.name}</p>}
+    </QueryState>,
+  );
+  expect(screen.queryByText('loading…')).not.toBeInTheDocument();
+  expect(container).toBeEmptyDOMElement();
 });
 
 it('renders children with data when resolved', () => {

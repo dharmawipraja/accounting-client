@@ -20,7 +20,9 @@ export function QueryState<T>({
   onRetry?: boolean;
   children: (data: T) => ReactNode;
 }) {
-  if (query.isPending) return <>{loading}</>;
+  // A disabled/idle query (enabled:false with no cached data) is "pending" but
+  // not actually fetching — render nothing instead of a perpetual skeleton.
+  if (query.isPending) return query.fetchStatus === 'idle' ? null : <>{loading}</>;
   if (query.isError) {
     if (notFound && query.error instanceof ApiError && query.error.status === 404) {
       return <>{notFound}</>;
