@@ -15,6 +15,7 @@ export const salesInvoicesApi = createResourceHooks<
   key: 'salesInvoices',
   basePath: '/sales-invoices',
   itemSchema: salesInvoiceSchema,
+  paginated: true,
 });
 
 export const usePostInvoice = () => useDocumentAction({ key: 'salesInvoices', basePath: '/sales-invoices', action: 'post' });

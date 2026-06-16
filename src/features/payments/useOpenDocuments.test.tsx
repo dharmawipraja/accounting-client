@@ -29,14 +29,15 @@ const bill = (over: Record<string, unknown>) => ({
 
 it('RECEIPT → open POSTED invoices for the partner, mapped', async () => {
   useSession.getState().setTokens({ accessToken: 'a', refreshToken: 'b' });
+  const invoicesData = [
+    invoice({ id: 'open', partnerId: 'p1' }),
+    invoice({ id: 'draft', partnerId: 'p1', status: 'DRAFT' }),
+    invoice({ id: 'paid', partnerId: 'p1', outstanding: '0.0000' }),
+    invoice({ id: 'other', partnerId: 'p2' }),
+  ];
   server.use(
-    http.get(`${API}/sales-invoices`, () => HttpResponse.json([
-      invoice({ id: 'open', partnerId: 'p1' }),
-      invoice({ id: 'draft', partnerId: 'p1', status: 'DRAFT' }),
-      invoice({ id: 'paid', partnerId: 'p1', outstanding: '0.0000' }),
-      invoice({ id: 'other', partnerId: 'p2' }),
-    ])),
-    http.get(`${API}/purchase-bills`, () => HttpResponse.json([])),
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: invoicesData, total: invoicesData.length, limit: 200, offset: 0 })),
+    http.get(`${API}/purchase-bills`, () => HttpResponse.json({ data: [], total: 0, limit: 200, offset: 0 })),
   );
   const { result } = renderHook(() => useOpenDocuments('RECEIPT', 'p1'), { wrapper });
   await waitFor(() => expect(result.current.map((d) => d.id)).toEqual(['open']));
@@ -45,14 +46,15 @@ it('RECEIPT → open POSTED invoices for the partner, mapped', async () => {
 
 it('DISBURSEMENT → open POSTED bills for the partner, mapped', async () => {
   useSession.getState().setTokens({ accessToken: 'a', refreshToken: 'b' });
+  const billsData = [
+    bill({ id: 'openb', partnerId: 'v1' }),
+    bill({ id: 'draftb', partnerId: 'v1', status: 'DRAFT' }),
+    bill({ id: 'paidb', partnerId: 'v1', outstanding: '0.0000' }),
+    bill({ id: 'otherb', partnerId: 'v2' }),
+  ];
   server.use(
-    http.get(`${API}/sales-invoices`, () => HttpResponse.json([])),
-    http.get(`${API}/purchase-bills`, () => HttpResponse.json([
-      bill({ id: 'openb', partnerId: 'v1' }),
-      bill({ id: 'draftb', partnerId: 'v1', status: 'DRAFT' }),
-      bill({ id: 'paidb', partnerId: 'v1', outstanding: '0.0000' }),
-      bill({ id: 'otherb', partnerId: 'v2' }),
-    ])),
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [], total: 0, limit: 200, offset: 0 })),
+    http.get(`${API}/purchase-bills`, () => HttpResponse.json({ data: billsData, total: billsData.length, limit: 200, offset: 0 })),
   );
   const { result } = renderHook(() => useOpenDocuments('DISBURSEMENT', 'v1'), { wrapper });
   await waitFor(() => expect(result.current.map((d) => d.id)).toEqual(['openb']));

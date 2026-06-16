@@ -6,6 +6,7 @@ export const paymentsApi = createResourceHooks<Payment, PaymentCreatePayload, Pa
   key: 'payments',
   basePath: '/payments',
   itemSchema: paymentSchema,
+  paginated: true,
 });
 
 export const usePostPayment = () => useDocumentAction({ key: 'payments', basePath: '/payments', action: 'post' });

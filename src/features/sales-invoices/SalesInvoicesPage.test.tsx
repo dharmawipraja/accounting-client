@@ -32,10 +32,10 @@ function renderPage() {
 it('lists invoices with partner name (joined) and a Draft status, gated New for ACCOUNTANT', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
   server.use(
-    http.get(`${API}/sales-invoices`, () => HttpResponse.json([
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [
       { id: 'i1', invoiceNumber: null, partnerId: 'p1', date: '2026-06-13T00:00:00.000Z', dueDate: null, description: 'x', status: 'DRAFT', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [] },
-    ])),
-    http.get(`${API}/partners`, () => HttpResponse.json([{ id: 'p1', code: 'CUST-1', name: 'Toko A', isCustomer: true, isVendor: false, isActive: true }])),
+    ], total: 1, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: [{ id: 'p1', code: 'CUST-1', name: 'Toko A', isCustomer: true, isVendor: false, isActive: true }], total: 1, limit: 200, offset: 0 })),
   );
   renderPage();
   expect(await screen.findByText('Toko A')).toBeInTheDocument();      // joined partner name
@@ -48,10 +48,10 @@ it('deletes a draft after confirm (ACCOUNTANT)', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
   let deleted = false;
   server.use(
-    http.get(`${API}/sales-invoices`, () => HttpResponse.json([
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [
       { id: 'i1', invoiceNumber: null, partnerId: 'p1', date: '2026-06-13T00:00:00.000Z', dueDate: null, description: 'x', status: 'DRAFT', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [] },
-    ])),
-    http.get(`${API}/partners`, () => HttpResponse.json([{ id: 'p1', code: 'CUST-1', name: 'Toko A', isCustomer: true, isVendor: false, isActive: true }])),
+    ], total: 1, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: [{ id: 'p1', code: 'CUST-1', name: 'Toko A', isCustomer: true, isVendor: false, isActive: true }], total: 1, limit: 200, offset: 0 })),
     http.delete(`${API}/sales-invoices/i1`, () => { deleted = true; return HttpResponse.json({}); }),
   );
   renderPage();
@@ -66,8 +66,8 @@ it('APPROVER can post a draft (idempotency key sent); ACCOUNTANT cannot post', a
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
   server.use(
-    http.get(`${API}/sales-invoices`, () => HttpResponse.json([draftInvoice])),
-    http.get(`${API}/partners`, () => HttpResponse.json(onePartner)),
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [draftInvoice], total: 1, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: onePartner, total: 1, limit: 200, offset: 0 })),
   );
   const { unmount } = renderPage();
   await screen.findByText('Toko A');
@@ -77,8 +77,8 @@ it('APPROVER can post a draft (idempotency key sent); ACCOUNTANT cannot post', a
   useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
   let seenKey: string | null = null;
   server.use(
-    http.get(`${API}/sales-invoices`, () => HttpResponse.json([draftInvoice])),
-    http.get(`${API}/partners`, () => HttpResponse.json(onePartner)),
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [draftInvoice], total: 1, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: onePartner, total: 1, limit: 200, offset: 0 })),
     http.post(`${API}/sales-invoices/i1/post`, ({ request }) => { seenKey = request.headers.get('Idempotency-Key'); return HttpResponse.json({ ...draftInvoice, status: 'POSTED', invoiceNumber: 1, invoiceRef: 'INV/2026/000001' }); }),
   );
   renderPage();
@@ -93,8 +93,8 @@ it('shows the SoD message when post returns 403 SEGREGATION_OF_DUTIES', async ()
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
   server.use(
-    http.get(`${API}/sales-invoices`, () => HttpResponse.json([draftInvoice])),
-    http.get(`${API}/partners`, () => HttpResponse.json(onePartner)),
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [draftInvoice], total: 1, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: onePartner, total: 1, limit: 200, offset: 0 })),
     http.post(`${API}/sales-invoices/i1/post`, () => HttpResponse.json({ code: 'SEGREGATION_OF_DUTIES', message: 'no self-approve' }, { status: 403 })),
   );
   renderPage();
@@ -110,8 +110,8 @@ it('APPROVER can void a posted invoice', async () => {
   useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
   let voided = false;
   server.use(
-    http.get(`${API}/sales-invoices`, () => HttpResponse.json([postedInvoice])),
-    http.get(`${API}/partners`, () => HttpResponse.json(onePartner)),
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [postedInvoice], total: 1, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: onePartner, total: 1, limit: 200, offset: 0 })),
     http.post(`${API}/sales-invoices/i2/void`, () => { voided = true; return HttpResponse.json({ ...postedInvoice, status: 'VOID' }); }),
   );
   renderPage();
@@ -125,8 +125,8 @@ it('APPROVER can void a posted invoice', async () => {
 it('hides New for VIEWER', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
   server.use(
-    http.get(`${API}/sales-invoices`, () => HttpResponse.json([])),
-    http.get(`${API}/partners`, () => HttpResponse.json([])),
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [], total: 0, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: [], total: 0, limit: 200, offset: 0 })),
   );
   renderPage();
   expect(await screen.findByText(/tidak ada data/i)).toBeInTheDocument();

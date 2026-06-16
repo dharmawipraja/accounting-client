@@ -32,8 +32,8 @@ function renderPage() {
 it('lists payments with partner + cash-account joins; ACCOUNTANT no Posting', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
   server.use(
-    http.get(`${API}/payments`, () => HttpResponse.json([draftPayment])),
-    http.get(`${API}/partners`, () => HttpResponse.json(partners)),
+    http.get(`${API}/payments`, () => HttpResponse.json({ data: [draftPayment], total: 1, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
   );
   renderPage();
@@ -47,8 +47,8 @@ it('APPROVER posts a draft payment with an idempotency key', async () => {
   useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
   let seenKey: string | null = null;
   server.use(
-    http.get(`${API}/payments`, () => HttpResponse.json([draftPayment])),
-    http.get(`${API}/partners`, () => HttpResponse.json(partners)),
+    http.get(`${API}/payments`, () => HttpResponse.json({ data: [draftPayment], total: 1, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
     http.post(`${API}/payments/pay1/post`, ({ request }) => { seenKey = request.headers.get('Idempotency-Key'); return HttpResponse.json({ ...draftPayment, status: 'POSTED', number: 1, ref: 'PAY-RCV/2026/000001', fiscalYear: 2026 }); }),
   );
@@ -65,8 +65,8 @@ it('APPROVER voids a posted payment with an idempotency key', async () => {
   useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
   let seenKey: string | null = null;
   server.use(
-    http.get(`${API}/payments`, () => HttpResponse.json([postedPayment])),
-    http.get(`${API}/partners`, () => HttpResponse.json(partners)),
+    http.get(`${API}/payments`, () => HttpResponse.json({ data: [postedPayment], total: 1, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
     http.post(`${API}/payments/pay1/void`, ({ request }) => { seenKey = request.headers.get('Idempotency-Key'); return HttpResponse.json({ ...postedPayment, status: 'VOID' }); }),
   );
@@ -83,8 +83,8 @@ it('shows the SoD message when post returns 403 SEGREGATION_OF_DUTIES', async ()
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
   server.use(
-    http.get(`${API}/payments`, () => HttpResponse.json([draftPayment])),
-    http.get(`${API}/partners`, () => HttpResponse.json(partners)),
+    http.get(`${API}/payments`, () => HttpResponse.json({ data: [draftPayment], total: 1, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
     http.post(`${API}/payments/pay1/post`, () => HttpResponse.json({ code: 'SEGREGATION_OF_DUTIES', message: 'no self-approve' }, { status: 403 })),
   );
@@ -100,9 +100,10 @@ it('filters by direction and shows both create buttons', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
   const disb = { ...draftPayment, id: 'pay2', direction: 'DISBURSEMENT', partnerId: 'v1', ref: 'PAY-DSB/2026/000001', allocations: [{ purchaseBillId: 'b1', amount: '1000000.0000' }] };
+  const allPartners = [...partners, { id: 'v1', code: 'VEND-1', name: 'PT Pemasok', isCustomer: false, isVendor: true, isActive: true }];
   server.use(
-    http.get(`${API}/payments`, () => HttpResponse.json([draftPayment, disb])),
-    http.get(`${API}/partners`, () => HttpResponse.json([...partners, { id: 'v1', code: 'VEND-1', name: 'PT Pemasok', isCustomer: false, isVendor: true, isActive: true }])),
+    http.get(`${API}/payments`, () => HttpResponse.json({ data: [draftPayment, disb], total: 2, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: allPartners, total: 2, limit: 200, offset: 0 })),
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
   );
   renderPage();

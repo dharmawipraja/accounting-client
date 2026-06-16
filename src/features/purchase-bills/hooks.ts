@@ -15,6 +15,7 @@ export const purchaseBillsApi = createResourceHooks<
   key: 'purchaseBills',
   basePath: '/purchase-bills',
   itemSchema: purchaseBillSchema,
+  paginated: true,
 });
 
 export const usePostBill = () => useDocumentAction({ key: 'purchaseBills', basePath: '/purchase-bills', action: 'post' });

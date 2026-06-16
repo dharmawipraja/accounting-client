@@ -26,7 +26,7 @@ it('creates a draft: vendor + line → posts the purchase payload with vendorInv
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
   server.use(
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
-    http.get(`${API}/partners`, () => HttpResponse.json(partners)),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/tax/codes`, () => HttpResponse.json([])),
   );
   let posted: Record<string, unknown> | null = null;
@@ -60,7 +60,7 @@ it('blocks save with no lines / no partner', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
   server.use(
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
-    http.get(`${API}/partners`, () => HttpResponse.json(partners)),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/tax/codes`, () => HttpResponse.json([])),
   );
   renderForm(<BillForm mode="create" onSaved={vi.fn()} startEmpty />);

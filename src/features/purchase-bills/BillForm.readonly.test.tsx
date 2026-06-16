@@ -27,7 +27,7 @@ it('renders a posted bill read-only: disabled fields, banner, no Save', async ()
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
   server.use(
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json([{ id: 'exp', code: '5-1000', name: 'HPP', type: 'EXPENSE', subtype: 'COGS', normalBalance: 'DEBIT', isPostable: true, isActive: true, parentId: null }])),
-    http.get(`${API}/partners`, () => HttpResponse.json([{ id: 'v1', code: 'VEND-1', name: 'PT Pemasok', isCustomer: false, isVendor: true, isActive: true }])),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: [{ id: 'v1', code: 'VEND-1', name: 'PT Pemasok', isCustomer: false, isVendor: true, isActive: true }], total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/tax/codes`, () => HttpResponse.json([])),
   );
   renderForm(<BillForm mode="edit" bill={posted} onSaved={vi.fn()} readOnly />);

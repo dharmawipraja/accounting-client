@@ -27,7 +27,7 @@ it('renders a posted invoice read-only: disabled fields, banner, no Save', async
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
   server.use(
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json([{ id: 'rev', code: '4-1000', name: 'Pendapatan', type: 'REVENUE', subtype: 'REVENUE', normalBalance: 'CREDIT', isPostable: true, isActive: true, parentId: null }])),
-    http.get(`${API}/partners`, () => HttpResponse.json([{ id: 'c1', code: 'CUST-1', name: 'Toko A', isCustomer: true, isVendor: false, isActive: true }])),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: [{ id: 'c1', code: 'CUST-1', name: 'Toko A', isCustomer: true, isVendor: false, isActive: true }], total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/tax/codes`, () => HttpResponse.json([])),
   );
   renderForm(<InvoiceForm mode="edit" invoice={posted} onSaved={vi.fn()} readOnly />);

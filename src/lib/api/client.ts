@@ -73,9 +73,16 @@ export async function rawFetch<T>(
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export async function apiFetch<T>(path: string, opts: RequestOptions<T> = {}): Promise<T> {
-  const auth = opts.auth ?? true;
+  // Auto-assign a random Idempotency-Key for POST requests that don't supply one.
+  // The same key is reused for every rawFetch call within this request's retry chain,
+  // ensuring the backend's idempotency guard works correctly across 401/429 retries.
+  const normalizedOpts: RequestOptions<T> =
+    opts.method === 'POST' && !opts.idempotencyKey
+      ? { ...opts, idempotencyKey: crypto.randomUUID() }
+      : opts;
+  const auth = normalizedOpts.auth ?? true;
   try {
-    const { data } = await rawFetch<T>(path, opts);
+    const { data } = await rawFetch<T>(path, normalizedOpts);
     return data;
   } catch (err) {
     if (!(err instanceof ApiError)) throw err;
@@ -84,7 +91,7 @@ export async function apiFetch<T>(path: string, opts: RequestOptions<T> = {}): P
     if (e.status === 401 && auth) {
       const fresh = await refreshAccessToken();
       if (fresh) {
-        const { data } = await rawFetch<T>(path, opts);
+        const { data } = await rawFetch<T>(path, normalizedOpts);
         return data;
       }
     }
@@ -92,7 +99,7 @@ export async function apiFetch<T>(path: string, opts: RequestOptions<T> = {}): P
     if (e.status === 429) {
       const retryAfter = Number(e.details?.['retryAfter']) || 1;
       await sleep(retryAfter * 1000);
-      const { data } = await rawFetch<T>(path, opts);
+      const { data } = await rawFetch<T>(path, normalizedOpts);
       return data;
     }
     throw err;

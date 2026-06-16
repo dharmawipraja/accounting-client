@@ -31,8 +31,8 @@ function renderPage() {
 it('lists bills with the joined vendor name; ACCOUNTANT sees New but not Posting', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
   server.use(
-    http.get(`${API}/purchase-bills`, () => HttpResponse.json([draftBill])),
-    http.get(`${API}/partners`, () => HttpResponse.json(onePartner)),
+    http.get(`${API}/purchase-bills`, () => HttpResponse.json({ data: [draftBill], total: 1, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: onePartner, total: 1, limit: 200, offset: 0 })),
   );
   renderPage();
   expect(await screen.findByText('PT Pemasok')).toBeInTheDocument();
@@ -45,8 +45,8 @@ it('APPROVER posts a draft with an idempotency key', async () => {
   useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
   let seenKey: string | null = null;
   server.use(
-    http.get(`${API}/purchase-bills`, () => HttpResponse.json([draftBill])),
-    http.get(`${API}/partners`, () => HttpResponse.json(onePartner)),
+    http.get(`${API}/purchase-bills`, () => HttpResponse.json({ data: [draftBill], total: 1, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: onePartner, total: 1, limit: 200, offset: 0 })),
     http.post(`${API}/purchase-bills/b1/post`, ({ request }) => { seenKey = request.headers.get('Idempotency-Key'); return HttpResponse.json({ ...draftBill, status: 'POSTED', billNumber: 1, billRef: 'BILL/2026/000001' }); }),
   );
   renderPage();
@@ -61,8 +61,8 @@ it('shows the SoD message when post returns 403 SEGREGATION_OF_DUTIES', async ()
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
   server.use(
-    http.get(`${API}/purchase-bills`, () => HttpResponse.json([draftBill])),
-    http.get(`${API}/partners`, () => HttpResponse.json(onePartner)),
+    http.get(`${API}/purchase-bills`, () => HttpResponse.json({ data: [draftBill], total: 1, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: onePartner, total: 1, limit: 200, offset: 0 })),
     http.post(`${API}/purchase-bills/b1/post`, () => HttpResponse.json({ code: 'SEGREGATION_OF_DUTIES', message: 'no self-approve' }, { status: 403 })),
   );
   renderPage();
@@ -78,8 +78,8 @@ it('APPROVER voids a posted bill', async () => {
   useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
   let voided = false;
   server.use(
-    http.get(`${API}/purchase-bills`, () => HttpResponse.json([postedBill])),
-    http.get(`${API}/partners`, () => HttpResponse.json(onePartner)),
+    http.get(`${API}/purchase-bills`, () => HttpResponse.json({ data: [postedBill], total: 1, limit: 200, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: onePartner, total: 1, limit: 200, offset: 0 })),
     http.post(`${API}/purchase-bills/b2/void`, () => { voided = true; return HttpResponse.json({ ...postedBill, status: 'VOID' }); }),
   );
   renderPage();

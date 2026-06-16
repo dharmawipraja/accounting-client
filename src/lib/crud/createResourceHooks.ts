@@ -5,7 +5,7 @@ import {
   type UseMutationResult,
   type UseQueryResult,
 } from '@tanstack/react-query';
-import type { ZodType } from 'zod';
+import { z, type ZodType } from 'zod';
 import { apiFetch } from '@/lib/api/client';
 import type { ApiError } from '@/lib/api/errors';
 
@@ -13,6 +13,14 @@ export interface ResourceConfig<TItem> {
   key: string;
   basePath: string;
   itemSchema: ZodType<TItem>;
+  /**
+   * Set to true for resources whose list endpoint returns a pagination envelope
+   * { data: TItem[], total: number, limit: number, offset: number }.
+   * useList will unwrap the envelope and still resolve to TItem[], so consumers
+   * are unchanged. Requests limit=200 to preserve the old "show all" behaviour.
+   * Default: false (bare array).
+   */
+  paginated?: boolean;
 }
 
 export interface ResourceKeys {
@@ -32,9 +40,15 @@ export function createResourceKeys(key: string): ResourceKeys {
 export function createResourceHooks<TItem, TCreate = unknown, TUpdate = unknown>(
   config: ResourceConfig<TItem>,
 ) {
-  const { basePath, itemSchema } = config;
+  const { basePath, itemSchema, paginated = false } = config;
   const keys = createResourceKeys(config.key);
   const listSchema = itemSchema.array();
+  const envelopeSchema = z.object({
+    data: listSchema,
+    total: z.number(),
+    limit: z.number(),
+    offset: z.number(),
+  });
 
   const invalidate = (qc: ReturnType<typeof useQueryClient>) =>
     qc.invalidateQueries({ queryKey: keys.all });
@@ -42,7 +56,15 @@ export function createResourceHooks<TItem, TCreate = unknown, TUpdate = unknown>
   function useList(): UseQueryResult<TItem[], ApiError> {
     return useQuery<TItem[], ApiError>({
       queryKey: keys.list(),
-      queryFn: () => apiFetch(basePath, { schema: listSchema }),
+      queryFn: paginated
+        ? async () => {
+            const envelope = await apiFetch(basePath, {
+              schema: envelopeSchema,
+              query: { limit: 200 },
+            });
+            return envelope.data;
+          }
+        : () => apiFetch(basePath, { schema: listSchema }),
     });
   }
 

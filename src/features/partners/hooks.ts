@@ -5,4 +5,5 @@ export const partnersApi = createResourceHooks<Partner, PartnerCreatePayload, Pa
   key: 'partners',
   basePath: '/partners',
   itemSchema: partnerSchema,
+  paginated: true,
 });

@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 
-export const API = 'http://localhost:4000';
+export const API = 'http://localhost:4000/v1';
 
 // --- accounts (Plan 2a) ---
 export const accountFixtures = () => [
@@ -140,7 +140,13 @@ export const handlers = [
   http.post(`${API}/ledger/accounts/:id/deactivate`, () => HttpResponse.json({})),
   http.delete(`${API}/ledger/accounts/:id`, () => HttpResponse.json({})),
 
-  http.get(`${API}/partners`, () => HttpResponse.json(partnerFixtures())),
+  http.get(`${API}/partners`, ({ request }) => {
+    const u = new URL(request.url).searchParams;
+    const limit = Number(u.get('limit') ?? '200');
+    const offset = Number(u.get('offset') ?? '0');
+    const data = partnerFixtures();
+    return HttpResponse.json({ data: data.slice(offset, offset + limit), total: data.length, limit, offset });
+  }),
   http.post(`${API}/partners`, async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;
     if (body.code === 'DUP') return HttpResponse.json({ code: 'CONFLICT', message: 'dup' }, { status: 409 });
@@ -166,7 +172,13 @@ export const handlers = [
   http.post(`${API}/tax/codes/:id/deactivate`, () => HttpResponse.json({})),
   http.delete(`${API}/tax/codes/:id`, () => HttpResponse.json({})),
 
-  http.get(`${API}/sales-invoices`, () => HttpResponse.json(salesInvoiceFixtures())),
+  http.get(`${API}/sales-invoices`, ({ request }) => {
+    const u = new URL(request.url).searchParams;
+    const limit = Number(u.get('limit') ?? '200');
+    const offset = Number(u.get('offset') ?? '0');
+    const data = salesInvoiceFixtures();
+    return HttpResponse.json({ data: data.slice(offset, offset + limit), total: data.length, limit, offset });
+  }),
   http.get(`${API}/sales-invoices/:id`, ({ params }) => HttpResponse.json({ ...salesInvoiceFixtures()[0], id: params.id })),
   http.post(`${API}/sales-invoices`, async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;
@@ -195,7 +207,13 @@ export const handlers = [
   }),
 
   // --- payments (Plan 4a) ---
-  http.get(`${API}/payments`, () => HttpResponse.json(paymentFixtures())),
+  http.get(`${API}/payments`, ({ request }) => {
+    const u = new URL(request.url).searchParams;
+    const limit = Number(u.get('limit') ?? '200');
+    const offset = Number(u.get('offset') ?? '0');
+    const data = paymentFixtures();
+    return HttpResponse.json({ data: data.slice(offset, offset + limit), total: data.length, limit, offset });
+  }),
   http.get(`${API}/payments/:id`, ({ params }) => HttpResponse.json({ ...paymentFixtures()[0], id: params.id })),
   http.post(`${API}/payments`, async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;
@@ -210,7 +228,13 @@ export const handlers = [
   http.post(`${API}/payments/:id/void`, ({ params }) => HttpResponse.json({ ...paymentFixtures()[0], id: params.id, status: 'VOID' })),
 
   // --- purchase bills (Plan 5a) ---
-  http.get(`${API}/purchase-bills`, () => HttpResponse.json(purchaseBillFixtures())),
+  http.get(`${API}/purchase-bills`, ({ request }) => {
+    const u = new URL(request.url).searchParams;
+    const limit = Number(u.get('limit') ?? '200');
+    const offset = Number(u.get('offset') ?? '0');
+    const data = purchaseBillFixtures();
+    return HttpResponse.json({ data: data.slice(offset, offset + limit), total: data.length, limit, offset });
+  }),
   http.get(`${API}/purchase-bills/:id`, ({ params }) => HttpResponse.json({ ...purchaseBillFixtures()[0], id: params.id })),
   http.post(`${API}/purchase-bills`, async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;
