@@ -38,6 +38,7 @@ it('lists bills with the joined vendor name; ACCOUNTANT sees New but not Posting
   expect(await screen.findByText('PT Pemasok')).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /tagihan baru/i })).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Posting' })).not.toBeInTheDocument();
+  expect(screen.getByText(/Menampilkan/)).toBeInTheDocument();
 });
 
 it('APPROVER posts a draft with an idempotency key', async () => {
