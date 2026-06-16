@@ -3,13 +3,13 @@ import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
 import { DataTable } from '@/components/common/DataTable';
-import { ErrorState } from '@/components/common/ErrorState';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Pagination } from '@/components/common/Pagination';
+import { QueryState } from '@/components/common/QueryState';
 import { RoleGate } from '@/components/common/RoleGate';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
+import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { useT } from '@/lib/i18n/useT';
 import { buildPartnerColumns } from './columns';
 import { PartnerFormDialog } from './PartnerFormDialog';
@@ -39,11 +39,6 @@ export function PartnersPage() {
     [t],
   );
 
-  const rows = useMemo(() => {
-    const q = search.toLowerCase();
-    return (page.data?.data ?? []).filter((p) => !q || p.code.toLowerCase().includes(q) || p.name.toLowerCase().includes(q));
-  }, [page.data, search]);
-
   function runConfirm() {
     if (!confirm) return;
     const action = confirm.kind === 'deactivate' ? deactivate : remove;
@@ -67,12 +62,18 @@ export function PartnersPage() {
         <p className="text-xs text-muted-foreground">{t.common.searchOnThisPage}</p>
       </div>
 
-      {page.isLoading ? <Skeleton className="h-40 w-full" />
-        : page.isError ? <ErrorState error={page.error} />
-        : <>
-            <DataTable columns={columns} data={rows} />
-            <Pagination offset={offset} limit={LIMIT} total={page.data?.total ?? 0} onChange={setOffset} />
-          </>}
+      <QueryState query={page} loading={<SkeletonTable rows={8} cols={5} />} onRetry>
+        {(env) => {
+          const q = search.toLowerCase();
+          const rows = env.data.filter((p) => !q || p.code.toLowerCase().includes(q) || p.name.toLowerCase().includes(q));
+          return (
+            <>
+              <DataTable columns={columns} data={rows} />
+              <Pagination offset={offset} limit={LIMIT} total={env.total} onChange={setOffset} />
+            </>
+          );
+        }}
+      </QueryState>
 
       <PartnerFormDialog open={creating} onOpenChange={setCreating} mode="create" />
       <PartnerFormDialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)} mode="edit" partner={editing ?? undefined} />

@@ -3,13 +3,13 @@ import { Link } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import { DataTable } from '@/components/common/DataTable';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
-import { ErrorState } from '@/components/common/ErrorState';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Pagination } from '@/components/common/Pagination';
+import { QueryState } from '@/components/common/QueryState';
 import { RoleGate } from '@/components/common/RoleGate';
+import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { useT } from '@/lib/i18n/useT';
 import { toastApiError } from '@/lib/api/toastApiError';
 import { buildJournalColumns } from './columns';
@@ -92,14 +92,14 @@ export function JournalsPage({ initialStatus }: { initialStatus?: 'DRAFT' | 'POS
         </div>
       </div>
 
-      {page.isLoading ? <Skeleton className="h-40 w-full" />
-        : page.isError ? <ErrorState error={page.error} />
-        : page.data ? (
+      <QueryState query={page} loading={<SkeletonTable rows={8} cols={5} />} onRetry>
+        {(env) => (
           <>
-            <DataTable columns={columns} data={page.data.data} />
-            <Pagination offset={offset} limit={LIMIT} total={page.data.total} onChange={setOffset} />
+            <DataTable columns={columns} data={env.data} />
+            <Pagination offset={offset} limit={LIMIT} total={env.total} onChange={setOffset} />
           </>
-        ) : null}
+        )}
+      </QueryState>
 
       <ConfirmDialog
         open={!!action}
