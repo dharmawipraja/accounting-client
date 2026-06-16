@@ -174,7 +174,7 @@ export const handlers = [
 
   http.get(`${API}/sales-invoices`, ({ request }) => {
     const u = new URL(request.url).searchParams;
-    let data = salesInvoiceFixtures();
+    let data = salesInvoiceFixtures().map((x) => ({ ...x, lines: undefined })); // live list omits lines
     const status = u.get('status'); if (status) data = data.filter((x) => x.status === status);
     const limit = Number(u.get('limit') ?? '200');
     const offset = Number(u.get('offset') ?? '0');
@@ -210,7 +210,7 @@ export const handlers = [
   // --- payments (Plan 4a) ---
   http.get(`${API}/payments`, ({ request }) => {
     const u = new URL(request.url).searchParams;
-    let data = paymentFixtures();
+    let data = paymentFixtures().map((x) => ({ ...x, allocations: undefined })); // live list omits allocations
     const status = u.get('status'); if (status) data = data.filter((x) => x.status === status);
     const direction = u.get('direction'); if (direction) data = data.filter((x) => x.direction === direction);
     const limit = Number(u.get('limit') ?? '200');
@@ -233,7 +233,7 @@ export const handlers = [
   // --- purchase bills (Plan 5a) ---
   http.get(`${API}/purchase-bills`, ({ request }) => {
     const u = new URL(request.url).searchParams;
-    let data = purchaseBillFixtures();
+    let data = purchaseBillFixtures().map((x) => ({ ...x, lines: undefined })); // live list omits lines
     const status = u.get('status'); if (status) data = data.filter((x) => x.status === status);
     const limit = Number(u.get('limit') ?? '200');
     const offset = Number(u.get('offset') ?? '0');

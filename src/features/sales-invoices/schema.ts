@@ -32,7 +32,7 @@ export const salesInvoiceSchema = z.object({
   amountPaid: moneyString,
   outstanding: moneyString,
   paymentStatus: z.string().nullish(),
-  lines: z.array(salesInvoiceLineSchema),
+  lines: z.array(salesInvoiceLineSchema).default([]), // omitted from list responses
 });
 export type SalesInvoice = z.infer<typeof salesInvoiceSchema>;
 

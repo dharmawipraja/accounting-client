@@ -20,4 +20,11 @@ describe('paymentSchema', () => {
     expect(r.number).toBe(1);
     expect(r.ref).toBe('PAY-RCV/2026/000001');
   });
+
+  it('parses a list item that omits allocations (list responses omit them)', () => {
+    const listItem: Record<string, unknown> = { ...draft };
+    delete listItem.allocations;
+    const r = paymentSchema.parse(listItem);
+    expect(r.allocations).toEqual([]);
+  });
 });

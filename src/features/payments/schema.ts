@@ -24,7 +24,7 @@ export const paymentSchema = z.object({
   journalEntryId: z.string().nullish(),
   postedBy: z.string().nullish(),
   postedAt: z.string().nullish(),
-  allocations: z.array(paymentAllocationSchema),
+  allocations: z.array(paymentAllocationSchema).default([]), // omitted from list responses
 });
 export type Payment = z.infer<typeof paymentSchema>;
 

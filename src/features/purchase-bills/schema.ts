@@ -35,7 +35,7 @@ export const purchaseBillSchema = z.object({
   amountPaid: moneyString,
   outstanding: moneyString,
   paymentStatus: z.string().nullish(),
-  lines: z.array(purchaseBillLineSchema),
+  lines: z.array(purchaseBillLineSchema).default([]), // omitted from list responses
 });
 export type PurchaseBill = z.infer<typeof purchaseBillSchema>;
 

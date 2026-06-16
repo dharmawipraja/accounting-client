@@ -23,6 +23,13 @@ describe('salesInvoiceSchema', () => {
     expect(r.invoiceNumber).toBe(1);
     expect(r.invoiceRef).toBe('INV/2026/000001');
   });
+
+  it('parses a list item that omits lines (list responses omit them)', () => {
+    const listItem: Record<string, unknown> = { ...sample, fiscalYear: null, createdBy: 'u' };
+    delete listItem.lines;
+    const r = salesInvoiceSchema.parse(listItem);
+    expect(r.lines).toEqual([]);
+  });
 });
 
 describe('invoiceFormSchema', () => {

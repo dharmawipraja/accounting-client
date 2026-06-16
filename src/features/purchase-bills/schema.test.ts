@@ -23,6 +23,13 @@ describe('purchaseBillSchema', () => {
     expect(r.billNumber).toBe(1);
     expect(r.billRef).toBe('BILL/2026/000001');
   });
+
+  it('parses a list item that omits lines (list responses omit them)', () => {
+    const listItem: Record<string, unknown> = { ...sample, fiscalYear: null, createdBy: 'u' };
+    delete listItem.lines;
+    const r = purchaseBillSchema.parse(listItem);
+    expect(r.lines).toEqual([]);
+  });
 });
 
 describe('billFormSchema', () => {
