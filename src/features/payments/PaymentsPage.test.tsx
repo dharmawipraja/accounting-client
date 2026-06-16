@@ -101,8 +101,13 @@ it('filters by direction and shows both create buttons', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
   const disb = { ...draftPayment, id: 'pay2', direction: 'DISBURSEMENT', partnerId: 'v1', ref: 'PAY-DSB/2026/000001', allocations: [{ purchaseBillId: 'b1', amount: '1000000.0000' }] };
   const allPartners = [...partners, { id: 'v1', code: 'VEND-1', name: 'PT Pemasok', isCustomer: false, isVendor: true, isActive: true }];
+  const allPayments = [draftPayment, disb];
   server.use(
-    http.get(`${API}/payments`, () => HttpResponse.json({ data: [draftPayment, disb], total: 2, limit: 200, offset: 0 })),
+    http.get(`${API}/payments`, ({ request }) => {
+      const dir = new URL(request.url).searchParams.get('direction');
+      const data = dir ? allPayments.filter((p) => p.direction === dir) : allPayments;
+      return HttpResponse.json({ data, total: data.length, limit: 20, offset: 0 });
+    }),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: allPartners, total: 2, limit: 200, offset: 0 })),
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
   );
@@ -112,7 +117,9 @@ it('filters by direction and shows both create buttons', async () => {
   // two gated create buttons (rendered as links via Button asChild)
   expect(screen.getByRole('link', { name: /terima/i })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /bayar/i })).toBeInTheDocument();
-  // filter to disbursements only (the filter is a <button>, distinct from the create <a>)
+  // pagination label visible (2 total on first page)
+  expect(screen.getByText(/Menampilkan 1/)).toBeInTheDocument();
+  // filter to disbursements only — server now filters; the receipt row disappears
   await user.click(screen.getByRole('button', { name: 'Bayar' }));
   await waitFor(() => expect(screen.queryByText('Toko A')).not.toBeInTheDocument());
   expect(screen.getByText('PT Pemasok')).toBeInTheDocument();

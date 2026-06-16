@@ -9,6 +9,7 @@ import { DataTable } from '@/components/common/DataTable';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { ErrorState } from '@/components/common/ErrorState';
 import { PageHeader } from '@/components/common/PageHeader';
+import { Pagination } from '@/components/common/Pagination';
 import { RoleGate } from '@/components/common/RoleGate';
 import { useT } from '@/lib/i18n/useT';
 import { toastApiError } from '@/lib/api/toastApiError';
@@ -18,13 +19,13 @@ import { buildPaymentColumns } from './columns';
 import { paymentsApi, usePostPayment, useVoidPayment } from './hooks';
 import type { Payment } from './schema';
 
+const LIMIT = 20;
 const STATUSES = ['ALL', 'DRAFT', 'POSTED', 'VOID'] as const;
 const DIRECTIONS = ['ALL', 'RECEIPT', 'DISBURSEMENT'] as const;
 type PendingAction = { kind: 'delete' | 'post' | 'void'; payment: Payment; idempotencyKey?: string };
 
 export function PaymentsPage() {
   const t = useT();
-  const list = paymentsApi.useList();
   const partners = partnersApi.useList();
   const accounts = accountsApi.useList();
   const remove = paymentsApi.useRemove();
@@ -34,6 +35,14 @@ export function PaymentsPage() {
   const [status, setStatus] = useState<(typeof STATUSES)[number]>('ALL');
   const [direction, setDirection] = useState<(typeof DIRECTIONS)[number]>('ALL');
   const [action, setAction] = useState<PendingAction | null>(null);
+  const [offset, setOffset] = useState(0);
+
+  const page = paymentsApi.usePagedList({
+    limit: LIMIT,
+    offset,
+    status: status === 'ALL' ? undefined : status,
+    direction: direction === 'ALL' ? undefined : direction,
+  });
 
   const partnerName = useMemo(() => {
     const map = new Map((partners.data ?? []).map((p) => [p.id, p.name]));
@@ -55,12 +64,9 @@ export function PaymentsPage() {
 
   const rows = useMemo(() => {
     const q = search.toLowerCase();
-    return (list.data ?? []).filter((p) => {
-      if (status !== 'ALL' && p.status !== status && !(status === 'VOID' && p.status.startsWith('VOID'))) return false;
-      if (direction !== 'ALL' && p.direction !== direction) return false;
-      return !q || (p.ref ?? '').toLowerCase().includes(q) || partnerName(p.partnerId).toLowerCase().includes(q);
-    });
-  }, [list.data, search, status, direction, partnerName]);
+    return (page.data?.data ?? []).filter((p) =>
+      !q || (p.ref ?? '').toLowerCase().includes(q) || partnerName(p.partnerId).toLowerCase().includes(q));
+  }, [page.data, search, partnerName]);
 
   function runAction() {
     if (!action) return;
@@ -92,26 +98,32 @@ export function PaymentsPage() {
       } />
 
       <div className="mb-4 flex flex-wrap gap-2">
-        <Input className="max-w-xs" placeholder={t.common.search} value={search} onChange={(e) => setSearch(e.target.value)} />
+        <div className="max-w-xs space-y-1">
+          <Input className="max-w-xs" placeholder={t.common.search} value={search} onChange={(e) => setSearch(e.target.value)} />
+          <p className="text-xs text-muted-foreground">{t.common.searchOnThisPage}</p>
+        </div>
         <div className="flex gap-1">
           {STATUSES.map((s) => (
-            <Button key={s} size="sm" variant={status === s ? 'default' : 'outline'} onClick={() => setStatus(s)}>
+            <Button key={s} size="sm" variant={status === s ? 'default' : 'outline'} onClick={() => { setStatus(s); setOffset(0); }}>
               {s === 'ALL' ? t.payments.statusAll : s === 'DRAFT' ? t.payments.statusDraft : s === 'POSTED' ? t.payments.statusPosted : t.payments.statusVoid}
             </Button>
           ))}
         </div>
         <div className="flex gap-1">
           {DIRECTIONS.map((d) => (
-            <Button key={d} size="sm" variant={direction === d ? 'default' : 'outline'} onClick={() => setDirection(d)}>
+            <Button key={d} size="sm" variant={direction === d ? 'default' : 'outline'} onClick={() => { setDirection(d); setOffset(0); }}>
               {d === 'ALL' ? t.payments.directionAll : d === 'RECEIPT' ? t.payments.directionReceipt : t.payments.directionDisbursement}
             </Button>
           ))}
         </div>
       </div>
 
-      {list.isLoading ? <Skeleton className="h-40 w-full" />
-        : list.isError ? <ErrorState error={list.error} />
-        : <DataTable columns={columns} data={rows} />}
+      {page.isLoading ? <Skeleton className="h-40 w-full" />
+        : page.isError ? <ErrorState error={page.error} />
+        : <>
+            <DataTable columns={columns} data={rows} />
+            <Pagination offset={offset} limit={LIMIT} total={page.data?.total ?? 0} onChange={setOffset} />
+          </>}
 
       <ConfirmDialog
         open={!!action}
