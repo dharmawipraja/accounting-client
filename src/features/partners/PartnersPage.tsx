@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { DataTable } from '@/components/common/DataTable';
 import { ErrorState } from '@/components/common/ErrorState';
 import { PageHeader } from '@/components/common/PageHeader';
+import { Pagination } from '@/components/common/Pagination';
 import { RoleGate } from '@/components/common/RoleGate';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { useT } from '@/lib/i18n/useT';
@@ -15,9 +16,12 @@ import { PartnerFormDialog } from './PartnerFormDialog';
 import { partnersApi } from './hooks';
 import type { Partner } from './schema';
 
+const LIMIT = 20;
+
 export function PartnersPage() {
   const t = useT();
-  const list = partnersApi.useList();
+  const [offset, setOffset] = useState(0);
+  const page = partnersApi.usePagedList({ limit: LIMIT, offset });
   const deactivate = partnersApi.useDeactivate();
   const remove = partnersApi.useRemove();
 
@@ -37,8 +41,8 @@ export function PartnersPage() {
 
   const rows = useMemo(() => {
     const q = search.toLowerCase();
-    return (list.data ?? []).filter((p) => !q || p.code.toLowerCase().includes(q) || p.name.toLowerCase().includes(q));
-  }, [list.data, search]);
+    return (page.data?.data ?? []).filter((p) => !q || p.code.toLowerCase().includes(q) || p.name.toLowerCase().includes(q));
+  }, [page.data, search]);
 
   function runConfirm() {
     if (!confirm) return;
@@ -58,13 +62,17 @@ export function PartnersPage() {
         </RoleGate>
       } />
 
-      <div className="mb-4 max-w-xs">
+      <div className="mb-4 max-w-xs space-y-1">
         <Input placeholder={t.common.search} value={search} onChange={(e) => setSearch(e.target.value)} />
+        <p className="text-xs text-muted-foreground">{t.common.searchOnThisPage}</p>
       </div>
 
-      {list.isLoading ? <Skeleton className="h-40 w-full" />
-        : list.isError ? <ErrorState error={list.error} />
-        : <DataTable columns={columns} data={rows} />}
+      {page.isLoading ? <Skeleton className="h-40 w-full" />
+        : page.isError ? <ErrorState error={page.error} />
+        : <>
+            <DataTable columns={columns} data={rows} />
+            <Pagination offset={offset} limit={LIMIT} total={page.data?.total ?? 0} onChange={setOffset} />
+          </>}
 
       <PartnerFormDialog open={creating} onOpenChange={setCreating} mode="create" />
       <PartnerFormDialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)} mode="edit" partner={editing ?? undefined} />
