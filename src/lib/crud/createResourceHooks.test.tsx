@@ -7,6 +7,7 @@ import { API } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
 import { createResourceHooks, createResourceKeys } from './createResourceHooks';
+import { partnersApi } from '@/features/partners/hooks';
 
 const widgetSchema = z.object({ id: z.string(), name: z.string() });
 type Widget = z.infer<typeof widgetSchema>;
@@ -29,7 +30,8 @@ describe('createResourceKeys', () => {
   it('builds prefix-shaped keys', () => {
     const k = createResourceKeys('widgets');
     expect(k.all).toEqual(['widgets']);
-    expect(k.list()).toEqual(['widgets', 'list']);
+    expect(k.list()).toEqual(['widgets', 'list', undefined]);
+    expect(k.list({ limit: 10 })).toEqual(['widgets', 'list', { limit: 10 }]);
     expect(k.item('7')).toEqual(['widgets', 'item', '7']);
   });
 });
@@ -78,4 +80,20 @@ describe('createResourceHooks', () => {
     await result.current.mutateAsync('9');
     expect(method).toBe('DELETE');
   });
+});
+
+it('usePagedList returns the envelope and forwards limit/offset query params', async () => {
+  useSession.getState().setTokens({ accessToken: 'a', refreshToken: 'b' });
+  let seenLimit: string | null = null;
+  let seenOffset: string | null = null;
+  server.use(http.get(`${API}/partners`, ({ request }) => {
+    const u = new URL(request.url).searchParams;
+    seenLimit = u.get('limit'); seenOffset = u.get('offset');
+    return HttpResponse.json({ data: [], total: 7, limit: 20, offset: 20 });
+  }));
+  const { result } = renderHook(() => partnersApi.usePagedList({ limit: 20, offset: 20 }), { wrapper });
+  await waitFor(() => expect(result.current.isSuccess).toBe(true));
+  expect(result.current.data?.total).toBe(7);
+  expect(seenLimit).toBe('20');
+  expect(seenOffset).toBe('20');
 });

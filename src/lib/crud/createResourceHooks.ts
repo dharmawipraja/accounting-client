@@ -25,14 +25,14 @@ export interface ResourceConfig<TItem> {
 
 export interface ResourceKeys {
   all: readonly unknown[];
-  list: () => readonly unknown[];
+  list: (params?: unknown) => readonly unknown[];
   item: (id: string) => readonly unknown[];
 }
 
 export function createResourceKeys(key: string): ResourceKeys {
   return {
     all: [key],
-    list: () => [key, 'list'],
+    list: (params?: unknown) => [key, 'list', params],
     item: (id: string) => [key, 'item', id],
   };
 }
@@ -65,6 +65,16 @@ export function createResourceHooks<TItem, TCreate = unknown, TUpdate = unknown>
             return envelope.data;
           }
         : () => apiFetch(basePath, { schema: listSchema }),
+    });
+  }
+
+  type Envelope = { data: TItem[]; total: number; limit: number; offset: number };
+  function usePagedList(
+    query: Record<string, string | number | undefined> = {},
+  ): UseQueryResult<Envelope, ApiError> {
+    return useQuery<Envelope, ApiError>({
+      queryKey: keys.list(query),
+      queryFn: () => apiFetch(basePath, { schema: envelopeSchema, query }),
     });
   }
 
@@ -110,5 +120,5 @@ export function createResourceHooks<TItem, TCreate = unknown, TUpdate = unknown>
     });
   }
 
-  return { keys, useList, useItem, useCreate, useUpdate, useDeactivate, useRemove };
+  return { keys, useList, usePagedList, useItem, useCreate, useUpdate, useDeactivate, useRemove };
 }

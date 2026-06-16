@@ -15,6 +15,7 @@ export const id = {
     prev: 'Sebelumnya',
     next: 'Berikutnya',
     paginationShowing: 'Menampilkan {from}–{to} dari {total}',
+    searchOnThisPage: 'Pencarian berlaku untuk halaman ini',
   },
   auth: {
     signIn: 'Masuk',
