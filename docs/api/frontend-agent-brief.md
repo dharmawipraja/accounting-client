@@ -13,9 +13,12 @@ period / year-end close.
 ## Sources of truth (use these, don't guess)
 
 1. **`openapi.json`** (committed in the API repo at `docs/api/openapi.json`) — the
-   request/response **schemas**. **Generate a typed client from it** (e.g.
-   `openapi-typescript`, `orval`) and import those types everywhere. Don't hand-write
-   request/response shapes.
+   request **and response** **schemas**. **Every 2xx response body is now fully typed**
+   (entity shapes are `*ResponseDto`, computed/report shapes are `*Dto`), so generating
+   a typed client (e.g. `openapi-typescript`, `orval`) gives you **response** types too,
+   not just request types — import them everywhere; don't hand-write any shape. Two
+   schema conventions to know: money fields are **strings** even in responses (4dp), and
+   soft-delete columns (`deletedAt`/`deletedBy`) are **omitted** from response schemas.
 2. **`frontend-guide.md`** (same folder) — the **conventions, role matrix, lifecycles,
    and glossary**. Read it before writing client code; it explains the things OpenAPI
    can't (auth/refresh, money format, error envelope, soft-delete, draft→post flow).
@@ -44,16 +47,28 @@ lifecycles, money), follow the guide.
    mutation (the creator of a document may be barred from posting it themselves).
 5. **Dates are `YYYY-MM-DD`** (date-only). Reports use `?asOf=` (balance sheet, aging,
    trial balance) or `?from=&to=` (income statement, cash flow, general ledger).
-6. **Pagination is mixed:** only `GET /ledger/journal-entries` returns the
-   `{ data, total, limit, offset }` envelope (limit default 50, max 200). **Every
-   other list endpoint — including `GET /audit` — returns a bare array** (don't look
-   for `.data`); `/audit` still takes `limit`/`offset` (limit default 50, max 500).
-7. **Soft-delete → 404.** Deleting/deactivating makes a resource 404 and removes it
+6. **All business calls go under `/v1`.** Every endpoint except the operational probes
+   (`/health`, `/ready`, `/metrics`) is served at `/v1/...` (e.g.
+   `POST /v1/sales-invoices`, `GET /v1/ledger/accounts`). Do not call the un-prefixed
+   business paths — they 404.
+7. **Covered write endpoints require `Idempotency-Key`.** Pass a unique UUID header on
+   every call to: invoice/bill/payment `create`/`:id/post`/`:id/void`, year-end close,
+   journal create/post/reverse, and opening-balances. Store the key before sending so
+   you can replay the same key on retry without changing the body. A missing key →
+   `422`; same key + different body/endpoint → `422`; in-flight → `409`.
+   (Partners/accounts/tax-codes creates are NOT covered — their unique `code` handles
+   deduplication.)
+8. **Pagination is mixed.** Five list endpoints return the envelope
+   `{ data, total, limit, offset }` (limit default 50, max 200) — **read `.data`**:
+   `GET /v1/partners`, `GET /v1/sales-invoices`, `GET /v1/purchase-bills`,
+   `GET /v1/payments`, `GET /v1/ledger/journal-entries`. All other lists return a
+   **bare array** (no `.data`): `GET /v1/ledger/accounts`, `GET /v1/tax/codes`,
+   `GET /v1/ledger/periods`, `GET /v1/audit`.
+9. **Soft-delete → 404.** Deleting/deactivating makes a resource 404 and removes it
    from lists; unique codes are reusable afterward. Don't treat that 404 as a crash.
-8. **Draft → post approval flow.** Documents (journals, invoices, bills, payments) are
-   created as drafts by ACCOUNTANT+, then **posted by APPROVER/ADMIN**. Build an
-   approval queue (e.g. `GET /ledger/journal-entries?status=DRAFT`). Pass an
-   `Idempotency-Key` header on post/reverse to make retries safe.
+10. **Draft → post approval flow.** Documents (journals, invoices, bills, payments) are
+    created as drafts by ACCOUNTANT+, then **posted by APPROVER/ADMIN**. Build an
+    approval queue (e.g. `GET /v1/ledger/journal-entries?status=DRAFT`).
 
 ## Do / Don't
 
@@ -65,10 +80,19 @@ lifecycles, money), follow the guide.
 
 **Don't**
 - Don't `parseFloat` money. Don't do float math on amounts.
+- Don't call business endpoints without the `/v1` prefix — they 404.
 - Don't assume `/docs` (Swagger UI) exists in production — it's gated behind
   `ENABLE_SWAGGER` there. Rely on the committed `openapi.json`.
-- Don't expect a logout endpoint, a pagination envelope on any non-journal list
-  (including `/audit`), or that a creator can self-approve.
+- Don't omit `Idempotency-Key` on covered writes (invoice/bill/payment create/post/void,
+  year-end close, journal/opening-balances) — the API returns `422` without it.
+- Don't read a list response body as a bare array for the five enveloped endpoints
+  (`/v1/partners`, `/v1/sales-invoices`, `/v1/purchase-bills`, `/v1/payments`,
+  `/v1/ledger/journal-entries`) — iterate `.data`, not the root.
+- Don't expect a logout endpoint, a pagination envelope on accounts/tax-codes/periods/
+  audit, or that a creator can self-approve.
+- Don't rely on nested `lines` (invoices/bills) or `allocations` (payments) in **list**
+  responses — they're **detail-only** (present on single-resource GET/POST, omitted from
+  lists; optional in the schema).
 - Don't branch on `message` strings — branch on `code`.
 
 ## Regenerating `openapi.json`

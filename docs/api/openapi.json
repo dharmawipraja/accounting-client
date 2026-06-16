@@ -7,7 +7,14 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthStatusDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -21,7 +28,14 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessStatusDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -29,9 +43,9 @@
         ]
       }
     },
-    "/auth/login": {
+    "/v1/auth/login": {
       "post": {
-        "operationId": "AuthController_login",
+        "operationId": "AuthController_login_v1",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -65,9 +79,9 @@
         ]
       }
     },
-    "/auth/refresh": {
+    "/v1/auth/refresh": {
       "post": {
-        "operationId": "AuthController_refresh",
+        "operationId": "AuthController_refresh_v1",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -101,9 +115,9 @@
         ]
       }
     },
-    "/auth/me": {
+    "/v1/auth/me": {
       "get": {
-        "operationId": "AuthController_me",
+        "operationId": "AuthController_me_v1",
         "parameters": [],
         "responses": {
           "200": {
@@ -111,7 +125,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/AuthenticatedUserDto"
                 }
               }
             }
@@ -127,13 +141,20 @@
         ]
       }
     },
-    "/auth/admin-only": {
+    "/v1/auth/admin-only": {
       "get": {
-        "operationId": "AuthController_adminOnly",
+        "operationId": "AuthController_adminOnly_v1",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkFlagDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -146,13 +167,20 @@
         ]
       }
     },
-    "/company/settings": {
+    "/v1/company/settings": {
       "get": {
-        "operationId": "CompanyController_get",
+        "operationId": "CompanyController_get_v1",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanySettingsDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -165,7 +193,7 @@
         ]
       },
       "patch": {
-        "operationId": "CompanyController_update",
+        "operationId": "CompanyController_update_v1",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -179,7 +207,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanySettingsDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -192,13 +227,23 @@
         ]
       }
     },
-    "/ledger/accounts": {
+    "/v1/ledger/accounts": {
       "get": {
-        "operationId": "AccountsController_list",
+        "operationId": "AccountsController_list_v1",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AccountResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -211,7 +256,7 @@
         ]
       },
       "post": {
-        "operationId": "AccountsController_create",
+        "operationId": "AccountsController_create_v1",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -225,7 +270,14 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -238,9 +290,9 @@
         ]
       }
     },
-    "/ledger/accounts/{id}/balance": {
+    "/v1/ledger/accounts/{id}/balance": {
       "get": {
-        "operationId": "AccountsController_balance",
+        "operationId": "AccountsController_balance_v1",
         "parameters": [
           {
             "name": "id",
@@ -261,7 +313,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountBalanceDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -274,9 +333,9 @@
         ]
       }
     },
-    "/ledger/accounts/{id}": {
+    "/v1/ledger/accounts/{id}": {
       "get": {
-        "operationId": "AccountsController_get",
+        "operationId": "AccountsController_get_v1",
         "parameters": [
           {
             "name": "id",
@@ -289,7 +348,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -302,7 +368,7 @@
         ]
       },
       "patch": {
-        "operationId": "AccountsController_update",
+        "operationId": "AccountsController_update_v1",
         "parameters": [
           {
             "name": "id",
@@ -325,7 +391,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -338,7 +411,7 @@
         ]
       },
       "delete": {
-        "operationId": "AccountsController_remove",
+        "operationId": "AccountsController_remove_v1",
         "parameters": [
           {
             "name": "id",
@@ -364,9 +437,9 @@
         ]
       }
     },
-    "/ledger/accounts/{id}/deactivate": {
+    "/v1/ledger/accounts/{id}/deactivate": {
       "post": {
-        "operationId": "AccountsController_deactivate",
+        "operationId": "AccountsController_deactivate_v1",
         "parameters": [
           {
             "name": "id",
@@ -379,7 +452,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -392,9 +472,9 @@
         ]
       }
     },
-    "/ledger/periods": {
+    "/v1/ledger/periods": {
       "get": {
-        "operationId": "PeriodsController_list",
+        "operationId": "PeriodsController_list_v1",
         "parameters": [
           {
             "name": "fiscalYear",
@@ -407,7 +487,17 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FiscalPeriodResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -420,9 +510,9 @@
         ]
       }
     },
-    "/ledger/periods/generate": {
+    "/v1/ledger/periods/generate": {
       "post": {
-        "operationId": "PeriodsController_generate",
+        "operationId": "PeriodsController_generate_v1",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -436,7 +526,17 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FiscalPeriodResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -449,9 +549,9 @@
         ]
       }
     },
-    "/ledger/periods/{id}/close": {
+    "/v1/ledger/periods/{id}/close": {
       "post": {
-        "operationId": "PeriodsController_close",
+        "operationId": "PeriodsController_close_v1",
         "parameters": [
           {
             "name": "id",
@@ -464,7 +564,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FiscalPeriodResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -477,9 +584,9 @@
         ]
       }
     },
-    "/ledger/periods/{id}/reopen": {
+    "/v1/ledger/periods/{id}/reopen": {
       "post": {
-        "operationId": "PeriodsController_reopen",
+        "operationId": "PeriodsController_reopen_v1",
         "parameters": [
           {
             "name": "id",
@@ -492,7 +599,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FiscalPeriodResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -505,9 +619,9 @@
         ]
       }
     },
-    "/ledger/journal-entries": {
+    "/v1/ledger/journal-entries": {
       "get": {
-        "operationId": "JournalController_list",
+        "operationId": "JournalController_list_v1",
         "parameters": [
           {
             "name": "status",
@@ -587,7 +701,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalEntryListResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -600,7 +721,7 @@
         ]
       },
       "post": {
-        "operationId": "JournalController_createOrPost",
+        "operationId": "JournalController_createOrPost_v1",
         "parameters": [
           {
             "name": "post",
@@ -611,9 +732,10 @@
             }
           },
           {
-            "name": "idempotency-key",
-            "required": true,
+            "name": "Idempotency-Key",
             "in": "header",
+            "description": "Unique key to make this write safely retryable.",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -631,7 +753,14 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalEntryResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -644,9 +773,9 @@
         ]
       }
     },
-    "/ledger/journal-entries/{id}": {
+    "/v1/ledger/journal-entries/{id}": {
       "get": {
-        "operationId": "JournalController_get",
+        "operationId": "JournalController_get_v1",
         "parameters": [
           {
             "name": "id",
@@ -659,7 +788,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalEntryResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -672,7 +808,7 @@
         ]
       },
       "delete": {
-        "operationId": "JournalController_remove",
+        "operationId": "JournalController_remove_v1",
         "parameters": [
           {
             "name": "id",
@@ -698,9 +834,9 @@
         ]
       }
     },
-    "/ledger/journal-entries/{id}/post": {
+    "/v1/ledger/journal-entries/{id}/post": {
       "post": {
-        "operationId": "JournalController_post",
+        "operationId": "JournalController_post_v1",
         "parameters": [
           {
             "name": "id",
@@ -711,9 +847,10 @@
             }
           },
           {
-            "name": "idempotency-key",
-            "required": true,
+            "name": "Idempotency-Key",
             "in": "header",
+            "description": "Unique key to make this write safely retryable.",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -721,7 +858,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalEntryResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -734,9 +878,9 @@
         ]
       }
     },
-    "/ledger/journal-entries/{id}/reverse": {
+    "/v1/ledger/journal-entries/{id}/reverse": {
       "post": {
-        "operationId": "JournalController_reverse",
+        "operationId": "JournalController_reverse_v1",
         "parameters": [
           {
             "name": "id",
@@ -747,9 +891,10 @@
             }
           },
           {
-            "name": "idempotency-key",
-            "required": true,
+            "name": "Idempotency-Key",
             "in": "header",
+            "description": "Unique key to make this write safely retryable.",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -757,7 +902,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalEntryResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -770,14 +922,15 @@
         ]
       }
     },
-    "/ledger/opening-balances": {
+    "/v1/ledger/opening-balances": {
       "post": {
-        "operationId": "OpeningBalancesController_post",
+        "operationId": "OpeningBalancesController_post_v1",
         "parameters": [
           {
-            "name": "idempotency-key",
-            "required": true,
+            "name": "Idempotency-Key",
             "in": "header",
+            "description": "Unique key to make this write safely retryable.",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -795,7 +948,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalEntryResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -808,9 +968,9 @@
         ]
       }
     },
-    "/ledger/trial-balance": {
+    "/v1/ledger/trial-balance": {
       "get": {
-        "operationId": "BalancesController_trialBalance",
+        "operationId": "BalancesController_trialBalance_v1",
         "parameters": [
           {
             "name": "asOf",
@@ -827,7 +987,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/TrialBalanceDto"
                 }
               }
             }
@@ -843,13 +1003,23 @@
         ]
       }
     },
-    "/tax/codes": {
+    "/v1/tax/codes": {
       "get": {
-        "operationId": "TaxCodesController_list",
+        "operationId": "TaxCodesController_list_v1",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaxCodeResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -862,7 +1032,7 @@
         ]
       },
       "post": {
-        "operationId": "TaxCodesController_create",
+        "operationId": "TaxCodesController_create_v1",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -876,7 +1046,14 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxCodeResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -889,9 +1066,9 @@
         ]
       }
     },
-    "/tax/codes/{id}": {
+    "/v1/tax/codes/{id}": {
       "get": {
-        "operationId": "TaxCodesController_get",
+        "operationId": "TaxCodesController_get_v1",
         "parameters": [
           {
             "name": "id",
@@ -904,7 +1081,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxCodeResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -917,7 +1101,7 @@
         ]
       },
       "patch": {
-        "operationId": "TaxCodesController_update",
+        "operationId": "TaxCodesController_update_v1",
         "parameters": [
           {
             "name": "id",
@@ -940,7 +1124,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxCodeResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -953,7 +1144,7 @@
         ]
       },
       "delete": {
-        "operationId": "TaxCodesController_remove",
+        "operationId": "TaxCodesController_remove_v1",
         "parameters": [
           {
             "name": "id",
@@ -979,9 +1170,9 @@
         ]
       }
     },
-    "/tax/codes/{id}/deactivate": {
+    "/v1/tax/codes/{id}/deactivate": {
       "post": {
-        "operationId": "TaxCodesController_deactivate",
+        "operationId": "TaxCodesController_deactivate_v1",
         "parameters": [
           {
             "name": "id",
@@ -994,7 +1185,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxCodeResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1007,9 +1205,9 @@
         ]
       }
     },
-    "/tax/calculate": {
+    "/v1/tax/calculate": {
       "post": {
-        "operationId": "TaxController_calculate",
+        "operationId": "TaxController_calculate_v1",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1027,7 +1225,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/TaxCalculationDto"
                 }
               }
             }
@@ -1043,13 +1241,40 @@
         ]
       }
     },
-    "/partners": {
+    "/v1/partners": {
       "get": {
-        "operationId": "BusinessPartnersController_list",
-        "parameters": [],
+        "operationId": "BusinessPartnersController_list_v1",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BusinessPartnerListResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1062,7 +1287,7 @@
         ]
       },
       "post": {
-        "operationId": "BusinessPartnersController_create",
+        "operationId": "BusinessPartnersController_create_v1",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1076,7 +1301,14 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BusinessPartnerResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1089,9 +1321,9 @@
         ]
       }
     },
-    "/partners/{id}": {
+    "/v1/partners/{id}": {
       "get": {
-        "operationId": "BusinessPartnersController_get",
+        "operationId": "BusinessPartnersController_get_v1",
         "parameters": [
           {
             "name": "id",
@@ -1104,7 +1336,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BusinessPartnerResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1117,7 +1356,7 @@
         ]
       },
       "patch": {
-        "operationId": "BusinessPartnersController_update",
+        "operationId": "BusinessPartnersController_update_v1",
         "parameters": [
           {
             "name": "id",
@@ -1140,7 +1379,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BusinessPartnerResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1153,7 +1399,7 @@
         ]
       },
       "delete": {
-        "operationId": "BusinessPartnersController_remove",
+        "operationId": "BusinessPartnersController_remove_v1",
         "parameters": [
           {
             "name": "id",
@@ -1179,9 +1425,9 @@
         ]
       }
     },
-    "/partners/{id}/deactivate": {
+    "/v1/partners/{id}/deactivate": {
       "post": {
-        "operationId": "BusinessPartnersController_deactivate",
+        "operationId": "BusinessPartnersController_deactivate_v1",
         "parameters": [
           {
             "name": "id",
@@ -1194,7 +1440,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BusinessPartnerResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1207,10 +1460,29 @@
         ]
       }
     },
-    "/sales-invoices": {
+    "/v1/sales-invoices": {
       "get": {
-        "operationId": "SalesInvoicesController_list",
+        "operationId": "SalesInvoicesController_list_v1",
         "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
           {
             "name": "partnerId",
             "required": false,
@@ -1240,10 +1512,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
+                  "$ref": "#/components/schemas/SalesInvoiceListResponseDto"
                 }
               }
             }
@@ -1259,8 +1528,18 @@
         ]
       },
       "post": {
-        "operationId": "SalesInvoicesController_create",
-        "parameters": [],
+        "operationId": "SalesInvoicesController_create_v1",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key to make this write safely retryable.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1277,7 +1556,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/SalesInvoiceResponseDto"
                 }
               }
             }
@@ -1293,9 +1572,9 @@
         ]
       }
     },
-    "/sales-invoices/{id}": {
+    "/v1/sales-invoices/{id}": {
       "get": {
-        "operationId": "SalesInvoicesController_get",
+        "operationId": "SalesInvoicesController_get_v1",
         "parameters": [
           {
             "name": "id",
@@ -1312,7 +1591,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/SalesInvoiceResponseDto"
                 }
               }
             }
@@ -1328,7 +1607,7 @@
         ]
       },
       "patch": {
-        "operationId": "SalesInvoicesController_update",
+        "operationId": "SalesInvoicesController_update_v1",
         "parameters": [
           {
             "name": "id",
@@ -1355,7 +1634,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/SalesInvoiceResponseDto"
                 }
               }
             }
@@ -1371,7 +1650,7 @@
         ]
       },
       "delete": {
-        "operationId": "SalesInvoicesController_remove",
+        "operationId": "SalesInvoicesController_remove_v1",
         "parameters": [
           {
             "name": "id",
@@ -1397,14 +1676,23 @@
         ]
       }
     },
-    "/sales-invoices/{id}/post": {
+    "/v1/sales-invoices/{id}/post": {
       "post": {
-        "operationId": "SalesInvoicesController_post",
+        "operationId": "SalesInvoicesController_post_v1",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key to make this write safely retryable.",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -1416,7 +1704,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/SalesInvoiceResponseDto"
                 }
               }
             }
@@ -1432,14 +1720,23 @@
         ]
       }
     },
-    "/sales-invoices/{id}/void": {
+    "/v1/sales-invoices/{id}/void": {
       "post": {
-        "operationId": "SalesInvoicesController_void",
+        "operationId": "SalesInvoicesController_void_v1",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key to make this write safely retryable.",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -1451,7 +1748,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/SalesInvoiceResponseDto"
                 }
               }
             }
@@ -1467,10 +1764,29 @@
         ]
       }
     },
-    "/purchase-bills": {
+    "/v1/purchase-bills": {
       "get": {
-        "operationId": "PurchaseBillsController_list",
+        "operationId": "PurchaseBillsController_list_v1",
         "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
           {
             "name": "partnerId",
             "required": false,
@@ -1500,10 +1816,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
+                  "$ref": "#/components/schemas/PurchaseBillListResponseDto"
                 }
               }
             }
@@ -1519,8 +1832,18 @@
         ]
       },
       "post": {
-        "operationId": "PurchaseBillsController_create",
-        "parameters": [],
+        "operationId": "PurchaseBillsController_create_v1",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key to make this write safely retryable.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1537,7 +1860,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/PurchaseBillResponseDto"
                 }
               }
             }
@@ -1553,9 +1876,9 @@
         ]
       }
     },
-    "/purchase-bills/{id}": {
+    "/v1/purchase-bills/{id}": {
       "get": {
-        "operationId": "PurchaseBillsController_get",
+        "operationId": "PurchaseBillsController_get_v1",
         "parameters": [
           {
             "name": "id",
@@ -1572,7 +1895,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/PurchaseBillResponseDto"
                 }
               }
             }
@@ -1588,7 +1911,7 @@
         ]
       },
       "patch": {
-        "operationId": "PurchaseBillsController_update",
+        "operationId": "PurchaseBillsController_update_v1",
         "parameters": [
           {
             "name": "id",
@@ -1615,7 +1938,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/PurchaseBillResponseDto"
                 }
               }
             }
@@ -1631,7 +1954,7 @@
         ]
       },
       "delete": {
-        "operationId": "PurchaseBillsController_remove",
+        "operationId": "PurchaseBillsController_remove_v1",
         "parameters": [
           {
             "name": "id",
@@ -1657,14 +1980,23 @@
         ]
       }
     },
-    "/purchase-bills/{id}/post": {
+    "/v1/purchase-bills/{id}/post": {
       "post": {
-        "operationId": "PurchaseBillsController_post",
+        "operationId": "PurchaseBillsController_post_v1",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key to make this write safely retryable.",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -1676,7 +2008,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/PurchaseBillResponseDto"
                 }
               }
             }
@@ -1692,14 +2024,23 @@
         ]
       }
     },
-    "/purchase-bills/{id}/void": {
+    "/v1/purchase-bills/{id}/void": {
       "post": {
-        "operationId": "PurchaseBillsController_void",
+        "operationId": "PurchaseBillsController_void_v1",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key to make this write safely retryable.",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -1711,7 +2052,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/PurchaseBillResponseDto"
                 }
               }
             }
@@ -1727,10 +2068,29 @@
         ]
       }
     },
-    "/payments": {
+    "/v1/payments": {
       "get": {
-        "operationId": "PaymentsController_list",
+        "operationId": "PaymentsController_list_v1",
         "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
           {
             "name": "partnerId",
             "required": false,
@@ -1768,7 +2128,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentListResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1781,8 +2148,18 @@
         ]
       },
       "post": {
-        "operationId": "PaymentsController_create",
-        "parameters": [],
+        "operationId": "PaymentsController_create_v1",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key to make this write safely retryable.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1795,7 +2172,14 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1808,9 +2192,9 @@
         ]
       }
     },
-    "/payments/{id}": {
+    "/v1/payments/{id}": {
       "get": {
-        "operationId": "PaymentsController_get",
+        "operationId": "PaymentsController_get_v1",
         "parameters": [
           {
             "name": "id",
@@ -1823,7 +2207,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1836,7 +2227,7 @@
         ]
       },
       "delete": {
-        "operationId": "PaymentsController_remove",
+        "operationId": "PaymentsController_remove_v1",
         "parameters": [
           {
             "name": "id",
@@ -1862,9 +2253,9 @@
         ]
       }
     },
-    "/payments/{id}/post": {
+    "/v1/payments/{id}/post": {
       "post": {
-        "operationId": "PaymentsController_post",
+        "operationId": "PaymentsController_post_v1",
         "parameters": [
           {
             "name": "id",
@@ -1873,11 +2264,27 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key to make this write safely retryable.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1890,9 +2297,9 @@
         ]
       }
     },
-    "/payments/{id}/void": {
+    "/v1/payments/{id}/void": {
       "post": {
-        "operationId": "PaymentsController_void",
+        "operationId": "PaymentsController_void_v1",
         "parameters": [
           {
             "name": "id",
@@ -1901,11 +2308,27 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key to make this write safely retryable.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1918,9 +2341,9 @@
         ]
       }
     },
-    "/reports/balance-sheet": {
+    "/v1/reports/balance-sheet": {
       "get": {
-        "operationId": "ReportsController_balanceSheet",
+        "operationId": "ReportsController_balanceSheet_v1",
         "parameters": [
           {
             "name": "asOf",
@@ -1933,7 +2356,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BalanceSheetDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1946,9 +2376,9 @@
         ]
       }
     },
-    "/reports/income-statement": {
+    "/v1/reports/income-statement": {
       "get": {
-        "operationId": "ReportsController_incomeStatement",
+        "operationId": "ReportsController_incomeStatement_v1",
         "parameters": [
           {
             "name": "from",
@@ -1969,7 +2399,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncomeStatementDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1982,9 +2419,9 @@
         ]
       }
     },
-    "/reports/general-ledger": {
+    "/v1/reports/general-ledger": {
       "get": {
-        "operationId": "ReportsController_generalLedger",
+        "operationId": "ReportsController_generalLedger_v1",
         "parameters": [
           {
             "name": "accountId",
@@ -2014,7 +2451,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeneralLedgerDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2027,9 +2471,9 @@
         ]
       }
     },
-    "/reports/ar-aging": {
+    "/v1/reports/ar-aging": {
       "get": {
-        "operationId": "ReportsController_arAging",
+        "operationId": "ReportsController_arAging_v1",
         "parameters": [
           {
             "name": "asOf",
@@ -2042,7 +2486,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgingReportDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2055,9 +2506,9 @@
         ]
       }
     },
-    "/reports/ap-aging": {
+    "/v1/reports/ap-aging": {
       "get": {
-        "operationId": "ReportsController_apAging",
+        "operationId": "ReportsController_apAging_v1",
         "parameters": [
           {
             "name": "asOf",
@@ -2070,7 +2521,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgingReportDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2083,9 +2541,9 @@
         ]
       }
     },
-    "/reports/cash-flow": {
+    "/v1/reports/cash-flow": {
       "get": {
-        "operationId": "ReportsController_cashFlowReport",
+        "operationId": "ReportsController_cashFlowReport_v1",
         "parameters": [
           {
             "name": "from",
@@ -2106,7 +2564,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CashFlowDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2119,10 +2584,20 @@
         ]
       }
     },
-    "/close/year-end": {
+    "/v1/close/year-end": {
       "post": {
-        "operationId": "ClosingController_run",
-        "parameters": [],
+        "operationId": "ClosingController_run_v1",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key to make this write safely retryable.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -2135,7 +2610,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/YearEndClosingResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2148,9 +2630,9 @@
         ]
       }
     },
-    "/close/year-end/{fiscalYear}/reopen": {
+    "/v1/close/year-end/{fiscalYear}/reopen": {
       "post": {
-        "operationId": "ClosingController_reopen",
+        "operationId": "ClosingController_reopen_v1",
         "parameters": [
           {
             "name": "fiscalYear",
@@ -2163,7 +2645,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/YearEndClosingResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2176,9 +2665,9 @@
         ]
       }
     },
-    "/close/year-end/{fiscalYear}": {
+    "/v1/close/year-end/{fiscalYear}": {
       "get": {
-        "operationId": "ClosingController_status",
+        "operationId": "ClosingController_status_v1",
         "parameters": [
           {
             "name": "fiscalYear",
@@ -2191,7 +2680,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/YearEndClosingResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2204,9 +2700,9 @@
         ]
       }
     },
-    "/audit": {
+    "/v1/audit": {
       "get": {
-        "operationId": "AuditController_list",
+        "operationId": "AuditController_list_v1",
         "parameters": [
           {
             "name": "userId",
@@ -2268,7 +2764,17 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEntryDto"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2287,7 +2793,14 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Prometheus exposition format."
           }
         },
         "tags": [
@@ -2299,7 +2812,7 @@
   "info": {
     "title": "Indonesian Accounting API",
     "description": "Conventions, roles, and lifecycles: see docs/api/frontend-guide.md",
-    "version": "1.0",
+    "version": "1.0.0",
     "contact": {}
   },
   "tags": [
@@ -2318,6 +2831,35 @@
       }
     },
     "schemas": {
+      "HealthStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "ReadinessStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "db": {
+            "type": "string",
+            "example": "up"
+          }
+        },
+        "required": [
+          "status",
+          "db"
+        ]
+      },
       "ErrorEnvelopeDto": {
         "type": "object",
         "properties": {
@@ -2386,6 +2928,108 @@
           "refreshToken"
         ]
       },
+      "AuthenticatedUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "example": "admin@x.com"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "ACCOUNTANT",
+              "APPROVER",
+              "VIEWER"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "role"
+        ]
+      },
+      "OkFlagDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "ok"
+        ]
+      },
+      "CompanySettingsDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "singleton": {
+            "type": "boolean",
+            "example": true
+          },
+          "legalName": {
+            "type": "string",
+            "example": "PT Contoh"
+          },
+          "npwp": {
+            "type": "string",
+            "nullable": true,
+            "example": "01.234.567.8-901.000"
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "fiscalYearStartMonth": {
+            "type": "number",
+            "example": 1
+          },
+          "baseCurrency": {
+            "type": "string",
+            "example": "IDR"
+          },
+          "segregationOfDutiesEnabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "isPkp": {
+            "type": "boolean",
+            "example": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "singleton",
+          "legalName",
+          "npwp",
+          "address",
+          "fiscalYearStartMonth",
+          "baseCurrency",
+          "segregationOfDutiesEnabled",
+          "isPkp",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
       "UpdateCompanySettingsDto": {
         "type": "object",
         "properties": {
@@ -2410,6 +3054,138 @@
             "type": "boolean"
           }
         }
+      },
+      "AccountResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "example": "1-1000"
+          },
+          "name": {
+            "type": "string",
+            "example": "Kas"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "ASSET",
+              "LIABILITY",
+              "EQUITY",
+              "REVENUE",
+              "EXPENSE"
+            ]
+          },
+          "subtype": {
+            "type": "string",
+            "enum": [
+              "CURRENT_ASSET",
+              "NON_CURRENT_ASSET",
+              "FIXED_ASSET",
+              "ACCUMULATED_DEPRECIATION",
+              "CURRENT_LIABILITY",
+              "NON_CURRENT_LIABILITY",
+              "EQUITY",
+              "REVENUE",
+              "COGS",
+              "OPERATING_EXPENSE",
+              "OTHER_INCOME",
+              "OTHER_EXPENSE",
+              "TAX_PAYABLE",
+              "TAX_RECEIVABLE"
+            ]
+          },
+          "cashFlowCategory": {
+            "type": "string",
+            "enum": [
+              "OPERATING",
+              "INVESTING",
+              "FINANCING",
+              "NONE"
+            ]
+          },
+          "normalBalance": {
+            "type": "string",
+            "enum": [
+              "DEBIT",
+              "CREDIT"
+            ]
+          },
+          "parentId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "isPostable": {
+            "type": "boolean",
+            "example": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true
+          },
+          "currency": {
+            "type": "string",
+            "example": "IDR"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "type",
+          "subtype",
+          "cashFlowCategory",
+          "normalBalance",
+          "parentId",
+          "isPostable",
+          "isActive",
+          "currency",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "AccountBalanceDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "debit": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "credit": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "balance": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "normalBalance-signed net, 4 dp"
+          }
+        },
+        "required": [
+          "accountId",
+          "debit",
+          "credit",
+          "balance"
+        ]
       },
       "CreateAccountDto": {
         "type": "object",
@@ -2502,6 +3278,75 @@
           }
         }
       },
+      "FiscalPeriodResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fiscalYear": {
+            "type": "number",
+            "example": 2026
+          },
+          "sequence": {
+            "type": "number",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "2026-01"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-01-01"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-01-31"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "CLOSED"
+            ]
+          },
+          "closedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "closedBy": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "fiscalYear",
+          "sequence",
+          "name",
+          "startDate",
+          "endDate",
+          "status",
+          "closedAt",
+          "closedBy",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
       "GeneratePeriodsDto": {
         "type": "object",
         "properties": {
@@ -2513,6 +3358,280 @@
         },
         "required": [
           "fiscalYear"
+        ]
+      },
+      "JournalEntryListItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "entryRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "entryNumber": {
+            "type": "number",
+            "nullable": true
+          },
+          "fiscalYear": {
+            "type": "number",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-01-15"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "POSTED",
+              "REVERSED"
+            ]
+          },
+          "sourceType": {
+            "type": "string",
+            "enum": [
+              "MANUAL",
+              "OPENING",
+              "REVERSAL",
+              "SALES_INVOICE",
+              "PURCHASE_BILL",
+              "PAYMENT",
+              "CLOSING"
+            ]
+          },
+          "sourceId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "totalDebit": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "lineCount": {
+            "type": "number",
+            "example": 2
+          }
+        },
+        "required": [
+          "id",
+          "entryRef",
+          "entryNumber",
+          "fiscalYear",
+          "date",
+          "description",
+          "status",
+          "sourceType",
+          "sourceId",
+          "totalDebit",
+          "lineCount"
+        ]
+      },
+      "JournalEntryListResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JournalEntryListItemDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "example": 137
+          },
+          "limit": {
+            "type": "number",
+            "example": 50
+          },
+          "offset": {
+            "type": "number",
+            "example": 0
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "limit",
+          "offset"
+        ]
+      },
+      "JournalLineResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "journalEntryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lineNo": {
+            "type": "number",
+            "example": 1
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "debit": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "credit": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "journalEntryId",
+          "lineNo",
+          "accountId",
+          "debit",
+          "credit",
+          "description",
+          "createdAt"
+        ]
+      },
+      "JournalEntryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "entryNumber": {
+            "type": "number",
+            "nullable": true,
+            "example": 42
+          },
+          "entryRef": {
+            "type": "string",
+            "nullable": true,
+            "example": "JE-2026-42"
+          },
+          "fiscalYear": {
+            "type": "number",
+            "nullable": true,
+            "example": 2026
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-01-15"
+          },
+          "periodId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sourceType": {
+            "type": "string",
+            "enum": [
+              "MANUAL",
+              "OPENING",
+              "REVERSAL",
+              "SALES_INVOICE",
+              "PURCHASE_BILL",
+              "PAYMENT",
+              "CLOSING"
+            ]
+          },
+          "sourceId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "POSTED",
+              "REVERSED"
+            ]
+          },
+          "reversalOfId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "reversedById": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "postedBy": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "postedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JournalLineResponseDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "entryNumber",
+          "entryRef",
+          "fiscalYear",
+          "date",
+          "periodId",
+          "description",
+          "sourceType",
+          "sourceId",
+          "status",
+          "reversalOfId",
+          "reversedById",
+          "createdBy",
+          "postedBy",
+          "postedAt",
+          "createdAt",
+          "updatedAt",
+          "lines"
         ]
       },
       "JournalLineDto": {
@@ -2576,6 +3695,136 @@
         "required": [
           "date",
           "balances"
+        ]
+      },
+      "TrialBalanceRowDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "example": "1-1000"
+          },
+          "name": {
+            "type": "string",
+            "example": "Kas"
+          },
+          "debit": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "credit": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "balance": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          }
+        },
+        "required": [
+          "accountId",
+          "code",
+          "name",
+          "debit",
+          "credit",
+          "balance"
+        ]
+      },
+      "TrialBalanceDto": {
+        "type": "object",
+        "properties": {
+          "asOf": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-01-31"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrialBalanceRowDto"
+            }
+          },
+          "totalDebit": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "totalCredit": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          }
+        },
+        "required": [
+          "asOf",
+          "rows",
+          "totalDebit",
+          "totalCredit"
+        ]
+      },
+      "TaxCodeResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "example": "PPN-OUT"
+          },
+          "name": {
+            "type": "string",
+            "example": "PPN Keluaran 11%"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "PPN_OUTPUT",
+              "PPN_INPUT",
+              "PPH_PAYABLE",
+              "PPH_PREPAID"
+            ]
+          },
+          "rate": {
+            "type": "string",
+            "example": "0.110000",
+            "description": "Rate as a 6-dp decimal string (e.g. 0.110000 = 11%)."
+          },
+          "taxAccountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "kind",
+          "rate",
+          "taxAccountId",
+          "isActive",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "CreateTaxCodeDto": {
@@ -2684,6 +3933,203 @@
           "lines"
         ]
       },
+      "TaxBreakdownRowDto": {
+        "type": "object",
+        "properties": {
+          "taxCodeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "example": "PPN-OUT"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "PPN_OUTPUT",
+              "PPN_INPUT",
+              "PPH_PAYABLE",
+              "PPH_PREPAID"
+            ]
+          },
+          "base": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Tax base (DPP), 4 dp string"
+          },
+          "amount": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Tax amount, rounded to rupiah"
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "taxCodeId",
+          "code",
+          "kind",
+          "base",
+          "amount",
+          "accountId"
+        ]
+      },
+      "CalculatedLineDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "debit": {
+            "type": "string",
+            "example": "1000.0000"
+          },
+          "credit": {
+            "type": "string",
+            "example": "1000.0000"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "accountId"
+        ]
+      },
+      "TaxCalculationDto": {
+        "type": "object",
+        "properties": {
+          "subtotal": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Sum of tax-exclusive base line amounts"
+          },
+          "taxes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaxBreakdownRowDto"
+            }
+          },
+          "settlementAmount": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "journalLines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CalculatedLineDto"
+            }
+          }
+        },
+        "required": [
+          "subtotal",
+          "taxes",
+          "settlementAmount",
+          "journalLines"
+        ]
+      },
+      "BusinessPartnerResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "example": "CUST-001"
+          },
+          "name": {
+            "type": "string",
+            "example": "PT Pelanggan"
+          },
+          "npwp": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true,
+            "example": "a@b.com"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "isCustomer": {
+            "type": "boolean",
+            "example": true
+          },
+          "isVendor": {
+            "type": "boolean",
+            "example": false
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "npwp",
+          "email",
+          "phone",
+          "address",
+          "isCustomer",
+          "isVendor",
+          "isActive",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "BusinessPartnerListResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BusinessPartnerResponseDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "example": 87
+          },
+          "limit": {
+            "type": "number",
+            "example": 50
+          },
+          "offset": {
+            "type": "number",
+            "example": 0
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "limit",
+          "offset"
+        ]
+      },
       "CreateBusinessPartnerDto": {
         "type": "object",
         "properties": {
@@ -2756,6 +4202,234 @@
             "type": "boolean"
           }
         }
+      },
+      "SalesInvoiceLineResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "salesInvoiceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lineNo": {
+            "type": "number",
+            "example": 1
+          },
+          "description": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "quantity": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Quantity, 4 dp string"
+          },
+          "unitPrice": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "amount": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "taxCodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "salesInvoiceId",
+          "lineNo",
+          "description",
+          "accountId",
+          "quantity",
+          "unitPrice",
+          "amount",
+          "taxCodeIds"
+        ]
+      },
+      "SalesInvoiceResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "invoiceNumber": {
+            "type": "number",
+            "nullable": true
+          },
+          "invoiceRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "fiscalYear": {
+            "type": "number",
+            "nullable": true
+          },
+          "partnerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-01-15"
+          },
+          "dueDate": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "POSTED",
+              "VOID"
+            ]
+          },
+          "subtotal": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "taxTotal": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "withholdingTotal": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "total": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "amountPaid": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "journalEntryId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "postedBy": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "postedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "outstanding": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "total − amountPaid"
+          },
+          "paymentStatus": {
+            "type": "string",
+            "enum": [
+              "UNPAID",
+              "PARTIAL",
+              "PAID"
+            ]
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SalesInvoiceLineResponseDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "invoiceNumber",
+          "invoiceRef",
+          "fiscalYear",
+          "partnerId",
+          "date",
+          "dueDate",
+          "description",
+          "status",
+          "subtotal",
+          "taxTotal",
+          "withholdingTotal",
+          "total",
+          "amountPaid",
+          "journalEntryId",
+          "createdBy",
+          "postedBy",
+          "postedAt",
+          "createdAt",
+          "updatedAt",
+          "outstanding",
+          "paymentStatus"
+        ]
+      },
+      "SalesInvoiceListResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SalesInvoiceResponseDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "example": 240
+          },
+          "limit": {
+            "type": "number",
+            "example": 50
+          },
+          "offset": {
+            "type": "number",
+            "example": 0
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "limit",
+          "offset"
+        ]
       },
       "SalesInvoiceLineDto": {
         "type": "object",
@@ -2844,6 +4518,239 @@
             }
           }
         }
+      },
+      "PurchaseBillLineResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "purchaseBillId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lineNo": {
+            "type": "number",
+            "example": 1
+          },
+          "description": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "quantity": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Quantity, 4 dp string"
+          },
+          "unitPrice": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "amount": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "taxCodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "purchaseBillId",
+          "lineNo",
+          "description",
+          "accountId",
+          "quantity",
+          "unitPrice",
+          "amount",
+          "taxCodeIds"
+        ]
+      },
+      "PurchaseBillResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "billNumber": {
+            "type": "number",
+            "nullable": true
+          },
+          "billRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "fiscalYear": {
+            "type": "number",
+            "nullable": true
+          },
+          "partnerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vendorInvoiceNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-01-15"
+          },
+          "dueDate": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "POSTED",
+              "VOID"
+            ]
+          },
+          "subtotal": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "taxTotal": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "withholdingTotal": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "total": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "amountPaid": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "journalEntryId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "postedBy": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "postedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "outstanding": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "total − amountPaid"
+          },
+          "paymentStatus": {
+            "type": "string",
+            "enum": [
+              "UNPAID",
+              "PARTIAL",
+              "PAID"
+            ]
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PurchaseBillLineResponseDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "billNumber",
+          "billRef",
+          "fiscalYear",
+          "partnerId",
+          "vendorInvoiceNo",
+          "date",
+          "dueDate",
+          "description",
+          "status",
+          "subtotal",
+          "taxTotal",
+          "withholdingTotal",
+          "total",
+          "amountPaid",
+          "journalEntryId",
+          "createdBy",
+          "postedBy",
+          "postedAt",
+          "createdAt",
+          "updatedAt",
+          "outstanding",
+          "paymentStatus"
+        ]
+      },
+      "PurchaseBillListResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PurchaseBillResponseDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "example": 240
+          },
+          "limit": {
+            "type": "number",
+            "example": 50
+          },
+          "offset": {
+            "type": "number",
+            "example": 0
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "limit",
+          "offset"
+        ]
       },
       "PurchaseBillLineDto": {
         "type": "object",
@@ -2941,6 +4848,180 @@
           }
         }
       },
+      "PaymentAllocationResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "paymentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "salesInvoiceId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "purchaseBillId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          }
+        },
+        "required": [
+          "id",
+          "paymentId",
+          "salesInvoiceId",
+          "purchaseBillId",
+          "amount"
+        ]
+      },
+      "PaymentResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "number",
+            "nullable": true
+          },
+          "ref": {
+            "type": "string",
+            "nullable": true
+          },
+          "fiscalYear": {
+            "type": "number",
+            "nullable": true
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "RECEIPT",
+              "DISBURSEMENT"
+            ]
+          },
+          "partnerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-01-15"
+          },
+          "cashAccountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "POSTED",
+              "VOID"
+            ]
+          },
+          "journalEntryId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "postedBy": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "postedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "allocations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentAllocationResponseDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "ref",
+          "fiscalYear",
+          "direction",
+          "partnerId",
+          "date",
+          "cashAccountId",
+          "amount",
+          "description",
+          "status",
+          "journalEntryId",
+          "createdBy",
+          "postedBy",
+          "postedAt",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PaymentListResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentResponseDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "example": 310
+          },
+          "limit": {
+            "type": "number",
+            "example": 50
+          },
+          "offset": {
+            "type": "number",
+            "example": 0
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "limit",
+          "offset"
+        ]
+      },
       "AllocationDto": {
         "type": "object",
         "properties": {
@@ -3002,6 +5083,588 @@
           "allocations"
         ]
       },
+      "ReportLineDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "4-1000"
+          },
+          "name": {
+            "type": "string",
+            "example": "Pendapatan"
+          },
+          "amount": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "amount"
+        ]
+      },
+      "ReportGroupDto": {
+        "type": "object",
+        "properties": {
+          "subtype": {
+            "type": "string",
+            "example": "CURRENT_ASSET"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportLineDto"
+            }
+          },
+          "subtotal": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          }
+        },
+        "required": [
+          "subtype",
+          "lines",
+          "subtotal"
+        ]
+      },
+      "ReportSectionDto": {
+        "type": "object",
+        "properties": {
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportGroupDto"
+            }
+          },
+          "total": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          }
+        },
+        "required": [
+          "groups",
+          "total"
+        ]
+      },
+      "BalanceSheetDto": {
+        "type": "object",
+        "properties": {
+          "asOf": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-01-31"
+          },
+          "assets": {
+            "$ref": "#/components/schemas/ReportSectionDto"
+          },
+          "liabilities": {
+            "$ref": "#/components/schemas/ReportSectionDto"
+          },
+          "equity": {
+            "$ref": "#/components/schemas/ReportSectionDto"
+          },
+          "totalAssets": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "totalLiabilities": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "totalEquity": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "currentYearEarnings": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "balanced": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "asOf",
+          "assets",
+          "liabilities",
+          "equity",
+          "totalAssets",
+          "totalLiabilities",
+          "totalEquity",
+          "currentYearEarnings",
+          "balanced"
+        ]
+      },
+      "IncomeStatementDto": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "revenue": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "revenueLines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportLineDto"
+            }
+          },
+          "cogs": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "cogsLines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportLineDto"
+            }
+          },
+          "grossProfit": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "operatingExpense": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "operatingExpenseLines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportLineDto"
+            }
+          },
+          "operatingProfit": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "otherIncome": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "otherExpense": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "profitBeforeTax": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "taxExpense": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "netIncome": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "revenue",
+          "revenueLines",
+          "cogs",
+          "cogsLines",
+          "grossProfit",
+          "operatingExpense",
+          "operatingExpenseLines",
+          "operatingProfit",
+          "otherIncome",
+          "otherExpense",
+          "profitBeforeTax",
+          "taxExpense",
+          "netIncome"
+        ]
+      },
+      "GeneralLedgerAccountDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "example": "1-1000"
+          },
+          "name": {
+            "type": "string",
+            "example": "Kas"
+          },
+          "normalBalance": {
+            "type": "string",
+            "enum": [
+              "DEBIT",
+              "CREDIT"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "normalBalance"
+        ]
+      },
+      "GeneralLedgerLineDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "entryRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "debit": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "credit": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "runningBalance": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          }
+        },
+        "required": [
+          "date",
+          "entryRef",
+          "description",
+          "debit",
+          "credit",
+          "runningBalance"
+        ]
+      },
+      "GeneralLedgerDto": {
+        "type": "object",
+        "properties": {
+          "account": {
+            "$ref": "#/components/schemas/GeneralLedgerAccountDto"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "openingBalance": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeneralLedgerLineDto"
+            }
+          },
+          "closingBalance": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          }
+        },
+        "required": [
+          "account",
+          "from",
+          "to",
+          "openingBalance",
+          "lines",
+          "closingBalance"
+        ]
+      },
+      "AgingDocumentDto": {
+        "type": "object",
+        "properties": {
+          "ref": {
+            "type": "string",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "dueDate": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "total": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "paidAsOf": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "outstanding": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "bucket": {
+            "type": "string",
+            "enum": [
+              "Current",
+              "1-30",
+              "31-60",
+              "61-90",
+              ">90"
+            ]
+          }
+        },
+        "required": [
+          "ref",
+          "date",
+          "dueDate",
+          "total",
+          "paidAsOf",
+          "outstanding",
+          "bucket"
+        ]
+      },
+      "AgingPartnerDto": {
+        "type": "object",
+        "properties": {
+          "partnerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "partnerName": {
+            "type": "string"
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgingDocumentDto"
+            }
+          },
+          "buckets": {
+            "type": "object",
+            "description": "Outstanding per bucket, keyed by bucket name (money strings).",
+            "example": {
+              "Current": "0.0000",
+              "1-30": "500.0000",
+              "31-60": "0.0000",
+              "61-90": "0.0000",
+              ">90": "0.0000"
+            },
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "partnerId",
+          "partnerName",
+          "documents",
+          "buckets"
+        ]
+      },
+      "AgingReportDto": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "AR",
+              "AP"
+            ]
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date"
+          },
+          "partners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgingPartnerDto"
+            }
+          },
+          "totalsByBucket": {
+            "type": "object",
+            "description": "Grand totals per bucket (money strings).",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "totalOutstanding": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          }
+        },
+        "required": [
+          "kind",
+          "asOf",
+          "partners",
+          "totalsByBucket",
+          "totalOutstanding"
+        ]
+      },
+      "CashFlowLineDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "1-2000"
+          },
+          "name": {
+            "type": "string",
+            "example": "Piutang Usaha"
+          },
+          "amount": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "amount"
+        ]
+      },
+      "CashFlowOperatingDto": {
+        "type": "object",
+        "properties": {
+          "adjustments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CashFlowLineDto"
+            }
+          },
+          "total": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          }
+        },
+        "required": [
+          "adjustments",
+          "total"
+        ]
+      },
+      "CashFlowSectionDto": {
+        "type": "object",
+        "properties": {
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CashFlowLineDto"
+            }
+          },
+          "total": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          }
+        },
+        "required": [
+          "lines",
+          "total"
+        ]
+      },
+      "CashFlowDto": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "netIncome": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "operating": {
+            "$ref": "#/components/schemas/CashFlowOperatingDto"
+          },
+          "investing": {
+            "$ref": "#/components/schemas/CashFlowSectionDto"
+          },
+          "financing": {
+            "$ref": "#/components/schemas/CashFlowSectionDto"
+          },
+          "netChange": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "kasAwal": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "kasAkhir": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "reconciles": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "netIncome",
+          "operating",
+          "investing",
+          "financing",
+          "netChange",
+          "kasAwal",
+          "kasAkhir",
+          "reconciles"
+        ]
+      },
       "CloseYearDto": {
         "type": "object",
         "properties": {
@@ -3013,6 +5676,132 @@
         },
         "required": [
           "fiscalYear"
+        ]
+      },
+      "YearEndClosingResponseDto": {
+        "type": "object",
+        "properties": {
+          "fiscalYear": {
+            "type": "number",
+            "example": 2026
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "CLOSED"
+            ]
+          },
+          "closingEntryId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "netIncome": {
+            "type": "string",
+            "example": "1000.0000",
+            "description": "Decimal monetary amount as a string, fixed 4 decimal places."
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reopenedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "reopenedBy": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "fiscalYear",
+          "status",
+          "closingEntryId",
+          "netIncome",
+          "closedAt",
+          "closedBy",
+          "reopenedAt",
+          "reopenedBy",
+          "updatedAt"
+        ]
+      },
+      "AuditEntryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "userRole": {
+            "type": "string",
+            "nullable": true,
+            "example": "ADMIN"
+          },
+          "method": {
+            "type": "string",
+            "example": "POST"
+          },
+          "path": {
+            "type": "string",
+            "example": "/ledger/journal-entries"
+          },
+          "params": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": true
+          },
+          "body": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": true
+          },
+          "statusCode": {
+            "type": "number",
+            "example": 201
+          },
+          "durationMs": {
+            "type": "number",
+            "example": 42
+          },
+          "ip": {
+            "type": "string",
+            "nullable": true,
+            "example": "127.0.0.1"
+          }
+        },
+        "required": [
+          "id",
+          "timestamp",
+          "userId",
+          "userRole",
+          "method",
+          "path",
+          "params",
+          "body",
+          "statusCode",
+          "durationMs",
+          "ip"
         ]
       }
     }
