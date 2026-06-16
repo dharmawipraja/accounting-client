@@ -136,3 +136,29 @@ body {
     @apply font-sans;
   }
 }
+
+/* Skeleton shimmer: a sweeping highlight overlay that reads on any base
+   colour and in both themes (uses --foreground at low alpha). */
+@keyframes skeleton-shimmer {
+  100% { transform: translateX(100%); }
+}
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.animate-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--foreground) 8%, transparent),
+    transparent
+  );
+  animation: skeleton-shimmer 1.6s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer::after { animation: none; }
+}
