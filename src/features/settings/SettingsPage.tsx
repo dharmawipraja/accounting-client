@@ -9,10 +9,10 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
-import { ErrorState } from '@/components/common/ErrorState';
 import { PageHeader } from '@/components/common/PageHeader';
+import { QueryState } from '@/components/common/QueryState';
 import { useRole } from '@/components/common/RoleGate';
-import { Skeleton } from '@/components/ui/skeleton';
+import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { applyApiErrorToForm } from '@/lib/api/form-errors';
 import { MONTHS_ID } from '@/lib/format/months';
 import { useT } from '@/lib/i18n/useT';
@@ -25,13 +25,9 @@ export function SettingsPage() {
   return (
     <div>
       <PageHeader title={t.settings.title} />
-      {query.isLoading ? (
-        <Skeleton className="h-96 w-full max-w-xl" />
-      ) : query.isError ? (
-        <ErrorState error={query.error} />
-      ) : (
-        <SettingsForm settings={query.data!} />
-      )}
+      <QueryState query={query} loading={<SkeletonForm fields={5} />} onRetry>
+        {(settings) => <SettingsForm settings={settings} />}
+      </QueryState>
     </div>
   );
 }

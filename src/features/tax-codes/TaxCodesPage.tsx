@@ -3,12 +3,12 @@ import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
 import { DataTable } from '@/components/common/DataTable';
-import { ErrorState } from '@/components/common/ErrorState';
 import { PageHeader } from '@/components/common/PageHeader';
+import { QueryState } from '@/components/common/QueryState';
 import { RoleGate } from '@/components/common/RoleGate';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
+import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { useT } from '@/lib/i18n/useT';
 import { accountsApi } from '@/features/accounts/hooks';
 import { buildTaxCodeColumns } from './columns';
@@ -69,9 +69,9 @@ export function TaxCodesPage() {
         <Input placeholder={t.common.search} value={search} onChange={(e) => setSearch(e.target.value)} />
       </div>
 
-      {list.isLoading ? <Skeleton className="h-40 w-full" />
-        : list.isError ? <ErrorState error={list.error} />
-        : <DataTable columns={columns} data={rows} />}
+      <QueryState query={list} loading={<SkeletonTable rows={8} cols={4} />} onRetry>
+        {() => <DataTable columns={columns} data={rows} />}
+      </QueryState>
 
       <TaxCodeFormDialog open={creating} onOpenChange={setCreating} mode="create" />
       <TaxCodeFormDialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)} mode="edit" taxCode={editing ?? undefined} />

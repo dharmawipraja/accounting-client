@@ -1,10 +1,22 @@
 import type { ReactNode } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
-import { Skeleton } from '@/components/ui/skeleton';
-import { ErrorState } from '@/components/common/ErrorState';
+import { QueryState } from '@/components/common/QueryState';
+import type { ApiError } from '@/lib/api/errors';
 
-export function ReportContent<T>({ query, children }: { query: UseQueryResult<T, unknown>; children: (data: T) => ReactNode }) {
-  if (query.isError) return <ErrorState error={query.error} />;
-  if (query.data === undefined) return <Skeleton className="h-64 w-full" />;
-  return <>{children(query.data)}</>;
+/** Shared loading/error/data shell for every report page.
+ *  Pass a skeleton shaped for the report type via `loading`. */
+export function ReportContent<T>({
+  query,
+  loading,
+  children,
+}: {
+  query: UseQueryResult<T, ApiError>;
+  loading: ReactNode;
+  children: (data: T) => ReactNode;
+}) {
+  return (
+    <QueryState query={query} loading={loading} onRetry>
+      {children}
+    </QueryState>
+  );
 }

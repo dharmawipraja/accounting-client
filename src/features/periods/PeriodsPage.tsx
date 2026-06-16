@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PageHeader } from '@/components/common/PageHeader';
-import { ErrorState } from '@/components/common/ErrorState';
-import { RoleGate } from '@/components/common/RoleGate';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
+import { PageHeader } from '@/components/common/PageHeader';
+import { QueryState } from '@/components/common/QueryState';
+import { RoleGate } from '@/components/common/RoleGate';
+import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { formatDateID } from '@/lib/format/date';
 import { useT } from '@/lib/i18n/useT';
 import { usePeriods, useYearEndStatus } from './usePeriods';
@@ -31,8 +32,7 @@ export function PeriodsPage() {
   const runYearEnd = useRunYearEnd();
   const reopenYear = useReopenYear();
 
-  const rows = periods.data ?? [];
-  const anyOpen = rows.some((p) => !isPeriodClosed(p));
+  const anyOpen = (periods.data ?? []).some((p) => !isPeriodClosed(p));
   const closed = isYearClosed(yearEnd.data);
   const isMutating =
     close.isPending || reopen.isPending || generate.isPending || runYearEnd.isPending || reopenYear.isPending;
@@ -68,52 +68,50 @@ export function PeriodsPage() {
         <Button variant="outline" size="icon" aria-label={t.periods.nextYear} onClick={() => setFiscalYear((y) => y + 1)}>+</Button>
       </div>
 
-      {periods.isLoading ? (
-        <Skeleton className="h-48 w-full" />
-      ) : periods.isError ? (
-        <ErrorState error={periods.error} />
-      ) : rows.length === 0 ? (
-        <div className="space-y-3 rounded-lg border p-6 text-center">
-          <p className="text-sm text-muted-foreground">{t.periods.noPeriods}</p>
-          <RoleGate allow={['APPROVER', 'ADMIN']}>
-            <Button onClick={() => setPending({ kind: 'generate' })}>{t.periods.generate}</Button>
-          </RoleGate>
-        </div>
-      ) : (
-        <div className="rounded-lg border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t.periods.bulan}</TableHead>
-                <TableHead>{t.periods.status}</TableHead>
-                <TableHead className="text-right">{t.periods.aksi}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((p) => {
-                const c = isPeriodClosed(p);
-                return (
-                  <TableRow key={p.id}>
-                    <TableCell>{monthLabel(p)}</TableCell>
-                    <TableCell><Badge variant={c ? 'destructive' : 'default'}>{c ? t.periods.closed : t.periods.open}</Badge></TableCell>
-                    <TableCell className="text-right">
-                      {c ? (
-                        <RoleGate allow={['ADMIN']}>
-                          <Button variant="outline" size="sm" onClick={() => setPending({ kind: 'reopen', period: p })}>{t.periods.reopen}</Button>
-                        </RoleGate>
-                      ) : (
-                        <RoleGate allow={['APPROVER', 'ADMIN']}>
-                          <Button variant="outline" size="sm" onClick={() => setPending({ kind: 'close', period: p })}>{t.periods.close}</Button>
-                        </RoleGate>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+      <QueryState query={periods} loading={<SkeletonTable rows={6} cols={3} />} onRetry>
+        {(rows) => rows.length === 0 ? (
+          <div className="space-y-3 rounded-lg border p-6 text-center">
+            <p className="text-sm text-muted-foreground">{t.periods.noPeriods}</p>
+            <RoleGate allow={['APPROVER', 'ADMIN']}>
+              <Button onClick={() => setPending({ kind: 'generate' })}>{t.periods.generate}</Button>
+            </RoleGate>
+          </div>
+        ) : (
+          <div className="rounded-lg border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t.periods.bulan}</TableHead>
+                  <TableHead>{t.periods.status}</TableHead>
+                  <TableHead className="text-right">{t.periods.aksi}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.map((p) => {
+                  const c = isPeriodClosed(p);
+                  return (
+                    <TableRow key={p.id}>
+                      <TableCell>{monthLabel(p)}</TableCell>
+                      <TableCell><Badge variant={c ? 'destructive' : 'default'}>{c ? t.periods.closed : t.periods.open}</Badge></TableCell>
+                      <TableCell className="text-right">
+                        {c ? (
+                          <RoleGate allow={['ADMIN']}>
+                            <Button variant="outline" size="sm" onClick={() => setPending({ kind: 'reopen', period: p })}>{t.periods.reopen}</Button>
+                          </RoleGate>
+                        ) : (
+                          <RoleGate allow={['APPROVER', 'ADMIN']}>
+                            <Button variant="outline" size="sm" onClick={() => setPending({ kind: 'close', period: p })}>{t.periods.close}</Button>
+                          </RoleGate>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </QueryState>
 
       <div className="mt-6 space-y-2 rounded-lg border p-4">
         <h2 className="font-semibold">{t.periods.yearEndStatus}</h2>

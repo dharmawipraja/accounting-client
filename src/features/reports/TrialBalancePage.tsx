@@ -6,6 +6,7 @@ import { MoneyText } from '@/components/common/MoneyText';
 import { Money } from '@/lib/money/money';
 import { toApiDate } from '@/lib/format/date';
 import { useT } from '@/lib/i18n/useT';
+import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { ReportDateControls } from './ReportDateControls';
 import { ReportContent } from './ReportContent';
 import { ReportTable, MoneyCell, type ReportColumn } from './ReportTable';
@@ -26,7 +27,7 @@ export function TrialBalancePage({ onOpenAccount }: { onOpenAccount: (accountId:
     <div>
       <PageHeader title={t.reports.trialBalance} />
       <ReportDateControls mode="asOf" asOf={asOf} onAsOf={setAsOf} />
-      <ReportContent query={query}>
+      <ReportContent query={query} loading={<SkeletonTable rows={6} cols={4} />}>
         {(tb) => {
           const balanced = Money.from(tb.totalDebit).eq(Money.from(tb.totalCredit));
           return (
