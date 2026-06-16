@@ -9,6 +9,7 @@ import { DataTable } from '@/components/common/DataTable';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { ErrorState } from '@/components/common/ErrorState';
 import { PageHeader } from '@/components/common/PageHeader';
+import { Pagination } from '@/components/common/Pagination';
 import { RoleGate } from '@/components/common/RoleGate';
 import { useT } from '@/lib/i18n/useT';
 import { toastApiError } from '@/lib/api/toastApiError';
@@ -17,13 +18,14 @@ import { buildInvoiceColumns } from './columns';
 import { salesInvoicesApi, usePostInvoice, useVoidInvoice } from './hooks';
 import type { SalesInvoice } from './schema';
 
+const LIMIT = 20;
+
 const STATUSES = ['ALL', 'DRAFT', 'POSTED', 'VOID'] as const;
 
 type PendingAction = { kind: 'delete' | 'post' | 'void'; invoice: SalesInvoice; idempotencyKey?: string };
 
 export function SalesInvoicesPage() {
   const t = useT();
-  const list = salesInvoicesApi.useList();
   const partners = partnersApi.useList();
   const remove = salesInvoicesApi.useRemove();
   const post = usePostInvoice();
@@ -31,6 +33,8 @@ export function SalesInvoicesPage() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<(typeof STATUSES)[number]>('ALL');
   const [action, setAction] = useState<PendingAction | null>(null);
+  const [offset, setOffset] = useState(0);
+  const page = salesInvoicesApi.usePagedList({ limit: LIMIT, offset, status: status === 'ALL' ? undefined : status });
 
   const partnerName = useMemo(() => {
     const map = new Map((partners.data ?? []).map((p) => [p.id, p.name]));
@@ -66,11 +70,9 @@ export function SalesInvoicesPage() {
 
   const rows = useMemo(() => {
     const q = search.toLowerCase();
-    return (list.data ?? []).filter((inv) => {
-      if (status !== 'ALL' && inv.status !== status && !(status === 'VOID' && inv.status.startsWith('VOID'))) return false;
-      return !q || (inv.invoiceRef ?? '').toLowerCase().includes(q) || partnerName(inv.partnerId).toLowerCase().includes(q);
-    });
-  }, [list.data, search, status, partnerName]);
+    return (page.data?.data ?? []).filter((inv) =>
+      !q || (inv.invoiceRef ?? '').toLowerCase().includes(q) || partnerName(inv.partnerId).toLowerCase().includes(q));
+  }, [page.data, search, partnerName]);
 
   return (
     <div>
@@ -81,19 +83,25 @@ export function SalesInvoicesPage() {
       } />
 
       <div className="mb-4 flex flex-wrap gap-2">
-        <Input className="max-w-xs" placeholder={t.common.search} value={search} onChange={(e) => setSearch(e.target.value)} />
+        <div className="max-w-xs space-y-1">
+          <Input placeholder={t.common.search} value={search} onChange={(e) => setSearch(e.target.value)} />
+          <p className="text-xs text-muted-foreground">{t.common.searchOnThisPage}</p>
+        </div>
         <div className="flex gap-1">
           {STATUSES.map((s) => (
-            <Button key={s} size="sm" variant={status === s ? 'default' : 'outline'} onClick={() => setStatus(s)}>
+            <Button key={s} size="sm" variant={status === s ? 'default' : 'outline'} onClick={() => { setStatus(s); setOffset(0); }}>
               {s === 'ALL' ? t.salesInvoices.statusAll : s === 'DRAFT' ? t.salesInvoices.statusDraft : s === 'POSTED' ? t.salesInvoices.statusPosted : t.salesInvoices.statusVoid}
             </Button>
           ))}
         </div>
       </div>
 
-      {list.isLoading ? <Skeleton className="h-40 w-full" />
-        : list.isError ? <ErrorState error={list.error} />
-        : <DataTable columns={columns} data={rows} />}
+      {page.isLoading ? <Skeleton className="h-40 w-full" />
+        : page.isError ? <ErrorState error={page.error} />
+        : <>
+            <DataTable columns={columns} data={rows} />
+            <Pagination offset={offset} limit={LIMIT} total={page.data?.total ?? 0} onChange={setOffset} />
+          </>}
 
       <ConfirmDialog
         open={!!action}

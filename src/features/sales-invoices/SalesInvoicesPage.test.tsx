@@ -132,3 +132,14 @@ it('hides New for VIEWER', async () => {
   expect(await screen.findByText(/tidak ada data/i)).toBeInTheDocument();
   expect(screen.queryByRole('link', { name: /faktur baru/i })).not.toBeInTheDocument();
 });
+
+it('shows Pagination "Menampilkan" label with correct count', async () => {
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  server.use(
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [draftInvoice, postedInvoice], total: 2, limit: 20, offset: 0 })),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: onePartner, total: 1, limit: 200, offset: 0 })),
+  );
+  renderPage();
+  // Pagination component renders "Menampilkan {from}–{to} dari {total}"
+  expect(await screen.findByText(/menampilkan 1.+2 dari 2/i)).toBeInTheDocument();
+});
