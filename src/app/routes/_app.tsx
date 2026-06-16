@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router';
 import { AppShell } from '@/components/common/AppShell';
+import { ErrorState } from '@/components/common/ErrorState';
 import { requireAuth } from '@/features/auth/guard';
 
 export const Route = createFileRoute('/_app')({
@@ -11,4 +12,11 @@ export const Route = createFileRoute('/_app')({
       </AppShell>
     );
   },
+  errorComponent: ({ error }) => (
+    <AppShell>
+      <div className="p-6">
+        <ErrorState error={error} />
+      </div>
+    </AppShell>
+  ),
 });
