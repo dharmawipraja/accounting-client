@@ -174,9 +174,10 @@ export const handlers = [
 
   http.get(`${API}/sales-invoices`, ({ request }) => {
     const u = new URL(request.url).searchParams;
+    let data = salesInvoiceFixtures();
+    const status = u.get('status'); if (status) data = data.filter((x) => x.status === status);
     const limit = Number(u.get('limit') ?? '200');
     const offset = Number(u.get('offset') ?? '0');
-    const data = salesInvoiceFixtures();
     return HttpResponse.json({ data: data.slice(offset, offset + limit), total: data.length, limit, offset });
   }),
   http.get(`${API}/sales-invoices/:id`, ({ params }) => HttpResponse.json({ ...salesInvoiceFixtures()[0], id: params.id })),
@@ -209,9 +210,11 @@ export const handlers = [
   // --- payments (Plan 4a) ---
   http.get(`${API}/payments`, ({ request }) => {
     const u = new URL(request.url).searchParams;
+    let data = paymentFixtures();
+    const status = u.get('status'); if (status) data = data.filter((x) => x.status === status);
+    const direction = u.get('direction'); if (direction) data = data.filter((x) => x.direction === direction);
     const limit = Number(u.get('limit') ?? '200');
     const offset = Number(u.get('offset') ?? '0');
-    const data = paymentFixtures();
     return HttpResponse.json({ data: data.slice(offset, offset + limit), total: data.length, limit, offset });
   }),
   http.get(`${API}/payments/:id`, ({ params }) => HttpResponse.json({ ...paymentFixtures()[0], id: params.id })),
@@ -230,9 +233,10 @@ export const handlers = [
   // --- purchase bills (Plan 5a) ---
   http.get(`${API}/purchase-bills`, ({ request }) => {
     const u = new URL(request.url).searchParams;
+    let data = purchaseBillFixtures();
+    const status = u.get('status'); if (status) data = data.filter((x) => x.status === status);
     const limit = Number(u.get('limit') ?? '200');
     const offset = Number(u.get('offset') ?? '0');
-    const data = purchaseBillFixtures();
     return HttpResponse.json({ data: data.slice(offset, offset + limit), total: data.length, limit, offset });
   }),
   http.get(`${API}/purchase-bills/:id`, ({ params }) => HttpResponse.json({ ...purchaseBillFixtures()[0], id: params.id })),
