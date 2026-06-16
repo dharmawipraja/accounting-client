@@ -1,7 +1,9 @@
 import { useNavigate } from '@tanstack/react-router';
-import { ErrorState } from '@/components/common/ErrorState';
+import { Button } from '@/components/ui/button';
+import { NotFound } from '@/components/common/NotFound';
 import { PageHeader } from '@/components/common/PageHeader';
-import { Skeleton } from '@/components/ui/skeleton';
+import { QueryState } from '@/components/common/QueryState';
+import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { useT } from '@/lib/i18n/useT';
 import { InvoiceForm } from './InvoiceForm';
 import { salesInvoicesApi } from './hooks';
@@ -20,13 +22,29 @@ export function InvoiceEditorPage({ id }: { id?: string }) {
       </div>
     );
   }
-  if (item.isLoading) return <Skeleton className="h-96 w-full" />;
-  if (item.isError || !item.data) return <ErrorState error={item.error} />;
-  const readOnly = item.data.status !== 'DRAFT';
+
   return (
-    <div>
-      <PageHeader title={readOnly ? t.salesInvoices.view : t.salesInvoices.editInvoice} />
-      <InvoiceForm mode="edit" invoice={item.data} onSaved={goList} readOnly={readOnly} />
-    </div>
+    <QueryState
+      query={item}
+      loading={<SkeletonForm fields={6} />}
+      onRetry
+      notFound={
+        <NotFound
+          title={t.notFound.recordTitle}
+          message={t.notFound.recordMessage}
+          action={<Button onClick={goList}>{t.notFound.backToList}</Button>}
+        />
+      }
+    >
+      {(data) => {
+        const readOnly = data.status !== 'DRAFT';
+        return (
+          <div>
+            <PageHeader title={readOnly ? t.salesInvoices.view : t.salesInvoices.editInvoice} />
+            <InvoiceForm mode="edit" invoice={data} onSaved={goList} readOnly={readOnly} />
+          </div>
+        );
+      }}
+    </QueryState>
   );
 }
