@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
@@ -36,8 +36,13 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          # Optional: pin a stronger model (must be available to your account):
-          # claude_args: "--model claude-opus-4-6"
+          # Allow Dependabot-authored PRs to be reviewed. Requires the OAuth token
+          # to also be stored as a Dependabot secret (Settings -> Secrets and
+          # variables -> Dependabot), since GitHub withholds normal Actions secrets
+          # from Dependabot-triggered runs.
+          allowed_bots: "dependabot[bot]"
+          # Pin the reviewer to the latest model (must be available to your account).
+          claude_args: "--model claude-opus-4-8"
           prompt: |
             Review pull request #${{ github.event.pull_request.number }} in
             ${{ github.repository }} for a reviewer deciding whether to merge,
