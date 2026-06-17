@@ -20,3 +20,9 @@ export function computePeriod(preset: Exclude<PeriodPreset, 'custom'>, today: Da
 export function periodValid(p: Period): boolean {
   return !!p.from && !!p.to && isRangeValid(p.from, p.to);
 }
+
+/** Resolve a stored selection for display: relative presets recompute to
+ *  `today`; a custom range is returned verbatim. */
+export function resolveStoredPeriod(stored: Period, today: Date): Period {
+  return stored.preset === 'custom' ? stored : computePeriod(stored.preset, today);
+}
