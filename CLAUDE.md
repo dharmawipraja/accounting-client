@@ -4,11 +4,7 @@ React 19 (+ React Compiler) · TypeScript strict · TanStack Router (file-based)
 
 ## Design system
 
-Follow **`/DESIGN.md`** (American Express visual language). Apply the Amex **design tokens**: colors are CSS variables in `src/index.css` (`:root` light, `.dark` premium-navy); the typeface is **Public Sans**; radius is 8px; shadows are navy-tinted; money uses **tabular figures** at weight 600. Amex Blue `#006FCF` is the single action/accent color; deep navy `#00175A` is the premium surface (sidebar, dark mode). Use the semantic tokens (`--success`, `--warning`, `--destructive`) — never raw hex in components.
-
-### CRITICAL caveat about DESIGN.md
-
-`DESIGN.md` bundles a generic "anti-slop frontend" skill **scoped to landing pages and portfolios**. This app is a **data-dense accounting product** (dashboards, data tables, multi-step forms) — that skill's own Section 13 lists this app type as **out of scope**. Apply only its **design tokens, accessibility, interactive states, form/table patterns, color/shape-consistency, the em-dash ban, and reduced-motion** guidance. **Ignore** its hero / marquee / GSAP / bento / image-strategy / centered-hero / landing-page rules — they do not apply here.
+Follow **`/DESIGN.md`** (the Buku design system). Apply the **design tokens**: colors are CSS variables in `src/index.css` (`:root` light, `.dark` premium-navy); the typeface is **Public Sans**; radius is 8px; shadows are navy-tinted; money uses **tabular figures** at weight 600. Primary blue `#006FCF` is the single action/accent color; deep navy `#00175A` is the premium surface (sidebar, dark mode). Use the semantic tokens (`--success`, `--warning`, `--destructive`) — never raw hex in components.
 
 ## Non-negotiable conventions
 

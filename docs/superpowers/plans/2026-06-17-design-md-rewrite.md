@@ -1,3 +1,33 @@
+# Rewrite DESIGN.md as the Buku Design System — Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Replace the Amex-brand `DESIGN.md` (+ bundled landing-page skill) with a focused Buku Design System doc accurate to what's shipped, and update `CLAUDE.md`'s reference.
+
+**Architecture:** Documentation only. Overwrite `DESIGN.md` with the content below (token frontmatter mirrors `src/index.css`); make two edits to `CLAUDE.md`. No application code changes.
+
+**Tech Stack:** Markdown docs (no build/test impact).
+
+**Spec:** `docs/superpowers/specs/2026-06-17-design-md-rewrite-design.md`
+
+**Branch:** `docs/design-md-rewrite` (already created; spec committed at `edfb944`).
+
+---
+
+## File Structure
+
+- **Modify (full rewrite):** `DESIGN.md` (repo root).
+- **Modify:** `CLAUDE.md` (repo root).
+
+---
+
+## Task 1: Rewrite `DESIGN.md`
+
+**Files:** Overwrite `DESIGN.md` (repo root)
+
+- [ ] **Step 1: Overwrite `DESIGN.md` with exactly this content**
+
+```markdown
 # Buku Design System
 
 > Design reference for **Buku**, a single-company Indonesian accounting web client (SAK/PSAK). This is the source of truth for all UI in this app. Tokens mirror `src/index.css`; components live in `src/components/**`. When in doubt, the code is canonical.
@@ -117,3 +147,87 @@ Calm and motivated only. Overlays (dialogs, menus, tooltips) animate open/close 
 - **YAGNI.** Build the state or variant a screen actually needs.
 - **i18n and money discipline.** Every string via `useT()` (Indonesian); every amount via decimal.js (`Money`) and `MoneyText`.
 - **Redesign-preserve.** Styling work must not change routes, nav labels, or form-field names.
+```
+
+- [ ] **Step 2: Verify the token values match `src/index.css`**
+
+Open `src/index.css` and confirm the frontmatter values are accurate (e.g. `--primary: #006FCF`, `--sidebar: #00175A`, `--sidebar-ring: #4DA3E8`, `.dark --background: #000C3D`, `--radius: 0.5rem`, `--shadow-sm: 0 1px 4px rgba(0,23,90,0.10)`, `--font-sans: 'Public Sans Variable'…`). Fix any drift.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add DESIGN.md
+git commit -m "docs: rewrite DESIGN.md as the Buku design system
+
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+```
+
+---
+
+## Task 2: Update `CLAUDE.md`
+
+**Files:** Modify `CLAUDE.md` (repo root)
+
+- [ ] **Step 1: Reframe the design-system reference**
+
+Replace the design-system paragraph:
+```markdown
+Follow **`/DESIGN.md`** (American Express visual language). Apply the Amex **design tokens**: colors are CSS variables in `src/index.css` (`:root` light, `.dark` premium-navy); the typeface is **Public Sans**; radius is 8px; shadows are navy-tinted; money uses **tabular figures** at weight 600. Amex Blue `#006FCF` is the single action/accent color; deep navy `#00175A` is the premium surface (sidebar, dark mode). Use the semantic tokens (`--success`, `--warning`, `--destructive`) — never raw hex in components.
+```
+with:
+```markdown
+Follow **`/DESIGN.md`** (the Buku design system). Apply the **design tokens**: colors are CSS variables in `src/index.css` (`:root` light, `.dark` premium-navy); the typeface is **Public Sans**; radius is 8px; shadows are navy-tinted; money uses **tabular figures** at weight 600. Primary blue `#006FCF` is the single action/accent color; deep navy `#00175A` is the premium surface (sidebar, dark mode). Use the semantic tokens (`--success`, `--warning`, `--destructive`) — never raw hex in components.
+```
+
+- [ ] **Step 2: Delete the obsolete caveat section**
+
+Remove the entire section (heading + paragraph):
+```markdown
+### CRITICAL caveat about DESIGN.md
+
+`DESIGN.md` bundles a generic "anti-slop frontend" skill **scoped to landing pages and portfolios**. This app is a **data-dense accounting product** (dashboards, data tables, multi-step forms) — that skill's own Section 13 lists this app type as **out of scope**. Apply only its **design tokens, accessibility, interactive states, form/table patterns, color/shape-consistency, the em-dash ban, and reduced-motion** guidance. **Ignore** its hero / marquee / GSAP / bento / image-strategy / centered-hero / landing-page rules — they do not apply here.
+```
+(The "## Non-negotiable conventions" and "## Commands" sections stay unchanged.)
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add CLAUDE.md
+git commit -m "docs(claude): point at the Buku design system; drop obsolete caveat
+
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+```
+
+---
+
+## Task 3: Verify
+
+**Files:** none (verification only).
+
+- [ ] **Step 1: No leftover removed concepts**
+
+Run: `grep -niE "american express|amex|benton|membership|centurion|marquee|gsap|bento|anti-slop|out of scope" DESIGN.md CLAUDE.md`
+Expected: **no matches** (the rewrite scrubs all Amex-brand and landing-page-skill references; the heritage line says "finance brand equity", not "American Express").
+
+- [ ] **Step 2: Docs-only sanity**
+
+Run: `pnpm test --run && pnpm run build`
+Expected: still green (272 tests, build OK) — no code imports `DESIGN.md`, so nothing changed functionally.
+
+- [ ] **Step 3: Commit (if any verify fixes were needed)**
+
+```bash
+git add -A
+git commit -m "docs: DESIGN.md/CLAUDE.md verification fixes
+
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+```
+(Skip if nothing needed fixing.)
+
+---
+
+## Notes for the implementer
+
+- This is documentation only — do NOT change `src/index.css`, components, or any application code.
+- The `DESIGN.md` content above is the full deliverable; write it verbatim, then verify the token values against `src/index.css` (the canonical source).
+- The new `DESIGN.md` intentionally contains no "American Express"/"Amex"/"Benton Sans" references — the palette's heritage is acknowledged only as generic "finance brand equity".
