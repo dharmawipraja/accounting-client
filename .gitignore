@@ -15,6 +15,9 @@ dist-ssr
 # TanStack Router plugin temp/cache
 .tanstack
 
+# Superpowers brainstorming mockups
+.superpowers
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

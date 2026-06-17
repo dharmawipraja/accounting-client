@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { MoneyText } from '@/components/common/MoneyText';
 import { PageHeader } from '@/components/common/PageHeader';
+import { SkeletonCards } from '@/components/common/skeletons/SkeletonCards';
 import { formatDateID } from '@/lib/format/date';
 import { useT } from '@/lib/i18n/useT';
 import { DashboardFilters } from './DashboardFilters';
@@ -24,6 +25,9 @@ export function DashboardPage() {
   const asOfHint = valid ? `${t.dashboard.asOfLabel} ${formatDateID(period.to)}` : undefined;
   const money = (v?: string) => (v ? <MoneyText value={v} /> : '—');
 
+  // Show a skeleton grid on the very first paint before any query has resolved.
+  const allPending = bs.isPending && is.isPending && cf.isPending && drafts.isPending;
+
   return (
     <div className="space-y-6">
       <PageHeader title={t.nav.dashboard} />
@@ -32,17 +36,21 @@ export function DashboardPage() {
         onSelectPreset={(preset: Exclude<PeriodPreset, 'custom'>) => setPeriod(computePeriod(preset, new Date()))}
         onCustomChange={(from, to) => setPeriod({ preset: 'custom', from, to })}
       />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <SummaryCard title={t.dashboard.totalAssets} value={money(bs.data?.totalAssets)} loading={bs.isLoading} error={bs.isError} onRetry={() => void bs.refetch()} hint={asOfHint} />
-        <SummaryCard title={t.dashboard.totalLiabilities} value={money(bs.data?.totalLiabilities)} loading={bs.isLoading} error={bs.isError} onRetry={() => void bs.refetch()} hint={asOfHint} />
-        <SummaryCard title={t.dashboard.totalEquity} value={money(bs.data?.totalEquity)} loading={bs.isLoading} error={bs.isError} onRetry={() => void bs.refetch()} hint={asOfHint} />
-        <SummaryCard title={t.dashboard.revenue} value={money(is.data?.revenue)} loading={is.isLoading} error={is.isError} onRetry={() => void is.refetch()} hint={rangeHint} />
-        <SummaryCard title={t.dashboard.netIncome} value={money(is.data?.netIncome)} loading={is.isLoading} error={is.isError} onRetry={() => void is.refetch()} hint={rangeHint} />
-        <SummaryCard title={t.dashboard.endingCash} value={money(cf.data?.kasAkhir)} loading={cf.isLoading} error={cf.isError} onRetry={() => void cf.refetch()} hint={rangeHint} />
-        <Link to="/journals" search={{ status: 'DRAFT' }} className="block rounded-xl transition-opacity hover:opacity-90">
-          <SummaryCard title={t.dashboard.draftEntries} value={drafts.data?.total ?? '—'} loading={drafts.isLoading} error={drafts.isError} onRetry={() => void drafts.refetch()} />
-        </Link>
-      </div>
+      {allPending ? (
+        <SkeletonCards count={4} />
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <SummaryCard title={t.dashboard.totalAssets} value={money(bs.data?.totalAssets)} loading={bs.isLoading} error={bs.isError} onRetry={() => void bs.refetch()} hint={asOfHint} />
+          <SummaryCard title={t.dashboard.totalLiabilities} value={money(bs.data?.totalLiabilities)} loading={bs.isLoading} error={bs.isError} onRetry={() => void bs.refetch()} hint={asOfHint} />
+          <SummaryCard title={t.dashboard.totalEquity} value={money(bs.data?.totalEquity)} loading={bs.isLoading} error={bs.isError} onRetry={() => void bs.refetch()} hint={asOfHint} />
+          <SummaryCard title={t.dashboard.revenue} value={money(is.data?.revenue)} loading={is.isLoading} error={is.isError} onRetry={() => void is.refetch()} hint={rangeHint} />
+          <SummaryCard title={t.dashboard.netIncome} value={money(is.data?.netIncome)} loading={is.isLoading} error={is.isError} onRetry={() => void is.refetch()} hint={rangeHint} />
+          <SummaryCard title={t.dashboard.endingCash} value={money(cf.data?.kasAkhir)} loading={cf.isLoading} error={cf.isError} onRetry={() => void cf.refetch()} hint={rangeHint} />
+          <Link to="/journals" search={{ status: 'DRAFT' }} className="block rounded-xl transition-opacity hover:opacity-90">
+            <SummaryCard title={t.dashboard.draftEntries} value={drafts.data?.total ?? '—'} loading={drafts.isLoading} error={drafts.isError} onRetry={() => void drafts.refetch()} />
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

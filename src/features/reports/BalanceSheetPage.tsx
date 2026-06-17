@@ -5,6 +5,7 @@ import { Money } from '@/lib/money/money';
 import { toApiDate } from '@/lib/format/date';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { useT } from '@/lib/i18n/useT';
+import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { ReportDateControls } from './ReportDateControls';
 import { ReportContent } from './ReportContent';
 import { StatementView, type StatementRow } from './StatementView';
@@ -38,7 +39,7 @@ export function BalanceSheetPage() {
     <div>
       <PageHeader title={t.reports.balanceSheet} />
       <ReportDateControls mode="asOf" asOf={asOf} onAsOf={setAsOf} />
-      <ReportContent query={query}>
+      <ReportContent query={query} loading={<SkeletonForm fields={5} />}>
         {(bs) => (
           <div className="space-y-3">
             <StatementView rows={buildRows(bs, t)} />

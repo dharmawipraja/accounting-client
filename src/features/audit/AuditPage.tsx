@@ -4,11 +4,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ErrorState } from '@/components/common/ErrorState';
 import { PageHeader } from '@/components/common/PageHeader';
+import { QueryState } from '@/components/common/QueryState';
 import { useRole } from '@/components/common/RoleGate';
+import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { useT } from '@/lib/i18n/useT';
 import { OffsetPager } from './OffsetPager';
 import { useAuditLog, type AuditFilters } from './useAuditLog';
@@ -40,7 +40,6 @@ function AuditContent() {
 
   const filters: AuditFilters = { method: method || undefined, from: from || undefined, to: to || undefined, limit: LIMIT, offset };
   const query = useAuditLog(filters);
-  const rows = query.data ?? [];
 
   const onMethod = (v: string) => { setMethod(v === 'ALL' ? '' : v); setOffset(0); };
   const onFrom = (v: string) => { setFrom(v); setOffset(0); };
@@ -71,42 +70,41 @@ function AuditContent() {
         </div>
       </div>
 
-      {query.isLoading ? (
-        <Skeleton className="h-64 w-full" />
-      ) : query.isError ? (
-        <ErrorState error={query.error} />
-      ) : (
-        <div className="rounded-lg border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t.audit.waktu}</TableHead>
-                <TableHead>{t.audit.pengguna}</TableHead>
-                <TableHead>{t.audit.metode}</TableHead>
-                <TableHead>{t.audit.path}</TableHead>
-                <TableHead>{t.audit.status}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.length === 0 ? (
-                <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">{t.audit.empty}</TableCell></TableRow>
-              ) : (
-                rows.map((e) => (
-                  <TableRow key={e.id} className="cursor-pointer" onClick={() => setSelected(e)}>
-                    <TableCell className="whitespace-nowrap tabular-nums">{formatAuditTime(e.timestamp)}</TableCell>
-                    <TableCell>{e.userRole ?? '—'}</TableCell>
-                    <TableCell><Badge variant="outline">{e.method}</Badge></TableCell>
-                    <TableCell className="max-w-xs truncate">{e.path}</TableCell>
-                    <TableCell><Badge variant={e.statusCode && e.statusCode < 400 ? 'default' : 'destructive'}>{e.statusCode ?? '—'}</Badge></TableCell>
+      <QueryState query={query} loading={<SkeletonTable rows={8} cols={5} />} onRetry>
+        {(rows) => (
+          <>
+            <div className="rounded-lg border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t.audit.waktu}</TableHead>
+                    <TableHead>{t.audit.pengguna}</TableHead>
+                    <TableHead>{t.audit.metode}</TableHead>
+                    <TableHead>{t.audit.path}</TableHead>
+                    <TableHead>{t.audit.status}</TableHead>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      )}
-
-      <OffsetPager offset={offset} limit={LIMIT} count={rows.length} onChange={setOffset} />
+                </TableHeader>
+                <TableBody>
+                  {rows.length === 0 ? (
+                    <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">{t.audit.empty}</TableCell></TableRow>
+                  ) : (
+                    rows.map((e) => (
+                      <TableRow key={e.id} className="cursor-pointer" onClick={() => setSelected(e)}>
+                        <TableCell className="whitespace-nowrap tabular-nums">{formatAuditTime(e.timestamp)}</TableCell>
+                        <TableCell>{e.userRole ?? '—'}</TableCell>
+                        <TableCell><Badge variant="outline">{e.method}</Badge></TableCell>
+                        <TableCell className="max-w-xs truncate">{e.path}</TableCell>
+                        <TableCell><Badge variant={e.statusCode && e.statusCode < 400 ? 'default' : 'destructive'}>{e.statusCode ?? '—'}</Badge></TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+            <OffsetPager offset={offset} limit={LIMIT} count={rows.length} onChange={setOffset} />
+          </>
+        )}
+      </QueryState>
 
       <Sheet open={selected !== null} onOpenChange={(o) => { if (!o) setSelected(null); }}>
         <SheetContent className="w-full overflow-y-auto sm:max-w-lg">

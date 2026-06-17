@@ -5,6 +5,7 @@ import { MoneyText } from '@/components/common/MoneyText';
 import { AccountSelect } from '@/components/common/AccountSelect';
 import { formatDateID, toApiDate, isRangeValid } from '@/lib/format/date';
 import { useT } from '@/lib/i18n/useT';
+import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { ReportDateControls } from './ReportDateControls';
 import { ReportContent } from './ReportContent';
 import { ReportTable, MoneyCell, type ReportColumn } from './ReportTable';
@@ -41,7 +42,7 @@ export function GeneralLedgerPage({ initialAccountId }: { initialAccountId?: str
       {!accountId ? (
         <p className="text-sm text-muted-foreground">{t.reports.selectAccount}</p>
       ) : (
-        <ReportContent query={query}>
+        <ReportContent query={query} loading={<SkeletonTable rows={6} cols={4} />}>
           {(gl) => (
             <div className="space-y-2">
               <div className="text-sm font-medium">{gl.account.code} · {gl.account.name} · {gl.account.normalBalance}</div>

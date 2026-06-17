@@ -3,6 +3,7 @@ import { PageHeader } from '@/components/common/PageHeader';
 import { toApiDate, isRangeValid } from '@/lib/format/date';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { useT } from '@/lib/i18n/useT';
+import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { ReportDateControls } from './ReportDateControls';
 import { ReportContent } from './ReportContent';
 import { StatementView, type StatementRow } from './StatementView';
@@ -40,7 +41,7 @@ export function IncomeStatementPage() {
     <div>
       <PageHeader title={t.reports.incomeStatement} />
       <ReportDateControls mode="range" from={from} to={to} onRange={(f, tt) => { setFrom(f); setTo(tt); }} />
-      <ReportContent query={query}>{(is) => <StatementView rows={buildRows(is, t)} />}</ReportContent>
+      <ReportContent query={query} loading={<SkeletonForm fields={5} />}>{(is) => <StatementView rows={buildRows(is, t)} />}</ReportContent>
     </div>
   );
 }

@@ -3,11 +3,11 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DataTable } from '@/components/common/DataTable';
-import { ErrorState } from '@/components/common/ErrorState';
 import { PageHeader } from '@/components/common/PageHeader';
+import { QueryState } from '@/components/common/QueryState';
 import { RoleGate } from '@/components/common/RoleGate';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
-import { Skeleton } from '@/components/ui/skeleton';
+import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { toast } from 'sonner';
 import { useT } from '@/lib/i18n/useT';
 import { ACCOUNT_TYPE_ORDER, type AccountType } from './account-meta';
@@ -53,6 +53,7 @@ export function AccountsPage() {
     })).filter((g) => g.rows.length > 0);
   }, [list.data, search]);
 
+
   function runConfirm() {
     if (!confirm) return;
     const action = confirm.kind === 'deactivate' ? deactivate : remove;
@@ -80,22 +81,20 @@ export function AccountsPage() {
         <Input placeholder={t.common.search} value={search} onChange={(e) => setSearch(e.target.value)} />
       </div>
 
-      {list.isLoading ? (
-        <Skeleton className="h-40 w-full" />
-      ) : list.isError ? (
-        <ErrorState error={list.error} />
-      ) : (
-        <div className="space-y-8">
-          {grouped.map((g) => (
-            <section key={g.type}>
-              <h2 className="mb-2 text-sm font-semibold text-muted-foreground">
-                {t.accounts[TYPE_LABEL[g.type]]}
-              </h2>
-              <DataTable columns={columns} data={g.rows} />
-            </section>
-          ))}
-        </div>
-      )}
+      <QueryState query={list} loading={<SkeletonTable rows={8} cols={4} />} onRetry>
+        {() => (
+          <div className="space-y-8">
+            {grouped.map((g) => (
+              <section key={g.type}>
+                <h2 className="mb-2 text-sm font-semibold text-muted-foreground">
+                  {t.accounts[TYPE_LABEL[g.type]]}
+                </h2>
+                <DataTable columns={columns} data={g.rows} />
+              </section>
+            ))}
+          </div>
+        )}
+      </QueryState>
 
       <AccountFormDialog open={creating} onOpenChange={setCreating} mode="create" />
       <AccountFormDialog

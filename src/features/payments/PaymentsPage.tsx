@@ -4,13 +4,13 @@ import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
 import { DataTable } from '@/components/common/DataTable';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
-import { ErrorState } from '@/components/common/ErrorState';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Pagination } from '@/components/common/Pagination';
+import { QueryState } from '@/components/common/QueryState';
 import { RoleGate } from '@/components/common/RoleGate';
+import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { useT } from '@/lib/i18n/useT';
 import { toastApiError } from '@/lib/api/toastApiError';
 import { partnersApi } from '@/features/partners/hooks';
@@ -62,12 +62,6 @@ export function PaymentsPage() {
     [t, partnerName, accountName],
   );
 
-  const rows = useMemo(() => {
-    const q = search.toLowerCase();
-    return (page.data?.data ?? []).filter((p) =>
-      !q || (p.ref ?? '').toLowerCase().includes(q) || partnerName(p.partnerId).toLowerCase().includes(q));
-  }, [page.data, search, partnerName]);
-
   function runAction() {
     if (!action) return;
     const close = () => setAction(null);
@@ -118,12 +112,19 @@ export function PaymentsPage() {
         </div>
       </div>
 
-      {page.isLoading ? <Skeleton className="h-40 w-full" />
-        : page.isError ? <ErrorState error={page.error} />
-        : <>
-            <DataTable columns={columns} data={rows} />
-            <Pagination offset={offset} limit={LIMIT} total={page.data?.total ?? 0} onChange={setOffset} />
-          </>}
+      <QueryState query={page} loading={<SkeletonTable rows={8} cols={6} />} onRetry>
+        {(env) => {
+          const q = search.toLowerCase();
+          const rows = env.data.filter((p) =>
+            !q || (p.ref ?? '').toLowerCase().includes(q) || partnerName(p.partnerId).toLowerCase().includes(q));
+          return (
+            <>
+              <DataTable columns={columns} data={rows} />
+              <Pagination offset={offset} limit={LIMIT} total={env.total} onChange={setOffset} />
+            </>
+          );
+        }}
+      </QueryState>
 
       <ConfirmDialog
         open={!!action}
