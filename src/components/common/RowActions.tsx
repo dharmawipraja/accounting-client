@@ -12,11 +12,13 @@ import { hasRole, useRole } from './RoleGate';
 
 interface RowActionsProps {
   onEdit: () => void;
-  onDeactivate?: () => void;
+  /** Current active state of the row; decides the toggle label (Aktifkan / Nonaktifkan). */
+  active?: boolean;
+  onToggleActive?: () => void;
   onDelete?: () => void;
 }
 
-export function RowActions({ onEdit, onDeactivate, onDelete }: RowActionsProps) {
+export function RowActions({ onEdit, active, onToggleActive, onDelete }: RowActionsProps) {
   const t = useT();
   const role = useRole();
   const canEdit = hasRole(role, ['ACCOUNTANT', 'APPROVER', 'ADMIN']);
@@ -34,8 +36,10 @@ export function RowActions({ onEdit, onDeactivate, onDelete }: RowActionsProps) 
         {canEdit ? (
           <DropdownMenuItem onSelect={onEdit}>{t.common.edit}</DropdownMenuItem>
         ) : null}
-        {canAdmin && onDeactivate ? (
-          <DropdownMenuItem onSelect={onDeactivate}>{t.crud.deactivate}</DropdownMenuItem>
+        {canAdmin && onToggleActive ? (
+          <DropdownMenuItem onSelect={onToggleActive}>
+            {active ? t.crud.deactivate : t.crud.activate}
+          </DropdownMenuItem>
         ) : null}
         {canAdmin && onDelete ? (
           <>

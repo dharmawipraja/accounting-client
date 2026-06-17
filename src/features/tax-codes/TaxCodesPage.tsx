@@ -22,6 +22,7 @@ export function TaxCodesPage() {
   const accounts = accountsApi.useList();
   const deactivate = taxCodesApi.useDeactivate();
   const remove = taxCodesApi.useRemove();
+  const { mutate: activate } = taxCodesApi.useActivate();
 
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<TaxCode | null>(null);
@@ -36,10 +37,16 @@ export function TaxCodesPage() {
   const columns = useMemo(
     () => buildTaxCodeColumns(t, accountLabel, {
       onEdit: (x) => setEditing(x),
-      onDeactivate: (x) => setConfirm({ kind: 'deactivate', taxCode: x }),
+      onToggleActive: (x) =>
+        x.isActive
+          ? setConfirm({ kind: 'deactivate', taxCode: x })
+          : activate(x.id, {
+              onSuccess: () => toast.success(t.crud.activated),
+              onError: () => toast.error(t.common.error),
+            }),
       onDelete: (x) => setConfirm({ kind: 'delete', taxCode: x }),
     }),
-    [t, accountLabel],
+    [t, accountLabel, activate],
   );
 
   const rows = useMemo(() => {

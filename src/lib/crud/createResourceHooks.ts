@@ -112,6 +112,16 @@ export function createResourceHooks<TItem, TCreate = unknown, TUpdate = unknown>
     });
   }
 
+  // Reactivation: there is no `/activate` endpoint; the update DTOs accept an
+  // optional `isActive`, so a partial PATCH flips the row back on.
+  function useActivate(): UseMutationResult<unknown, ApiError, string> {
+    const qc = useQueryClient();
+    return useMutation<unknown, ApiError, string>({
+      mutationFn: (id) => apiFetch(`${basePath}/${id}`, { method: 'PATCH', body: { isActive: true } }),
+      onSuccess: () => invalidate(qc),
+    });
+  }
+
   function useRemove(): UseMutationResult<unknown, ApiError, string> {
     const qc = useQueryClient();
     return useMutation<unknown, ApiError, string>({
@@ -120,5 +130,5 @@ export function createResourceHooks<TItem, TCreate = unknown, TUpdate = unknown>
     });
   }
 
-  return { keys, useList, usePagedList, useItem, useCreate, useUpdate, useDeactivate, useRemove };
+  return { keys, useList, usePagedList, useItem, useCreate, useUpdate, useDeactivate, useActivate, useRemove };
 }

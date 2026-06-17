@@ -16,7 +16,7 @@ const KIND_KEY: Record<TaxKind, keyof Messages['taxCodes']> = {
 export function buildTaxCodeColumns(
   t: Messages,
   accountLabel: (id: string) => string,
-  handlers: { onEdit: (x: TaxCode) => void; onDeactivate: (x: TaxCode) => void; onDelete: (x: TaxCode) => void },
+  handlers: { onEdit: (x: TaxCode) => void; onToggleActive: (x: TaxCode) => void; onDelete: (x: TaxCode) => void },
 ) {
   return [
     col.accessor('code', { header: t.taxCodes.code }),
@@ -24,14 +24,15 @@ export function buildTaxCodeColumns(
     col.accessor('kind', { header: t.taxCodes.kind, cell: (c) => <Badge variant="outline">{t.taxCodes[KIND_KEY[c.getValue()]]}</Badge> }),
     col.accessor('rate', { header: t.taxCodes.rate, cell: (c) => <span className="font-mono tabular-nums">{formatRatePercent(c.getValue())}</span> }),
     col.accessor('taxAccountId', { header: t.taxCodes.taxAccount, cell: (c) => accountLabel(c.getValue()) }),
-    col.accessor('isActive', { header: '', cell: (c) => <StatusBadge active={c.getValue()} /> }),
+    col.accessor('isActive', { header: t.crud.status, cell: (c) => <StatusBadge active={c.getValue()} /> }),
     col.display({
       id: 'actions',
       header: '',
       cell: (c) => (
         <RowActions
           onEdit={() => handlers.onEdit(c.row.original)}
-          onDeactivate={() => handlers.onDeactivate(c.row.original)}
+          active={c.row.original.isActive}
+          onToggleActive={() => handlers.onToggleActive(c.row.original)}
           onDelete={() => handlers.onDelete(c.row.original)}
         />
       ),
