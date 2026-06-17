@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PeriodStatusChip } from '@/components/common/statusChips';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { PageHeader } from '@/components/common/PageHeader';
@@ -92,7 +92,7 @@ export function PeriodsPage() {
                   return (
                     <TableRow key={p.id}>
                       <TableCell>{monthLabel(p)}</TableCell>
-                      <TableCell><Badge variant={c ? 'destructive' : 'default'}>{c ? t.periods.closed : t.periods.open}</Badge></TableCell>
+                      <TableCell><PeriodStatusChip closed={c} t={t} /></TableCell>
                       <TableCell className="text-right">
                         {c ? (
                           <RoleGate allow={['ADMIN']}>
