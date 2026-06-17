@@ -55,7 +55,7 @@ export interface PreferencesState {
 - Each link gets `title={collapsed ? item.label : undefined}` for a native hover tooltip when collapsed. Because the label text stays in the DOM, the link's screen-reader accessible name is preserved in both states (no separate `aria-label` needed).
 - Active styling (blue left-bar `shadow-[inset_3px_0_0_var(--sidebar-ring)]` + `bg-sidebar-accent`) is identical in both states and reads correctly on the rail.
 
-The wordmark `<span>` in the brand row fades the same way (`opacity` transition).
+The brand cluster (logo + "Buku" wordmark) is conditionally rendered — present when expanded, omitted when collapsed — so the toggle centers cleanly in the 64px rail without the wordmark pushing it out of the clipped area. The animated fade applies to the **nav-row labels** (the bulk of the motion); the brand swap is a hard cut hidden behind the simultaneous width animation.
 
 **Header bar and content** (`<header>`, `<main>`) are unchanged.
 
