@@ -86,7 +86,7 @@ describe('401 refresh', () => {
     expect(refreshCalls).toBe(1);
   });
 
-  it('clears the session when refresh fails', async () => {
+  it('clears the session when refresh is genuinely rejected (401)', async () => {
     useSession.getState().setTokens({ accessToken: 'expired', refreshToken: 'r-bad' });
     server.use(
       http.get(`${API}/secure`, () =>
@@ -99,5 +99,32 @@ describe('401 refresh', () => {
     await expect(apiFetch('/secure')).rejects.toMatchObject({ status: 401 });
     expect(useSession.getState().status).toBe('anonymous');
     expect(useSession.getState().accessToken).toBeNull();
+  });
+
+  it('keeps the session when refresh fails with a network error (API down)', async () => {
+    useSession.getState().setTokens({ accessToken: 'expired', refreshToken: 'r-good' });
+    server.use(
+      http.get(`${API}/secure`, () =>
+        HttpResponse.json({ code: 'UNAUTHORIZED', message: 'x' }, { status: 401 }),
+      ),
+      http.post(`${API}/auth/refresh`, () => HttpResponse.error()),
+    );
+    await expect(apiFetch('/secure')).rejects.toMatchObject({ status: 401 });
+    // A transient outage must NOT log the user out — token preserved.
+    expect(useSession.getState().accessToken).toBe('expired');
+  });
+
+  it('keeps the session when refresh returns a 5xx', async () => {
+    useSession.getState().setTokens({ accessToken: 'expired', refreshToken: 'r-good' });
+    server.use(
+      http.get(`${API}/secure`, () =>
+        HttpResponse.json({ code: 'UNAUTHORIZED', message: 'x' }, { status: 401 }),
+      ),
+      http.post(`${API}/auth/refresh`, () =>
+        HttpResponse.json({ code: 'INTERNAL', message: 'boom' }, { status: 500 }),
+      ),
+    );
+    await expect(apiFetch('/secure')).rejects.toMatchObject({ status: 401 });
+    expect(useSession.getState().accessToken).toBe('expired');
   });
 });

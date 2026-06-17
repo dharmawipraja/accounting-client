@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { ApiError } from '@/lib/api/errors';
 import { useSession } from '@/stores/session';
 import { fetchMe } from './useMe';
 
@@ -9,7 +10,16 @@ export function useHydrateSession(): void {
     if (accessToken && !useSession.getState().user) {
       fetchMe()
         .then((me) => useSession.getState().setUser(me))
-        .catch(() => useSession.getState().clear());
+        .catch((err: unknown) => {
+          // Only a genuine auth rejection (token invalid) clears the session.
+          // A transient/network failure (e.g. API unreachable) must NOT log the
+          // user out — keep the token; user info hydrates on a later success.
+          if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
+            useSession.getState().clear();
+          } else {
+            useSession.getState().setStatus('authenticated');
+          }
+        });
     } else if (!accessToken) {
       useSession.getState().setStatus('anonymous');
     }
