@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { JournalStatusChip } from '@/components/common/statusChips';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { NotFound } from '@/components/common/NotFound';
 import { PageHeader } from '@/components/common/PageHeader';
@@ -48,7 +48,7 @@ export function JournalEntryEditorPage({ id }: { id?: string }) {
           <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
             <div><div className="text-muted-foreground">{t.journals.date}</div><div>{formatDateID(je.date.slice(0, 10))}</div></div>
             <div className="md:col-span-2"><div className="text-muted-foreground">{t.journals.description}</div><div>{je.description}</div></div>
-            <div><div className="text-muted-foreground">{t.journals.status}</div><Badge variant={je.status === 'DRAFT' ? 'secondary' : 'default'}>{je.status === 'DRAFT' ? t.journals.statusDraft : t.journals.statusPosted}</Badge></div>
+            <div><div className="text-muted-foreground">{t.journals.status}</div><JournalStatusChip status={je.status} t={t} /></div>
           </div>
           <div className="rounded-lg border">
             <Table>

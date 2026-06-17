@@ -2,6 +2,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { Link } from '@tanstack/react-router';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { JournalStatusChip } from '@/components/common/statusChips';
 import { MoneyText } from '@/components/common/MoneyText';
 import { RoleGate } from '@/components/common/RoleGate';
 import { formatDateID } from '@/lib/format/date';
@@ -10,9 +11,6 @@ import type { JournalEntryListItem } from './schema';
 
 const col = createColumnHelper<JournalEntryListItem>();
 
-function statusLabel(t: Messages, s: string): string {
-  return s === 'DRAFT' ? t.journals.statusDraft : t.journals.statusPosted;
-}
 function sourceLabel(t: Messages, s: string): string {
   if (s === 'MANUAL') return t.journals.sourceManual;
   if (s === 'REVERSAL') return t.journals.sourceReversal;
@@ -31,7 +29,7 @@ export function buildJournalColumns(
     col.accessor('date', { header: t.journals.date, cell: (c) => formatDateID(c.getValue().slice(0, 10)) }),
     col.accessor('description', { header: t.journals.description, cell: (c) => c.getValue() }),
     col.accessor('sourceType', { header: t.journals.sourceType, cell: (c) => <Badge variant="outline">{sourceLabel(t, c.getValue())}</Badge> }),
-    col.accessor('status', { header: t.journals.status, cell: (c) => <Badge variant={c.getValue() === 'DRAFT' ? 'secondary' : 'default'}>{statusLabel(t, c.getValue())}</Badge> }),
+    col.accessor('status', { header: t.journals.status, cell: (c) => <JournalStatusChip status={c.getValue()} t={t} /> }),
     col.accessor('totalDebit', { header: t.journals.totalDebit, cell: (c) => <MoneyText value={c.getValue()} /> }),
     col.accessor('lineCount', { header: t.journals.lineCount, cell: (c) => c.getValue() }),
     col.display({

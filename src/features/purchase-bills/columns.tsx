@@ -1,7 +1,7 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Link } from '@tanstack/react-router';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { DocStatusChip } from '@/components/common/statusChips';
 import { MoneyText } from '@/components/common/MoneyText';
 import { RoleGate } from '@/components/common/RoleGate';
 import { formatDateID } from '@/lib/format/date';
@@ -26,7 +26,7 @@ export function buildBillColumns(
     col.accessor('partnerId', { header: t.purchaseBills.partner, cell: (c) => partnerName(c.getValue()) }),
     col.accessor('date', { header: t.purchaseBills.date, cell: (c) => formatDateID(c.getValue().slice(0, 10)) }),
     col.accessor('vendorInvoiceNo', { header: t.purchaseBills.vendorInvoiceNo, cell: (c) => c.getValue() ?? '—' }),
-    col.accessor('status', { header: t.purchaseBills.status, cell: (c) => <Badge variant={c.getValue() === 'DRAFT' ? 'secondary' : 'default'}>{statusLabel(t, c.getValue())}</Badge> }),
+    col.accessor('status', { header: t.purchaseBills.status, cell: (c) => <DocStatusChip status={c.getValue()} label={statusLabel(t, c.getValue())} /> }),
     col.accessor('total', { header: t.purchaseBills.total, cell: (c) => <MoneyText value={c.getValue()} /> }),
     col.display({
       id: 'actions',

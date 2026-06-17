@@ -1,7 +1,7 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Link } from '@tanstack/react-router';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { DocStatusChip, DirectionChip } from '@/components/common/statusChips';
 import { MoneyText } from '@/components/common/MoneyText';
 import { RoleGate } from '@/components/common/RoleGate';
 import { Money } from '@/lib/money/money';
@@ -17,10 +17,6 @@ function statusLabel(t: Messages, s: string): string {
   return t.payments.statusVoid;
 }
 
-function directionLabel(t: Messages, d: string): string {
-  return d === 'DISBURSEMENT' ? t.payments.directionDisbursement : t.payments.directionReceipt;
-}
-
 /** Payment total = sum of allocation amounts (decimal). */
 export function paymentTotal(p: Payment): string {
   return p.allocations.reduce((acc, a) => acc.plus(Money.from(a.amount)), Money.zero()).toApi();
@@ -34,12 +30,12 @@ export function buildPaymentColumns(
 ) {
   return [
     col.accessor('ref', { header: t.payments.number, cell: (c) => c.getValue() ?? '—' }),
-    col.accessor('direction', { header: t.payments.direction, cell: (c) => <Badge variant="outline">{directionLabel(t, c.getValue())}</Badge> }),
+    col.accessor('direction', { header: t.payments.direction, cell: (c) => <DirectionChip direction={c.getValue()} t={t} /> }),
     col.accessor('partnerId', { header: t.payments.partner, cell: (c) => partnerName(c.getValue()) }),
     col.accessor('date', { header: t.payments.date, cell: (c) => formatDateID(c.getValue().slice(0, 10)) }),
     col.accessor('cashAccountId', { header: t.payments.cashAccount, cell: (c) => accountName(c.getValue()) }),
     col.display({ id: 'total', header: t.payments.amount, cell: (c) => <MoneyText value={paymentTotal(c.row.original)} /> }),
-    col.accessor('status', { header: t.payments.status, cell: (c) => <Badge variant={c.getValue() === 'DRAFT' ? 'secondary' : 'default'}>{statusLabel(t, c.getValue())}</Badge> }),
+    col.accessor('status', { header: t.payments.status, cell: (c) => <DocStatusChip status={c.getValue()} label={statusLabel(t, c.getValue())} /> }),
     col.display({
       id: 'actions',
       header: '',
