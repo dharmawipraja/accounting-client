@@ -46,7 +46,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-svh">
-      <aside className="flex w-60 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
+      <aside className="flex w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
         <div className="flex items-center gap-2 px-5 py-4">
           <BookText className="size-5 text-sidebar-foreground" />
           <span className="text-lg font-semibold">{t.app.name}</span>
@@ -75,7 +75,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           )}
         </nav>
       </aside>
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 items-center justify-end gap-3 border-b px-6">
           <span className="text-sm text-muted-foreground">{user?.email}</span>
           <ThemeToggle />
