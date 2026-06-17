@@ -6,6 +6,7 @@ import { SkeletonCards } from '@/components/common/skeletons/SkeletonCards';
 import { formatDateID } from '@/lib/format/date';
 import { useT } from '@/lib/i18n/useT';
 import { usePreferences } from '@/stores/preferences';
+import { Reveal } from '@/components/common/Reveal';
 import { DashboardFilters } from './DashboardFilters';
 import { DashboardHero } from './DashboardHero';
 import { SummaryCard } from './SummaryCard';
@@ -44,22 +45,32 @@ export function DashboardPage() {
         <SkeletonCards count={4} />
       ) : (
         <div className="space-y-6">
-          <DashboardHero
-            assets={bs.data?.totalAssets}
-            liabilities={bs.data?.totalLiabilities}
-            equity={bs.data?.totalEquity}
-            loading={bs.isLoading}
-            error={bs.isError}
-            onRetry={() => void bs.refetch()}
-            asOf={asOfHint}
-          />
+          <Reveal index={0}>
+            <DashboardHero
+              assets={bs.data?.totalAssets}
+              liabilities={bs.data?.totalLiabilities}
+              equity={bs.data?.totalEquity}
+              loading={bs.isLoading}
+              error={bs.isError}
+              onRetry={() => void bs.refetch()}
+              asOf={asOfHint}
+            />
+          </Reveal>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <SummaryCard title={t.dashboard.revenue} value={money(is.data?.revenue)} loading={is.isLoading} error={is.isError} onRetry={() => void is.refetch()} hint={rangeHint} />
-            <SummaryCard title={t.dashboard.netIncome} value={money(is.data?.netIncome)} loading={is.isLoading} error={is.isError} onRetry={() => void is.refetch()} hint={rangeHint} />
-            <SummaryCard title={t.dashboard.endingCash} value={money(cf.data?.kasAkhir)} loading={cf.isLoading} error={cf.isError} onRetry={() => void cf.refetch()} hint={rangeHint} />
-            <Link to="/journals" search={{ status: 'DRAFT' }} className="block rounded-xl transition-opacity hover:opacity-90">
-              <SummaryCard title={t.dashboard.draftEntries} value={drafts.data?.total ?? '—'} loading={drafts.isLoading} error={drafts.isError} onRetry={() => void drafts.refetch()} />
-            </Link>
+            <Reveal index={1}>
+              <SummaryCard title={t.dashboard.revenue} value={money(is.data?.revenue)} loading={is.isLoading} error={is.isError} onRetry={() => void is.refetch()} hint={rangeHint} />
+            </Reveal>
+            <Reveal index={2}>
+              <SummaryCard title={t.dashboard.netIncome} value={money(is.data?.netIncome)} loading={is.isLoading} error={is.isError} onRetry={() => void is.refetch()} hint={rangeHint} />
+            </Reveal>
+            <Reveal index={3}>
+              <SummaryCard title={t.dashboard.endingCash} value={money(cf.data?.kasAkhir)} loading={cf.isLoading} error={cf.isError} onRetry={() => void cf.refetch()} hint={rangeHint} />
+            </Reveal>
+            <Reveal index={4}>
+              <Link to="/journals" search={{ status: 'DRAFT' }} className="block rounded-xl transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                <SummaryCard title={t.dashboard.draftEntries} value={drafts.data?.total ?? '—'} loading={drafts.isLoading} error={drafts.isError} onRetry={() => void drafts.refetch()} />
+              </Link>
+            </Reveal>
           </div>
         </div>
       )}
