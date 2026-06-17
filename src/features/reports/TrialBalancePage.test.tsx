@@ -41,3 +41,13 @@ it('renders rows + balanced badge; asOf drives the fetch; a row click opens that
   fireEvent.change(screen.getByLabelText(/per tanggal/i), { target: { value: '2026-05-31' } });
   await waitFor(() => expect(seenAsOf).toBe('2026-05-31'));
 });
+
+it('shows a back link to the reports menu', async () => {
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  server.use(http.get(`${API}/ledger/trial-balance`, ({ request }) =>
+    HttpResponse.json(fixture(new URL(request.url).searchParams.get('asOf') ?? '')),
+  ));
+  renderPage();
+  const link = await screen.findByRole('link', { name: 'Laporan' });
+  expect(link).toHaveAttribute('href', '/reports');
+});
