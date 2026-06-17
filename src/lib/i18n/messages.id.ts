@@ -325,6 +325,7 @@ export const id = {
     statusAll: 'Semua',
     statusDraft: 'Draf',
     statusPosted: 'Diposting',
+    statusReversed: 'Dibalik',
     sourceAll: 'Semua',
     sourceManual: 'Manual',
     sourceReversal: 'Pembalik',
