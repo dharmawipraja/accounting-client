@@ -10,9 +10,13 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, expect, it } from 'vitest';
 import { useSession } from '@/stores/session';
+import { usePreferences } from '@/stores/preferences';
 import { AppShell } from './AppShell';
 
-afterEach(() => useSession.getState().clear());
+afterEach(() => {
+  useSession.getState().clear();
+  usePreferences.setState({ sidebarCollapsed: false });
+});
 
 const NAV_PATHS = [
   '/dashboard',
@@ -79,4 +83,21 @@ it('clears the session and navigates to /login on sign-out', async () => {
 
   expect(useSession.getState().accessToken).toBeNull();
   await screen.findByTestId('login');
+});
+
+it('toggles the sidebar collapsed state and persists it', async () => {
+  useSession.getState().setUser({ id: '1', email: 'admin@buku.id', role: 'ADMIN' });
+  renderInRouter(<AppShell><div>content</div></AppShell>);
+
+  const toggle = await screen.findByRole('button', { name: 'Ciutkan menu' });
+  expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  expect(toggle).toHaveAttribute('aria-controls', 'app-sidebar');
+
+  await userEvent.click(toggle);
+
+  expect(usePreferences.getState().sidebarCollapsed).toBe(true);
+  const expandBtn = screen.getByRole('button', { name: 'Lebarkan menu' });
+  expect(expandBtn).toHaveAttribute('aria-expanded', 'false');
+  // labels stay in the DOM when collapsed, so links keep their accessible names
+  expect(screen.getByRole('link', { name: /dasbor/i })).toBeInTheDocument();
 });
