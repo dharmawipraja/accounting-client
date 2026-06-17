@@ -1,18 +1,21 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { Link } from '@tanstack/react-router';
 import { MoneyText } from '@/components/common/MoneyText';
 import { PageHeader } from '@/components/common/PageHeader';
 import { SkeletonCards } from '@/components/common/skeletons/SkeletonCards';
 import { formatDateID } from '@/lib/format/date';
 import { useT } from '@/lib/i18n/useT';
+import { usePreferences } from '@/stores/preferences';
 import { DashboardFilters } from './DashboardFilters';
 import { SummaryCard } from './SummaryCard';
 import { useBalanceSheet, useCashFlow, useDraftCount, useIncomeStatement } from './hooks';
-import { computePeriod, periodValid, type Period, type PeriodPreset } from './period';
+import { computePeriod, periodValid, resolveStoredPeriod, type PeriodPreset } from './period';
 
 export function DashboardPage() {
   const t = useT();
-  const [period, setPeriod] = useState<Period>(() => computePeriod('year', new Date()));
+  const stored = usePreferences((s) => s.dashboardPeriod);
+  const setPeriod = usePreferences((s) => s.setDashboardPeriod);
+  const period = useMemo(() => resolveStoredPeriod(stored, new Date()), [stored]);
   const valid = periodValid(period);
   const asOf = valid ? period.to : '';
 
