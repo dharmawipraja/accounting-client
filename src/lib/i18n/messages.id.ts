@@ -59,6 +59,8 @@ export const id = {
     periods: 'Tutup Buku',
     audit: 'Audit',
     settings: 'Pengaturan',
+    collapseSidebar: 'Ciutkan menu',
+    expandSidebar: 'Lebarkan menu',
   },
   dashboard: {
     totalAssets: 'Total Aset',
