@@ -9,9 +9,14 @@ import { API } from '@/test/handlers';
 import { server } from '@/test/server';
 import { toApiDate } from '@/lib/format/date';
 import { useSession } from '@/stores/session';
+import { usePreferences } from '@/stores/preferences';
 import { DashboardPage } from './DashboardPage';
+import { computePeriod } from './period';
 
-afterEach(() => useSession.getState().clear());
+afterEach(() => {
+  useSession.getState().clear();
+  usePreferences.setState({ dashboardPeriod: computePeriod('year', new Date()) });
+});
 
 function renderPage() {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -105,4 +110,13 @@ it('the Jurnal Draft card links to /journals filtered to DRAFT', async () => {
   expect(link).not.toBeNull();
   expect(link?.getAttribute('href')).toContain('/journals');
   expect(link?.getAttribute('href')).toContain('status=DRAFT');
+});
+
+it('persists the selected period preset to buku.prefs', async () => {
+  const user = userEvent.setup();
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  renderPage();
+  await screen.findByText('Rp 1.500.000'); // initial (year) load settled
+  await user.click(screen.getByRole('button', { name: 'Bulan Ini' })); // "This month"
+  await waitFor(() => expect(localStorage.getItem('buku.prefs')).toContain('"preset":"month"'));
 });
