@@ -14,7 +14,7 @@ export function MoneyInput({ value, onChange, ...rest }: MoneyInputProps) {
   return (
     <Input
       inputMode="decimal"
-      className="text-right font-mono tabular-nums"
+      className="text-right tabular-nums"
       value={value}
       onChange={(e) => {
         const next = e.target.value;
