@@ -1,4 +1,4 @@
-import { CheckCircle2, Ban, PencilLine, RotateCcw, Lock, LockOpen, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+import { CheckCircle2, Ban, PencilLine, RotateCcw, Lock, LockOpen, ArrowDownLeft, ArrowUpRight, Circle, CircleDashed } from 'lucide-react';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { StatusChip } from './StatusChip';
 
@@ -8,6 +8,13 @@ export function DocStatusChip({ status, label }: { status: string; label: string
   if (status === 'POSTED') return <StatusChip tone="success" icon={CheckCircle2} label={label} />;
   if (status === 'VOID') return <StatusChip tone="error" icon={Ban} label={label} />;
   return <StatusChip tone="neutral" icon={PencilLine} label={label} />;
+}
+
+/** Payment status of an invoice/bill (UNPAID | PARTIAL | PAID) — single i18n namespace. */
+export function PaymentStatusChip({ status, t }: { status: string; t: Messages }) {
+  if (status === 'PAID') return <StatusChip tone="success" icon={CheckCircle2} label={t.documents.paid} />;
+  if (status === 'PARTIAL') return <StatusChip tone="warning" icon={CircleDashed} label={t.documents.partial} />;
+  return <StatusChip tone="neutral" icon={Circle} label={t.documents.unpaid} />;
 }
 
 /** Journal status (DRAFT | POSTED | REVERSED) — single i18n namespace, owns its label. */
