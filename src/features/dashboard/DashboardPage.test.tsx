@@ -34,13 +34,14 @@ function renderPage() {
   return render(<QueryClientProvider client={qc}><RouterProvider router={router} /></QueryClientProvider>);
 }
 
-it('renders the seven summary cards from the reports', async () => {
+it('renders the financial-position hero and the secondary metric cards', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
   renderPage();
-  expect(await screen.findByText('Rp 1.500.000')).toBeInTheDocument(); // totalAssets
-  expect(screen.getByText('Rp 1.750.000')).toBeInTheDocument(); // netIncome
-  expect(screen.getByText('Rp 1.234.000')).toBeInTheDocument(); // kasAkhir
-  expect(screen.getByText('3')).toBeInTheDocument(); // draft count
+  expect(await screen.findByText('Posisi Keuangan')).toBeInTheDocument(); // hero label
+  expect(screen.getByText('Rp 1.500.000')).toBeInTheDocument(); // totalAssets (hero)
+  expect(screen.getByText('Rp 1.750.000')).toBeInTheDocument(); // netIncome (grid)
+  expect(screen.getByText('Rp 1.234.000')).toBeInTheDocument(); // kasAkhir (grid)
+  expect(screen.getByText('3')).toBeInTheDocument(); // draft count (grid)
 });
 
 it('refetches the period cards with the new range when a preset is clicked', async () => {
