@@ -119,12 +119,26 @@ export { Toaster }
 
 ## Testing
 
-A focused RTL test (`src/components/ui/sonner.test.tsx`) that pins the two regressions this change fixes. Both assert on sonner's always-rendered container element `[data-sonner-toaster]` (sonner renders this `<ol>` even with no active toasts), so no live toast lifecycle is needed in jsdom:
+A focused test (`src/components/ui/sonner.test.tsx`) that **mocks the `sonner` library** so its `Toaster` is a spy that records the props our composition passes, then renders the real `<Providers>` tree (which mounts our `Toaster` wrapper). This tests the actual wiring — store → `theme` prop, and the dropped `richColors` at the mount site — without depending on sonner's internal DOM or a live toast lifecycle.
 
-1. **Theme follows the store, not the OS.** Set the zustand theme store to `'dark'`, render `<Toaster />`, and assert `[data-sonner-toaster]` carries `data-theme="dark"` (sonner reflects its `theme` prop onto this attribute). Set the store to `'light'`, re-render, assert `data-theme="light"`. This fails against the old `next-themes` wiring, which always yields `"system"`.
-2. **No `richColors`.** Assert `[data-sonner-toaster]` does **not** advertise rich colours: its `data-rich-colors` attribute is not `"true"` (sonner sets `data-rich-colors="true"` only when the prop is on). Guards against re-adding `richColors`.
+Why not assert on rendered DOM: sonner v2 reflects its theme onto `data-sonner-theme` (not `data-theme`) and returns `null` for a position with no toasts, so `[data-sonner-toaster]` is **absent** until a toast actually fires — too brittle for a unit test. The mock-spy approach matches existing precedent (`src/lib/api/toastApiError.test.ts` already does `vi.mock('sonner', …)`).
 
-The per-type accent `classNames` (`success`/`error`/`warning`/`info`) are static configuration on the `Toaster`, not asserted via a live toast in jsdom; they are covered by the visual/manual verification below. The two container-attribute assertions are the automated contract this test locks.
+The spy is created with `vi.hoisted` (so the hoisted `vi.mock` factory can reference it):
+
+```tsx
+const { sonnerSpy } = vi.hoisted(() => ({ sonnerSpy: vi.fn() }));
+vi.mock('sonner', () => ({
+  Toaster: (props: Record<string, unknown>) => { sonnerSpy(props); return null; },
+}));
+```
+
+Three assertions, each rendering `<Providers><div /></Providers>` and reading the latest spy call's props:
+
+1. **Theme follows the store, not the OS.** With `useTheme.setState({ theme: 'dark' })` before render, assert the captured props `toMatchObject({ theme: 'dark' })`. This **fails** against the old `next-themes` wiring (which yields `theme: 'system'`), and passes once the import is switched to `@/stores/theme`.
+2. **No `richColors`.** Assert the captured `props.richColors` is falsy. Guards against re-adding it at the mount.
+3. **Buku accent classNames.** Assert `props.toastOptions.classNames` has `success` containing `border-l-success`, `error` containing `border-l-destructive`, `warning` containing `border-l-warning`, `info` containing `border-l-primary`.
+
+`afterEach` resets the store (`useTheme.setState({ theme: 'light' })`) and clears the spy. The per-type icon colour and shadow are covered by the visual/manual verification below.
 
 Existing callers (`src/lib/api/toastApiError.ts` and every `toast.success/error/...` site) are unchanged — they keep calling the same sonner API and simply render in the new style. The full suite must stay green.
 
