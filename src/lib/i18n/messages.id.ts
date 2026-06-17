@@ -78,6 +78,7 @@ export const id = {
     loadError: 'Gagal memuat',
     retry: 'Coba lagi',
     asOfLabel: 'per',
+    financialPosition: 'Posisi Keuangan',
   },
   roles: {
     forbidden: 'Anda tidak memiliki izin untuk tindakan ini',
