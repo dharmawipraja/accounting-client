@@ -61,6 +61,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-svh">
       <aside
+        id="app-sidebar"
         className={cn(
           'flex shrink-0 flex-col overflow-hidden border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-out motion-reduce:transition-none',
           collapsed ? 'w-16' : 'w-60',
@@ -77,6 +78,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             type="button"
             onClick={toggleSidebar}
             aria-expanded={!collapsed}
+            aria-controls="app-sidebar"
             aria-label={collapsed ? t.nav.expandSidebar : t.nav.collapseSidebar}
             className={cn(
               'flex size-8 items-center justify-center rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring',

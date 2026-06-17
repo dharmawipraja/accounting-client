@@ -91,6 +91,7 @@ it('toggles the sidebar collapsed state and persists it', async () => {
 
   const toggle = await screen.findByRole('button', { name: 'Ciutkan menu' });
   expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  expect(toggle).toHaveAttribute('aria-controls', 'app-sidebar');
 
   await userEvent.click(toggle);
 
