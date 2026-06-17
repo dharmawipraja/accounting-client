@@ -159,6 +159,10 @@ export const id = {
     pphWithheld: 'PPh Dipotong',
     total: 'Total Tagihan',
     calculating: 'Menghitung…',
+    paymentStatus: 'Status Bayar',
+    paid: 'Lunas',
+    partial: 'Sebagian',
+    unpaid: 'Belum dibayar',
   },
   salesInvoices: {
     title: 'Faktur Penjualan',

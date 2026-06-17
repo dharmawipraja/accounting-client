@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { expect, it } from 'vitest';
 import { id } from '@/lib/i18n/messages.id';
-import { DocStatusChip, JournalStatusChip, PeriodStatusChip, DirectionChip } from './statusChips';
+import { DocStatusChip, PaymentStatusChip, JournalStatusChip, PeriodStatusChip, DirectionChip } from './statusChips';
 import { StatusBadge } from './StatusBadge';
 
 const variantOf = (c: HTMLElement) => c.querySelector('[data-slot="badge"]')?.getAttribute('data-variant');
@@ -10,6 +10,13 @@ it('DocStatusChip: POSTED=success, VOID=destructive, DRAFT=secondary', () => {
   expect(variantOf(render(<DocStatusChip status="POSTED" label="P" />).container)).toBe('success');
   expect(variantOf(render(<DocStatusChip status="VOID" label="V" />).container)).toBe('destructive');
   expect(variantOf(render(<DocStatusChip status="DRAFT" label="D" />).container)).toBe('secondary');
+});
+
+it('PaymentStatusChip: PAID=success, PARTIAL=warning, UNPAID=secondary', () => {
+  expect(variantOf(render(<PaymentStatusChip status="PAID" t={id} />).container)).toBe('success');
+  expect(variantOf(render(<PaymentStatusChip status="PARTIAL" t={id} />).container)).toBe('warning');
+  expect(variantOf(render(<PaymentStatusChip status="UNPAID" t={id} />).container)).toBe('secondary');
+  expect(screen.getByText(id.documents.partial)).toBeInTheDocument();
 });
 
 it('JournalStatusChip: REVERSED is neutral with its own label', () => {

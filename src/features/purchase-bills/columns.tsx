@@ -1,7 +1,7 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
-import { DocStatusChip } from '@/components/common/statusChips';
+import { DocStatusChip, PaymentStatusChip } from '@/components/common/statusChips';
 import { MoneyText } from '@/components/common/MoneyText';
 import { RoleGate } from '@/components/common/RoleGate';
 import { formatDateID } from '@/lib/format/date';
@@ -27,6 +27,13 @@ export function buildBillColumns(
     col.accessor('date', { header: t.purchaseBills.date, cell: (c) => formatDateID(c.getValue().slice(0, 10)) }),
     col.accessor('vendorInvoiceNo', { header: t.purchaseBills.vendorInvoiceNo, cell: (c) => c.getValue() ?? '—' }),
     col.accessor('status', { header: t.purchaseBills.status, cell: (c) => <DocStatusChip status={c.getValue()} label={statusLabel(t, c.getValue())} /> }),
+    col.accessor('paymentStatus', {
+      header: t.documents.paymentStatus,
+      cell: (c) => {
+        const ps = c.getValue();
+        return ps ? <PaymentStatusChip status={ps} t={t} /> : '—';
+      },
+    }),
     col.accessor('total', { header: t.purchaseBills.total, cell: (c) => <MoneyText value={c.getValue()} /> }),
     col.display({
       id: 'actions',

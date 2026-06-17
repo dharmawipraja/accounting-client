@@ -1,7 +1,7 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
-import { DocStatusChip } from '@/components/common/statusChips';
+import { DocStatusChip, PaymentStatusChip } from '@/components/common/statusChips';
 import { MoneyText } from '@/components/common/MoneyText';
 import { RoleGate } from '@/components/common/RoleGate';
 import { formatDateID } from '@/lib/format/date';
@@ -28,6 +28,13 @@ export function buildInvoiceColumns(
     col.accessor('status', {
       header: t.salesInvoices.status,
       cell: (c) => <DocStatusChip status={c.getValue()} label={statusLabel(t, c.getValue())} />,
+    }),
+    col.accessor('paymentStatus', {
+      header: t.documents.paymentStatus,
+      cell: (c) => {
+        const ps = c.getValue();
+        return ps ? <PaymentStatusChip status={ps} t={t} /> : '—';
+      },
     }),
     col.accessor('total', { header: t.salesInvoices.total, cell: (c) => <MoneyText value={c.getValue()} /> }),
     col.display({
