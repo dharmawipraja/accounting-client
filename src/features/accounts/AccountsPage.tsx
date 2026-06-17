@@ -26,6 +26,7 @@ export function AccountsPage() {
   const list = accountsApi.useList();
   const deactivate = accountsApi.useDeactivate();
   const remove = accountsApi.useRemove();
+  const { mutate: activate } = accountsApi.useActivate();
 
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Account | null>(null);
@@ -36,10 +37,16 @@ export function AccountsPage() {
     () =>
       buildAccountColumns(t, {
         onEdit: (a) => setEditing(a),
-        onDeactivate: (a) => setConfirm({ kind: 'deactivate', account: a }),
+        onToggleActive: (a) =>
+          a.isActive
+            ? setConfirm({ kind: 'deactivate', account: a })
+            : activate(a.id, {
+                onSuccess: () => toast.success(t.crud.activated),
+                onError: () => toast.error(t.common.error),
+              }),
         onDelete: (a) => setConfirm({ kind: 'delete', account: a }),
       }),
-    [t],
+    [t, activate],
   );
 
   const grouped = useMemo(() => {

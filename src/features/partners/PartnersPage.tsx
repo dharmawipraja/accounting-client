@@ -24,6 +24,7 @@ export function PartnersPage() {
   const page = partnersApi.usePagedList({ limit: LIMIT, offset });
   const deactivate = partnersApi.useDeactivate();
   const remove = partnersApi.useRemove();
+  const { mutate: activate } = partnersApi.useActivate();
 
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Partner | null>(null);
@@ -33,10 +34,16 @@ export function PartnersPage() {
   const columns = useMemo(
     () => buildPartnerColumns(t, {
       onEdit: (p) => setEditing(p),
-      onDeactivate: (p) => setConfirm({ kind: 'deactivate', partner: p }),
+      onToggleActive: (p) =>
+        p.isActive
+          ? setConfirm({ kind: 'deactivate', partner: p })
+          : activate(p.id, {
+              onSuccess: () => toast.success(t.crud.activated),
+              onError: () => toast.error(t.common.error),
+            }),
       onDelete: (p) => setConfirm({ kind: 'delete', partner: p }),
     }),
-    [t],
+    [t, activate],
   );
 
   function runConfirm() {

@@ -9,7 +9,7 @@ const col = createColumnHelper<Partner>();
 
 export function buildPartnerColumns(
   t: Messages,
-  handlers: { onEdit: (p: Partner) => void; onDeactivate: (p: Partner) => void; onDelete: (p: Partner) => void },
+  handlers: { onEdit: (p: Partner) => void; onToggleActive: (p: Partner) => void; onDelete: (p: Partner) => void },
 ) {
   return [
     col.accessor('code', { header: t.partners.code }),
@@ -17,7 +17,7 @@ export function buildPartnerColumns(
     col.accessor('npwp', { header: t.partners.npwp, cell: (c) => c.getValue() ?? '—' }),
     col.display({
       id: 'type',
-      header: '',
+      header: t.partners.type,
       cell: (c) => (
         <div className="flex gap-1">
           {c.row.original.isCustomer ? <Badge variant="outline">{t.partners.customer}</Badge> : null}
@@ -25,14 +25,15 @@ export function buildPartnerColumns(
         </div>
       ),
     }),
-    col.accessor('isActive', { header: '', cell: (c) => <StatusBadge active={c.getValue()} /> }),
+    col.accessor('isActive', { header: t.crud.status, cell: (c) => <StatusBadge active={c.getValue()} /> }),
     col.display({
       id: 'actions',
       header: '',
       cell: (c) => (
         <RowActions
           onEdit={() => handlers.onEdit(c.row.original)}
-          onDeactivate={() => handlers.onDeactivate(c.row.original)}
+          active={c.row.original.isActive}
+          onToggleActive={() => handlers.onToggleActive(c.row.original)}
           onDelete={() => handlers.onDelete(c.row.original)}
         />
       ),

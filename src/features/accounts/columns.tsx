@@ -10,7 +10,7 @@ const col = createColumnHelper<Account>();
 
 export function buildAccountColumns(
   t: Messages,
-  handlers: { onEdit: (a: Account) => void; onDeactivate: (a: Account) => void; onDelete: (a: Account) => void },
+  handlers: { onEdit: (a: Account) => void; onToggleActive: (a: Account) => void; onDelete: (a: Account) => void },
 ) {
   return [
     col.accessor('code', { header: t.accounts.code }),
@@ -28,7 +28,7 @@ export function buildAccountColumns(
       ),
     }),
     col.accessor('isActive', {
-      header: '',
+      header: t.crud.status,
       cell: (c) => <StatusBadge active={c.getValue()} />,
     }),
     col.display({
@@ -37,7 +37,8 @@ export function buildAccountColumns(
       cell: (c) => (
         <RowActions
           onEdit={() => handlers.onEdit(c.row.original)}
-          onDeactivate={() => handlers.onDeactivate(c.row.original)}
+          active={c.row.original.isActive}
+          onToggleActive={() => handlers.onToggleActive(c.row.original)}
           onDelete={() => handlers.onDelete(c.row.original)}
         />
       ),
