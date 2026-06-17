@@ -46,9 +46,9 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-svh">
-      <aside className="flex w-60 flex-col border-r bg-muted/30">
+      <aside className="flex w-60 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
         <div className="flex items-center gap-2 px-5 py-4">
-          <BookText className="size-5 text-primary" />
+          <BookText className="size-5 text-sidebar-foreground" />
           <span className="text-lg font-semibold">{t.app.name}</span>
         </div>
         <nav className="flex-1 space-y-1 px-3">
@@ -56,8 +56,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Link
               key={item.to}
               to={item.to}
-              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
-              activeProps={{ className: 'bg-primary/10 font-medium text-primary' }}
+              className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              activeProps={{ className: 'bg-sidebar-accent font-medium text-sidebar-foreground shadow-[inset_3px_0_0_var(--sidebar-ring)]' }}
             >
               <item.icon className="size-4" />
               {item.label}
@@ -66,8 +66,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           {user?.role === 'ADMIN' && (
             <Link
               to="/audit"
-              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
-              activeProps={{ className: 'bg-primary/10 font-medium text-primary' }}
+              className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              activeProps={{ className: 'bg-sidebar-accent font-medium text-sidebar-foreground shadow-[inset_3px_0_0_var(--sidebar-ring)]' }}
             >
               <ScrollText className="size-4" />
               {t.nav.audit}
