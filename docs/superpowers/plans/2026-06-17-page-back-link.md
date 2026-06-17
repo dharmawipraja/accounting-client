@@ -348,6 +348,16 @@ function renderPage(initialAccountId?: string) {
 }
 ```
 
+Also fix one synchronous assertion in this file: under `renderWithRouter`, `RouterProvider` mounts asynchronously (an internal transition), so a `getByText` immediately after render runs before the content is in the DOM. The `it('shows the select-account hint ...')` test (already `async`) has on its first assertion:
+```tsx
+expect(screen.getByText(/pilih akun/i)).toBeInTheDocument();
+```
+Change it to await the hint:
+```tsx
+expect(await screen.findByText(/pilih akun/i)).toBeInTheDocument();
+```
+(The later `expect(called).toBe(false)` assertion is unaffected.) This is the only report test with a synchronous post-render assertion; the others already use `findBy`/`waitFor` and tolerate the async mount.
+
 - [ ] **Step 6: AgingPage.test.tsx**
 
 Remove line 1 (`import { QueryClient, QueryClientProvider } from '@tanstack/react-query';`).
