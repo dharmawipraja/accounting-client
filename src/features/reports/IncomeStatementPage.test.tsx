@@ -1,7 +1,7 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it } from 'vitest';
+import { renderWithRouter } from '@/test/renderWithRouter';
 import { API } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
@@ -10,8 +10,7 @@ import { IncomeStatementPage } from './IncomeStatementPage';
 afterEach(() => useSession.getState().clear());
 
 function renderPage() {
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return render(<QueryClientProvider client={qc}><IncomeStatementPage /></QueryClientProvider>);
+  return renderWithRouter(<IncomeStatementPage />);
 }
 
 it('renders the income statement down to Laba Bersih; range drives from', async () => {

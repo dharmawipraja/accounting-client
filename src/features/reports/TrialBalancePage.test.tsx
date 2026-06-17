@@ -1,7 +1,7 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it, vi } from 'vitest';
+import { renderWithRouter } from '@/test/renderWithRouter';
 import { API } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
@@ -20,8 +20,7 @@ const fixture = (asOf: string) => ({
 
 function renderPage() {
   const onOpenAccount = vi.fn();
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  render(<QueryClientProvider client={qc}><TrialBalancePage onOpenAccount={onOpenAccount} /></QueryClientProvider>);
+  renderWithRouter(<TrialBalancePage onOpenAccount={onOpenAccount} />);
   return onOpenAccount;
 }
 

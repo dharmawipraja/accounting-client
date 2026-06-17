@@ -1,7 +1,7 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it } from 'vitest';
+import { renderWithRouter } from '@/test/renderWithRouter';
 import { API } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
@@ -10,8 +10,7 @@ import { GeneralLedgerPage } from './GeneralLedgerPage';
 afterEach(() => useSession.getState().clear());
 
 function renderPage(initialAccountId?: string) {
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  render(<QueryClientProvider client={qc}><GeneralLedgerPage initialAccountId={initialAccountId} /></QueryClientProvider>);
+  renderWithRouter(<GeneralLedgerPage initialAccountId={initialAccountId} />);
 }
 
 it('shows the select-account hint and does not fetch when no account is chosen', async () => {
@@ -19,7 +18,7 @@ it('shows the select-account hint and does not fetch when no account is chosen',
   let called = false;
   server.use(http.get(`${API}/reports/general-ledger`, () => { called = true; return HttpResponse.json({}); }));
   renderPage(undefined);
-  expect(screen.getByText(/pilih akun/i)).toBeInTheDocument();
+  expect(await screen.findByText(/pilih akun/i)).toBeInTheDocument();
   await new Promise((r) => setTimeout(r, 150));
   expect(called).toBe(false);
 });
