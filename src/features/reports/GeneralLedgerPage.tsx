@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { PageHeader } from '@/components/common/PageHeader';
+import { BackLink } from '@/components/common/BackLink';
 import { MoneyText } from '@/components/common/MoneyText';
 import { AccountSelect } from '@/components/common/AccountSelect';
 import { formatDateID, toApiDate, isRangeValid } from '@/lib/format/date';
@@ -31,7 +32,7 @@ export function GeneralLedgerPage({ initialAccountId }: { initialAccountId?: str
   ];
   return (
     <div>
-      <PageHeader title={t.reports.generalLedger} />
+      <PageHeader title={t.reports.generalLedger} back={<BackLink to="/reports" label={t.nav.reports} />} />
       <div className="mb-4 flex flex-wrap items-end gap-3">
         <div className="space-y-1.5">
           <span className="text-sm font-medium">{t.reports.account}</span>

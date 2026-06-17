@@ -2,6 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { NotFound } from '@/components/common/NotFound';
 import { PageHeader } from '@/components/common/PageHeader';
+import { BackLink } from '@/components/common/BackLink';
 import { QueryState } from '@/components/common/QueryState';
 import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { useT } from '@/lib/i18n/useT';
@@ -16,7 +17,7 @@ export function PaymentEditorPage({ id, direction = 'RECEIPT' }: { id?: string; 
 
   if (!id) {
     const title = direction === 'DISBURSEMENT' ? t.payments.newDisbursementTitle : t.payments.newReceiptTitle;
-    return <div><PageHeader title={title} /><PaymentForm mode="create" direction={direction} onSaved={goList} /></div>;
+    return <div><PageHeader title={title} back={<BackLink to="/payments" label={t.nav.payments} />} /><PaymentForm mode="create" direction={direction} onSaved={goList} /></div>;
   }
 
   return (
@@ -36,7 +37,7 @@ export function PaymentEditorPage({ id, direction = 'RECEIPT' }: { id?: string; 
         const readOnly = data.status !== 'DRAFT';
         return (
           <div>
-            <PageHeader title={readOnly ? t.payments.view : t.payments.editPayment} />
+            <PageHeader title={readOnly ? t.payments.view : t.payments.editPayment} back={<BackLink to="/payments" label={t.nav.payments} />} />
             <PaymentForm mode="edit" payment={data} onSaved={goList} readOnly={readOnly} />
           </div>
         );

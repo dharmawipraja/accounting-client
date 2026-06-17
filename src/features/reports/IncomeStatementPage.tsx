@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { PageHeader } from '@/components/common/PageHeader';
+import { BackLink } from '@/components/common/BackLink';
 import { toApiDate, isRangeValid } from '@/lib/format/date';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { useT } from '@/lib/i18n/useT';
@@ -39,7 +40,7 @@ export function IncomeStatementPage() {
   const query = useReport('/reports/income-statement', { from, to }, incomeStatementReportSchema, isRangeValid(from, to));
   return (
     <div>
-      <PageHeader title={t.reports.incomeStatement} />
+      <PageHeader title={t.reports.incomeStatement} back={<BackLink to="/reports" label={t.nav.reports} />} />
       <ReportDateControls mode="range" from={from} to={to} onRange={(f, tt) => { setFrom(f); setTo(tt); }} />
       <ReportContent query={query} loading={<SkeletonForm fields={5} />}>{(is) => <StatementView rows={buildRows(is, t)} />}</ReportContent>
     </div>

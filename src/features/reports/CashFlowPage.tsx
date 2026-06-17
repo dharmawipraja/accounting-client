@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { PageHeader } from '@/components/common/PageHeader';
+import { BackLink } from '@/components/common/BackLink';
 import { toApiDate, isRangeValid } from '@/lib/format/date';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { useT } from '@/lib/i18n/useT';
@@ -36,7 +37,7 @@ export function CashFlowPage() {
   const query = useReport('/reports/cash-flow', { from, to }, cashFlowReportSchema, isRangeValid(from, to));
   return (
     <div>
-      <PageHeader title={t.reports.cashFlow} />
+      <PageHeader title={t.reports.cashFlow} back={<BackLink to="/reports" label={t.nav.reports} />} />
       <ReportDateControls mode="range" from={from} to={to} onRange={(f, tt) => { setFrom(f); setTo(tt); }} />
       <ReportContent query={query} loading={<SkeletonForm fields={5} />}>{(cf) => <StatementView rows={buildRows(cf, t)} />}</ReportContent>
     </div>

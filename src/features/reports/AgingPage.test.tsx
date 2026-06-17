@@ -1,7 +1,7 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it } from 'vitest';
+import { renderWithRouter } from '@/test/renderWithRouter';
 import { API } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
@@ -21,8 +21,7 @@ const fixture = (asOf: string, kind: string) => ({
 });
 
 function renderPage(kind: 'AR' | 'AP') {
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  render(<QueryClientProvider client={qc}><AgingPage kind={kind} /></QueryClientProvider>);
+  renderWithRouter(<AgingPage kind={kind} />);
 }
 
 it('AR: renders Umur Piutang + a partner row; asOf drives the fetch; clicking a partner reveals its documents', async () => {

@@ -1,7 +1,7 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it } from 'vitest';
+import { renderWithRouter } from '@/test/renderWithRouter';
 import { API } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
@@ -10,8 +10,7 @@ import { CashFlowPage } from './CashFlowPage';
 afterEach(() => useSession.getState().clear());
 
 function renderPage() {
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return render(<QueryClientProvider client={qc}><CashFlowPage /></QueryClientProvider>);
+  return renderWithRouter(<CashFlowPage />);
 }
 
 it('renders the cash flow statement with Kas Akhir', async () => {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/common/PageHeader';
+import { BackLink } from '@/components/common/BackLink';
 import { Money } from '@/lib/money/money';
 import { toApiDate } from '@/lib/format/date';
 import type { Messages } from '@/lib/i18n/messages.id';
@@ -37,7 +38,7 @@ export function BalanceSheetPage() {
   const query = useReport('/reports/balance-sheet', { asOf }, balanceSheetReportSchema);
   return (
     <div>
-      <PageHeader title={t.reports.balanceSheet} />
+      <PageHeader title={t.reports.balanceSheet} back={<BackLink to="/reports" label={t.nav.reports} />} />
       <ReportDateControls mode="asOf" asOf={asOf} onAsOf={setAsOf} />
       <ReportContent query={query} loading={<SkeletonForm fields={5} />}>
         {(bs) => (
