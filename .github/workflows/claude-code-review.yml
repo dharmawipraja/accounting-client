@@ -36,9 +36,29 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
-          plugins: 'code-review@claude-code-plugins'
-          prompt: '/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
+          # Optional: pin a stronger model (must be available to your account):
+          # claude_args: "--model claude-opus-4-6"
+          prompt: |
+            Review pull request #${{ github.event.pull_request.number }} in
+            ${{ github.repository }} for a reviewer deciding whether to merge,
+            and post your analysis as a PR comment.
+
+            Follow the repo's CLAUDE.md conventions (money via decimal.js; every
+            user-facing string via useT; QueryState for async; status conveyed as
+            icon + text; no em-dashes in UI copy). Be concise and high-signal,
+            and only raise issues you are genuinely confident about. Structure
+            the comment with these sections:
+
+            1. **What this PR does** - 2 to 4 plain-language bullets.
+            2. **Breaking changes** - removed or renamed routes, component props,
+               exported functions, API or Zod schemas, or i18n keys, plus config,
+               CI, or dependency changes. Write "None found" if there are none.
+            3. **Bugs & risks** - logic errors, unhandled loading/error/empty
+               states, race conditions, security issues, and behavior changed
+               without matching test coverage.
+            4. **Convention check** - any CLAUDE.md or design-system violations.
+            5. **Verdict** - exactly one of:
+               "Safe to merge" / "Safe to merge with caveats" / "Not safe to merge"
+               with a one-line reason and a checklist of any must-fix items.
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://code.claude.com/docs/en/cli-reference for available options
 
