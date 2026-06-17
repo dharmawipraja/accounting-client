@@ -1,0 +1,7 @@
+# pnpm settings. msw's only install script is a postinstall that copies
+# mockServiceWorker.js into a browser worker dir — this project uses msw
+# solely via msw/node (setupServer) for tests, so that script is a no-op.
+# Listing it here marks it as intentionally not built and silences the
+# "Ignored build scripts" warning.
+ignoredBuiltDependencies:
+  - msw
