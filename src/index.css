@@ -6,39 +6,43 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.52 0.18 264);        /* indigo accent */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.52 0.18 264);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.52 0.18 264);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.52 0.18 264);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --radius: 0.5rem;
+  --background: #F7F8F9;
+  --foreground: #1A1A1A;
+  --card: #FFFFFF;
+  --card-foreground: #1A1A1A;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1A1A;
+  --primary: #006FCF;
+  --primary-foreground: #FFFFFF;
+  --secondary: #ECEDEE;
+  --secondary-foreground: #1A1A1A;
+  --muted: #ECEDEE;
+  --muted-foreground: #53565A;
+  --accent: #EAF3FC;
+  --accent-foreground: #00509E;
+  --destructive: #C52720;
+  --destructive-foreground: #FFFFFF;
+  --success: #00875A;
+  --success-foreground: #FFFFFF;
+  --warning: #B95000;
+  --warning-foreground: #FFFFFF;
+  --border: #D5D9DC;
+  --input: #D5D9DC;
+  --ring: #006FCF;
+  --sidebar: #00175A;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #1374D4;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #12306F;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(255, 255, 255, 0.10);
+  --sidebar-ring: #4DA3E8;
+  --chart-1: #006FCF;
+  --chart-2: #1374D4;
+  --chart-3: #00175A;
+  --chart-4: #53565A;
+  --chart-5: #86888C;
 }
 
 .dark {
