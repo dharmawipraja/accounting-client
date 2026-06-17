@@ -2,6 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { NotFound } from '@/components/common/NotFound';
 import { PageHeader } from '@/components/common/PageHeader';
+import { BackLink } from '@/components/common/BackLink';
 import { QueryState } from '@/components/common/QueryState';
 import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { useT } from '@/lib/i18n/useT';
@@ -17,7 +18,7 @@ export function BillEditorPage({ id }: { id?: string }) {
   if (!id) {
     return (
       <div>
-        <PageHeader title={t.purchaseBills.newBill} />
+        <PageHeader title={t.purchaseBills.newBill} back={<BackLink to="/purchase-bills" label={t.nav.purchaseBills} />} />
         <BillForm mode="create" onSaved={goList} />
       </div>
     );
@@ -40,7 +41,7 @@ export function BillEditorPage({ id }: { id?: string }) {
         const readOnly = data.status !== 'DRAFT';
         return (
           <div>
-            <PageHeader title={readOnly ? t.purchaseBills.view : t.purchaseBills.editBill} />
+            <PageHeader title={readOnly ? t.purchaseBills.view : t.purchaseBills.editBill} back={<BackLink to="/purchase-bills" label={t.nav.purchaseBills} />} />
             <BillForm mode="edit" bill={data} onSaved={goList} readOnly={readOnly} />
           </div>
         );
