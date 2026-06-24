@@ -17,9 +17,7 @@
             }
           }
         },
-        "tags": [
-          "Health"
-        ]
+        "tags": ["Health"]
       }
     },
     "/ready": {
@@ -38,9 +36,7 @@
             }
           }
         },
-        "tags": [
-          "Health"
-        ]
+        "tags": ["Health"]
       }
     },
     "/v1/auth/login": {
@@ -74,9 +70,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/v1/auth/refresh": {
@@ -110,9 +104,65 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
+      }
+    },
+    "/v1/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkFlagDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["Auth"]
+      }
+    },
+    "/v1/auth/logout-all": {
+      "post": {
+        "operationId": "AuthController_logoutAll_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkFlagDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["Auth"]
       }
     },
     "/v1/auth/me": {
@@ -136,9 +186,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/v1/auth/admin-only": {
@@ -162,9 +210,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/v1/company/settings": {
@@ -188,9 +234,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Company"
-        ]
+        "tags": ["Company"]
       },
       "patch": {
         "operationId": "CompanyController_update_v1",
@@ -222,25 +266,40 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Company"
-        ]
+        "tags": ["Company"]
       }
     },
     "/v1/ledger/accounts": {
       "get": {
         "operationId": "AccountsController_list_v1",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AccountResponseDto"
-                  }
+                  "$ref": "#/components/schemas/AccountListResponseDto"
                 }
               }
             }
@@ -251,9 +310,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Accounts"
-        ]
+        "tags": ["Accounts"]
       },
       "post": {
         "operationId": "AccountsController_create_v1",
@@ -285,9 +342,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Accounts"
-        ]
+        "tags": ["Accounts"]
       }
     },
     "/v1/ledger/accounts/{id}/balance": {
@@ -328,9 +383,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Accounts"
-        ]
+        "tags": ["Accounts"]
       }
     },
     "/v1/ledger/accounts/{id}": {
@@ -363,9 +416,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Accounts"
-        ]
+        "tags": ["Accounts"]
       },
       "patch": {
         "operationId": "AccountsController_update_v1",
@@ -406,9 +457,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Accounts"
-        ]
+        "tags": ["Accounts"]
       },
       "delete": {
         "operationId": "AccountsController_remove_v1",
@@ -432,9 +481,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Accounts"
-        ]
+        "tags": ["Accounts"]
       }
     },
     "/v1/ledger/accounts/{id}/deactivate": {
@@ -467,9 +514,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Accounts"
-        ]
+        "tags": ["Accounts"]
       }
     },
     "/v1/ledger/periods": {
@@ -505,9 +550,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Periods"
-        ]
+        "tags": ["Periods"]
       }
     },
     "/v1/ledger/periods/generate": {
@@ -544,9 +587,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Periods"
-        ]
+        "tags": ["Periods"]
       }
     },
     "/v1/ledger/periods/{id}/close": {
@@ -579,9 +620,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Periods"
-        ]
+        "tags": ["Periods"]
       }
     },
     "/v1/ledger/periods/{id}/reopen": {
@@ -614,9 +653,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Periods"
-        ]
+        "tags": ["Periods"]
       }
     },
     "/v1/ledger/journal-entries": {
@@ -624,16 +661,31 @@
         "operationId": "JournalController_list_v1",
         "parameters": [
           {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
             "name": "status",
             "required": false,
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": [
-                "DRAFT",
-                "POSTED",
-                "REVERSED"
-              ]
+              "enum": ["DRAFT", "POSTED", "REVERSED"]
             }
           },
           {
@@ -680,22 +732,12 @@
             }
           },
           {
-            "name": "limit",
+            "name": "q",
             "required": false,
             "in": "query",
             "schema": {
-              "minimum": 1,
-              "maximum": 200,
-              "type": "number"
-            }
-          },
-          {
-            "name": "offset",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 0,
-              "type": "number"
+              "maxLength": 100,
+              "type": "string"
             }
           }
         ],
@@ -716,9 +758,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Journal"
-        ]
+        "tags": ["Journal"]
       },
       "post": {
         "operationId": "JournalController_createOrPost_v1",
@@ -728,7 +768,7 @@
             "required": false,
             "in": "query",
             "schema": {
-              "type": "string"
+              "type": "boolean"
             }
           },
           {
@@ -768,9 +808,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Journal"
-        ]
+        "tags": ["Journal"]
       }
     },
     "/v1/ledger/journal-entries/{id}": {
@@ -803,9 +841,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Journal"
-        ]
+        "tags": ["Journal"]
       },
       "delete": {
         "operationId": "JournalController_remove_v1",
@@ -829,9 +865,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Journal"
-        ]
+        "tags": ["Journal"]
       }
     },
     "/v1/ledger/journal-entries/{id}/post": {
@@ -873,9 +907,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Journal"
-        ]
+        "tags": ["Journal"]
       }
     },
     "/v1/ledger/journal-entries/{id}/reverse": {
@@ -917,9 +949,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Journal"
-        ]
+        "tags": ["Journal"]
       }
     },
     "/v1/ledger/opening-balances": {
@@ -963,9 +993,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Journal"
-        ]
+        "tags": ["Journal"]
       }
     },
     "/v1/ledger/trial-balance": {
@@ -998,25 +1026,40 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Reporting"
-        ]
+        "tags": ["Reporting"]
       }
     },
     "/v1/tax/codes": {
       "get": {
         "operationId": "TaxCodesController_list_v1",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TaxCodeResponseDto"
-                  }
+                  "$ref": "#/components/schemas/TaxCodeListResponseDto"
                 }
               }
             }
@@ -1027,9 +1070,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Tax"
-        ]
+        "tags": ["Tax"]
       },
       "post": {
         "operationId": "TaxCodesController_create_v1",
@@ -1061,9 +1102,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Tax"
-        ]
+        "tags": ["Tax"]
       }
     },
     "/v1/tax/codes/{id}": {
@@ -1096,9 +1135,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Tax"
-        ]
+        "tags": ["Tax"]
       },
       "patch": {
         "operationId": "TaxCodesController_update_v1",
@@ -1139,9 +1176,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Tax"
-        ]
+        "tags": ["Tax"]
       },
       "delete": {
         "operationId": "TaxCodesController_remove_v1",
@@ -1165,9 +1200,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Tax"
-        ]
+        "tags": ["Tax"]
       }
     },
     "/v1/tax/codes/{id}/deactivate": {
@@ -1200,9 +1233,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Tax"
-        ]
+        "tags": ["Tax"]
       }
     },
     "/v1/tax/calculate": {
@@ -1236,9 +1267,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Tax"
-        ]
+        "tags": ["Tax"]
       }
     },
     "/v1/partners": {
@@ -1263,6 +1292,15 @@
               "minimum": 0,
               "type": "number"
             }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1282,9 +1320,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Business Partners"
-        ]
+        "tags": ["Business Partners"]
       },
       "post": {
         "operationId": "BusinessPartnersController_create_v1",
@@ -1316,9 +1352,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Business Partners"
-        ]
+        "tags": ["Business Partners"]
       }
     },
     "/v1/partners/{id}": {
@@ -1351,9 +1385,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Business Partners"
-        ]
+        "tags": ["Business Partners"]
       },
       "patch": {
         "operationId": "BusinessPartnersController_update_v1",
@@ -1394,9 +1426,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Business Partners"
-        ]
+        "tags": ["Business Partners"]
       },
       "delete": {
         "operationId": "BusinessPartnersController_remove_v1",
@@ -1420,9 +1450,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Business Partners"
-        ]
+        "tags": ["Business Partners"]
       }
     },
     "/v1/partners/{id}/deactivate": {
@@ -1455,9 +1483,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Business Partners"
-        ]
+        "tags": ["Business Partners"]
       }
     },
     "/v1/sales-invoices": {
@@ -1484,6 +1510,15 @@
             }
           },
           {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
             "name": "partnerId",
             "required": false,
             "in": "query",
@@ -1498,11 +1533,7 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": [
-                "DRAFT",
-                "POSTED",
-                "VOID"
-              ]
+              "enum": ["DRAFT", "POSTED", "VOID"]
             }
           }
         ],
@@ -1523,9 +1554,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Sales Invoices"
-        ]
+        "tags": ["Sales Invoices"]
       },
       "post": {
         "operationId": "SalesInvoicesController_create_v1",
@@ -1567,9 +1596,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Sales Invoices"
-        ]
+        "tags": ["Sales Invoices"]
       }
     },
     "/v1/sales-invoices/{id}": {
@@ -1602,9 +1629,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Sales Invoices"
-        ]
+        "tags": ["Sales Invoices"]
       },
       "patch": {
         "operationId": "SalesInvoicesController_update_v1",
@@ -1645,9 +1670,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Sales Invoices"
-        ]
+        "tags": ["Sales Invoices"]
       },
       "delete": {
         "operationId": "SalesInvoicesController_remove_v1",
@@ -1671,9 +1694,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Sales Invoices"
-        ]
+        "tags": ["Sales Invoices"]
       }
     },
     "/v1/sales-invoices/{id}/post": {
@@ -1715,9 +1736,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Sales Invoices"
-        ]
+        "tags": ["Sales Invoices"]
       }
     },
     "/v1/sales-invoices/{id}/void": {
@@ -1759,9 +1778,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Sales Invoices"
-        ]
+        "tags": ["Sales Invoices"]
       }
     },
     "/v1/purchase-bills": {
@@ -1788,6 +1805,15 @@
             }
           },
           {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
             "name": "partnerId",
             "required": false,
             "in": "query",
@@ -1802,11 +1828,7 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": [
-                "DRAFT",
-                "POSTED",
-                "VOID"
-              ]
+              "enum": ["DRAFT", "POSTED", "VOID"]
             }
           }
         ],
@@ -1827,9 +1849,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Purchase Bills"
-        ]
+        "tags": ["Purchase Bills"]
       },
       "post": {
         "operationId": "PurchaseBillsController_create_v1",
@@ -1871,9 +1891,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Purchase Bills"
-        ]
+        "tags": ["Purchase Bills"]
       }
     },
     "/v1/purchase-bills/{id}": {
@@ -1906,9 +1924,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Purchase Bills"
-        ]
+        "tags": ["Purchase Bills"]
       },
       "patch": {
         "operationId": "PurchaseBillsController_update_v1",
@@ -1949,9 +1965,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Purchase Bills"
-        ]
+        "tags": ["Purchase Bills"]
       },
       "delete": {
         "operationId": "PurchaseBillsController_remove_v1",
@@ -1975,9 +1989,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Purchase Bills"
-        ]
+        "tags": ["Purchase Bills"]
       }
     },
     "/v1/purchase-bills/{id}/post": {
@@ -2019,9 +2031,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Purchase Bills"
-        ]
+        "tags": ["Purchase Bills"]
       }
     },
     "/v1/purchase-bills/{id}/void": {
@@ -2063,9 +2073,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Purchase Bills"
-        ]
+        "tags": ["Purchase Bills"]
       }
     },
     "/v1/payments": {
@@ -2092,6 +2100,15 @@
             }
           },
           {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
             "name": "partnerId",
             "required": false,
             "in": "query",
@@ -2106,10 +2123,7 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": [
-                "RECEIPT",
-                "DISBURSEMENT"
-              ]
+              "enum": ["RECEIPT", "DISBURSEMENT"]
             }
           },
           {
@@ -2118,11 +2132,7 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": [
-                "DRAFT",
-                "POSTED",
-                "VOID"
-              ]
+              "enum": ["DRAFT", "POSTED", "VOID"]
             }
           }
         ],
@@ -2143,9 +2153,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Payments"
-        ]
+        "tags": ["Payments"]
       },
       "post": {
         "operationId": "PaymentsController_create_v1",
@@ -2187,9 +2195,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Payments"
-        ]
+        "tags": ["Payments"]
       }
     },
     "/v1/payments/{id}": {
@@ -2222,9 +2228,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Payments"
-        ]
+        "tags": ["Payments"]
       },
       "delete": {
         "operationId": "PaymentsController_remove_v1",
@@ -2248,9 +2252,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Payments"
-        ]
+        "tags": ["Payments"]
       }
     },
     "/v1/payments/{id}/post": {
@@ -2292,9 +2294,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Payments"
-        ]
+        "tags": ["Payments"]
       }
     },
     "/v1/payments/{id}/void": {
@@ -2336,9 +2336,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Payments"
-        ]
+        "tags": ["Payments"]
       }
     },
     "/v1/reports/balance-sheet": {
@@ -2371,9 +2369,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Reporting"
-        ]
+        "tags": ["Reporting"]
       }
     },
     "/v1/reports/income-statement": {
@@ -2414,9 +2410,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Reporting"
-        ]
+        "tags": ["Reporting"]
       }
     },
     "/v1/reports/general-ledger": {
@@ -2466,9 +2460,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Reporting"
-        ]
+        "tags": ["Reporting"]
       }
     },
     "/v1/reports/ar-aging": {
@@ -2501,9 +2493,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Reporting"
-        ]
+        "tags": ["Reporting"]
       }
     },
     "/v1/reports/ap-aging": {
@@ -2536,9 +2526,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Reporting"
-        ]
+        "tags": ["Reporting"]
       }
     },
     "/v1/reports/cash-flow": {
@@ -2579,9 +2567,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Reporting"
-        ]
+        "tags": ["Reporting"]
       }
     },
     "/v1/close/year-end": {
@@ -2625,9 +2611,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Close"
-        ]
+        "tags": ["Close"]
       }
     },
     "/v1/close/year-end/{fiscalYear}/reopen": {
@@ -2660,9 +2644,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Close"
-        ]
+        "tags": ["Close"]
       }
     },
     "/v1/close/year-end/{fiscalYear}": {
@@ -2695,15 +2677,32 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Close"
-        ]
+        "tags": ["Close"]
       }
     },
     "/v1/audit": {
       "get": {
         "operationId": "AuditController_list_v1",
         "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
           {
             "name": "userId",
             "required": false,
@@ -2718,12 +2717,7 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": [
-                "POST",
-                "PATCH",
-                "PUT",
-                "DELETE"
-              ]
+              "enum": ["POST", "PATCH", "PUT", "DELETE"]
             }
           },
           {
@@ -2740,25 +2734,6 @@
             "in": "query",
             "schema": {
               "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "maximum": 500,
-              "type": "number"
-            }
-          },
-          {
-            "name": "offset",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 0,
-              "type": "number"
             }
           }
         ],
@@ -2782,9 +2757,7 @@
             "bearer": []
           }
         ],
-        "tags": [
-          "Audit"
-        ]
+        "tags": ["Audit"]
       }
     },
     "/metrics": {
@@ -2803,16 +2776,14 @@
             "description": "Prometheus exposition format."
           }
         },
-        "tags": [
-          "Metrics"
-        ]
+        "tags": ["Metrics"]
       }
     }
   },
   "info": {
     "title": "Indonesian Accounting API",
     "description": "Conventions, roles, and lifecycles: see docs/api/frontend-guide.md",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "contact": {}
   },
   "tags": [
@@ -2839,9 +2810,7 @@
             "example": "ok"
           }
         },
-        "required": [
-          "status"
-        ]
+        "required": ["status"]
       },
       "ReadinessStatusDto": {
         "type": "object",
@@ -2855,10 +2824,7 @@
             "example": "up"
           }
         },
-        "required": [
-          "status",
-          "db"
-        ]
+        "required": ["status", "db"]
       },
       "ErrorEnvelopeDto": {
         "type": "object",
@@ -2880,10 +2846,7 @@
             "description": "Correlates with the X-Request-Id response header"
           }
         },
-        "required": [
-          "code",
-          "message"
-        ]
+        "required": ["code", "message"]
       },
       "LoginDto": {
         "type": "object",
@@ -2897,10 +2860,7 @@
             "minLength": 8
           }
         },
-        "required": [
-          "email",
-          "password"
-        ]
+        "required": ["email", "password"]
       },
       "TokenPairDto": {
         "type": "object",
@@ -2912,10 +2872,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "accessToken",
-          "refreshToken"
-        ]
+        "required": ["accessToken", "refreshToken"]
       },
       "RefreshDto": {
         "type": "object",
@@ -2924,9 +2881,26 @@
             "type": "string"
           }
         },
-        "required": [
-          "refreshToken"
-        ]
+        "required": ["refreshToken"]
+      },
+      "LogoutDto": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string"
+          }
+        },
+        "required": ["refreshToken"]
+      },
+      "OkFlagDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": ["ok"]
       },
       "AuthenticatedUserDto": {
         "type": "object",
@@ -2941,31 +2915,10 @@
           },
           "role": {
             "type": "string",
-            "enum": [
-              "ADMIN",
-              "ACCOUNTANT",
-              "APPROVER",
-              "VIEWER"
-            ]
+            "enum": ["ADMIN", "ACCOUNTANT", "APPROVER", "VIEWER"]
           }
         },
-        "required": [
-          "id",
-          "email",
-          "role"
-        ]
-      },
-      "OkFlagDto": {
-        "type": "object",
-        "properties": {
-          "ok": {
-            "type": "boolean",
-            "example": true
-          }
-        },
-        "required": [
-          "ok"
-        ]
+        "required": ["id", "email", "role"]
       },
       "CompanySettingsDto": {
         "type": "object",
@@ -3072,13 +3025,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "ASSET",
-              "LIABILITY",
-              "EQUITY",
-              "REVENUE",
-              "EXPENSE"
-            ]
+            "enum": ["ASSET", "LIABILITY", "EQUITY", "REVENUE", "EXPENSE"]
           },
           "subtype": {
             "type": "string",
@@ -3101,24 +3048,28 @@
           },
           "cashFlowCategory": {
             "type": "string",
-            "enum": [
-              "OPERATING",
-              "INVESTING",
-              "FINANCING",
-              "NONE"
-            ]
+            "enum": ["OPERATING", "INVESTING", "FINANCING", "NONE"]
           },
           "normalBalance": {
             "type": "string",
-            "enum": [
-              "DEBIT",
-              "CREDIT"
-            ]
+            "enum": ["DEBIT", "CREDIT"]
           },
           "parentId": {
             "type": "string",
             "nullable": true,
             "format": "uuid"
+          },
+          "role": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "CASH",
+              "AR_CONTROL",
+              "AP_CONTROL",
+              "RETAINED_EARNINGS",
+              "OPENING_BALANCE_EQUITY",
+              "TAX_EXPENSE"
+            ]
           },
           "isPostable": {
             "type": "boolean",
@@ -3150,12 +3101,37 @@
           "cashFlowCategory",
           "normalBalance",
           "parentId",
+          "role",
           "isPostable",
           "isActive",
           "currency",
           "createdAt",
           "updatedAt"
         ]
+      },
+      "AccountListResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountResponseDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "example": 28
+          },
+          "limit": {
+            "type": "number",
+            "example": 50
+          },
+          "offset": {
+            "type": "number",
+            "example": 0
+          }
+        },
+        "required": ["data", "total", "limit", "offset"]
       },
       "AccountBalanceDto": {
         "type": "object",
@@ -3180,12 +3156,7 @@
             "description": "normalBalance-signed net, 4 dp"
           }
         },
-        "required": [
-          "accountId",
-          "debit",
-          "credit",
-          "balance"
-        ]
+        "required": ["accountId", "debit", "credit", "balance"]
       },
       "CreateAccountDto": {
         "type": "object",
@@ -3200,13 +3171,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "ASSET",
-              "LIABILITY",
-              "EQUITY",
-              "REVENUE",
-              "EXPENSE"
-            ]
+            "enum": ["ASSET", "LIABILITY", "EQUITY", "REVENUE", "EXPENSE"]
           },
           "subtype": {
             "type": "string",
@@ -3229,18 +3194,21 @@
           },
           "normalBalance": {
             "type": "string",
-            "enum": [
-              "DEBIT",
-              "CREDIT"
-            ]
+            "enum": ["DEBIT", "CREDIT"]
           },
           "cashFlowCategory": {
             "type": "string",
+            "enum": ["OPERATING", "INVESTING", "FINANCING", "NONE"]
+          },
+          "role": {
+            "type": "string",
             "enum": [
-              "OPERATING",
-              "INVESTING",
-              "FINANCING",
-              "NONE"
+              "CASH",
+              "AR_CONTROL",
+              "AP_CONTROL",
+              "RETAINED_EARNINGS",
+              "OPENING_BALANCE_EQUITY",
+              "TAX_EXPENSE"
             ]
           },
           "isPostable": {
@@ -3250,13 +3218,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "code",
-          "name",
-          "type",
-          "subtype",
-          "normalBalance"
-        ]
+        "required": ["code", "name", "type", "subtype", "normalBalance"]
       },
       "UpdateAccountDto": {
         "type": "object",
@@ -3266,12 +3228,7 @@
           },
           "cashFlowCategory": {
             "type": "string",
-            "enum": [
-              "OPERATING",
-              "INVESTING",
-              "FINANCING",
-              "NONE"
-            ]
+            "enum": ["OPERATING", "INVESTING", "FINANCING", "NONE"]
           },
           "isActive": {
             "type": "boolean"
@@ -3309,10 +3266,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "OPEN",
-              "CLOSED"
-            ]
+            "enum": ["OPEN", "CLOSED"]
           },
           "closedAt": {
             "type": "string",
@@ -3356,9 +3310,7 @@
             "maximum": 2200
           }
         },
-        "required": [
-          "fiscalYear"
-        ]
+        "required": ["fiscalYear"]
       },
       "JournalEntryListItemDto": {
         "type": "object",
@@ -3389,11 +3341,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "DRAFT",
-              "POSTED",
-              "REVERSED"
-            ]
+            "enum": ["DRAFT", "POSTED", "REVERSED"]
           },
           "sourceType": {
             "type": "string",
@@ -3458,12 +3406,7 @@
             "example": 0
           }
         },
-        "required": [
-          "data",
-          "total",
-          "limit",
-          "offset"
-        ]
+        "required": ["data", "total", "limit", "offset"]
       },
       "JournalLineResponseDto": {
         "type": "object",
@@ -3568,11 +3511,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "DRAFT",
-              "POSTED",
-              "REVERSED"
-            ]
+            "enum": ["DRAFT", "POSTED", "REVERSED"]
           },
           "reversalOfId": {
             "type": "string",
@@ -3651,9 +3590,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "accountId"
-        ]
+        "required": ["accountId"]
       },
       "CreateJournalEntryDto": {
         "type": "object",
@@ -3672,11 +3609,7 @@
             }
           }
         },
-        "required": [
-          "date",
-          "description",
-          "lines"
-        ]
+        "required": ["date", "description", "lines"]
       },
       "OpeningBalancesDto": {
         "type": "object",
@@ -3692,10 +3625,7 @@
             }
           }
         },
-        "required": [
-          "date",
-          "balances"
-        ]
+        "required": ["date", "balances"]
       },
       "TrialBalanceRowDto": {
         "type": "object",
@@ -3728,14 +3658,7 @@
             "description": "Decimal monetary amount as a string, fixed 4 decimal places."
           }
         },
-        "required": [
-          "accountId",
-          "code",
-          "name",
-          "debit",
-          "credit",
-          "balance"
-        ]
+        "required": ["accountId", "code", "name", "debit", "credit", "balance"]
       },
       "TrialBalanceDto": {
         "type": "object",
@@ -3762,12 +3685,7 @@
             "description": "Decimal monetary amount as a string, fixed 4 decimal places."
           }
         },
-        "required": [
-          "asOf",
-          "rows",
-          "totalDebit",
-          "totalCredit"
-        ]
+        "required": ["asOf", "rows", "totalDebit", "totalCredit"]
       },
       "TaxCodeResponseDto": {
         "type": "object",
@@ -3786,12 +3704,7 @@
           },
           "kind": {
             "type": "string",
-            "enum": [
-              "PPN_OUTPUT",
-              "PPN_INPUT",
-              "PPH_PAYABLE",
-              "PPH_PREPAID"
-            ]
+            "enum": ["PPN_OUTPUT", "PPN_INPUT", "PPH_PAYABLE", "PPH_PREPAID"]
           },
           "rate": {
             "type": "string",
@@ -3827,6 +3740,30 @@
           "updatedAt"
         ]
       },
+      "TaxCodeListResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaxCodeResponseDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "example": 6
+          },
+          "limit": {
+            "type": "number",
+            "example": 50
+          },
+          "offset": {
+            "type": "number",
+            "example": 0
+          }
+        },
+        "required": ["data", "total", "limit", "offset"]
+      },
       "CreateTaxCodeDto": {
         "type": "object",
         "properties": {
@@ -3840,12 +3777,7 @@
           },
           "kind": {
             "type": "string",
-            "enum": [
-              "PPN_OUTPUT",
-              "PPN_INPUT",
-              "PPH_PAYABLE",
-              "PPH_PREPAID"
-            ]
+            "enum": ["PPN_OUTPUT", "PPN_INPUT", "PPH_PAYABLE", "PPH_PREPAID"]
           },
           "rate": {
             "type": "string",
@@ -3857,13 +3789,7 @@
             "format": "uuid"
           }
         },
-        "required": [
-          "code",
-          "name",
-          "kind",
-          "rate",
-          "taxAccountId"
-        ]
+        "required": ["code", "name", "kind", "rate", "taxAccountId"]
       },
       "UpdateTaxCodeDto": {
         "type": "object",
@@ -3899,21 +3825,14 @@
             }
           }
         },
-        "required": [
-          "accountId",
-          "amount",
-          "taxCodeIds"
-        ]
+        "required": ["accountId", "amount", "taxCodeIds"]
       },
       "CalculateTaxDto": {
         "type": "object",
         "properties": {
           "nature": {
             "type": "string",
-            "enum": [
-              "SALE",
-              "PURCHASE"
-            ]
+            "enum": ["SALE", "PURCHASE"]
           },
           "settlementAccountId": {
             "type": "string",
@@ -3927,11 +3846,7 @@
             }
           }
         },
-        "required": [
-          "nature",
-          "settlementAccountId",
-          "lines"
-        ]
+        "required": ["nature", "settlementAccountId", "lines"]
       },
       "TaxBreakdownRowDto": {
         "type": "object",
@@ -3946,12 +3861,7 @@
           },
           "kind": {
             "type": "string",
-            "enum": [
-              "PPN_OUTPUT",
-              "PPN_INPUT",
-              "PPH_PAYABLE",
-              "PPH_PREPAID"
-            ]
+            "enum": ["PPN_OUTPUT", "PPN_INPUT", "PPH_PAYABLE", "PPH_PREPAID"]
           },
           "base": {
             "type": "string",
@@ -3968,14 +3878,7 @@
             "format": "uuid"
           }
         },
-        "required": [
-          "taxCodeId",
-          "code",
-          "kind",
-          "base",
-          "amount",
-          "accountId"
-        ]
+        "required": ["taxCodeId", "code", "kind", "base", "amount", "accountId"]
       },
       "CalculatedLineDto": {
         "type": "object",
@@ -3996,9 +3899,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "accountId"
-        ]
+        "required": ["accountId"]
       },
       "TaxCalculationDto": {
         "type": "object",
@@ -4026,12 +3927,7 @@
             }
           }
         },
-        "required": [
-          "subtotal",
-          "taxes",
-          "settlementAmount",
-          "journalLines"
-        ]
+        "required": ["subtotal", "taxes", "settlementAmount", "journalLines"]
       },
       "BusinessPartnerResponseDto": {
         "type": "object",
@@ -4123,12 +4019,7 @@
             "example": 0
           }
         },
-        "required": [
-          "data",
-          "total",
-          "limit",
-          "offset"
-        ]
+        "required": ["data", "total", "limit", "offset"]
       },
       "CreateBusinessPartnerDto": {
         "type": "object",
@@ -4164,10 +4055,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "code",
-          "name"
-        ]
+        "required": ["code", "name"]
       },
       "UpdateBusinessPartnerDto": {
         "type": "object",
@@ -4267,14 +4155,6 @@
             "type": "string",
             "format": "uuid"
           },
-          "invoiceNumber": {
-            "type": "number",
-            "nullable": true
-          },
-          "invoiceRef": {
-            "type": "string",
-            "nullable": true
-          },
           "fiscalYear": {
             "type": "number",
             "nullable": true
@@ -4299,11 +4179,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "DRAFT",
-              "POSTED",
-              "VOID"
-            ]
+            "enum": ["DRAFT", "POSTED", "VOID"]
           },
           "subtotal": {
             "type": "string",
@@ -4364,11 +4240,15 @@
           },
           "paymentStatus": {
             "type": "string",
-            "enum": [
-              "UNPAID",
-              "PARTIAL",
-              "PAID"
-            ]
+            "enum": ["UNPAID", "PARTIAL", "PAID"]
+          },
+          "invoiceNumber": {
+            "type": "number",
+            "nullable": true
+          },
+          "invoiceRef": {
+            "type": "string",
+            "nullable": true
           },
           "lines": {
             "type": "array",
@@ -4379,8 +4259,6 @@
         },
         "required": [
           "id",
-          "invoiceNumber",
-          "invoiceRef",
           "fiscalYear",
           "partnerId",
           "date",
@@ -4399,7 +4277,9 @@
           "createdAt",
           "updatedAt",
           "outstanding",
-          "paymentStatus"
+          "paymentStatus",
+          "invoiceNumber",
+          "invoiceRef"
         ]
       },
       "SalesInvoiceListResponseDto": {
@@ -4424,14 +4304,9 @@
             "example": 0
           }
         },
-        "required": [
-          "data",
-          "total",
-          "limit",
-          "offset"
-        ]
+        "required": ["data", "total", "limit", "offset"]
       },
-      "SalesInvoiceLineDto": {
+      "DocumentLineDto": {
         "type": "object",
         "properties": {
           "description": {
@@ -4443,12 +4318,10 @@
             "format": "uuid"
           },
           "quantity": {
-            "type": "string",
-            "pattern": "^\\d+(\\.\\d{1,4})?$"
+            "type": "string"
           },
           "unitPrice": {
-            "type": "string",
-            "pattern": "^\\d+(\\.\\d{1,4})?$"
+            "type": "string"
           },
           "taxCodeIds": {
             "type": "array",
@@ -4458,13 +4331,7 @@
             }
           }
         },
-        "required": [
-          "description",
-          "accountId",
-          "quantity",
-          "unitPrice",
-          "taxCodeIds"
-        ]
+        "required": ["description", "accountId", "quantity", "unitPrice", "taxCodeIds"]
       },
       "CreateSalesInvoiceDto": {
         "type": "object",
@@ -4487,15 +4354,11 @@
             "minItems": 1,
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SalesInvoiceLineDto"
+              "$ref": "#/components/schemas/DocumentLineDto"
             }
           }
         },
-        "required": [
-          "partnerId",
-          "date",
-          "lines"
-        ]
+        "required": ["partnerId", "date", "lines"]
       },
       "UpdateSalesInvoiceDto": {
         "type": "object",
@@ -4514,7 +4377,7 @@
             "minItems": 1,
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SalesInvoiceLineDto"
+              "$ref": "#/components/schemas/DocumentLineDto"
             }
           }
         }
@@ -4583,14 +4446,6 @@
             "type": "string",
             "format": "uuid"
           },
-          "billNumber": {
-            "type": "number",
-            "nullable": true
-          },
-          "billRef": {
-            "type": "string",
-            "nullable": true
-          },
           "fiscalYear": {
             "type": "number",
             "nullable": true
@@ -4598,10 +4453,6 @@
           "partnerId": {
             "type": "string",
             "format": "uuid"
-          },
-          "vendorInvoiceNo": {
-            "type": "string",
-            "nullable": true
           },
           "date": {
             "type": "string",
@@ -4619,11 +4470,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "DRAFT",
-              "POSTED",
-              "VOID"
-            ]
+            "enum": ["DRAFT", "POSTED", "VOID"]
           },
           "subtotal": {
             "type": "string",
@@ -4684,11 +4531,19 @@
           },
           "paymentStatus": {
             "type": "string",
-            "enum": [
-              "UNPAID",
-              "PARTIAL",
-              "PAID"
-            ]
+            "enum": ["UNPAID", "PARTIAL", "PAID"]
+          },
+          "billNumber": {
+            "type": "number",
+            "nullable": true
+          },
+          "billRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "vendorInvoiceNo": {
+            "type": "string",
+            "nullable": true
           },
           "lines": {
             "type": "array",
@@ -4699,11 +4554,8 @@
         },
         "required": [
           "id",
-          "billNumber",
-          "billRef",
           "fiscalYear",
           "partnerId",
-          "vendorInvoiceNo",
           "date",
           "dueDate",
           "description",
@@ -4720,7 +4572,10 @@
           "createdAt",
           "updatedAt",
           "outstanding",
-          "paymentStatus"
+          "paymentStatus",
+          "billNumber",
+          "billRef",
+          "vendorInvoiceNo"
         ]
       },
       "PurchaseBillListResponseDto": {
@@ -4745,47 +4600,7 @@
             "example": 0
           }
         },
-        "required": [
-          "data",
-          "total",
-          "limit",
-          "offset"
-        ]
-      },
-      "PurchaseBillLineDto": {
-        "type": "object",
-        "properties": {
-          "description": {
-            "type": "string",
-            "maxLength": 255
-          },
-          "accountId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "quantity": {
-            "type": "string",
-            "pattern": "^\\d+(\\.\\d{1,4})?$"
-          },
-          "unitPrice": {
-            "type": "string",
-            "pattern": "^\\d+(\\.\\d{1,4})?$"
-          },
-          "taxCodeIds": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        },
-        "required": [
-          "description",
-          "accountId",
-          "quantity",
-          "unitPrice",
-          "taxCodeIds"
-        ]
+        "required": ["data", "total", "limit", "offset"]
       },
       "CreatePurchaseBillDto": {
         "type": "object",
@@ -4812,15 +4627,11 @@
             "minItems": 1,
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PurchaseBillLineDto"
+              "$ref": "#/components/schemas/DocumentLineDto"
             }
           }
         },
-        "required": [
-          "partnerId",
-          "date",
-          "lines"
-        ]
+        "required": ["partnerId", "date", "lines"]
       },
       "UpdatePurchaseBillDto": {
         "type": "object",
@@ -4843,7 +4654,7 @@
             "minItems": 1,
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PurchaseBillLineDto"
+              "$ref": "#/components/schemas/DocumentLineDto"
             }
           }
         }
@@ -4875,13 +4686,7 @@
             "description": "Decimal monetary amount as a string, fixed 4 decimal places."
           }
         },
-        "required": [
-          "id",
-          "paymentId",
-          "salesInvoiceId",
-          "purchaseBillId",
-          "amount"
-        ]
+        "required": ["id", "paymentId", "salesInvoiceId", "purchaseBillId", "amount"]
       },
       "PaymentResponseDto": {
         "type": "object",
@@ -4904,10 +4709,7 @@
           },
           "direction": {
             "type": "string",
-            "enum": [
-              "RECEIPT",
-              "DISBURSEMENT"
-            ]
+            "enum": ["RECEIPT", "DISBURSEMENT"]
           },
           "partnerId": {
             "type": "string",
@@ -4933,11 +4735,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "DRAFT",
-              "POSTED",
-              "VOID"
-            ]
+            "enum": ["DRAFT", "POSTED", "VOID"]
           },
           "journalEntryId": {
             "type": "string",
@@ -5015,12 +4813,7 @@
             "example": 0
           }
         },
-        "required": [
-          "data",
-          "total",
-          "limit",
-          "offset"
-        ]
+        "required": ["data", "total", "limit", "offset"]
       },
       "AllocationDto": {
         "type": "object",
@@ -5034,23 +4827,17 @@
             "format": "uuid"
           },
           "amount": {
-            "type": "string",
-            "pattern": "^\\d+(\\.\\d{1,4})?$"
+            "type": "string"
           }
         },
-        "required": [
-          "amount"
-        ]
+        "required": ["amount"]
       },
       "CreatePaymentDto": {
         "type": "object",
         "properties": {
           "direction": {
             "type": "string",
-            "enum": [
-              "RECEIPT",
-              "DISBURSEMENT"
-            ]
+            "enum": ["RECEIPT", "DISBURSEMENT"]
           },
           "partnerId": {
             "type": "string",
@@ -5075,13 +4862,7 @@
             }
           }
         },
-        "required": [
-          "direction",
-          "partnerId",
-          "date",
-          "cashAccountId",
-          "allocations"
-        ]
+        "required": ["direction", "partnerId", "date", "cashAccountId", "allocations"]
       },
       "ReportLineDto": {
         "type": "object",
@@ -5100,11 +4881,7 @@
             "description": "Decimal monetary amount as a string, fixed 4 decimal places."
           }
         },
-        "required": [
-          "code",
-          "name",
-          "amount"
-        ]
+        "required": ["code", "name", "amount"]
       },
       "ReportGroupDto": {
         "type": "object",
@@ -5125,11 +4902,7 @@
             "description": "Decimal monetary amount as a string, fixed 4 decimal places."
           }
         },
-        "required": [
-          "subtype",
-          "lines",
-          "subtotal"
-        ]
+        "required": ["subtype", "lines", "subtotal"]
       },
       "ReportSectionDto": {
         "type": "object",
@@ -5146,10 +4919,7 @@
             "description": "Decimal monetary amount as a string, fixed 4 decimal places."
           }
         },
-        "required": [
-          "groups",
-          "total"
-        ]
+        "required": ["groups", "total"]
       },
       "BalanceSheetDto": {
         "type": "object",
@@ -5320,18 +5090,10 @@
           },
           "normalBalance": {
             "type": "string",
-            "enum": [
-              "DEBIT",
-              "CREDIT"
-            ]
+            "enum": ["DEBIT", "CREDIT"]
           }
         },
-        "required": [
-          "id",
-          "code",
-          "name",
-          "normalBalance"
-        ]
+        "required": ["id", "code", "name", "normalBalance"]
       },
       "GeneralLedgerLineDto": {
         "type": "object",
@@ -5404,14 +5166,7 @@
             "description": "Decimal monetary amount as a string, fixed 4 decimal places."
           }
         },
-        "required": [
-          "account",
-          "from",
-          "to",
-          "openingBalance",
-          "lines",
-          "closingBalance"
-        ]
+        "required": ["account", "from", "to", "openingBalance", "lines", "closingBalance"]
       },
       "AgingDocumentDto": {
         "type": "object",
@@ -5446,13 +5201,7 @@
           },
           "bucket": {
             "type": "string",
-            "enum": [
-              "Current",
-              "1-30",
-              "31-60",
-              "61-90",
-              ">90"
-            ]
+            "enum": ["Current", "1-30", "31-60", "61-90", ">90"]
           }
         },
         "required": [
@@ -5496,22 +5245,14 @@
             }
           }
         },
-        "required": [
-          "partnerId",
-          "partnerName",
-          "documents",
-          "buckets"
-        ]
+        "required": ["partnerId", "partnerName", "documents", "buckets"]
       },
       "AgingReportDto": {
         "type": "object",
         "properties": {
           "kind": {
             "type": "string",
-            "enum": [
-              "AR",
-              "AP"
-            ]
+            "enum": ["AR", "AP"]
           },
           "asOf": {
             "type": "string",
@@ -5536,13 +5277,7 @@
             "description": "Decimal monetary amount as a string, fixed 4 decimal places."
           }
         },
-        "required": [
-          "kind",
-          "asOf",
-          "partners",
-          "totalsByBucket",
-          "totalOutstanding"
-        ]
+        "required": ["kind", "asOf", "partners", "totalsByBucket", "totalOutstanding"]
       },
       "CashFlowLineDto": {
         "type": "object",
@@ -5561,11 +5296,7 @@
             "description": "Decimal monetary amount as a string, fixed 4 decimal places."
           }
         },
-        "required": [
-          "code",
-          "name",
-          "amount"
-        ]
+        "required": ["code", "name", "amount"]
       },
       "CashFlowOperatingDto": {
         "type": "object",
@@ -5582,10 +5313,7 @@
             "description": "Decimal monetary amount as a string, fixed 4 decimal places."
           }
         },
-        "required": [
-          "adjustments",
-          "total"
-        ]
+        "required": ["adjustments", "total"]
       },
       "CashFlowSectionDto": {
         "type": "object",
@@ -5602,10 +5330,7 @@
             "description": "Decimal monetary amount as a string, fixed 4 decimal places."
           }
         },
-        "required": [
-          "lines",
-          "total"
-        ]
+        "required": ["lines", "total"]
       },
       "CashFlowDto": {
         "type": "object",
@@ -5674,9 +5399,7 @@
             "maximum": 2100
           }
         },
-        "required": [
-          "fiscalYear"
-        ]
+        "required": ["fiscalYear"]
       },
       "YearEndClosingResponseDto": {
         "type": "object",
@@ -5687,10 +5410,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "OPEN",
-              "CLOSED"
-            ]
+            "enum": ["OPEN", "CLOSED"]
           },
           "closingEntryId": {
             "type": "string",

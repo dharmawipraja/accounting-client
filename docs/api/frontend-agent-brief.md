@@ -23,7 +23,7 @@ period / year-end close.
    and glossary**. Read it before writing client code; it explains the things OpenAPI
    can't (auth/refresh, money format, error envelope, soft-delete, draft→post flow).
 
-When the two disagree about a *shape*, OpenAPI wins. For *behavior* (auth, roles,
+When the two disagree about a _shape_, OpenAPI wins. For _behavior_ (auth, roles,
 lifecycles, money), follow the guide.
 
 ## Non-negotiable rules
@@ -39,7 +39,9 @@ lifecycles, money), follow the guide.
    **422 = domain-rule violation** (e.g. `UNBALANCED_ENTRY`).
 3. **Auth = `Authorization: Bearer <accessToken>`.** Access token ~15m, refresh ~7d.
    On **401**, call `POST /auth/refresh { refreshToken }` for a fresh pair and retry
-   once; if refresh fails, go to login. There is **no server logout** — discard tokens.
+   once; if refresh fails, go to login. Call `POST /auth/logout { refreshToken }` to
+   revoke the current device's refresh token server-side; call `POST /auth/logout-all`
+   (authenticated) to revoke all sessions. Always discard tokens client-side too.
    On **429**, back off.
 4. **Respect the role matrix** (VIEWER / ACCOUNTANT / APPROVER / ADMIN; see the guide).
    Reads are open to any authenticated user. Hide/disable actions a role can't do —
@@ -58,12 +60,15 @@ lifecycles, money), follow the guide.
    `422`; same key + different body/endpoint → `422`; in-flight → `409`.
    (Partners/accounts/tax-codes creates are NOT covered — their unique `code` handles
    deduplication.)
-8. **Pagination is mixed.** Five list endpoints return the envelope
+8. **Pagination is mixed.** Seven list endpoints return the envelope
    `{ data, total, limit, offset }` (limit default 50, max 200) — **read `.data`**:
    `GET /v1/partners`, `GET /v1/sales-invoices`, `GET /v1/purchase-bills`,
-   `GET /v1/payments`, `GET /v1/ledger/journal-entries`. All other lists return a
-   **bare array** (no `.data`): `GET /v1/ledger/accounts`, `GET /v1/tax/codes`,
-   `GET /v1/ledger/periods`, `GET /v1/audit`.
+   `GET /v1/payments`, `GET /v1/ledger/journal-entries`, and — **newly enveloped**
+   `GET /v1/ledger/accounts`, `GET /v1/tax/codes`. The remaining lists return a
+   **bare array** (no `.data`): `GET /v1/ledger/periods`, `GET /v1/audit`.
+   > ⚠️ **Breaking change — action required.** `accounts` and `tax/codes` used to be
+   > bare arrays; they are now enveloped. Unwrap `.data` for them (the other five were
+   > always enveloped). This is the only list-shape change.
 9. **Soft-delete → 404.** Deleting/deactivating makes a resource 404 and removes it
    from lists; unique codes are reusable afterward. Don't treat that 404 as a crash.
 10. **Draft → post approval flow.** Documents (journals, invoices, bills, payments) are
@@ -73,23 +78,25 @@ lifecycles, money), follow the guide.
 ## Do / Don't
 
 **Do**
+
 - Generate and commit a typed client from `openapi.json`; regenerate when the API changes.
 - Centralize fetch in one wrapper (auth header, 401-refresh, 429 backoff, envelope parsing).
 - Keep money as decimal strings end-to-end; format only at the view layer.
 - Gate UI by role from `GET /auth/me`, and still handle server 403s.
 
 **Don't**
+
 - Don't `parseFloat` money. Don't do float math on amounts.
 - Don't call business endpoints without the `/v1` prefix — they 404.
 - Don't assume `/docs` (Swagger UI) exists in production — it's gated behind
   `ENABLE_SWAGGER` there. Rely on the committed `openapi.json`.
 - Don't omit `Idempotency-Key` on covered writes (invoice/bill/payment create/post/void,
   year-end close, journal/opening-balances) — the API returns `422` without it.
-- Don't read a list response body as a bare array for the five enveloped endpoints
+- Don't read a list response body as a bare array for the seven enveloped endpoints
   (`/v1/partners`, `/v1/sales-invoices`, `/v1/purchase-bills`, `/v1/payments`,
-  `/v1/ledger/journal-entries`) — iterate `.data`, not the root.
-- Don't expect a logout endpoint, a pagination envelope on accounts/tax-codes/periods/
-  audit, or that a creator can self-approve.
+  `/v1/ledger/journal-entries`, `/v1/ledger/accounts`, `/v1/tax/codes`) — iterate
+  `.data`, not the root.
+- Don't expect a pagination envelope on periods/audit, or that a creator can self-approve.
 - Don't rely on nested `lines` (invoices/bills) or `allocations` (payments) in **list**
   responses — they're **detail-only** (present on single-resource GET/POST, omitted from
   lists; optional in the schema).
