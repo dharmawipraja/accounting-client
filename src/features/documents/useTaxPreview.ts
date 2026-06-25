@@ -3,6 +3,7 @@ import { apiFetch } from '@/lib/api/client';
 import type { ApiError } from '@/lib/api/errors';
 import { useDebouncedValue } from '@/lib/hooks/useDebouncedValue';
 import { taxCalcSchema, type TaxCalc } from './taxCalcSchema';
+import { queryKeys } from '@/lib/query/keys';
 
 export type TaxPreviewLine = { accountId: string; amount: string; taxCodeIds: string[] };
 
@@ -22,7 +23,7 @@ export function useTaxPreview(args: Args): { data?: TaxCalc; isLoading: boolean;
   const enabled = !!parsed.settlementAccountId && completeLines.length > 0;
 
   const query = useQuery<TaxCalc, ApiError>({
-    queryKey: ['taxCalc', debounced],
+    queryKey: queryKeys.taxCalc(debounced),
     enabled,
     queryFn: () =>
       apiFetch('/tax/calculate', {

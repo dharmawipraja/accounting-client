@@ -1,18 +1,13 @@
 import { createResourceKeys } from '@/lib/crud/createResourceHooks';
 
 export const queryKeys = {
-  me: ['auth', 'me'] as const,
   accounts: createResourceKeys('accounts'),
   partners: createResourceKeys('partners'),
   taxCodes: createResourceKeys('taxCodes'),
   salesInvoices: createResourceKeys('salesInvoices'),
   payments: createResourceKeys('payments'),
   purchaseBills: createResourceKeys('purchaseBills'),
-  journalEntries: {
-    all: ['journalEntries'] as const,
-    list: (params: unknown) => ['journalEntries', 'list', params] as const,
-    item: (id: string) => ['journalEntries', 'item', id] as const,
-  },
+  journalEntries: createResourceKeys('journalEntries'),
   reports: {
     all: ['reports'] as const,
     balanceSheet: (asOf: string) => ['reports', 'balance-sheet', asOf] as const,
@@ -33,4 +28,6 @@ export const queryKeys = {
     list: (filters: unknown) => ['audit', 'list', filters] as const,
   },
   companySettings: ['company-settings'] as const,
+  taxCalc: (args: string) => ['taxCalc', args] as const,
+  report: (path: string, params: unknown) => ['report', path, params] as const,
 };
