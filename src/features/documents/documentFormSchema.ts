@@ -4,7 +4,7 @@ import { Money } from '@/lib/money/money';
 export const numericString = (msg: string) => z.string().regex(/^\d+(\.\d+)?$/, msg);
 
 export const documentLineFormSchema = z.object({
-  description: z.string(),
+  description: z.string().min(1),
   accountId: z.string().min(1, 'selectAccount'),
   quantity: numericString('invalidQuantity').refine((v) => Number(v) > 0, 'invalidQuantity'),
   unitPrice: numericString('invalidPrice'),

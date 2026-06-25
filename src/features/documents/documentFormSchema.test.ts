@@ -11,6 +11,9 @@ describe('documentLineFormSchema', () => {
   it('rejects a missing account', () => {
     expect(documentLineFormSchema.safeParse({ description: 'x', accountId: '', quantity: '1', unitPrice: '1000', taxCodeIds: [] }).success).toBe(false);
   });
+  it('rejects an empty description', () => {
+    expect(documentLineFormSchema.safeParse({ description: '', accountId: 'a1', quantity: '1', unitPrice: '1000', taxCodeIds: [] }).success).toBe(false);
+  });
 });
 
 describe('documentHeaderSchema', () => {
@@ -19,7 +22,7 @@ describe('documentHeaderSchema', () => {
     expect(r.success).toBe(false);
   });
   it('accepts a valid header', () => {
-    const r = documentHeaderSchema.safeParse({ partnerId: 'p1', date: '2026-06-25', dueDate: '', description: '', lines: [{ ...EMPTY_LINE, accountId: 'a1', unitPrice: '1000' }] });
+    const r = documentHeaderSchema.safeParse({ partnerId: 'p1', date: '2026-06-25', dueDate: '', description: '', lines: [{ ...EMPTY_LINE, description: 'Jasa', accountId: 'a1', unitPrice: '1000' }] });
     expect(r.success).toBe(true);
   });
 });
