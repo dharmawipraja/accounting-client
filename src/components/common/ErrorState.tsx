@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useT } from '@/lib/i18n/useT';
-import { describeError, type ErrorKind } from './describeError';
+import { describeError, type ErrorKind } from '@/lib/api/describeError';
 
 const ICONS: Record<ErrorKind, LucideIcon> = {
   offline: WifiOff,
