@@ -16,11 +16,11 @@ export function useGeneratePeriods() {
 }
 
 export function useClosePeriod() {
-  return useDocumentAction({ key: 'periods', basePath: '/ledger/periods', action: 'close' });
+  return useDocumentAction({ keys: queryKeys.periods, basePath: '/ledger/periods', action: 'close' });
 }
 
 export function useReopenPeriod() {
-  return useDocumentAction({ key: 'periods', basePath: '/ledger/periods', action: 'reopen' });
+  return useDocumentAction({ keys: queryKeys.periods, basePath: '/ledger/periods', action: 'reopen' });
 }
 
 export function useRunYearEnd() {

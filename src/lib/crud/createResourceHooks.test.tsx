@@ -12,7 +12,7 @@ import { partnersApi } from '@/features/partners/hooks';
 const widgetSchema = z.object({ id: z.string(), name: z.string() });
 type Widget = z.infer<typeof widgetSchema>;
 const widgets = createResourceHooks<Widget, { name: string }, { name: string }>({
-  key: 'widgets',
+  keys: createResourceKeys('widgets'),
   basePath: '/widgets',
   itemSchema: widgetSchema,
 });

@@ -1,5 +1,6 @@
 import { createResourceHooks } from '@/lib/crud/createResourceHooks';
 import { useDocumentAction } from '@/lib/crud/useDocumentAction';
+import { queryKeys } from '@/lib/query/keys';
 import {
   purchaseBillSchema,
   type PurchaseBill,
@@ -12,11 +13,11 @@ export const purchaseBillsApi = createResourceHooks<
   PurchaseBillCreatePayload,
   PurchaseBillUpdatePayload
 >({
-  key: 'purchaseBills',
+  keys: queryKeys.purchaseBills,
   basePath: '/purchase-bills',
   itemSchema: purchaseBillSchema,
   paginated: true,
 });
 
-export const usePostBill = () => useDocumentAction({ key: 'purchaseBills', basePath: '/purchase-bills', action: 'post' });
-export const useVoidBill = () => useDocumentAction({ key: 'purchaseBills', basePath: '/purchase-bills', action: 'void' });
+export const usePostBill = () => useDocumentAction({ keys: queryKeys.purchaseBills, basePath: '/purchase-bills', action: 'post' });
+export const useVoidBill = () => useDocumentAction({ keys: queryKeys.purchaseBills, basePath: '/purchase-bills', action: 'void' });

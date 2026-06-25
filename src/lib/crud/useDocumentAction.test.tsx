@@ -6,6 +6,7 @@ import { API } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
 import { useDocumentAction } from './useDocumentAction';
+import { createResourceKeys } from './createResourceHooks';
 
 afterEach(() => useSession.getState().clear());
 
@@ -25,7 +26,7 @@ it('POSTs to /:id/:action with an Idempotency-Key header', async () => {
       return HttpResponse.json({ ok: true });
     }),
   );
-  const { result } = renderHook(() => useDocumentAction({ key: 'widgets', basePath: '/widgets', action: 'post' }), { wrapper });
+  const { result } = renderHook(() => useDocumentAction({ keys: createResourceKeys('widgets'), basePath: '/widgets', action: 'post' }), { wrapper });
   await result.current.mutateAsync({ id: '7', idempotencyKey: 'key-123' });
   await waitFor(() => expect(hitPath).toBe('/widgets/7/post'));
   expect(seenKey).toBe('key-123');

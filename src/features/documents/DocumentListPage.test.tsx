@@ -12,6 +12,7 @@ import { id as messages } from '@/lib/i18n/messages.id';
 import { apiFetch } from '@/lib/api/client';
 import type { ApiError } from '@/lib/api/errors';
 import { useDocumentAction } from '@/lib/crud/useDocumentAction';
+import { createResourceKeys } from '@/lib/crud/createResourceHooks';
 import { salesInvoicesApi } from '@/features/sales-invoices/hooks';
 import { DocumentListPage } from './DocumentListPage';
 import type { DocumentListConfig, PageEnvelope } from './useDocumentListController';
@@ -27,7 +28,7 @@ const useDocs = (q: Record<string, string | number | undefined>): UseQueryResult
   useQuery({ queryKey: ['test-docs', q], queryFn: () => apiFetch('/test-docs', { query: q }) }) as UseQueryResult<PageEnvelope<Doc>, ApiError>;
 
 // thin local hooks pointing the action endpoints at /test-docs/:id/{post} via the real useDocumentAction shape
-const usePostInvoiceLike = () => useDocumentAction({ key: 'test-docs', basePath: '/test-docs', action: 'post' });
+const usePostInvoiceLike = () => useDocumentAction({ keys: createResourceKeys('test-docs'), basePath: '/test-docs', action: 'post' });
 const useRemoveLike = () => salesInvoicesApi.useRemove();
 
 function useTestConfig(): DocumentListConfig<Doc> {

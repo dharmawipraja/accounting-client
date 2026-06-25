@@ -1,8 +1,9 @@
 import { createResourceHooks } from '@/lib/crud/createResourceHooks';
+import { queryKeys } from '@/lib/query/keys';
 import { partnerSchema, type Partner, type PartnerCreatePayload, type PartnerUpdatePayload } from './schema';
 
 export const partnersApi = createResourceHooks<Partner, PartnerCreatePayload, PartnerUpdatePayload>({
-  key: 'partners',
+  keys: queryKeys.partners,
   basePath: '/partners',
   itemSchema: partnerSchema,
   paginated: true,

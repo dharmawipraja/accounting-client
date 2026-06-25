@@ -10,7 +10,7 @@ import { apiFetch } from '@/lib/api/client';
 import type { ApiError } from '@/lib/api/errors';
 
 export interface ResourceConfig<TItem> {
-  key: string;
+  keys: ResourceKeys;
   basePath: string;
   itemSchema: ZodType<TItem>;
   /**
@@ -41,7 +41,7 @@ export function createResourceHooks<TItem, TCreate = unknown, TUpdate = unknown>
   config: ResourceConfig<TItem>,
 ) {
   const { basePath, itemSchema, paginated = false } = config;
-  const keys = createResourceKeys(config.key);
+  const keys = config.keys;
   const listSchema = itemSchema.array();
   const envelopeSchema = z.object({
     data: listSchema,

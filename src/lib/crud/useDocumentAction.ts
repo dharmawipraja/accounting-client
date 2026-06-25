@@ -5,7 +5,7 @@ import type { ApiError } from '@/lib/api/errors';
 /** A document lifecycle action (post/void/reverse): POST {basePath}/:id/{action} with an
  *  Idempotency-Key, invalidating the resource list on success. */
 export function useDocumentAction<TResult = unknown>(config: {
-  key: string;
+  keys: { all: readonly unknown[] };
   basePath: string;
   action: string;
 }): UseMutationResult<TResult, ApiError, { id: string; idempotencyKey: string }> {
@@ -13,6 +13,6 @@ export function useDocumentAction<TResult = unknown>(config: {
   return useMutation<TResult, ApiError, { id: string; idempotencyKey: string }>({
     mutationFn: ({ id, idempotencyKey }) =>
       apiFetch(`${config.basePath}/${id}/${config.action}`, { method: 'POST', idempotencyKey }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: [config.key] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: config.keys.all }),
   });
 }

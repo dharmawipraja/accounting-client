@@ -55,5 +55,5 @@ export function useDeleteJournalEntry(): UseMutationResult<unknown, ApiError, st
   });
 }
 
-export const usePostJournalEntry = () => useDocumentAction({ key: 'journalEntries', basePath: '/ledger/journal-entries', action: 'post' });
-export const useReverseJournalEntry = () => useDocumentAction({ key: 'journalEntries', basePath: '/ledger/journal-entries', action: 'reverse' });
+export const usePostJournalEntry = () => useDocumentAction({ keys: queryKeys.journalEntries, basePath: '/ledger/journal-entries', action: 'post' });
+export const useReverseJournalEntry = () => useDocumentAction({ keys: queryKeys.journalEntries, basePath: '/ledger/journal-entries', action: 'reverse' });

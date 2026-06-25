@@ -8,7 +8,7 @@ import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
 import { useT } from '@/lib/i18n/useT';
-import { createResourceHooks } from '@/lib/crud/createResourceHooks';
+import { createResourceHooks, createResourceKeys } from '@/lib/crud/createResourceHooks';
 import { DocumentEditor, type DocumentEditorConfig, type DocumentEditorLabels } from './DocumentEditor';
 import { documentHeaderSchema, EMPTY_LINE, type DocumentHeaderValues } from './documentFormSchema';
 
@@ -18,7 +18,7 @@ afterEach(() => useSession.getState().clear());
 const testItemSchema = z.object({ id: z.string(), status: z.string(), partnerId: z.string() });
 type TestItem = z.infer<typeof testItemSchema>;
 type TestCreate = { partnerId: string; date: string; dueDate?: string; description?: string; lines: unknown[] };
-const testApi = createResourceHooks<TestItem, TestCreate, Partial<TestCreate>>({ key: 'test-docs', basePath: '/test-docs', itemSchema: testItemSchema });
+const testApi = createResourceHooks<TestItem, TestCreate, Partial<TestCreate>>({ keys: createResourceKeys('test-docs'), basePath: '/test-docs', itemSchema: testItemSchema });
 
 const accounts = [{ id: 'ar', code: '1-1200', name: 'Piutang', type: 'ASSET', subtype: 'CURRENT_ASSET', normalBalance: 'DEBIT', isPostable: true, isActive: true, parentId: null }];
 const partners = [{ id: 'c1', code: 'CUST-1', name: 'Toko A', isCustomer: true, isVendor: false, isActive: true }];

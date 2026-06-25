@@ -1,5 +1,6 @@
 import { createResourceHooks } from '@/lib/crud/createResourceHooks';
 import { useDocumentAction } from '@/lib/crud/useDocumentAction';
+import { queryKeys } from '@/lib/query/keys';
 import {
   salesInvoiceSchema,
   type SalesInvoice,
@@ -12,11 +13,11 @@ export const salesInvoicesApi = createResourceHooks<
   SalesInvoiceCreatePayload,
   SalesInvoiceUpdatePayload
 >({
-  key: 'salesInvoices',
+  keys: queryKeys.salesInvoices,
   basePath: '/sales-invoices',
   itemSchema: salesInvoiceSchema,
   paginated: true,
 });
 
-export const usePostInvoice = () => useDocumentAction({ key: 'salesInvoices', basePath: '/sales-invoices', action: 'post' });
-export const useVoidInvoice = () => useDocumentAction({ key: 'salesInvoices', basePath: '/sales-invoices', action: 'void' });
+export const usePostInvoice = () => useDocumentAction({ keys: queryKeys.salesInvoices, basePath: '/sales-invoices', action: 'post' });
+export const useVoidInvoice = () => useDocumentAction({ keys: queryKeys.salesInvoices, basePath: '/sales-invoices', action: 'void' });
