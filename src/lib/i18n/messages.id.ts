@@ -41,6 +41,8 @@ export const id = {
   auth: {
     signIn: 'Masuk',
     signOut: 'Keluar',
+    signOutAllDevices: 'Keluar dari semua perangkat',
+    accountMenu: 'Menu akun',
     email: 'Email',
     password: 'Kata sandi',
     loginTitle: 'Masuk ke Buku',

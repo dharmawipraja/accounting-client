@@ -9,6 +9,9 @@ import {
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, expect, it } from 'vitest';
+import { http, HttpResponse } from 'msw';
+import { API } from '@/test/handlers';
+import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
 import { usePreferences } from '@/stores/preferences';
 import { AppShell } from './AppShell';
@@ -74,15 +77,44 @@ it('renders the app name and the current user email', async () => {
   expect(screen.getByText('content')).toBeInTheDocument();
 });
 
-it('clears the session and navigates to /login on sign-out', async () => {
+it('signs out the current device and navigates to /login', async () => {
   useSession.getState().setTokens({ accessToken: 'tok-abc', refreshToken: 'ref-abc' });
   useSession.getState().setUser({ id: '2', email: 'user@buku.id', role: 'VIEWER' });
+  let loggedOut = false;
+  server.use(
+    http.post(`${API}/auth/logout`, () => {
+      loggedOut = true;
+      return HttpResponse.json({ ok: true });
+    }),
+  );
   renderWithLoginRoute();
 
-  await userEvent.click(await screen.findByRole('button', { name: 'Keluar' }));
+  await userEvent.click(await screen.findByRole('button', { name: 'Menu akun' }));
+  await userEvent.click(await screen.findByRole('menuitem', { name: 'Keluar' }));
 
   expect(useSession.getState().accessToken).toBeNull();
   await screen.findByTestId('login');
+  expect(loggedOut).toBe(true);
+});
+
+it('signs out of all devices and navigates to /login', async () => {
+  useSession.getState().setTokens({ accessToken: 'tok-abc', refreshToken: 'ref-abc' });
+  useSession.getState().setUser({ id: '2', email: 'user@buku.id', role: 'VIEWER' });
+  let loggedOutAll = false;
+  server.use(
+    http.post(`${API}/auth/logout-all`, () => {
+      loggedOutAll = true;
+      return HttpResponse.json({ ok: true });
+    }),
+  );
+  renderWithLoginRoute();
+
+  await userEvent.click(await screen.findByRole('button', { name: 'Menu akun' }));
+  await userEvent.click(await screen.findByRole('menuitem', { name: 'Keluar dari semua perangkat' }));
+
+  expect(useSession.getState().accessToken).toBeNull();
+  await screen.findByTestId('login');
+  expect(loggedOutAll).toBe(true);
 });
 
 it('toggles the sidebar collapsed state and persists it', async () => {

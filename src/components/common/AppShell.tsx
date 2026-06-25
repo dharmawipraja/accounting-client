@@ -17,6 +17,13 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { logoutCurrentDevice, logoutAllDevices } from '@/lib/api/logout';
 import { useHydrateSession } from '@/features/auth/useHydrateSession';
 import { useT } from '@/lib/i18n/useT';
 import { cn } from '@/lib/utils';
@@ -34,6 +41,17 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   // Hydrate user from /auth/me on mount/reload if token exists but no user yet.
   useHydrateSession();
+
+  async function handleSignOut() {
+    await logoutCurrentDevice();
+    clear();
+    void navigate({ to: '/login' });
+  }
+  async function handleSignOutAll() {
+    await logoutAllDevices();
+    clear();
+    void navigate({ to: '/login' });
+  }
 
   const nav = [
     { to: '/dashboard', label: t.nav.dashboard, icon: LayoutDashboard },
@@ -123,17 +141,21 @@ export function AppShell({ children }: { children: ReactNode }) {
         <header className="flex h-14 items-center justify-end gap-3 border-b px-6">
           <span className="text-sm text-muted-foreground">{user?.email}</span>
           <ThemeToggle />
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={t.auth.signOut}
-            onClick={() => {
-              clear();
-              void navigate({ to: '/login' });
-            }}
-          >
-            <LogOut className="size-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label={t.auth.accountMenu}>
+                <LogOut className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onSelect={() => void handleSignOut()}>
+                {t.auth.signOut}
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => void handleSignOutAll()}>
+                {t.auth.signOutAllDevices}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </header>
         <main className="flex-1 overflow-auto p-6">{children}</main>
       </div>
