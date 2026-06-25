@@ -6,16 +6,14 @@ import { z } from 'zod';
 import { API } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
-import { createResourceHooks, createResourceKeys } from './createResourceHooks';
+import { createMasterDataHooks, createDocumentHooks, createResourceKeys } from './createResourceHooks';
 import { partnersApi } from '@/features/partners/hooks';
 
 const widgetSchema = z.object({ id: z.string(), name: z.string() });
 type Widget = z.infer<typeof widgetSchema>;
-const widgets = createResourceHooks<Widget, { name: string }, { name: string }>({
-  keys: createResourceKeys('widgets'),
-  basePath: '/widgets',
-  itemSchema: widgetSchema,
-});
+const cfg = (key: string, basePath: string) => ({ keys: createResourceKeys(key), basePath, itemSchema: widgetSchema });
+const masterWidgets = createMasterDataHooks<Widget, { name: string }, { name: string }>(cfg('widgets', '/widgets'));
+const docWidgets = createDocumentHooks<Widget, { name: string }, { name: string }>(cfg('docwidgets', '/docwidgets'));
 
 function wrapper({ children }: { children: React.ReactNode }) {
   const qc = new QueryClient({
@@ -36,10 +34,16 @@ describe('createResourceKeys', () => {
   });
 });
 
-describe('createResourceHooks', () => {
+describe('createMasterDataHooks', () => {
+  it('exposes activate/deactivate and no detail-item hook', () => {
+    expect(masterWidgets).toHaveProperty('useActivate');
+    expect(masterWidgets).toHaveProperty('useDeactivate');
+    expect(masterWidgets).not.toHaveProperty('useItem');
+  });
+
   it('useList fetches and parses a bare array', async () => {
     server.use(http.get(`${API}/widgets`, () => HttpResponse.json([{ id: '1', name: 'A' }])));
-    const { result } = renderHook(() => widgets.useList(), { wrapper });
+    const { result } = renderHook(() => masterWidgets.useList(), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual([{ id: '1', name: 'A' }]);
   });
@@ -57,7 +61,7 @@ describe('createResourceHooks', () => {
       }),
     );
     const { result } = renderHook(
-      () => ({ list: widgets.useList(), create: widgets.useCreate() }),
+      () => ({ list: masterWidgets.useList(), create: masterWidgets.useCreate() }),
       { wrapper },
     );
     await waitFor(() => expect(result.current.list.data).toHaveLength(1));
@@ -68,7 +72,7 @@ describe('createResourceHooks', () => {
   it('useDeactivate posts to /:id/deactivate', async () => {
     let hit = '';
     server.use(http.post(`${API}/widgets/9/deactivate`, () => { hit = 'deactivate'; return HttpResponse.json({}); }));
-    const { result } = renderHook(() => widgets.useDeactivate(), { wrapper });
+    const { result } = renderHook(() => masterWidgets.useDeactivate(), { wrapper });
     await result.current.mutateAsync('9');
     expect(hit).toBe('deactivate');
   });
@@ -76,7 +80,30 @@ describe('createResourceHooks', () => {
   it('useRemove deletes /:id', async () => {
     let method = '';
     server.use(http.delete(`${API}/widgets/9`, () => { method = 'DELETE'; return HttpResponse.json({}); }));
-    const { result } = renderHook(() => widgets.useRemove(), { wrapper });
+    const { result } = renderHook(() => masterWidgets.useRemove(), { wrapper });
+    await result.current.mutateAsync('9');
+    expect(method).toBe('DELETE');
+  });
+});
+
+describe('createDocumentHooks', () => {
+  it('exposes a detail-item hook and no activate/deactivate', () => {
+    expect(docWidgets).toHaveProperty('useItem');
+    expect(docWidgets).not.toHaveProperty('useActivate');
+    expect(docWidgets).not.toHaveProperty('useDeactivate');
+  });
+
+  it('useItem fetches and parses a single item', async () => {
+    server.use(http.get(`${API}/docwidgets/9`, () => HttpResponse.json({ id: '9', name: 'Z' })));
+    const { result } = renderHook(() => docWidgets.useItem('9'), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual({ id: '9', name: 'Z' });
+  });
+
+  it('useRemove deletes /:id', async () => {
+    let method = '';
+    server.use(http.delete(`${API}/docwidgets/9`, () => { method = 'DELETE'; return HttpResponse.json({}); }));
+    const { result } = renderHook(() => docWidgets.useRemove(), { wrapper });
     await result.current.mutateAsync('9');
     expect(method).toBe('DELETE');
   });

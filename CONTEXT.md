@@ -52,3 +52,10 @@ A shared `documentHeaderSchema` + `documentLineFormSchema` + `safeAmount` + `EMP
 `src/features/documents/`; each feature's form schema composes from the base (bill `.extend()`s
 `vendorInvoiceNo`). Scope is invoice + bill only — payments (allocations) and journals (balanced
 debit/credit) editors are different shapes and stay separate.
+
+**Resource-hooks factories** *(decision 2026-06-26)*
+The CRUD hook factory is split along the Document / master-data line over a shared
+private `createCrudHooks` core (list/pagedList/create/update/remove): `createMasterDataHooks`
+adds activate/deactivate (no detail view) for accounts/partners/tax-codes;
+`createDocumentHooks` adds `useItem` (no activate/deactivate) for sales-invoices/payments/
+purchase-bills, whose draft/post/void lifecycle transitions go through `useDocumentAction`.

@@ -170,12 +170,3 @@ export function createDocumentHooks<TItem, TCreate = unknown, TUpdate = unknown>
   };
 }
 
-// Transitional: the original union factory, kept so the build stays green while
-// consumers migrate. Removed in the next task. Delegates — no duplicated bodies.
-export function createResourceHooks<TItem, TCreate = unknown, TUpdate = unknown>(
-  config: ResourceConfig<TItem>,
-) {
-  const master = createMasterDataHooks<TItem, TCreate, TUpdate>(config);
-  const doc = createDocumentHooks<TItem, TCreate, TUpdate>(config);
-  return { ...master, useItem: doc.useItem };
-}
