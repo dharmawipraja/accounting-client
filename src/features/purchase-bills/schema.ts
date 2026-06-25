@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { moneyString } from '@/lib/schemas/common';
+import { documentLineFormSchema, documentHeaderSchema, type DocumentLineFormValues } from '@/features/documents/documentFormSchema';
 
 export const purchaseBillLineSchema = z.object({
   id: z.string(),
@@ -39,25 +40,10 @@ export const purchaseBillSchema = z.object({
 });
 export type PurchaseBill = z.infer<typeof purchaseBillSchema>;
 
-const numericString = (msg: string) => z.string().regex(/^\d+(\.\d+)?$/, msg);
+export const billLineFormSchema = documentLineFormSchema;
+export type BillLineFormValues = DocumentLineFormValues;
 
-export const billLineFormSchema = z.object({
-  description: z.string().min(1),
-  accountId: z.string().min(1, 'selectAccount'),
-  quantity: numericString('invalidQuantity').refine((v) => Number(v) > 0, 'invalidQuantity'),
-  unitPrice: numericString('invalidPrice'),
-  taxCodeIds: z.array(z.string()),
-});
-export type BillLineFormValues = z.infer<typeof billLineFormSchema>;
-
-export const billFormSchema = z.object({
-  partnerId: z.string().min(1, 'selectPartner'),
-  date: z.string().min(1, 'required'),
-  dueDate: z.string(),
-  vendorInvoiceNo: z.string(),
-  description: z.string(),
-  lines: z.array(billLineFormSchema).min(1, 'atLeastOneLine'),
-});
+export const billFormSchema = documentHeaderSchema.extend({ vendorInvoiceNo: z.string() });
 export type BillFormValues = z.infer<typeof billFormSchema>;
 
 export type PurchaseBillCreatePayload = {
