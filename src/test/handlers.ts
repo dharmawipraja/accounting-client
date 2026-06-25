@@ -127,6 +127,8 @@ export const handlers = [
     }
     return HttpResponse.json({ accessToken: 'access-1', refreshToken: 'refresh-1' });
   }),
+  http.post(`${API}/auth/logout`, () => HttpResponse.json({ ok: true })),
+  http.post(`${API}/auth/logout-all`, () => HttpResponse.json({ ok: true })),
   http.get(`${API}/auth/me`, ({ request }) => {
     const auth = request.headers.get('Authorization');
     if (!auth?.startsWith('Bearer ')) {
