@@ -1,26 +1,30 @@
 import { toast } from 'sonner';
 import type { Messages } from '@/lib/i18n/messages.id';
-import { ApiError } from './errors';
+import { classifyApiError } from './classifyApiError';
 
 /** Surface an API error as a toast (for action/confirm contexts, not forms). */
 export function toastApiError(error: unknown, t: Messages): void {
-  if (!(error instanceof ApiError)) {
-    toast.error(t.common.error);
-    return;
+  const { kind, error: e } = classifyApiError(error);
+  switch (kind) {
+    case 'segregationOfDuties':
+      toast.error(t.roles.segregationOfDuties);
+      return;
+    case 'forbidden':
+      toast.error(t.roles.forbidden);
+      return;
+    case 'closedPeriod':
+      toast.error(t.crud.closedPeriod);
+      return;
+    case 'closedYear':
+      toast.error(t.crud.closedYear);
+      return;
+    default:
+      if (e) {
+        toast.error(e.message || t.common.error, {
+          description: e.traceId ? `${t.common.reference}: ${e.traceId}` : undefined,
+        });
+      } else {
+        toast.error(t.common.error);
+      }
   }
-  if (error.status === 403) {
-    toast.error(error.code === 'SEGREGATION_OF_DUTIES' ? t.roles.segregationOfDuties : t.roles.forbidden);
-    return;
-  }
-  if (error.status === 409 && error.code === 'CLOSED_PERIOD') {
-    toast.error(t.crud.closedPeriod);
-    return;
-  }
-  if (error.status === 409 && error.code === 'CLOSED_YEAR') {
-    toast.error(t.crud.closedYear);
-    return;
-  }
-  toast.error(error.message || t.common.error, {
-    description: error.traceId ? `${t.common.reference}: ${error.traceId}` : undefined,
-  });
 }
