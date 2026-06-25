@@ -138,7 +138,7 @@ export const handlers = [
   }),
   http.get(`${API}/ledger/accounts`, ({ request }) => {
     const u = new URL(request.url).searchParams;
-    return HttpResponse.json(paged(accountFixtures(), Number(u.get('limit') ?? 200), Number(u.get('offset') ?? 0)));
+    return HttpResponse.json(paged(accountFixtures(), Number(u.get('limit') || 200), Number(u.get('offset') || 0)));
   }),
   http.post(`${API}/ledger/accounts`, async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;
@@ -175,7 +175,7 @@ export const handlers = [
 
   http.get(`${API}/tax/codes`, ({ request }) => {
     const u = new URL(request.url).searchParams;
-    return HttpResponse.json(paged(taxCodeFixtures(), Number(u.get('limit') ?? 200), Number(u.get('offset') ?? 0)));
+    return HttpResponse.json(paged(taxCodeFixtures(), Number(u.get('limit') || 200), Number(u.get('offset') || 0)));
   }),
   http.post(`${API}/tax/codes`, async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;

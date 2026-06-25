@@ -38,6 +38,12 @@ it('logoutCurrentDevice swallows server errors (never throws)', async () => {
   await expect(logoutCurrentDevice()).resolves.toBeUndefined();
 });
 
+it('logoutCurrentDevice swallows network errors (never throws)', async () => {
+  useSession.getState().setTokens({ accessToken: 'a', refreshToken: 'ref' });
+  server.use(http.post(`${API}/auth/logout`, () => HttpResponse.error()));
+  await expect(logoutCurrentDevice()).resolves.toBeUndefined();
+});
+
 it('logoutAllDevices POSTs /auth/logout-all with the bearer token', async () => {
   useSession.getState().setTokens({ accessToken: 'tok-1', refreshToken: 'r' });
   let auth: string | null = null;

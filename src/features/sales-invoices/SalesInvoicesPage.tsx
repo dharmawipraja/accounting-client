@@ -78,7 +78,7 @@ export function SalesInvoicesPage() {
 
       <div className="mb-4 flex flex-wrap gap-2">
         <div className="max-w-xs space-y-1">
-          <Input placeholder={t.common.search} value={search} onChange={(e) => setSearch(e.target.value)} />
+          <Input placeholder={t.common.search} value={search} onChange={(e) => { setSearch(e.target.value); setOffset(0); }} />
           <p className="text-xs text-muted-foreground">{t.common.searchOnThisPage}</p>
         </div>
         <div className="flex gap-1">
