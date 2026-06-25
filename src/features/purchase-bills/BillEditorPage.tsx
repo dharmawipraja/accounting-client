@@ -6,20 +6,22 @@ import { BackLink } from '@/components/common/BackLink';
 import { QueryState } from '@/components/common/QueryState';
 import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { useT } from '@/lib/i18n/useT';
-import { BillForm } from './BillForm';
+import { DocumentEditor } from '@/features/documents/DocumentEditor';
+import { useBillEditorConfig } from './editorConfig';
 import { purchaseBillsApi } from './hooks';
 
 export function BillEditorPage({ id }: { id?: string }) {
   const t = useT();
   const navigate = useNavigate();
   const goList = () => navigate({ to: '/purchase-bills' });
+  const config = useBillEditorConfig();
   const item = purchaseBillsApi.useItem(id ?? '');
 
   if (!id) {
     return (
       <div>
         <PageHeader title={t.purchaseBills.newBill} back={<BackLink to="/purchase-bills" label={t.nav.purchaseBills} />} />
-        <BillForm mode="create" onSaved={goList} />
+        <DocumentEditor config={config} mode="create" onSaved={goList} />
       </div>
     );
   }
@@ -42,7 +44,7 @@ export function BillEditorPage({ id }: { id?: string }) {
         return (
           <div>
             <PageHeader title={readOnly ? t.purchaseBills.view : t.purchaseBills.editBill} back={<BackLink to="/purchase-bills" label={t.nav.purchaseBills} />} />
-            <BillForm mode="edit" bill={data} onSaved={goList} readOnly={readOnly} />
+            <DocumentEditor config={config} mode="edit" doc={data} onSaved={goList} readOnly={readOnly} />
           </div>
         );
       }}

@@ -6,7 +6,13 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
-import { BillForm } from './BillForm';
+import { DocumentEditor } from '@/features/documents/DocumentEditor';
+import { useBillEditorConfig } from './editorConfig';
+
+function BillEditorHarness(props: { mode: 'create' | 'edit'; bill?: import('./schema').PurchaseBill; onSaved: () => void; startEmpty?: boolean; readOnly?: boolean }) {
+  const config = useBillEditorConfig();
+  return <DocumentEditor config={config} mode={props.mode} doc={props.bill} onSaved={props.onSaved} startEmpty={props.startEmpty} readOnly={props.readOnly} />;
+}
 
 afterEach(() => useSession.getState().clear());
 
@@ -35,7 +41,7 @@ it('creates a draft: vendor + line → posts the purchase payload with vendorInv
     return HttpResponse.json({ id: 'b9', billNumber: null, billRef: null, vendorInvoiceNo: 'VINV-1', partnerId: 'v1', date: '2026-06-15T00:00:00.000Z', dueDate: null, description: 'x', status: 'DRAFT', subtotal: '0.0000', taxTotal: '0.0000', withholdingTotal: '0.0000', total: '0.0000', amountPaid: '0.0000', outstanding: '0.0000', paymentStatus: 'UNPAID', lines: [] });
   }));
   const onSaved = vi.fn();
-  renderForm(<BillForm mode="create" onSaved={onSaved} />);
+  renderForm(<BillEditorHarness mode="create" onSaved={onSaved} />);
 
   await user.click(screen.getByRole('combobox', { name: /vendor/i }));
   await user.click(await screen.findByRole('option', { name: /VEND-1/i }));
@@ -63,7 +69,7 @@ it('blocks save with no lines / no partner', async () => {
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/tax/codes`, () => HttpResponse.json(paged([]))),
   );
-  renderForm(<BillForm mode="create" onSaved={vi.fn()} startEmpty />);
+  renderForm(<BillEditorHarness mode="create" onSaved={vi.fn()} startEmpty />);
   await user.click(screen.getByRole('button', { name: /simpan draf/i }));
   expect((await screen.findAllByText(/minimal satu baris|pilih vendor|wajib diisi/i)).length).toBeGreaterThan(0);
 });

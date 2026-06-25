@@ -5,8 +5,14 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
-import { BillForm } from './BillForm';
+import { DocumentEditor } from '@/features/documents/DocumentEditor';
+import { useBillEditorConfig } from './editorConfig';
 import type { PurchaseBill } from './schema';
+
+function BillEditorHarness(props: { mode: 'create' | 'edit'; bill?: PurchaseBill; onSaved: () => void; startEmpty?: boolean; readOnly?: boolean }) {
+  const config = useBillEditorConfig();
+  return <DocumentEditor config={config} mode={props.mode} doc={props.bill} onSaved={props.onSaved} startEmpty={props.startEmpty} readOnly={props.readOnly} />;
+}
 
 afterEach(() => useSession.getState().clear());
 
@@ -30,7 +36,7 @@ it('renders a posted bill read-only: disabled fields, banner, no Save', async ()
     http.get(`${API}/partners`, () => HttpResponse.json({ data: [{ id: 'v1', code: 'VEND-1', name: 'PT Pemasok', isCustomer: false, isVendor: true, isActive: true }], total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/tax/codes`, () => HttpResponse.json(paged([]))),
   );
-  renderForm(<BillForm mode="edit" bill={posted} onSaved={vi.fn()} readOnly />);
+  renderForm(<BillEditorHarness mode="edit" bill={posted} onSaved={vi.fn()} readOnly />);
   expect(await screen.findByText(/hanya-baca/i)).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: /simpan draf/i })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: /tambah baris/i })).not.toBeInTheDocument();
