@@ -5,4 +5,5 @@ export const taxCodesApi = createResourceHooks<TaxCode, TaxCodeCreatePayload, Ta
   key: 'taxCodes',
   basePath: '/tax/codes',
   itemSchema: taxCodeSchema,
+  paginated: true,
 });

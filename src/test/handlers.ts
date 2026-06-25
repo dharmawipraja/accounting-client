@@ -2,6 +2,15 @@ import { http, HttpResponse } from 'msw';
 
 export const API = 'http://localhost:4000/v1';
 
+/**
+ * Wrap an array as the `{ data, total, limit, offset }` pagination envelope the
+ * API now returns for every enveloped list endpoint. Slices by limit/offset so
+ * handlers that read those query params return the correct page.
+ */
+export function paged<T>(data: T[], limit = 200, offset = 0) {
+  return { data: data.slice(offset, offset + limit), total: data.length, limit, offset };
+}
+
 // --- accounts (Plan 2a) ---
 export const accountFixtures = () => [
   { id: 'a1', code: '1-1000', name: 'Kas', type: 'ASSET', subtype: 'CURRENT_ASSET', normalBalance: 'DEBIT', cashFlowCategory: 'OPERATING', isPostable: true, isActive: true, parentId: null },
@@ -125,7 +134,10 @@ export const handlers = [
     }
     return HttpResponse.json({ id: 'u1', email: 'admin@buku.id', role: 'ADMIN' });
   }),
-  http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accountFixtures())),
+  http.get(`${API}/ledger/accounts`, ({ request }) => {
+    const u = new URL(request.url).searchParams;
+    return HttpResponse.json(paged(accountFixtures(), Number(u.get('limit') ?? 200), Number(u.get('offset') ?? 0)));
+  }),
   http.post(`${API}/ledger/accounts`, async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;
     if (body.code === '1-1000') {
@@ -159,7 +171,10 @@ export const handlers = [
   http.post(`${API}/partners/:id/deactivate`, () => HttpResponse.json({})),
   http.delete(`${API}/partners/:id`, () => HttpResponse.json({})),
 
-  http.get(`${API}/tax/codes`, () => HttpResponse.json(taxCodeFixtures())),
+  http.get(`${API}/tax/codes`, ({ request }) => {
+    const u = new URL(request.url).searchParams;
+    return HttpResponse.json(paged(taxCodeFixtures(), Number(u.get('limit') ?? 200), Number(u.get('offset') ?? 0)));
+  }),
   http.post(`${API}/tax/codes`, async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;
     if (body.code === 'DUP') return HttpResponse.json({ code: 'CONFLICT', message: 'dup' }, { status: 409 });

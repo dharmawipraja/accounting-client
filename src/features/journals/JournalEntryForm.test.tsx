@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it, vi } from 'vitest';
-import { API } from '@/test/handlers';
+import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
 import { JournalEntryForm } from './JournalEntryForm';
@@ -23,7 +23,7 @@ function renderForm(ui: React.ReactNode) {
 it('creates a balanced entry: debit + credit across two accounts → posts the payload', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
-  server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)));
+  server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
   let posted: Record<string, unknown> | null = null;
   server.use(http.post(`${API}/ledger/journal-entries`, async ({ request }) => {
     posted = (await request.json()) as Record<string, unknown>;
@@ -54,7 +54,7 @@ it('creates a balanced entry: debit + credit across two accounts → posts the p
 it('keeps Save disabled while unbalanced', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
-  server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)));
+  server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
   renderForm(<JournalEntryForm onSaved={vi.fn()} />);
   expect(screen.getByRole('button', { name: /simpan/i })).toBeDisabled();
   await user.click(screen.getAllByRole('combobox', { name: /akun/i })[0]);

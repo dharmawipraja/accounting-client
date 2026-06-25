@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it, vi } from 'vitest';
-import { API } from '@/test/handlers';
+import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
 import { InvoiceForm } from './InvoiceForm';
@@ -25,9 +25,9 @@ it('creates a draft: picks partner + line and posts the lines payload', async ()
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
   server.use(
-    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
+    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: partners.length, limit: 200, offset: 0 })),
-    http.get(`${API}/tax/codes`, () => HttpResponse.json([])),
+    http.get(`${API}/tax/codes`, () => HttpResponse.json(paged([]))),
   );
   let posted: Record<string, unknown> | null = null;
   server.use(http.post(`${API}/sales-invoices`, async ({ request }) => {
@@ -62,9 +62,9 @@ it('blocks save with no lines / no partner', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
   server.use(
-    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
+    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: partners.length, limit: 200, offset: 0 })),
-    http.get(`${API}/tax/codes`, () => HttpResponse.json([])),
+    http.get(`${API}/tax/codes`, () => HttpResponse.json(paged([]))),
   );
   renderForm(<InvoiceForm mode="create" onSaved={vi.fn()} startEmpty />);
   await user.click(screen.getByRole('button', { name: /simpan draf/i }));

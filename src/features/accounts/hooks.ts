@@ -5,4 +5,5 @@ export const accountsApi = createResourceHooks<Account, AccountCreatePayload, Ac
   key: 'accounts',
   basePath: '/ledger/accounts',
   itemSchema: accountSchema,
+  paginated: true,
 });

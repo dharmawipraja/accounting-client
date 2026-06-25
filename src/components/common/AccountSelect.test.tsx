@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it, vi } from 'vitest';
-import { API } from '@/test/handlers';
+import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
 import { AccountSelect } from './AccountSelect';
@@ -24,7 +24,7 @@ const accounts = [
 it('lists only postable + active accounts and selects by id', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
-  server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)));
+  server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
   const onChange = vi.fn();
   renderSelect(<AccountSelect onChange={onChange} placeholder="Pilih akun" />);
 

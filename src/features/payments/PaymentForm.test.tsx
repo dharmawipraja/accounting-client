@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it, vi } from 'vitest';
-import { API, openInvoiceFixture } from '@/test/handlers';
+import { API, openInvoiceFixture, paged } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
 import { PaymentForm } from './PaymentForm';
@@ -21,7 +21,7 @@ function renderForm(ui: React.ReactNode) {
 
 function commonHandlers() {
   server.use(
-    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
+    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [openInvoiceFixture()], total: 1, limit: 200, offset: 0 })),
   );
@@ -95,7 +95,7 @@ it('allocates via Lunasi and posts the DISBURSEMENT payload', async () => {
   const vendor = [{ id: 'v1', code: 'VEND-1', name: 'PT Pemasok', isCustomer: false, isVendor: true, isActive: true }];
   const openBill = { id: 'b1', billNumber: 1, billRef: 'BILL/2026/000001', fiscalYear: 2026, vendorInvoiceNo: null, partnerId: 'v1', date: '2026-06-15T00:00:00.000Z', dueDate: '2026-07-15T00:00:00.000Z', description: null, status: 'POSTED', subtotal: '1000000.0000', taxTotal: '0.0000', withholdingTotal: '0.0000', total: '1000000.0000', amountPaid: '0.0000', outstanding: '1000000.0000', paymentStatus: 'UNPAID', lines: [] };
   server.use(
-    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
+    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: vendor, total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [], total: 0, limit: 200, offset: 0 })),
     http.get(`${API}/purchase-bills`, () => HttpResponse.json({ data: [openBill], total: 1, limit: 200, offset: 0 })),

@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it, vi } from 'vitest';
-import { API } from '@/test/handlers';
+import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
 import { TaxCodeFormDialog } from './TaxCodeFormDialog';
@@ -22,7 +22,7 @@ function renderDialog(ui: React.ReactNode) {
 it('submits rate as a fraction and the selected account id', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
-  server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)));
+  server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
   let posted: Record<string, unknown> | null = null;
   server.use(
     http.post(`${API}/tax/codes`, async ({ request }) => {

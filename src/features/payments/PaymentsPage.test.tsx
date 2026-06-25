@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it, vi } from 'vitest';
 import { toast } from 'sonner';
-import { API } from '@/test/handlers';
+import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
 import { id as messages } from '@/lib/i18n/messages.id';
@@ -34,7 +34,7 @@ it('lists payments with partner + cash-account joins; ACCOUNTANT no Posting', as
   server.use(
     http.get(`${API}/payments`, () => HttpResponse.json({ data: [draftPayment], total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
-    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
+    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
   );
   renderPage();
   expect(await screen.findByText('Toko A')).toBeInTheDocument();
@@ -49,7 +49,7 @@ it('APPROVER posts a draft payment with an idempotency key', async () => {
   server.use(
     http.get(`${API}/payments`, () => HttpResponse.json({ data: [draftPayment], total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
-    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
+    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
     http.post(`${API}/payments/pay1/post`, ({ request }) => { seenKey = request.headers.get('Idempotency-Key'); return HttpResponse.json({ ...draftPayment, status: 'POSTED', number: 1, ref: 'PAY-RCV/2026/000001', fiscalYear: 2026 }); }),
   );
   renderPage();
@@ -67,7 +67,7 @@ it('APPROVER voids a posted payment with an idempotency key', async () => {
   server.use(
     http.get(`${API}/payments`, () => HttpResponse.json({ data: [postedPayment], total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
-    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
+    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
     http.post(`${API}/payments/pay1/void`, ({ request }) => { seenKey = request.headers.get('Idempotency-Key'); return HttpResponse.json({ ...postedPayment, status: 'VOID' }); }),
   );
   renderPage();
@@ -85,7 +85,7 @@ it('shows the SoD message when post returns 403 SEGREGATION_OF_DUTIES', async ()
   server.use(
     http.get(`${API}/payments`, () => HttpResponse.json({ data: [draftPayment], total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
-    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
+    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
     http.post(`${API}/payments/pay1/post`, () => HttpResponse.json({ code: 'SEGREGATION_OF_DUTIES', message: 'no self-approve' }, { status: 403 })),
   );
   renderPage();
@@ -109,7 +109,7 @@ it('filters by direction and shows both create buttons', async () => {
       return HttpResponse.json({ data, total: data.length, limit: 20, offset: 0 });
     }),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: allPartners, total: 2, limit: 200, offset: 0 })),
-    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(accounts)),
+    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
   );
   renderPage();
   expect(await screen.findByText('Toko A')).toBeInTheDocument();        // receipt row

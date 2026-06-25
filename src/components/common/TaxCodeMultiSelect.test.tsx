@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it, vi } from 'vitest';
-import { API } from '@/test/handlers';
+import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
 import { TaxCodeMultiSelect } from './TaxCodeMultiSelect';
@@ -24,7 +24,7 @@ const codes = [
 it('offers only allowed kinds and toggles selection by id', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
-  server.use(http.get(`${API}/tax/codes`, () => HttpResponse.json(codes)));
+  server.use(http.get(`${API}/tax/codes`, () => HttpResponse.json(paged(codes))));
   const onChange = vi.fn();
   renderMS(<TaxCodeMultiSelect value={[]} onChange={onChange} allowedKinds={['PPN_OUTPUT', 'PPH_PREPAID']} aria-label="Pajak" />);
   await user.click(screen.getByRole('combobox', { name: /pajak/i }));
