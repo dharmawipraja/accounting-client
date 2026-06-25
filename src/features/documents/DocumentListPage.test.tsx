@@ -30,7 +30,7 @@ const useDocs = (q: Record<string, string | number | undefined>): UseQueryResult
 const usePostInvoiceLike = () => useDocumentAction({ key: 'test-docs', basePath: '/test-docs', action: 'post' });
 const useRemoveLike = () => salesInvoicesApi.useRemove();
 
-function makeConfig(): DocumentListConfig<Doc> {
+function useTestConfig(): DocumentListConfig<Doc> {
   // mutations come from the real sales-invoices hooks so we exercise the live POST + idempotency path
   // (the synthetic /test-docs/:id/post handler stands in for the resource).
   const post = usePostInvoiceLike();
@@ -62,7 +62,7 @@ function makeConfig(): DocumentListConfig<Doc> {
 }
 
 function Harness() {
-  return <DocumentListPage config={makeConfig()} />;
+  return <DocumentListPage config={useTestConfig()} />;
 }
 
 function renderPage() {
@@ -139,7 +139,7 @@ it('resets offset to 0 when a status filter is clicked', async () => {
   await waitFor(() => expect(lastQuery?.get('offset')).toBe('20'));
   await user.click(screen.getByRole('button', { name: 'Draf' }));        // filter → offset 0 + status=DRAFT
   await waitFor(() => expect(lastQuery?.get('offset')).toBe('0'));
-  expect(lastQuery?.get('status')).toBe('DRAFT');
+  expect(lastQuery!.get('status')).toBe('DRAFT');
 });
 
 it('applies page-scoped search over the loaded page', async () => {

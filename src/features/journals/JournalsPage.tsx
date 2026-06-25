@@ -8,6 +8,15 @@ import { buildJournalColumns } from './columns';
 import { useJournalEntries, useDeleteJournalEntry, usePostJournalEntry, useReverseJournalEntry } from './hooks';
 import type { JournalEntryListItem } from './schema';
 
+function useJournalEntriesList(q: Record<string, string | number | undefined>) {
+  return useJournalEntries({
+    status: q.status as string | undefined,
+    sourceType: q.sourceType as string | undefined,
+    limit: q.limit as number,
+    offset: q.offset as number,
+  });
+}
+
 export function JournalsPage({ initialStatus }: { initialStatus?: 'DRAFT' | 'POSTED' } = {}) {
   const t = useT();
   const remove = useDeleteJournalEntry();
@@ -17,14 +26,7 @@ export function JournalsPage({ initialStatus }: { initialStatus?: 'DRAFT' | 'POS
   const config: DocumentListConfig<JournalEntryListItem> = {
     title: t.journals.title,
     colCount: 5,
-    // adapter: useJournalEntries takes named numeric params; the controller passes a generic query record
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    list: (q) => useJournalEntries({
-      status: q.status as string | undefined,
-      sourceType: q.sourceType as string | undefined,
-      limit: q.limit as number,
-      offset: q.offset as number,
-    }),
+    list: useJournalEntriesList,
     columns: (h) => buildJournalColumns(t, { onDelete: h.onDelete!, onPost: h.onPost!, onReverse: h.onReverse! }),
     actions: {
       delete: { mutation: remove, success: t.journals.deleted, confirm: { title: t.crud.confirmDeleteTitle, description: t.crud.confirmDeleteDesc, label: t.common.delete } },

@@ -61,8 +61,7 @@ it('mints an idempotency key for post but not for delete', () => {
 
 it('resets offset to 0 on filter change and on search change', () => {
   const listSpy = vi.fn();
-  let handlers!: ActionHandlers<Doc>;
-  const config = makeConfig({}, (h) => { handlers = h; }, listSpy);
+  const config = makeConfig({}, () => {}, listSpy);
   const { result } = renderHook(() => useDocumentListController(config));
 
   act(() => result.current.setOffset(40));
