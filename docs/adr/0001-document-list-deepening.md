@@ -58,6 +58,11 @@ error-routing are **derived from the lifecycle-action kind**, not configured. Ho
   versa), add a per-action override — do not re-open the scope.
 - **Do not re-suggest** folding master-data list pages into this module, or splitting it into
   externally-composable parts, without new evidence that overturns the reasoning above.
+- **Behavior delta (deliberate, recorded 2026-06-25):** the deepened controller closes the
+  confirm dialog on a failed **delete**. The old per-page code left the dialog open on a delete
+  error while already closing it on post/void/reverse errors — an inconsistency. The controller
+  makes all lifecycle actions consistent (close on both success and error). No test asserted the
+  old open-on-delete-error behavior.
 
 > Records a decision from the 2026-06-25 architecture review. The design is converged but not yet
 > implemented; implementation is a separate spec → plan → build cycle.
