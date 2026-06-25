@@ -5,8 +5,14 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
-import { InvoiceForm } from './InvoiceForm';
+import { DocumentEditor } from '@/features/documents/DocumentEditor';
+import { useInvoiceEditorConfig } from './editorConfig';
 import type { SalesInvoice } from './schema';
+
+function InvoiceEditorHarness(props: { mode: 'create' | 'edit'; invoice?: SalesInvoice; onSaved: () => void; startEmpty?: boolean; readOnly?: boolean }) {
+  const config = useInvoiceEditorConfig();
+  return <DocumentEditor config={config} mode={props.mode} doc={props.invoice} onSaved={props.onSaved} startEmpty={props.startEmpty} readOnly={props.readOnly} />;
+}
 
 afterEach(() => useSession.getState().clear());
 
@@ -30,7 +36,7 @@ it('renders a posted invoice read-only: disabled fields, banner, no Save', async
     http.get(`${API}/partners`, () => HttpResponse.json({ data: [{ id: 'c1', code: 'CUST-1', name: 'Toko A', isCustomer: true, isVendor: false, isActive: true }], total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/tax/codes`, () => HttpResponse.json(paged([]))),
   );
-  renderForm(<InvoiceForm mode="edit" invoice={posted} onSaved={vi.fn()} readOnly />);
+  renderForm(<InvoiceEditorHarness mode="edit" invoice={posted} onSaved={vi.fn()} readOnly />);
   expect(await screen.findByText(/hanya-baca/i)).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: /simpan draf/i })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: /tambah baris/i })).not.toBeInTheDocument();

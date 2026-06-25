@@ -6,7 +6,13 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
-import { InvoiceForm } from './InvoiceForm';
+import { DocumentEditor } from '@/features/documents/DocumentEditor';
+import { useInvoiceEditorConfig } from './editorConfig';
+
+function InvoiceEditorHarness(props: { mode: 'create' | 'edit'; invoice?: import('./schema').SalesInvoice; onSaved: () => void; startEmpty?: boolean; readOnly?: boolean }) {
+  const config = useInvoiceEditorConfig();
+  return <DocumentEditor config={config} mode={props.mode} doc={props.invoice} onSaved={props.onSaved} startEmpty={props.startEmpty} readOnly={props.readOnly} />;
+}
 
 afterEach(() => useSession.getState().clear());
 
@@ -40,7 +46,7 @@ it('creates a draft: picks partner + line and posts the lines payload', async ()
     });
   }));
   const onSaved = vi.fn();
-  renderForm(<InvoiceForm mode="create" onSaved={onSaved} />);
+  renderForm(<InvoiceEditorHarness mode="create" onSaved={onSaved} />);
 
   await user.click(screen.getByRole('combobox', { name: /pelanggan/i }));
   await user.click(await screen.findByRole('option', { name: /CUST-1/i }));
@@ -66,7 +72,7 @@ it('blocks save with no lines / no partner', async () => {
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: partners.length, limit: 200, offset: 0 })),
     http.get(`${API}/tax/codes`, () => HttpResponse.json(paged([]))),
   );
-  renderForm(<InvoiceForm mode="create" onSaved={vi.fn()} startEmpty />);
+  renderForm(<InvoiceEditorHarness mode="create" onSaved={vi.fn()} startEmpty />);
   await user.click(screen.getByRole('button', { name: /simpan draf/i }));
   // empty submit shows the line/partner/date validation errors
   expect((await screen.findAllByText(/minimal satu baris|pilih pelanggan|wajib diisi/i)).length).toBeGreaterThan(0);

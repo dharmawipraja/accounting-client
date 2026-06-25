@@ -6,20 +6,22 @@ import { BackLink } from '@/components/common/BackLink';
 import { QueryState } from '@/components/common/QueryState';
 import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { useT } from '@/lib/i18n/useT';
-import { InvoiceForm } from './InvoiceForm';
+import { DocumentEditor } from '@/features/documents/DocumentEditor';
+import { useInvoiceEditorConfig } from './editorConfig';
 import { salesInvoicesApi } from './hooks';
 
 export function InvoiceEditorPage({ id }: { id?: string }) {
   const t = useT();
   const navigate = useNavigate();
   const goList = () => navigate({ to: '/sales-invoices' });
+  const config = useInvoiceEditorConfig();
   const item = salesInvoicesApi.useItem(id ?? '');
 
   if (!id) {
     return (
       <div>
         <PageHeader title={t.salesInvoices.newInvoice} back={<BackLink to="/sales-invoices" label={t.nav.salesInvoices} />} />
-        <InvoiceForm mode="create" onSaved={goList} />
+        <DocumentEditor config={config} mode="create" onSaved={goList} />
       </div>
     );
   }
@@ -42,7 +44,7 @@ export function InvoiceEditorPage({ id }: { id?: string }) {
         return (
           <div>
             <PageHeader title={readOnly ? t.salesInvoices.view : t.salesInvoices.editInvoice} back={<BackLink to="/sales-invoices" label={t.nav.salesInvoices} />} />
-            <InvoiceForm mode="edit" invoice={data} onSaved={goList} readOnly={readOnly} />
+            <DocumentEditor config={config} mode="edit" doc={data} onSaved={goList} readOnly={readOnly} />
           </div>
         );
       }}
