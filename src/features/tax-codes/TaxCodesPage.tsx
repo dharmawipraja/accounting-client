@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DataTable } from '@/components/common/DataTable';
 import { PageHeader } from '@/components/common/PageHeader';
+import { Pagination } from '@/components/common/Pagination';
 import { QueryState } from '@/components/common/QueryState';
 import { RoleGate } from '@/components/common/RoleGate';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
@@ -16,9 +17,12 @@ import { TaxCodeFormDialog } from './TaxCodeFormDialog';
 import { taxCodesApi } from './hooks';
 import type { TaxCode } from './schema';
 
+const LIMIT = 20;
+
 export function TaxCodesPage() {
   const t = useT();
-  const list = taxCodesApi.useList();
+  const [offset, setOffset] = useState(0);
+  const page = taxCodesApi.usePagedList({ limit: LIMIT, offset });
   const accounts = accountsApi.useList();
   const deactivate = taxCodesApi.useDeactivate();
   const remove = taxCodesApi.useRemove();
@@ -49,11 +53,6 @@ export function TaxCodesPage() {
     [t, accountLabel, activate],
   );
 
-  const rows = useMemo(() => {
-    const q = search.toLowerCase();
-    return (list.data ?? []).filter((x) => !q || x.code.toLowerCase().includes(q) || x.name.toLowerCase().includes(q));
-  }, [list.data, search]);
-
   function runConfirm() {
     if (!confirm) return;
     const action = confirm.kind === 'deactivate' ? deactivate : remove;
@@ -72,12 +71,24 @@ export function TaxCodesPage() {
         </RoleGate>
       } />
 
-      <div className="mb-4 max-w-xs">
+      <div className="mb-4 max-w-xs space-y-1">
         <Input placeholder={t.common.search} value={search} onChange={(e) => setSearch(e.target.value)} />
+        <p className="text-xs text-muted-foreground">{t.common.searchOnThisPage}</p>
       </div>
 
-      <QueryState query={list} loading={<SkeletonTable rows={8} cols={4} />} onRetry>
-        {() => <DataTable columns={columns} data={rows} />}
+      <QueryState query={page} loading={<SkeletonTable rows={8} cols={4} />} onRetry>
+        {(env) => {
+          const q = search.toLowerCase();
+          const rows = env.data.filter(
+            (x) => !q || x.code.toLowerCase().includes(q) || x.name.toLowerCase().includes(q),
+          );
+          return (
+            <>
+              <DataTable columns={columns} data={rows} />
+              <Pagination offset={offset} limit={LIMIT} total={env.total} onChange={setOffset} />
+            </>
+          );
+        }}
       </QueryState>
 
       <TaxCodeFormDialog open={creating} onOpenChange={setCreating} mode="create" />
