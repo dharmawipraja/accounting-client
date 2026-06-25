@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { PartnerSelect } from '@/components/common/PartnerSelect';
+import { PartnerSelect } from '@/features/partners/PartnerSelect';
 import { applyApiErrorToForm } from '@/lib/api/form-errors';
 import { useT } from '@/lib/i18n/useT';
 import { cn } from '@/lib/utils';

@@ -6,17 +6,18 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { useT } from '@/lib/i18n/useT';
-import { taxCodesApi } from '@/features/tax-codes/hooks';
+import { taxCodesApi } from './hooks';
 
 interface TaxCodeMultiSelectProps {
   value: string[];
   onChange: (ids: string[]) => void;
   allowedKinds: string[];
   disabled?: boolean;
+  placeholder?: string;
   'aria-label'?: string;
 }
 
-export function TaxCodeMultiSelect({ value, onChange, allowedKinds, disabled, 'aria-label': ariaLabel }: TaxCodeMultiSelectProps) {
+export function TaxCodeMultiSelect({ value, onChange, allowedKinds, disabled, placeholder, 'aria-label': ariaLabel }: TaxCodeMultiSelectProps) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const list = taxCodesApi.useList();
@@ -38,7 +39,7 @@ export function TaxCodeMultiSelect({ value, onChange, allowedKinds, disabled, 'a
           disabled={disabled} className="h-auto min-h-9 w-full justify-between font-normal">
           <span className="flex flex-wrap gap-1">
             {selectedCodes.length === 0
-              ? <span className="text-muted-foreground">{t.salesInvoices.taxes}</span>
+              ? <span className="text-muted-foreground">{placeholder ?? t.common.search}</span>
               : selectedCodes.map((c) => <Badge key={c.id} variant="secondary">{c.code}</Badge>)}
           </span>
           <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />

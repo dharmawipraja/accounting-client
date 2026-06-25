@@ -3,7 +3,7 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { PageHeader } from '@/components/common/PageHeader';
 import { BackLink } from '@/components/common/BackLink';
 import { MoneyText } from '@/components/common/MoneyText';
-import { AccountSelect } from '@/components/common/AccountSelect';
+import { AccountSelect } from '@/features/accounts/AccountSelect';
 import { formatDateID, toApiDate, isRangeValid } from '@/lib/format/date';
 import { useT } from '@/lib/i18n/useT';
 import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';

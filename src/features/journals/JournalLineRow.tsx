@@ -2,7 +2,7 @@ import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { AccountSelect } from '@/components/common/AccountSelect';
+import { AccountSelect } from '@/features/accounts/AccountSelect';
 import { MoneyInput } from '@/components/common/MoneyInput';
 import { useT } from '@/lib/i18n/useT';
 

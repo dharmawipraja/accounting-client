@@ -8,7 +8,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { FormDialog } from '@/components/common/FormDialog';
-import { AccountSelect } from '@/components/common/AccountSelect';
+import { AccountSelect } from '@/features/accounts/AccountSelect';
 import { applyApiErrorToForm } from '@/lib/api/form-errors';
 import { useT } from '@/lib/i18n/useT';
 import type { Messages } from '@/lib/i18n/messages.id';
