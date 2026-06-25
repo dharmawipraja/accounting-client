@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DataTable } from '@/components/common/DataTable';
 import { PageHeader } from '@/components/common/PageHeader';
+import { Pagination } from '@/components/common/Pagination';
 import { QueryState } from '@/components/common/QueryState';
 import { RoleGate } from '@/components/common/RoleGate';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
@@ -16,6 +17,8 @@ import { AccountFormDialog } from './AccountFormDialog';
 import { accountsApi } from './hooks';
 import type { Account } from './schema';
 
+const LIMIT = 20;
+
 const TYPE_LABEL: Record<AccountType, keyof ReturnType<typeof useT>['accounts']> = {
   ASSET: 'typeAset', LIABILITY: 'typeLiabilitas', EQUITY: 'typeEkuitas',
   REVENUE: 'typePendapatan', EXPENSE: 'typeBeban',
@@ -23,7 +26,8 @@ const TYPE_LABEL: Record<AccountType, keyof ReturnType<typeof useT>['accounts']>
 
 export function AccountsPage() {
   const t = useT();
-  const list = accountsApi.useList();
+  const [offset, setOffset] = useState(0);
+  const page = accountsApi.usePagedList({ limit: LIMIT, offset });
   const deactivate = accountsApi.useDeactivate();
   const remove = accountsApi.useRemove();
   const { mutate: activate } = accountsApi.useActivate();
@@ -49,18 +53,6 @@ export function AccountsPage() {
     [t, activate],
   );
 
-  const grouped = useMemo(() => {
-    const rows = (list.data ?? []).filter((a) => {
-      const q = search.toLowerCase();
-      return !q || a.code.toLowerCase().includes(q) || a.name.toLowerCase().includes(q);
-    });
-    return ACCOUNT_TYPE_ORDER.map((type) => ({
-      type,
-      rows: rows.filter((a) => a.type === type).sort((x, y) => x.code.localeCompare(y.code)),
-    })).filter((g) => g.rows.length > 0);
-  }, [list.data, search]);
-
-
   function runConfirm() {
     if (!confirm) return;
     const action = confirm.kind === 'deactivate' ? deactivate : remove;
@@ -84,23 +76,37 @@ export function AccountsPage() {
         }
       />
 
-      <div className="mb-4 max-w-xs">
+      <div className="mb-4 max-w-xs space-y-1">
         <Input placeholder={t.common.search} value={search} onChange={(e) => setSearch(e.target.value)} />
+        <p className="text-xs text-muted-foreground">{t.common.searchOnThisPage}</p>
       </div>
 
-      <QueryState query={list} loading={<SkeletonTable rows={8} cols={4} />} onRetry>
-        {() => (
-          <div className="space-y-8">
-            {grouped.map((g) => (
-              <section key={g.type}>
-                <h2 className="mb-2 text-sm font-semibold text-muted-foreground">
-                  {t.accounts[TYPE_LABEL[g.type]]}
-                </h2>
-                <DataTable columns={columns} data={g.rows} />
-              </section>
-            ))}
-          </div>
-        )}
+      <QueryState query={page} loading={<SkeletonTable rows={8} cols={4} />} onRetry>
+        {(env) => {
+          const q = search.toLowerCase();
+          const rows = env.data.filter(
+            (a) => !q || a.code.toLowerCase().includes(q) || a.name.toLowerCase().includes(q),
+          );
+          const grouped = ACCOUNT_TYPE_ORDER.map((type) => ({
+            type,
+            rows: rows.filter((a) => a.type === type).sort((x, y) => x.code.localeCompare(y.code)),
+          })).filter((g) => g.rows.length > 0);
+          return (
+            <>
+              <div className="space-y-8">
+                {grouped.map((g) => (
+                  <section key={g.type}>
+                    <h2 className="mb-2 text-sm font-semibold text-muted-foreground">
+                      {t.accounts[TYPE_LABEL[g.type]]}
+                    </h2>
+                    <DataTable columns={columns} data={g.rows} />
+                  </section>
+                ))}
+              </div>
+              <Pagination offset={offset} limit={LIMIT} total={env.total} onChange={setOffset} />
+            </>
+          );
+        }}
       </QueryState>
 
       <AccountFormDialog open={creating} onOpenChange={setCreating} mode="create" />
