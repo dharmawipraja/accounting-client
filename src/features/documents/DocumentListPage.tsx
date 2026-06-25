@@ -1,0 +1,64 @@
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { DataTable } from '@/components/common/DataTable';
+import { ConfirmDialog } from '@/components/common/ConfirmDialog';
+import { PageHeader } from '@/components/common/PageHeader';
+import { Pagination } from '@/components/common/Pagination';
+import { QueryState } from '@/components/common/QueryState';
+import { RoleGate } from '@/components/common/RoleGate';
+import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
+import { useT } from '@/lib/i18n/useT';
+import { useDocumentListController, type DocumentListConfig } from './useDocumentListController';
+
+export function DocumentListPage<T extends { id: string }>({ config }: { config: DocumentListConfig<T> }) {
+  const t = useT();
+  const c = useDocumentListController(config);
+  const newRole = config.newRole ?? ['ACCOUNTANT', 'APPROVER', 'ADMIN'];
+
+  return (
+    <div>
+      <PageHeader
+        title={config.title}
+        actions={config.newControl ? <RoleGate allow={newRole}>{config.newControl}</RoleGate> : undefined}
+      />
+
+      <div className="mb-4 flex flex-wrap gap-2">
+        {config.search ? (
+          <div className="max-w-xs space-y-1">
+            <Input
+              placeholder={config.search.placeholder ?? t.common.search}
+              value={c.search}
+              onChange={(e) => c.setSearch(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">{t.common.searchOnThisPage}</p>
+          </div>
+        ) : null}
+        {(config.filters ?? []).map((f) => (
+          <div key={f.param} className="flex gap-1">
+            {f.options.map((o) => (
+              <Button
+                key={o.value}
+                size="sm"
+                variant={c.filterValues[f.param] === o.value ? 'default' : 'outline'}
+                onClick={() => c.setFilter(f.param, o.value)}
+              >
+                {o.label}
+              </Button>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      <QueryState query={c.page} loading={<SkeletonTable rows={8} cols={config.colCount} />} onRetry>
+        {(env) => (
+          <>
+            <DataTable columns={c.columns} data={c.applySearch(env.data)} />
+            <Pagination offset={c.offset} limit={c.limit} total={env.total} onChange={c.setOffset} />
+          </>
+        )}
+      </QueryState>
+
+      <ConfirmDialog {...c.dialog} />
+    </div>
+  );
+}
