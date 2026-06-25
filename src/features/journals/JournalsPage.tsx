@@ -1,116 +1,51 @@
-import { useMemo, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
-import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { DataTable } from '@/components/common/DataTable';
-import { ConfirmDialog } from '@/components/common/ConfirmDialog';
-import { PageHeader } from '@/components/common/PageHeader';
-import { Pagination } from '@/components/common/Pagination';
-import { QueryState } from '@/components/common/QueryState';
-import { RoleGate } from '@/components/common/RoleGate';
-import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { useT } from '@/lib/i18n/useT';
-import { toastApiError } from '@/lib/api/toastApiError';
+import { DocumentListPage } from '@/features/documents/DocumentListPage';
+import type { DocumentListConfig } from '@/features/documents/useDocumentListController';
 import { buildJournalColumns } from './columns';
 import { useJournalEntries, useDeleteJournalEntry, usePostJournalEntry, useReverseJournalEntry } from './hooks';
 import type { JournalEntryListItem } from './schema';
 
-const LIMIT = 20;
-const STATUSES = ['ALL', 'DRAFT', 'POSTED'] as const;
-const SOURCES = ['ALL', 'MANUAL'] as const;
-type PendingAction = { kind: 'delete' | 'post' | 'reverse'; entry: JournalEntryListItem; idempotencyKey?: string };
-
 export function JournalsPage({ initialStatus }: { initialStatus?: 'DRAFT' | 'POSTED' } = {}) {
   const t = useT();
-  const [status, setStatus] = useState<(typeof STATUSES)[number]>(initialStatus ?? 'ALL');
-  const [source, setSource] = useState<(typeof SOURCES)[number]>('ALL');
-  const [offset, setOffset] = useState(0);
-  const [action, setAction] = useState<PendingAction | null>(null);
-
-  const page = useJournalEntries({
-    status: status === 'ALL' ? undefined : status,
-    sourceType: source === 'ALL' ? undefined : source,
-    limit: LIMIT,
-    offset,
-  });
   const remove = useDeleteJournalEntry();
   const post = usePostJournalEntry();
   const reverse = useReverseJournalEntry();
 
-  const columns = useMemo(
-    () => buildJournalColumns(t, {
-      onDelete: (e) => setAction({ kind: 'delete', entry: e }),
-      onPost: (e) => setAction({ kind: 'post', entry: e, idempotencyKey: crypto.randomUUID() }),
-      onReverse: (e) => setAction({ kind: 'reverse', entry: e, idempotencyKey: crypto.randomUUID() }),
+  const config: DocumentListConfig<JournalEntryListItem> = {
+    title: t.journals.title,
+    colCount: 5,
+    // adapter: useJournalEntries takes named numeric params; the controller passes a generic query record
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    list: (q) => useJournalEntries({
+      status: q.status as string | undefined,
+      sourceType: q.sourceType as string | undefined,
+      limit: q.limit as number,
+      offset: q.offset as number,
     }),
-    [t],
-  );
+    columns: (h) => buildJournalColumns(t, { onDelete: h.onDelete!, onPost: h.onPost!, onReverse: h.onReverse! }),
+    actions: {
+      delete: { mutation: remove, success: t.journals.deleted, confirm: { title: t.crud.confirmDeleteTitle, description: t.crud.confirmDeleteDesc, label: t.common.delete } },
+      post: { mutation: post, success: t.journals.posted, confirm: { title: t.journals.confirmPostTitle, description: t.journals.confirmPostDesc, label: t.journals.post } },
+      reverse: { mutation: reverse, success: t.journals.reversed, confirm: { title: t.journals.confirmReverseTitle, description: t.journals.confirmReverseDesc, label: t.journals.reverse } },
+    },
+    filters: [
+      { param: 'status', options: [
+        { value: 'ALL', label: t.journals.statusAll },
+        { value: 'DRAFT', label: t.journals.statusDraft },
+        { value: 'POSTED', label: t.journals.statusPosted },
+      ] },
+      { param: 'sourceType', options: [
+        { value: 'ALL', label: t.journals.sourceAll },
+        { value: 'MANUAL', label: t.journals.sourceManual },
+      ] },
+    ],
+    initialFilters: initialStatus ? { status: initialStatus } : undefined,
+    // no `search` → no search box (matches today's JournalsPage)
+    newControl: <Button asChild><Link to="/journals/new"><Plus className="size-4" /> {t.journals.newEntry}</Link></Button>,
+  };
 
-  function runAction() {
-    if (!action) return;
-    const close = () => setAction(null);
-    if (action.kind === 'delete') {
-      remove.mutate(action.entry.id, { onSuccess: () => { toast.success(t.journals.deleted); close(); }, onError: () => toast.error(t.common.error) });
-    } else if (action.kind === 'post') {
-      post.mutate({ id: action.entry.id, idempotencyKey: action.idempotencyKey! }, { onSuccess: () => { toast.success(t.journals.posted); close(); }, onError: (e) => { toastApiError(e, t); close(); } });
-    } else {
-      reverse.mutate({ id: action.entry.id, idempotencyKey: action.idempotencyKey! }, { onSuccess: () => { toast.success(t.journals.reversed); close(); }, onError: (e) => { toastApiError(e, t); close(); } });
-    }
-  }
-
-  const confirmCopy = {
-    delete: { title: t.crud.confirmDeleteTitle, desc: t.crud.confirmDeleteDesc, label: t.common.delete },
-    post: { title: t.journals.confirmPostTitle, desc: t.journals.confirmPostDesc, label: t.journals.post },
-    reverse: { title: t.journals.confirmReverseTitle, desc: t.journals.confirmReverseDesc, label: t.journals.reverse },
-  } as const;
-
-  function pick<T>(setter: (v: T) => void, value: T) { setter(value); setOffset(0); }
-
-  return (
-    <div>
-      <PageHeader title={t.journals.title} actions={
-        <RoleGate allow={['ACCOUNTANT', 'APPROVER', 'ADMIN']}>
-          <Button asChild><Link to="/journals/new"><Plus className="size-4" /> {t.journals.newEntry}</Link></Button>
-        </RoleGate>
-      } />
-
-      <div className="mb-4 flex flex-wrap gap-2">
-        <div className="flex gap-1">
-          {STATUSES.map((s) => (
-            <Button key={s} size="sm" variant={status === s ? 'default' : 'outline'} onClick={() => pick(setStatus, s)}>
-              {s === 'ALL' ? t.journals.statusAll : s === 'DRAFT' ? t.journals.statusDraft : t.journals.statusPosted}
-            </Button>
-          ))}
-        </div>
-        <div className="flex gap-1">
-          {SOURCES.map((s) => (
-            <Button key={s} size="sm" variant={source === s ? 'default' : 'outline'} onClick={() => pick(setSource, s)}>
-              {s === 'ALL' ? t.journals.sourceAll : t.journals.sourceManual}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      <QueryState query={page} loading={<SkeletonTable rows={8} cols={5} />} onRetry>
-        {(env) => (
-          <>
-            <DataTable columns={columns} data={env.data} />
-            <Pagination offset={offset} limit={LIMIT} total={env.total} onChange={setOffset} />
-          </>
-        )}
-      </QueryState>
-
-      <ConfirmDialog
-        open={!!action}
-        onOpenChange={(o) => !o && setAction(null)}
-        title={action ? confirmCopy[action.kind].title : ''}
-        description={action ? confirmCopy[action.kind].desc : undefined}
-        confirmLabel={action ? confirmCopy[action.kind].label : ''}
-        destructive={action?.kind !== 'post'}
-        pending={remove.isPending || post.isPending || reverse.isPending}
-        onConfirm={runAction}
-      />
-    </div>
-  );
+  return <DocumentListPage config={config} />;
 }
