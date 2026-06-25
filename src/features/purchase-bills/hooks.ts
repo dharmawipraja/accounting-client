@@ -1,4 +1,4 @@
-import { createResourceHooks } from '@/lib/crud/createResourceHooks';
+import { createDocumentHooks } from '@/lib/crud/createResourceHooks';
 import { useDocumentAction } from '@/lib/crud/useDocumentAction';
 import { queryKeys } from '@/lib/query/keys';
 import {
@@ -8,7 +8,7 @@ import {
   type PurchaseBillUpdatePayload,
 } from './schema';
 
-export const purchaseBillsApi = createResourceHooks<
+export const purchaseBillsApi = createDocumentHooks<
   PurchaseBill,
   PurchaseBillCreatePayload,
   PurchaseBillUpdatePayload

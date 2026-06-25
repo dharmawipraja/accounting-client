@@ -1,9 +1,9 @@
-import { createResourceHooks } from '@/lib/crud/createResourceHooks';
+import { createDocumentHooks } from '@/lib/crud/createResourceHooks';
 import { useDocumentAction } from '@/lib/crud/useDocumentAction';
 import { queryKeys } from '@/lib/query/keys';
 import { paymentSchema, type Payment, type PaymentCreatePayload, type PaymentUpdatePayload } from './schema';
 
-export const paymentsApi = createResourceHooks<Payment, PaymentCreatePayload, PaymentUpdatePayload>({
+export const paymentsApi = createDocumentHooks<Payment, PaymentCreatePayload, PaymentUpdatePayload>({
   keys: queryKeys.payments,
   basePath: '/payments',
   itemSchema: paymentSchema,

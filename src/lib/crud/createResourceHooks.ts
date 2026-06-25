@@ -37,9 +37,9 @@ export function createResourceKeys(key: string): ResourceKeys {
   };
 }
 
-export function createResourceHooks<TItem, TCreate = unknown, TUpdate = unknown>(
-  config: ResourceConfig<TItem>,
-) {
+// Shared CRUD core: the hooks common to every resource shape. Not exported —
+// consumed by the two shape-specific factories below.
+function createCrudHooks<TItem, TCreate, TUpdate>(config: ResourceConfig<TItem>) {
   const { basePath, itemSchema, paginated = false } = config;
   const keys = config.keys;
   const listSchema = itemSchema.array();
@@ -78,14 +78,6 @@ export function createResourceHooks<TItem, TCreate = unknown, TUpdate = unknown>
     });
   }
 
-  function useItem(id: string): UseQueryResult<TItem, ApiError> {
-    return useQuery<TItem, ApiError>({
-      queryKey: keys.item(id),
-      queryFn: () => apiFetch(`${basePath}/${id}`, { schema: itemSchema }),
-      enabled: !!id,
-    });
-  }
-
   function useCreate(): UseMutationResult<TItem, ApiError, TCreate> {
     const qc = useQueryClient();
     return useMutation<TItem, ApiError, TCreate>({
@@ -104,24 +96,6 @@ export function createResourceHooks<TItem, TCreate = unknown, TUpdate = unknown>
     });
   }
 
-  function useDeactivate(): UseMutationResult<unknown, ApiError, string> {
-    const qc = useQueryClient();
-    return useMutation<unknown, ApiError, string>({
-      mutationFn: (id) => apiFetch(`${basePath}/${id}/deactivate`, { method: 'POST' }),
-      onSuccess: () => invalidate(qc),
-    });
-  }
-
-  // Reactivation: there is no `/activate` endpoint; the update DTOs accept an
-  // optional `isActive`, so a partial PATCH flips the row back on.
-  function useActivate(): UseMutationResult<unknown, ApiError, string> {
-    const qc = useQueryClient();
-    return useMutation<unknown, ApiError, string>({
-      mutationFn: (id) => apiFetch(`${basePath}/${id}`, { method: 'PATCH', body: { isActive: true } }),
-      onSuccess: () => invalidate(qc),
-    });
-  }
-
   function useRemove(): UseMutationResult<unknown, ApiError, string> {
     const qc = useQueryClient();
     return useMutation<unknown, ApiError, string>({
@@ -130,5 +104,78 @@ export function createResourceHooks<TItem, TCreate = unknown, TUpdate = unknown>
     });
   }
 
-  return { keys, useList, usePagedList, useItem, useCreate, useUpdate, useDeactivate, useActivate, useRemove };
+  return { keys, basePath, itemSchema, invalidate, useList, usePagedList, useCreate, useUpdate, useRemove };
+}
+
+// Master data (accounts, partners, tax codes): an activate/deactivate lifecycle,
+// edited in dialogs (no standalone detail view, so no useItem).
+export function createMasterDataHooks<TItem, TCreate = unknown, TUpdate = unknown>(
+  config: ResourceConfig<TItem>,
+) {
+  const core = createCrudHooks<TItem, TCreate, TUpdate>(config);
+
+  function useDeactivate(): UseMutationResult<unknown, ApiError, string> {
+    const qc = useQueryClient();
+    return useMutation<unknown, ApiError, string>({
+      mutationFn: (id) => apiFetch(`${core.basePath}/${id}/deactivate`, { method: 'POST' }),
+      onSuccess: () => core.invalidate(qc),
+    });
+  }
+
+  // Reactivation: there is no `/activate` endpoint; the update DTOs accept an
+  // optional `isActive`, so a partial PATCH flips the row back on.
+  function useActivate(): UseMutationResult<unknown, ApiError, string> {
+    const qc = useQueryClient();
+    return useMutation<unknown, ApiError, string>({
+      mutationFn: (id) => apiFetch(`${core.basePath}/${id}`, { method: 'PATCH', body: { isActive: true } }),
+      onSuccess: () => core.invalidate(qc),
+    });
+  }
+
+  return {
+    keys: core.keys,
+    useList: core.useList,
+    usePagedList: core.usePagedList,
+    useCreate: core.useCreate,
+    useUpdate: core.useUpdate,
+    useRemove: core.useRemove,
+    useDeactivate,
+    useActivate,
+  };
+}
+
+// Documents (sales invoices, payments, purchase bills): a draft -> post -> void
+// lifecycle (transitions via useDocumentAction) plus a detail view (useItem).
+export function createDocumentHooks<TItem, TCreate = unknown, TUpdate = unknown>(
+  config: ResourceConfig<TItem>,
+) {
+  const core = createCrudHooks<TItem, TCreate, TUpdate>(config);
+
+  function useItem(id: string): UseQueryResult<TItem, ApiError> {
+    return useQuery<TItem, ApiError>({
+      queryKey: core.keys.item(id),
+      queryFn: () => apiFetch(`${core.basePath}/${id}`, { schema: core.itemSchema }),
+      enabled: !!id,
+    });
+  }
+
+  return {
+    keys: core.keys,
+    useList: core.useList,
+    usePagedList: core.usePagedList,
+    useItem,
+    useCreate: core.useCreate,
+    useUpdate: core.useUpdate,
+    useRemove: core.useRemove,
+  };
+}
+
+// Transitional: the original union factory, kept so the build stays green while
+// consumers migrate. Removed in the next task. Delegates — no duplicated bodies.
+export function createResourceHooks<TItem, TCreate = unknown, TUpdate = unknown>(
+  config: ResourceConfig<TItem>,
+) {
+  const master = createMasterDataHooks<TItem, TCreate, TUpdate>(config);
+  const doc = createDocumentHooks<TItem, TCreate, TUpdate>(config);
+  return { ...master, useItem: doc.useItem };
 }
