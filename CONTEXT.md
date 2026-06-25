@@ -38,3 +38,17 @@ escape hatch for a page that needs bespoke layout. Idempotency and error-routing
 the lifecycle action kind*, not configured. Scope is the four Documents only — master-data pages
 are intentionally excluded (folding them in would force one interface over two unrelated action
 shapes and yield a shallow, config-heavy module).
+
+**DocumentEditor** / **DocumentLineRow** *(decision 2026-06-25 — design converged, not yet built)*
+The deepened editor that concentrates the invoice/bill document-editor lifecycle (the AR/AP sibling
+of DocumentListPage). `DocumentEditor({ config, mode, doc, readOnly, onSaved })` owns the RHF setup,
+the `lines` field array, the tax `previewLines` + `<DocumentTotals>`, the create/edit submit
+(`applyApiErrorToForm` + `toast.success` + `onSaved`), and the readOnly banner. Config (mirrors
+`DocumentListConfig`) supplies `nature` (SALE/PURCHASE), `settlementAccountCode` (1-1200 AR /
+2-1000 AP), `allowedTaxKinds`, `partnerFilter`, `formSchema`, `toFormValues`/`toPayload`, injected
+`create`/`update` mutations, `labels`, `docRef`, and an optional type-safe `extraHeaderField`
+descriptor (the bill-only `vendorInvoiceNo` — the single structural difference between the editors).
+A shared `documentHeaderSchema` + `documentLineFormSchema` + `safeAmount` + `EMPTY_LINE` live in
+`src/features/documents/`; each feature's form schema composes from the base (bill `.extend()`s
+`vendorInvoiceNo`). Scope is invoice + bill only — payments (allocations) and journals (balanced
+debit/credit) editors are different shapes and stay separate.
