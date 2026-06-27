@@ -59,3 +59,18 @@ private `createCrudHooks` core (list/pagedList/create/update/remove): `createMas
 adds activate/deactivate (no detail view) for accounts/partners/tax-codes;
 `createDocumentHooks` adds `useItem` (no activate/deactivate) for sales-invoices/payments/
 purchase-bills, whose draft/post/void lifecycle transitions go through `useDocumentAction`.
+
+**MasterDataFormDialog** / **MasterDataListPage** / **useMasterDataListController** *(decision 2026-06-27 — design converged, not yet built)*
+The master-data layer's deepenings — the activate/deactivate/delete siblings of `DocumentEditor`
+and `DocumentListPage`, covering the three **master data** features (accounts, partners, tax codes).
+`MasterDataFormDialog(config)` is a component (fields via a `(form) => JSX` render-prop) that owns
+the `FormDialog` shell, RHF setup (`zodResolver(config.schema)` + `defaultValues`), the submit
+lifecycle (`await config.submit(values)` → `toast.success(t.crud.saved)` + optional `form.reset()` +
+close; on throw → `applyApiErrorToForm`), `pending` (from `form.formState.isSubmitting`), and the
+shared root+`code` error block (the `code` block now shown for all three, surfacing the 409
+duplicate-code error partner/tax-code previously swallowed). `MasterDataListPage(config)` on
+`useMasterDataListController(config)` owns offset state, the search→`setOffset(0)` invariant, the
+activate (immediate) / deactivate / delete confirm→mutate→toast flow, `Pagination`, and create/edit
+open state; a `renderData?` slot handles accounts' type-grouped display (default = flat `DataTable`).
+A **separate** module from `DocumentListPage` (per ADR-0001): master-data's lifecycle-action set is
+activate/deactivate/delete — no idempotency keys, plain-toast errors — not post/void/reverse.
