@@ -1,16 +1,6 @@
-import { useMemo, useState } from 'react';
-import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { DataTable } from '@/components/common/DataTable';
-import { PageHeader } from '@/components/common/PageHeader';
-import { Pagination } from '@/components/common/Pagination';
-import { QueryState } from '@/components/common/QueryState';
-import { RoleGate } from '@/components/common/RoleGate';
-import { ConfirmDialog } from '@/components/common/ConfirmDialog';
-import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
-import { toast } from 'sonner';
 import { useT } from '@/lib/i18n/useT';
+import { DataTable } from '@/components/common/DataTable';
+import { MasterDataListPage } from '@/features/master-data/MasterDataListPage';
 import { ACCOUNT_TYPE_ORDER, type AccountType } from './account-meta';
 import { buildAccountColumns } from './columns';
 import { AccountFormDialog } from './AccountFormDialog';
@@ -26,107 +16,31 @@ const TYPE_LABEL: Record<AccountType, keyof ReturnType<typeof useT>['accounts']>
 
 export function AccountsPage() {
   const t = useT();
-  const [offset, setOffset] = useState(0);
-  const page = accountsApi.usePagedList({ limit: LIMIT, offset });
-  const deactivate = accountsApi.useDeactivate();
-  const remove = accountsApi.useRemove();
-  const { mutate: activate } = accountsApi.useActivate();
-
-  const [search, setSearch] = useState('');
-  const [editing, setEditing] = useState<Account | null>(null);
-  const [creating, setCreating] = useState(false);
-  const [confirm, setConfirm] = useState<{ kind: 'deactivate' | 'delete'; account: Account } | null>(null);
-
-  const columns = useMemo(
-    () =>
-      buildAccountColumns(t, {
-        onEdit: (a) => setEditing(a),
-        onToggleActive: (a) =>
-          a.isActive
-            ? setConfirm({ kind: 'deactivate', account: a })
-            : activate(a.id, {
-                onSuccess: () => toast.success(t.crud.activated),
-                onError: () => toast.error(t.common.error),
-              }),
-        onDelete: (a) => setConfirm({ kind: 'delete', account: a }),
-      }),
-    [t, activate],
-  );
-
-  function runConfirm() {
-    if (!confirm) return;
-    const action = confirm.kind === 'deactivate' ? deactivate : remove;
-    const okMsg = confirm.kind === 'deactivate' ? t.crud.deactivated : t.crud.deleted;
-    action.mutate(confirm.account.id, {
-      onSuccess: () => { toast.success(okMsg); setConfirm(null); },
-      onError: () => toast.error(t.common.error),
-    });
-  }
-
   return (
-    <div>
-      <PageHeader
-        title={t.accounts.title}
-        actions={
-          <RoleGate allow={['ACCOUNTANT', 'APPROVER', 'ADMIN']}>
-            <Button onClick={() => setCreating(true)}>
-              <Plus className="size-4" /> {t.crud.new}
-            </Button>
-          </RoleGate>
-        }
-      />
-
-      <div className="mb-4 max-w-xs space-y-1">
-        <Input placeholder={t.common.search} value={search} onChange={(e) => { setSearch(e.target.value); setOffset(0); }} />
-        <p className="text-xs text-muted-foreground">{t.common.searchOnThisPage}</p>
-      </div>
-
-      <QueryState query={page} loading={<SkeletonTable rows={8} cols={4} />} onRetry>
-        {(env) => {
-          const q = search.toLowerCase();
-          const rows = env.data.filter(
-            (a) => !q || a.code.toLowerCase().includes(q) || a.name.toLowerCase().includes(q),
-          );
-          const grouped = ACCOUNT_TYPE_ORDER.map((type) => ({
-            type,
-            rows: rows.filter((a) => a.type === type).sort((x, y) => x.code.localeCompare(y.code)),
-          })).filter((g) => g.rows.length > 0);
-          return (
-            <>
-              <div className="space-y-8">
-                {grouped.map((g) => (
-                  <section key={g.type}>
-                    <h2 className="mb-2 text-sm font-semibold text-muted-foreground">
-                      {t.accounts[TYPE_LABEL[g.type]]}
-                    </h2>
-                    <DataTable columns={columns} data={g.rows} />
-                  </section>
-                ))}
-              </div>
-              <Pagination offset={offset} limit={LIMIT} total={env.total} onChange={setOffset} />
-            </>
-          );
-        }}
-      </QueryState>
-
-      <AccountFormDialog open={creating} onOpenChange={setCreating} mode="create" />
-      <AccountFormDialog
-        open={!!editing}
-        onOpenChange={(o) => !o && setEditing(null)}
-        mode="edit"
-        account={editing ?? undefined}
-      />
-
-      <ConfirmDialog
-        open={!!confirm}
-        onOpenChange={(o) => !o && setConfirm(null)}
-        title={confirm?.kind === 'delete' ? t.crud.confirmDeleteTitle : t.crud.confirmDeactivateTitle}
-        description={confirm?.kind === 'delete' ? t.crud.confirmDeleteDesc : undefined}
-        confirmLabel={confirm?.kind === 'delete' ? t.common.delete : t.crud.deactivate}
-        destructive={confirm?.kind === 'delete'}
-        pending={deactivate.isPending || remove.isPending}
-        onConfirm={runConfirm}
-      />
-    </div>
+    <MasterDataListPage<Account>
+      title={t.accounts.title}
+      usePagedList={accountsApi.usePagedList}
+      actions={{ activate: accountsApi.useActivate(), deactivate: accountsApi.useDeactivate(), remove: accountsApi.useRemove() }}
+      columns={(h) => buildAccountColumns(t, h)}
+      skeletonCols={4}
+      renderData={(rows, columns) => {
+        const grouped = ACCOUNT_TYPE_ORDER.map((type) => ({
+          type,
+          rows: rows.filter((a) => a.type === type).sort((x, y) => x.code.localeCompare(y.code)),
+        })).filter((g) => g.rows.length > 0);
+        return (
+          <div className="space-y-8">
+            {grouped.map((g) => (
+              <section key={g.type}>
+                <h2 className="mb-2 text-sm font-semibold text-muted-foreground">{t.accounts[TYPE_LABEL[g.type]]}</h2>
+                <DataTable columns={columns} data={g.rows} />
+              </section>
+            ))}
+          </div>
+        );
+      }}
+      formDialog={(p) => <AccountFormDialog open={p.open} onOpenChange={p.onOpenChange} mode={p.mode} account={p.item} />}
+      limit={LIMIT}
+    />
   );
 }
