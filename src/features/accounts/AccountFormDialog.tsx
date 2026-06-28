@@ -1,15 +1,12 @@
 import { useEffect } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+import type { UseFormReturn } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import { FormDialog } from '@/components/common/FormDialog';
-import { applyApiErrorToForm } from '@/lib/api/form-errors';
+import { MasterDataFormDialog } from '@/features/master-data/MasterDataFormDialog';
 import { useT } from '@/lib/i18n/useT';
 import { SUBTYPE_META, SUBTYPE_OPTIONS, type AccountSubtype } from './account-meta';
 import { accountsApi } from './hooks';
@@ -37,14 +34,42 @@ export function AccountFormDialog({ open, onOpenChange, mode, account }: Props) 
 function CreateForm({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const t = useT();
   const create = accountsApi.useCreate();
-  const form = useForm<AccountCreateValues>({
-    resolver: zodResolver(accountCreateSchema),
-    defaultValues: {
-      code: '', name: '', subtype: 'CURRENT_ASSET', type: 'ASSET',
-      normalBalance: 'DEBIT', cashFlowCategory: 'NONE', isPostable: true, parentCode: '',
-    },
-  });
+  return (
+    <MasterDataFormDialog<AccountCreateValues>
+      open={open}
+      onOpenChange={onOpenChange}
+      title={t.accounts.newAccount}
+      schema={accountCreateSchema}
+      defaultValues={{
+        code: '', name: '', subtype: 'CURRENT_ASSET', type: 'ASSET',
+        normalBalance: 'DEBIT', cashFlowCategory: 'NONE', isPostable: true, parentCode: '',
+      }}
+      resetOnSuccess
+      submit={(values) => create.mutateAsync({ ...values, parentCode: values.parentCode || undefined })}
+      fields={(form) => <AccountCreateFields form={form} />}
+    />
+  );
+}
 
+function EditForm({ account, open, onOpenChange }: { account: Account; open: boolean; onOpenChange: (o: boolean) => void }) {
+  const t = useT();
+  const update = accountsApi.useUpdate();
+  return (
+    <MasterDataFormDialog<AccountEditValues>
+      open={open}
+      onOpenChange={onOpenChange}
+      title={t.accounts.editAccount}
+      description={`${account.code} — ${account.name}`}
+      schema={accountEditSchema}
+      defaultValues={{ name: account.name, cashFlowCategory: account.cashFlowCategory ?? 'NONE', isActive: account.isActive }}
+      submit={(values) => update.mutateAsync({ id: account.id, data: values })}
+      fields={(form) => <AccountEditFields form={form} />}
+    />
+  );
+}
+
+function AccountCreateFields({ form }: { form: UseFormReturn<AccountCreateValues> }) {
+  const t = useT();
   const subtype = form.watch('subtype');
   useEffect(() => {
     const meta = SUBTYPE_META[subtype as AccountSubtype];
@@ -54,24 +79,8 @@ function CreateForm({ open, onOpenChange }: { open: boolean; onOpenChange: (o: b
     }
   }, [subtype, form]);
 
-  function onSubmit(values: AccountCreateValues) {
-    create.mutate(
-      { ...values, parentCode: values.parentCode || undefined },
-      {
-        onSuccess: () => { toast.success(t.crud.saved); onOpenChange(false); form.reset(); },
-        onError: (err) => applyApiErrorToForm(err, form, t),
-      },
-    );
-  }
-
   return (
-    <FormDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      title={t.accounts.newAccount}
-      onSubmit={form.handleSubmit(onSubmit)}
-      pending={create.isPending}
-    >
+    <>
       <div className="grid grid-cols-2 gap-3">
         <Field label={t.accounts.code} htmlFor="code">
           <Input id="code" {...form.register('code')} />
@@ -125,48 +134,14 @@ function CreateForm({ open, onOpenChange }: { open: boolean; onOpenChange: (o: b
         />
         {t.accounts.postable}
       </label>
-
-      {form.formState.errors.root ? (
-        <p role="alert" className="text-sm text-destructive">{form.formState.errors.root.message}</p>
-      ) : null}
-      {form.formState.errors.code ? (
-        <p role="alert" className="text-sm text-destructive">{form.formState.errors.code.message}</p>
-      ) : null}
-    </FormDialog>
+    </>
   );
 }
 
-function EditForm({ account, open, onOpenChange }: { account: Account; open: boolean; onOpenChange: (o: boolean) => void }) {
+function AccountEditFields({ form }: { form: UseFormReturn<AccountEditValues> }) {
   const t = useT();
-  const update = accountsApi.useUpdate();
-  const form = useForm<AccountEditValues>({
-    resolver: zodResolver(accountEditSchema),
-    defaultValues: {
-      name: account.name,
-      cashFlowCategory: account.cashFlowCategory ?? 'NONE',
-      isActive: account.isActive,
-    },
-  });
-
-  function onSubmit(values: AccountEditValues) {
-    update.mutate(
-      { id: account.id, data: values },
-      {
-        onSuccess: () => { toast.success(t.crud.saved); onOpenChange(false); },
-        onError: (err) => applyApiErrorToForm(err, form, t),
-      },
-    );
-  }
-
   return (
-    <FormDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      title={t.accounts.editAccount}
-      description={`${account.code} — ${account.name}`}
-      onSubmit={form.handleSubmit(onSubmit)}
-      pending={update.isPending}
-    >
+    <>
       <Field label={t.accounts.name} htmlFor="ename">
         <Input id="ename" {...form.register('name')} />
       </Field>
@@ -185,10 +160,7 @@ function EditForm({ account, open, onOpenChange }: { account: Account; open: boo
         <Checkbox checked={form.watch('isActive')} onCheckedChange={(v) => form.setValue('isActive', v === true)} />
         {t.crud.active}
       </label>
-      {form.formState.errors.root ? (
-        <p role="alert" className="text-sm text-destructive">{form.formState.errors.root.message}</p>
-      ) : null}
-    </FormDialog>
+    </>
   );
 }
 

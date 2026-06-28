@@ -1,11 +1,8 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, type UseFormReturn } from 'react-hook-form';
-import { toast } from 'sonner';
+import type { UseFormReturn } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { FormDialog } from '@/components/common/FormDialog';
-import { applyApiErrorToForm } from '@/lib/api/form-errors';
+import { MasterDataFormDialog } from '@/features/master-data/MasterDataFormDialog';
 import { useT } from '@/lib/i18n/useT';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { partnersApi } from './hooks';
@@ -37,56 +34,51 @@ export function PartnerFormDialog({ open, onOpenChange, mode, partner }: Props) 
 function CreateForm({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const t = useT();
   const create = partnersApi.useCreate();
-  const form = useForm<PartnerCreateValues>({
-    resolver: zodResolver(partnerCreateSchema),
-    defaultValues: { code: '', name: '', npwp: '', email: '', phone: '', address: '', isCustomer: false, isVendor: false },
-  });
-
-  function onSubmit(values: PartnerCreateValues) {
-    create.mutate(values, {
-      onSuccess: () => { toast.success(t.crud.saved); onOpenChange(false); form.reset(); },
-      onError: (err) => applyApiErrorToForm(err, form, t),
-    });
-  }
-
   return (
-    <FormDialog open={open} onOpenChange={onOpenChange} title={t.partners.newPartner}
-      onSubmit={form.handleSubmit(onSubmit)} pending={create.isPending}>
-      <CreateFields form={form} />
-    </FormDialog>
+    <MasterDataFormDialog<PartnerCreateValues>
+      open={open}
+      onOpenChange={onOpenChange}
+      title={t.partners.newPartner}
+      schema={partnerCreateSchema}
+      defaultValues={{ code: '', name: '', npwp: '', email: '', phone: '', address: '', isCustomer: false, isVendor: false }}
+      resetOnSuccess
+      submit={(values) => create.mutateAsync(values)}
+      fields={(form) => <CreateFields form={form} />}
+    />
   );
 }
 
 function EditForm({ partner, open, onOpenChange }: { partner: Partner; open: boolean; onOpenChange: (o: boolean) => void }) {
   const t = useT();
   const update = partnersApi.useUpdate();
-  const form = useForm<PartnerEditValues>({
-    resolver: zodResolver(partnerEditSchema),
-    defaultValues: {
-      name: partner.name, npwp: partner.npwp ?? '', email: partner.email ?? '',
-      phone: partner.phone ?? '', address: partner.address ?? '',
-      isCustomer: partner.isCustomer, isVendor: partner.isVendor, isActive: partner.isActive,
-    },
-  });
-
-  function onSubmit(values: PartnerEditValues) {
-    update.mutate({ id: partner.id, data: values }, {
-      onSuccess: () => { toast.success(t.crud.saved); onOpenChange(false); },
-      onError: (err) => applyApiErrorToForm(err, form, t),
-    });
-  }
-
   return (
-    <FormDialog open={open} onOpenChange={onOpenChange} title={t.partners.editPartner}
+    <MasterDataFormDialog<PartnerEditValues>
+      open={open}
+      onOpenChange={onOpenChange}
+      title={t.partners.editPartner}
       description={`${partner.code} — ${partner.name}`}
-      onSubmit={form.handleSubmit(onSubmit)} pending={update.isPending}>
+      schema={partnerEditSchema}
+      defaultValues={{
+        name: partner.name, npwp: partner.npwp ?? '', email: partner.email ?? '',
+        phone: partner.phone ?? '', address: partner.address ?? '',
+        isCustomer: partner.isCustomer, isVendor: partner.isVendor, isActive: partner.isActive,
+      }}
+      submit={(values) => update.mutateAsync({ id: partner.id, data: values })}
+      fields={(form) => <EditFields form={form} />}
+    />
+  );
+}
+
+function EditFields({ form }: { form: UseFormReturn<PartnerEditValues> }) {
+  const t = useT();
+  return (
+    <>
       <SharedFields form={form} />
       <label className="flex items-center gap-2 text-sm">
         <Checkbox checked={form.watch('isActive')} onCheckedChange={(v) => form.setValue('isActive', v === true)} />
         {t.crud.active}
       </label>
-      <RootError form={form} />
-    </FormDialog>
+    </>
   );
 }
 
@@ -105,7 +97,6 @@ function CreateFields({ form }: { form: UseFormReturn<PartnerCreateValues> }) {
         </div>
       </div>
       <SharedFields form={form} />
-      <RootError form={form} />
     </>
   );
 }
@@ -164,11 +155,4 @@ function SharedFields({ form }: { form: UseFormReturn<any> }) {
       ) : null}
     </>
   );
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function RootError({ form }: { form: UseFormReturn<any> }) {
-  return form.formState.errors.root ? (
-    <p role="alert" className="text-sm text-destructive">{form.formState.errors.root.message}</p>
-  ) : null;
 }

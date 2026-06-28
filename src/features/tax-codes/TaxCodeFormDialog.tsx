@@ -1,15 +1,12 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+import type { UseFormReturn } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import { FormDialog } from '@/components/common/FormDialog';
 import { AccountSelect } from '@/features/accounts/AccountSelect';
-import { applyApiErrorToForm } from '@/lib/api/form-errors';
+import { MasterDataFormDialog } from '@/features/master-data/MasterDataFormDialog';
 import { useT } from '@/lib/i18n/useT';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { taxCodesApi } from './hooks';
@@ -48,24 +45,46 @@ export function TaxCodeFormDialog({ open, onOpenChange, mode, taxCode }: Props) 
 function CreateForm({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const t = useT();
   const create = taxCodesApi.useCreate();
-  const form = useForm<TaxCodeCreateValues>({
-    resolver: zodResolver(taxCodeCreateSchema),
-    defaultValues: { code: '', name: '', kind: 'PPN_OUTPUT', ratePercent: '', taxAccountId: '' },
-  });
-
-  function onSubmit(values: TaxCodeCreateValues) {
-    create.mutate(
-      { code: values.code, name: values.name, kind: values.kind, rate: percentToFraction(values.ratePercent), taxAccountId: values.taxAccountId },
-      {
-        onSuccess: () => { toast.success(t.crud.saved); onOpenChange(false); form.reset(); },
-        onError: (e) => applyApiErrorToForm(e, form, t),
-      },
-    );
-  }
-
   return (
-    <FormDialog open={open} onOpenChange={onOpenChange} title={t.taxCodes.newTaxCode}
-      onSubmit={form.handleSubmit(onSubmit)} pending={create.isPending}>
+    <MasterDataFormDialog<TaxCodeCreateValues>
+      open={open}
+      onOpenChange={onOpenChange}
+      title={t.taxCodes.newTaxCode}
+      schema={taxCodeCreateSchema}
+      defaultValues={{ code: '', name: '', kind: 'PPN_OUTPUT', ratePercent: '', taxAccountId: '' }}
+      resetOnSuccess
+      submit={(values) => create.mutateAsync({
+        code: values.code, name: values.name, kind: values.kind,
+        rate: percentToFraction(values.ratePercent), taxAccountId: values.taxAccountId,
+      })}
+      fields={(form) => <TaxCodeCreateFields form={form} />}
+    />
+  );
+}
+
+function EditForm({ taxCode, open, onOpenChange }: { taxCode: TaxCode; open: boolean; onOpenChange: (o: boolean) => void }) {
+  const t = useT();
+  const update = taxCodesApi.useUpdate();
+  return (
+    <MasterDataFormDialog<TaxCodeEditValues>
+      open={open}
+      onOpenChange={onOpenChange}
+      title={t.taxCodes.editTaxCode}
+      description={`${taxCode.code} — ${taxCode.name}`}
+      schema={taxCodeEditSchema}
+      defaultValues={{ name: taxCode.name, ratePercent: fractionToPercent(taxCode.rate), isActive: taxCode.isActive }}
+      submit={(values) => update.mutateAsync({
+        id: taxCode.id, data: { name: values.name, rate: percentToFraction(values.ratePercent), isActive: values.isActive },
+      })}
+      fields={(form) => <TaxCodeEditFields form={form} />}
+    />
+  );
+}
+
+function TaxCodeCreateFields({ form }: { form: UseFormReturn<TaxCodeCreateValues> }) {
+  const t = useT();
+  return (
+    <>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label htmlFor="code">{t.taxCodes.code}</Label>
@@ -108,39 +127,14 @@ function CreateForm({ open, onOpenChange }: { open: boolean; onOpenChange: (o: b
           ) : null}
         </div>
       </div>
-
-      {form.formState.errors.root ? (
-        <p role="alert" className="text-sm text-destructive">{form.formState.errors.root.message}</p>
-      ) : null}
-      {form.formState.errors.code ? (
-        <p role="alert" className="text-sm text-destructive">{form.formState.errors.code.message}</p>
-      ) : null}
-    </FormDialog>
+    </>
   );
 }
 
-function EditForm({ taxCode, open, onOpenChange }: { taxCode: TaxCode; open: boolean; onOpenChange: (o: boolean) => void }) {
+function TaxCodeEditFields({ form }: { form: UseFormReturn<TaxCodeEditValues> }) {
   const t = useT();
-  const update = taxCodesApi.useUpdate();
-  const form = useForm<TaxCodeEditValues>({
-    resolver: zodResolver(taxCodeEditSchema),
-    defaultValues: { name: taxCode.name, ratePercent: fractionToPercent(taxCode.rate), isActive: taxCode.isActive },
-  });
-
-  function onSubmit(values: TaxCodeEditValues) {
-    update.mutate(
-      { id: taxCode.id, data: { name: values.name, rate: percentToFraction(values.ratePercent), isActive: values.isActive } },
-      {
-        onSuccess: () => { toast.success(t.crud.saved); onOpenChange(false); },
-        onError: (e) => applyApiErrorToForm(e, form, t),
-      },
-    );
-  }
-
   return (
-    <FormDialog open={open} onOpenChange={onOpenChange} title={t.taxCodes.editTaxCode}
-      description={`${taxCode.code} — ${taxCode.name}`}
-      onSubmit={form.handleSubmit(onSubmit)} pending={update.isPending}>
+    <>
       <div className="space-y-1.5">
         <Label htmlFor="ename">{t.taxCodes.name}</Label>
         <Input id="ename" {...form.register('name')} />
@@ -156,9 +150,6 @@ function EditForm({ taxCode, open, onOpenChange }: { taxCode: TaxCode; open: boo
         <Checkbox checked={form.watch('isActive')} onCheckedChange={(v) => form.setValue('isActive', v === true)} />
         {t.crud.active}
       </label>
-      {form.formState.errors.root ? (
-        <p role="alert" className="text-sm text-destructive">{form.formState.errors.root.message}</p>
-      ) : null}
-    </FormDialog>
+    </>
   );
 }
