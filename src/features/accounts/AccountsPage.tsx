@@ -1,18 +1,13 @@
 import { useT } from '@/lib/i18n/useT';
 import { DataTable } from '@/components/common/DataTable';
 import { MasterDataListPage } from '@/features/master-data/MasterDataListPage';
-import { ACCOUNT_TYPE_ORDER, type AccountType } from './account-meta';
+import { ACCOUNT_TYPE_ORDER, accountTypeLabel } from './account-meta';
 import { buildAccountColumns } from './columns';
 import { AccountFormDialog } from './AccountFormDialog';
 import { accountsApi } from './hooks';
 import type { Account } from './schema';
 
 const LIMIT = 20;
-
-const TYPE_LABEL: Record<AccountType, keyof ReturnType<typeof useT>['accounts']> = {
-  ASSET: 'typeAset', LIABILITY: 'typeLiabilitas', EQUITY: 'typeEkuitas',
-  REVENUE: 'typePendapatan', EXPENSE: 'typeBeban',
-};
 
 export function AccountsPage() {
   const t = useT();
@@ -32,7 +27,7 @@ export function AccountsPage() {
           <div className="space-y-8">
             {grouped.map((g) => (
               <section key={g.type}>
-                <h2 className="mb-2 text-sm font-semibold text-muted-foreground">{t.accounts[TYPE_LABEL[g.type]]}</h2>
+                <h2 className="mb-2 text-sm font-semibold text-muted-foreground">{accountTypeLabel(t, g.type)}</h2>
                 <DataTable columns={columns} data={g.rows} />
               </section>
             ))}

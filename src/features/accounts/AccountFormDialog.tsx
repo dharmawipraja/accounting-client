@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/select';
 import { MasterDataFormDialog } from '@/features/master-data/MasterDataFormDialog';
 import { useT } from '@/lib/i18n/useT';
-import { SUBTYPE_META, SUBTYPE_OPTIONS, type AccountSubtype } from './account-meta';
+import { SUBTYPE_META, SUBTYPE_VALUES, subtypeLabel, cashFlowCategoryLabel, type AccountSubtype } from './account-meta';
 import { accountsApi } from './hooks';
 import {
   accountCreateSchema, accountEditSchema,
@@ -94,8 +94,8 @@ function AccountCreateFields({ form }: { form: UseFormReturn<AccountCreateValues
         <Select value={subtype} onValueChange={(v) => form.setValue('subtype', v as AccountSubtype)}>
           <SelectTrigger id="subtype" aria-label={t.accounts.subtype}><SelectValue /></SelectTrigger>
           <SelectContent>
-            {SUBTYPE_OPTIONS.map((o) => (
-              <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+            {SUBTYPE_VALUES.map((v) => (
+              <SelectItem key={v} value={v}>{subtypeLabel(t, v)}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -121,7 +121,7 @@ function AccountCreateFields({ form }: { form: UseFormReturn<AccountCreateValues
           >
             <SelectTrigger id="cf" aria-label={t.accounts.cashFlowCategory}><SelectValue /></SelectTrigger>
             <SelectContent>
-              {CASH_FLOW_OPTIONS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              {CASH_FLOW_OPTIONS.map((c) => <SelectItem key={c} value={c}>{cashFlowCategoryLabel(t, c)}</SelectItem>)}
             </SelectContent>
           </Select>
         </Field>
@@ -152,7 +152,7 @@ function AccountEditFields({ form }: { form: UseFormReturn<AccountEditValues> })
         >
           <SelectTrigger id="ecf" aria-label={t.accounts.cashFlowCategory}><SelectValue /></SelectTrigger>
           <SelectContent>
-            {CASH_FLOW_OPTIONS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+            {CASH_FLOW_OPTIONS.map((c) => <SelectItem key={c} value={c}>{cashFlowCategoryLabel(t, c)}</SelectItem>)}
           </SelectContent>
         </Select>
       </Field>

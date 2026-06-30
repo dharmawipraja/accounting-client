@@ -10,16 +10,23 @@ import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { ReportDateControls } from './ReportDateControls';
 import { ReportContent } from './ReportContent';
 import { StatementView, type StatementRow } from './StatementView';
-import { subtypeLabel } from './subtypeLabel';
 import { useReport } from './useReport';
 import { balanceSheetReportSchema, type BalanceSheetReport } from './schema';
+
+/** The balance-sheet report can emit subtype values beyond the account schema
+ *  (e.g. the report-only CURRENT_EARNINGS), so resolve tolerantly: shared
+ *  account subtype labels, the report-only earnings label, else the raw value. */
+function bsSubtypeLabel(t: Messages, subtype: string): string {
+  if (subtype === 'CURRENT_EARNINGS') return t.reports.currentEarnings;
+  return (t.accounts.subtypeLabels as Record<string, string>)[subtype] ?? subtype;
+}
 
 function buildRows(bs: BalanceSheetReport, t: Messages): StatementRow[] {
   const rows: StatementRow[] = [];
   const section = (header: string, sec: BalanceSheetReport['assets'], totalLabel: string, total: string) => {
     rows.push({ label: header, bold: true });
     for (const g of sec.groups) {
-      rows.push({ label: subtypeLabel(t, g.subtype), level: 1 });
+      rows.push({ label: bsSubtypeLabel(t, g.subtype), level: 1 });
       for (const l of g.lines) rows.push({ label: `${l.code} ${l.name}`.trim(), amount: l.amount, level: 2 });
       rows.push({ label: t.reports.subtotal, amount: g.subtotal, level: 1, bold: true });
     }

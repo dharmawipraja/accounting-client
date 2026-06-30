@@ -9,6 +9,11 @@ export const accountSubtypeSchema = z.enum([
   'COGS', 'OPERATING_EXPENSE', 'OTHER_INCOME', 'OTHER_EXPENSE', 'TAX_PAYABLE', 'TAX_RECEIVABLE',
 ]);
 
+export type AccountType = z.infer<typeof accountTypeSchema>;
+export type NormalBalance = z.infer<typeof normalBalanceSchema>;
+export type CashFlowCategory = z.infer<typeof cashFlowCategorySchema>;
+export type AccountSubtype = z.infer<typeof accountSubtypeSchema>;
+
 // Item shape — hand-authored; reconciled against the live API in Plan 2b's first task.
 // Default zod strips unknown keys, so extra server fields are tolerated.
 export const accountSchema = z.object({

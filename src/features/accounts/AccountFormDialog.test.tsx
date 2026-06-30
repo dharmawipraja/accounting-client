@@ -79,7 +79,7 @@ it('edit form shows cash flow category and submits the updated value', async () 
   // the cash flow category field is visible
   expect(screen.getByLabelText(/kategori arus kas/i)).toBeInTheDocument();
   await user.click(screen.getByLabelText(/kategori arus kas/i));
-  await user.click(await screen.findByRole('option', { name: /operating/i }));
+  await user.click(await screen.findByRole('option', { name: /operasi/i }));
   await user.click(screen.getByRole('button', { name: /simpan/i }));
   await waitFor(() => expect(patched).toBeTruthy());
   expect(patched).toMatchObject({ cashFlowCategory: 'OPERATING' });

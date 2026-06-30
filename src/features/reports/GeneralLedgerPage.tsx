@@ -4,6 +4,7 @@ import { PageHeader } from '@/components/common/PageHeader';
 import { BackLink } from '@/components/common/BackLink';
 import { MoneyText } from '@/components/common/MoneyText';
 import { AccountSelect } from '@/features/accounts/AccountSelect';
+import { normalBalanceLabel, type NormalBalance } from '@/features/accounts/account-meta';
 import { formatDateID, toApiDate, isRangeValid } from '@/lib/format/date';
 import { useT } from '@/lib/i18n/useT';
 import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
@@ -46,7 +47,7 @@ export function GeneralLedgerPage({ initialAccountId }: { initialAccountId?: str
         <ReportContent query={query} loading={<SkeletonTable rows={6} cols={4} />}>
           {(gl) => (
             <div className="space-y-2">
-              <div className="text-sm font-medium">{gl.account.code} · {gl.account.name} · {gl.account.normalBalance}</div>
+              <div className="text-sm font-medium">{gl.account.code} · {gl.account.name} · {normalBalanceLabel(t, gl.account.normalBalance as NormalBalance)}</div>
               <div className="text-sm text-muted-foreground">{t.reports.openingBalance}: <MoneyText value={gl.openingBalance} /></div>
               <ReportTable<GeneralLedgerLine>
                 columns={columns}

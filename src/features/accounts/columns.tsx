@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { RowActions } from '@/components/common/RowActions';
 import type { Messages } from '@/lib/i18n/messages.id';
-import { SUBTYPE_META } from './account-meta';
+import { subtypeLabel, normalBalanceLabel } from './account-meta';
 import type { Account } from './schema';
 
 const col = createColumnHelper<Account>();
@@ -17,15 +17,11 @@ export function buildAccountColumns(
     col.accessor('name', { header: t.accounts.name }),
     col.accessor('subtype', {
       header: t.accounts.subtype,
-      cell: (c) => SUBTYPE_META[c.getValue()]?.label ?? c.getValue(),
+      cell: (c) => subtypeLabel(t, c.getValue()),
     }),
     col.accessor('normalBalance', {
       header: t.accounts.normalBalance,
-      cell: (c) => (
-        <Badge variant="outline">
-          {c.getValue() === 'DEBIT' ? t.accounts.debit : t.accounts.credit}
-        </Badge>
-      ),
+      cell: (c) => <Badge variant="outline">{normalBalanceLabel(t, c.getValue())}</Badge>,
     }),
     col.accessor('isActive', {
       header: t.crud.status,
