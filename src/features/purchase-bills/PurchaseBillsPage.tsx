@@ -6,6 +6,7 @@ import { useT } from '@/lib/i18n/useT';
 import { partnersApi } from '@/features/partners/hooks';
 import { DocumentListPage } from '@/features/documents/DocumentListPage';
 import type { DocumentListConfig } from '@/features/documents/useDocumentListController';
+import { documentStatusLabel } from '@/features/documents/statusLabel';
 import { buildBillColumns } from './columns';
 import { purchaseBillsApi, usePostBill, useVoidBill } from './hooks';
 import type { PurchaseBill } from './schema';
@@ -34,9 +35,9 @@ export function PurchaseBillsPage() {
     },
     filters: [{ param: 'status', options: [
       { value: 'ALL', label: t.purchaseBills.statusAll },
-      { value: 'DRAFT', label: t.purchaseBills.statusDraft },
-      { value: 'POSTED', label: t.purchaseBills.statusPosted },
-      { value: 'VOID', label: t.purchaseBills.statusVoid },
+      { value: 'DRAFT', label: documentStatusLabel(t, 'DRAFT') },
+      { value: 'POSTED', label: documentStatusLabel(t, 'POSTED') },
+      { value: 'VOID', label: documentStatusLabel(t, 'VOID') },
     ] }],
     search: { predicate: (bill, q) => (bill.billRef ?? '').toLowerCase().includes(q) || partnerName(bill.partnerId).toLowerCase().includes(q) },
     newControl: <Button asChild><Link to="/purchase-bills/new"><Plus className="size-4" /> {t.purchaseBills.newBill}</Link></Button>,

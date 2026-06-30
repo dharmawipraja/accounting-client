@@ -6,15 +6,10 @@ import { MoneyText } from '@/components/common/MoneyText';
 import { RoleGate } from '@/components/common/RoleGate';
 import { formatDateID } from '@/lib/format/date';
 import type { Messages } from '@/lib/i18n/messages.id';
+import { documentStatusLabel, type DocumentStatus } from '@/features/documents/statusLabel';
 import type { PurchaseBill } from './schema';
 
 const col = createColumnHelper<PurchaseBill>();
-
-function statusLabel(t: Messages, status: string): string {
-  if (status === 'DRAFT') return t.purchaseBills.statusDraft;
-  if (status === 'POSTED') return t.purchaseBills.statusPosted;
-  return t.purchaseBills.statusVoid;
-}
 
 export function buildBillColumns(
   t: Messages,
@@ -26,7 +21,7 @@ export function buildBillColumns(
     col.accessor('partnerId', { header: t.purchaseBills.partner, cell: (c) => partnerName(c.getValue()) }),
     col.accessor('date', { header: t.purchaseBills.date, cell: (c) => formatDateID(c.getValue().slice(0, 10)) }),
     col.accessor('vendorInvoiceNo', { header: t.purchaseBills.vendorInvoiceNo, cell: (c) => c.getValue() ?? '—' }),
-    col.accessor('status', { header: t.purchaseBills.status, cell: (c) => <DocStatusChip status={c.getValue()} label={statusLabel(t, c.getValue())} /> }),
+    col.accessor('status', { header: t.purchaseBills.status, cell: (c) => <DocStatusChip status={c.getValue()} label={documentStatusLabel(t, c.getValue() as DocumentStatus)} /> }),
     col.accessor('paymentStatus', {
       header: t.documents.paymentStatus,
       cell: (c) => {

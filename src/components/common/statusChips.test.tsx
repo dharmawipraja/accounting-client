@@ -21,7 +21,7 @@ it('PaymentStatusChip: PAID=success, PARTIAL=warning, UNPAID=secondary', () => {
 
 it('JournalStatusChip: REVERSED is neutral with its own label', () => {
   const { container } = render(<JournalStatusChip status="REVERSED" t={id} />);
-  expect(screen.getByText(id.journals.statusReversed)).toBeInTheDocument();
+  expect(screen.getByText(id.documents.status.REVERSED)).toBeInTheDocument();
   expect(variantOf(container)).toBe('secondary');
 });
 

@@ -7,6 +7,7 @@ import { partnersApi } from '@/features/partners/hooks';
 import { accountsApi } from '@/features/accounts/hooks';
 import { DocumentListPage } from '@/features/documents/DocumentListPage';
 import type { DocumentListConfig } from '@/features/documents/useDocumentListController';
+import { documentStatusLabel } from '@/features/documents/statusLabel';
 import { buildPaymentColumns } from './columns';
 import { paymentsApi, usePostPayment, useVoidPayment } from './hooks';
 import type { Payment } from './schema';
@@ -41,9 +42,9 @@ export function PaymentsPage() {
     filters: [
       { param: 'status', options: [
         { value: 'ALL', label: t.payments.statusAll },
-        { value: 'DRAFT', label: t.payments.statusDraft },
-        { value: 'POSTED', label: t.payments.statusPosted },
-        { value: 'VOID', label: t.payments.statusVoid },
+        { value: 'DRAFT', label: documentStatusLabel(t, 'DRAFT') },
+        { value: 'POSTED', label: documentStatusLabel(t, 'POSTED') },
+        { value: 'VOID', label: documentStatusLabel(t, 'VOID') },
       ] },
       { param: 'direction', options: [
         { value: 'ALL', label: t.payments.directionAll },

@@ -7,15 +7,10 @@ import { RoleGate } from '@/components/common/RoleGate';
 import { Money } from '@/lib/money/money';
 import { formatDateID } from '@/lib/format/date';
 import type { Messages } from '@/lib/i18n/messages.id';
+import { documentStatusLabel, type DocumentStatus } from '@/features/documents/statusLabel';
 import type { Payment } from './schema';
 
 const col = createColumnHelper<Payment>();
-
-function statusLabel(t: Messages, s: string): string {
-  if (s === 'DRAFT') return t.payments.statusDraft;
-  if (s === 'POSTED') return t.payments.statusPosted;
-  return t.payments.statusVoid;
-}
 
 /** Payment total = sum of allocation amounts (decimal). */
 export function paymentTotal(p: Payment): string {
@@ -35,7 +30,7 @@ export function buildPaymentColumns(
     col.accessor('date', { header: t.payments.date, cell: (c) => formatDateID(c.getValue().slice(0, 10)) }),
     col.accessor('cashAccountId', { header: t.payments.cashAccount, cell: (c) => accountName(c.getValue()) }),
     col.display({ id: 'total', header: t.payments.amount, cell: (c) => <MoneyText value={paymentTotal(c.row.original)} /> }),
-    col.accessor('status', { header: t.payments.status, cell: (c) => <DocStatusChip status={c.getValue()} label={statusLabel(t, c.getValue())} /> }),
+    col.accessor('status', { header: t.payments.status, cell: (c) => <DocStatusChip status={c.getValue()} label={documentStatusLabel(t, c.getValue() as DocumentStatus)} /> }),
     col.display({
       id: 'actions',
       header: '',

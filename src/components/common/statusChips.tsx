@@ -1,5 +1,6 @@
 import { CheckCircle2, Ban, PencilLine, RotateCcw, Lock, LockOpen, ArrowDownLeft, ArrowUpRight, Circle, CircleDashed } from 'lucide-react';
 import type { Messages } from '@/lib/i18n/messages.id';
+import { documentStatusLabel } from '@/features/documents/statusLabel';
 import { StatusChip } from './StatusChip';
 
 /** Invoice / bill / payment status (DRAFT | POSTED | VOID). Label is passed in
@@ -19,9 +20,9 @@ export function PaymentStatusChip({ status, t }: { status: string; t: Messages }
 
 /** Journal status (DRAFT | POSTED | REVERSED) — single i18n namespace, owns its label. */
 export function JournalStatusChip({ status, t }: { status: string; t: Messages }) {
-  if (status === 'POSTED') return <StatusChip tone="success" icon={CheckCircle2} label={t.journals.statusPosted} />;
-  if (status === 'REVERSED') return <StatusChip tone="neutral" icon={RotateCcw} label={t.journals.statusReversed} />;
-  return <StatusChip tone="neutral" icon={PencilLine} label={t.journals.statusDraft} />;
+  if (status === 'POSTED') return <StatusChip tone="success" icon={CheckCircle2} label={documentStatusLabel(t, 'POSTED')} />;
+  if (status === 'REVERSED') return <StatusChip tone="neutral" icon={RotateCcw} label={documentStatusLabel(t, 'REVERSED')} />;
+  return <StatusChip tone="neutral" icon={PencilLine} label={documentStatusLabel(t, 'DRAFT')} />;
 }
 
 /** Fiscal period: open = success, closed = neutral. */

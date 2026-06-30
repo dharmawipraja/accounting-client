@@ -6,15 +6,10 @@ import { MoneyText } from '@/components/common/MoneyText';
 import { RoleGate } from '@/components/common/RoleGate';
 import { formatDateID } from '@/lib/format/date';
 import type { Messages } from '@/lib/i18n/messages.id';
+import { documentStatusLabel, type DocumentStatus } from '@/features/documents/statusLabel';
 import type { SalesInvoice } from './schema';
 
 const col = createColumnHelper<SalesInvoice>();
-
-function statusLabel(t: Messages, status: string): string {
-  if (status === 'DRAFT') return t.salesInvoices.statusDraft;
-  if (status === 'POSTED') return t.salesInvoices.statusPosted;
-  return t.salesInvoices.statusVoid;
-}
 
 export function buildInvoiceColumns(
   t: Messages,
@@ -27,7 +22,7 @@ export function buildInvoiceColumns(
     col.accessor('date', { header: t.salesInvoices.date, cell: (c) => formatDateID(c.getValue().slice(0, 10)) }),
     col.accessor('status', {
       header: t.salesInvoices.status,
-      cell: (c) => <DocStatusChip status={c.getValue()} label={statusLabel(t, c.getValue())} />,
+      cell: (c) => <DocStatusChip status={c.getValue()} label={documentStatusLabel(t, c.getValue() as DocumentStatus)} />,
     }),
     col.accessor('paymentStatus', {
       header: t.documents.paymentStatus,

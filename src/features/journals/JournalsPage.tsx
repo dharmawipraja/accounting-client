@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useT } from '@/lib/i18n/useT';
 import { DocumentListPage } from '@/features/documents/DocumentListPage';
 import type { DocumentListConfig } from '@/features/documents/useDocumentListController';
+import { documentStatusLabel } from '@/features/documents/statusLabel';
 import { buildJournalColumns } from './columns';
 import { useJournalEntries, useDeleteJournalEntry, usePostJournalEntry, useReverseJournalEntry } from './hooks';
 import type { JournalEntryListItem } from './schema';
@@ -36,8 +37,8 @@ export function JournalsPage({ initialStatus }: { initialStatus?: 'DRAFT' | 'POS
     filters: [
       { param: 'status', options: [
         { value: 'ALL', label: t.journals.statusAll },
-        { value: 'DRAFT', label: t.journals.statusDraft },
-        { value: 'POSTED', label: t.journals.statusPosted },
+        { value: 'DRAFT', label: documentStatusLabel(t, 'DRAFT') },
+        { value: 'POSTED', label: documentStatusLabel(t, 'POSTED') },
       ] },
       { param: 'sourceType', options: [
         { value: 'ALL', label: t.journals.sourceAll },
