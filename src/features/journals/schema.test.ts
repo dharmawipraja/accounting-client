@@ -5,7 +5,7 @@ describe('journal schemas', () => {
   it('list item parses the lightweight projection (totalDebit + lineCount, no lines)', () => {
     const r = journalEntryListItemSchema.parse({
       id: 'je1', entryRef: 'JE/2026/000002', entryNumber: 2, fiscalYear: 2026, date: '2026-06-15T00:00:00.000Z',
-      description: 'x', status: 'POSTED', sourceType: 'SALE', sourceId: 'inv1', totalDebit: '1110000.0000', lineCount: 2,
+      description: 'x', status: 'POSTED', sourceType: 'SALES_INVOICE', sourceId: 'inv1', totalDebit: '1110000.0000', lineCount: 2,
     });
     expect(r.totalDebit).toBe('1110000.0000');
     expect(r.lineCount).toBe(2);

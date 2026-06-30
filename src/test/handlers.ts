@@ -62,7 +62,7 @@ export const journalEntryListFixture = () => [
   { id: 'jed1', entryRef: null, entryNumber: null, fiscalYear: null, date: '2026-06-16T00:00:00.000Z', description: 'Draf 1', status: 'DRAFT', sourceType: 'MANUAL', sourceId: null, totalDebit: '100000.0000', lineCount: 2 },
   { id: 'jed2', entryRef: null, entryNumber: null, fiscalYear: null, date: '2026-06-16T00:00:00.000Z', description: 'Draf 2', status: 'DRAFT', sourceType: 'MANUAL', sourceId: null, totalDebit: '200000.0000', lineCount: 2 },
   { id: 'jed3', entryRef: null, entryNumber: null, fiscalYear: null, date: '2026-06-16T00:00:00.000Z', description: 'Draf 3', status: 'DRAFT', sourceType: 'MANUAL', sourceId: null, totalDebit: '300000.0000', lineCount: 2 },
-  { id: 'jep1', entryRef: 'JE/2026/000002', entryNumber: 2, fiscalYear: 2026, date: '2026-06-15T00:00:00.000Z', description: 'Penjualan diposting', status: 'POSTED', sourceType: 'SALE', sourceId: 'inv1', totalDebit: '1110000.0000', lineCount: 2 },
+  { id: 'jep1', entryRef: 'JE/2026/000002', entryNumber: 2, fiscalYear: 2026, date: '2026-06-15T00:00:00.000Z', description: 'Penjualan diposting', status: 'POSTED', sourceType: 'SALES_INVOICE', sourceId: 'inv1', totalDebit: '1110000.0000', lineCount: 2 },
   { id: 'jep2', entryRef: 'JE/2026/000003', entryNumber: 3, fiscalYear: 2026, date: '2026-06-15T00:00:00.000Z', description: 'Jurnal manual diposting', status: 'POSTED', sourceType: 'MANUAL', sourceId: null, totalDebit: '500000.0000', lineCount: 2 },
 ];
 export const journalEntryDetailFixture = () => ({

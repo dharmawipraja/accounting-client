@@ -7,18 +7,10 @@ import { MoneyText } from '@/components/common/MoneyText';
 import { RoleGate } from '@/components/common/RoleGate';
 import { formatDateID } from '@/lib/format/date';
 import type { Messages } from '@/lib/i18n/messages.id';
+import { journalSourceLabel } from './sourceLabel';
 import type { JournalEntryListItem } from './schema';
 
 const col = createColumnHelper<JournalEntryListItem>();
-
-function sourceLabel(t: Messages, s: string): string {
-  if (s === 'MANUAL') return t.journals.sourceManual;
-  if (s === 'REVERSAL') return t.journals.sourceReversal;
-  if (s === 'SALE') return t.journals.sourceSale;
-  if (s === 'PURCHASE') return t.journals.sourcePurchase;
-  if (s === 'PAYMENT') return t.journals.sourcePayment;
-  return s;
-}
 
 export function buildJournalColumns(
   t: Messages,
@@ -28,7 +20,7 @@ export function buildJournalColumns(
     col.accessor('entryRef', { header: t.journals.entryRef, cell: (c) => c.getValue() ?? '—' }),
     col.accessor('date', { header: t.journals.date, cell: (c) => formatDateID(c.getValue().slice(0, 10)) }),
     col.accessor('description', { header: t.journals.description, cell: (c) => c.getValue() }),
-    col.accessor('sourceType', { header: t.journals.sourceType, cell: (c) => <Badge variant="outline">{sourceLabel(t, c.getValue())}</Badge> }),
+    col.accessor('sourceType', { header: t.journals.sourceType, cell: (c) => <Badge variant="outline">{journalSourceLabel(t, c.getValue())}</Badge> }),
     col.accessor('status', { header: t.journals.status, cell: (c) => <JournalStatusChip status={c.getValue()} t={t} /> }),
     col.accessor('totalDebit', { header: t.journals.totalDebit, cell: (c) => <MoneyText value={c.getValue()} /> }),
     col.accessor('lineCount', { header: t.journals.lineCount, cell: (c) => c.getValue() }),
