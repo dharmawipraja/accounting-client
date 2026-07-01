@@ -53,6 +53,29 @@ A shared `documentHeaderSchema` + `documentLineFormSchema` + `safeAmount` + `EMP
 `vendorInvoiceNo`). Scope is invoice + bill only — payments (allocations) and journals (balanced
 debit/credit) editors are different shapes and stay separate.
 
+**DocumentEditorPage** / **DocumentEditorPageConfig** *(decision 2026-07-02 — design converged, not yet built)*
+The route-level wrapper that concentrates the editor-page lifecycle shared by the invoice/bill/payment
+editor pages — the load/mode/not-found sibling of `DocumentListPage`, sitting *above* the form body (so
+it does **not** touch the "editors stay separate" decision; the tax/balance/allocation bodies remain
+distinct). `DocumentEditorPage({ config, id })` owns `config.useItem(id ?? '')` (disabled when no id),
+the create-vs-edit branch, the `QueryState` + `SkeletonForm fields={6}` + `NotFound` envelope, the
+**editable-only-while-DRAFT invariant** (`readOnly = doc.status !== 'DRAFT'`, previously re-declared
+verbatim in each wrapper), the `PageHeader` create/edit/view-title frame, and navigate-on-save.
+`DocumentEditorPageConfig` (named to avoid colliding with the existing form-body `DocumentEditorConfig`)
+supplies `useItem` (the `(id) => UseQueryResult<Doc, ApiError>` loader hook),
+`onDone` (the typed navigate closure — feature-supplied so TanStack route literals keep their types,
+mirroring `DocumentListConfig.newControl`), a pre-rendered `back` `<BackLink>`, `titles {create,edit,view}`,
+and the one real seam `renderForm({ mode, doc, readOnly, onSaved })` — which maps `doc` onto each form's
+differently-named prop (`DocumentEditor doc=` vs `PaymentForm payment=`) and threads Payment's `direction`
+(direction stays in the feature component's scope; it never enters the module interface). Each feature
+keeps a thin page component that builds the config (parallel to `SalesInvoicesPage` over `DocumentListPage`),
+shrinking ~53 lines to ~18. **No separate controller hook** (unlike the list — the editor page holds no
+state machine, only `useItem` + a derived `readOnly`). Scope is invoice/bill/payment; journals stay
+bespoke — `JournalEntryEditorPage` is create-only with a read-only detail-table edit view, a genuinely
+different lifecycle shape. The four wrappers have **no** direct tests today, so this also creates a single
+test surface (`DocumentEditorPage.test.tsx`) for the currently-unverified load/not-found/readOnly/navigate
+logic; the per-feature form tests are unchanged.
+
 **Resource-hooks factories** *(decision 2026-06-26)*
 The CRUD hook factory is split along the Document / master-data line over a shared
 private `createCrudHooks` core (list/pagedList/create/update/remove): `createMasterDataHooks`
