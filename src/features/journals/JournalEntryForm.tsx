@@ -3,12 +3,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Plus } from 'lucide-react';
-import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { applyApiErrorToForm } from '@/lib/api/form-errors';
+import { useDocumentSubmit } from '@/features/documents/useDocumentSubmit';
 import { Money } from '@/lib/money/money';
 import { useT } from '@/lib/i18n/useT';
 import { JournalLineRow, type JournalLineState } from './JournalLineRow';
@@ -26,6 +25,7 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
   const t = useT();
   const create = useCreateJournalEntry();
   const form = useForm<HeaderValues>({ resolver: zodResolver(headerSchema), defaultValues: { date: '', description: '' } });
+  const handlers = useDocumentSubmit(form, onSaved);
   const [lines, setLines] = useState<JournalLineState[]>(() => [emptyLine(), emptyLine()]);
 
   const setLine = (i: number, patch: Partial<JournalLineState>) => setLines((prev) => prev.map((l, idx) => (idx === i ? { ...l, ...patch } : l)));
@@ -47,7 +47,7 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
           ...(hasValue(l.debit) ? { debit: Money.from(l.debit).toApi() } : { credit: Money.from(l.credit).toApi() }),
         })),
     };
-    create.mutate(payload, { onSuccess: () => { toast.success(t.crud.saved); onSaved(); }, onError: (err) => applyApiErrorToForm(err, form, t) });
+    create.mutate(payload, handlers);
   }
 
   return (
