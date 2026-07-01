@@ -1,47 +1,26 @@
 import { useNavigate } from '@tanstack/react-router';
-import { Button } from '@/components/ui/button';
-import { NotFound } from '@/components/common/NotFound';
-import { PageHeader } from '@/components/common/PageHeader';
 import { BackLink } from '@/components/common/BackLink';
-import { QueryState } from '@/components/common/QueryState';
-import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { useT } from '@/lib/i18n/useT';
+import { DocumentEditorPage } from '@/features/documents/DocumentEditorPage';
 import { PaymentForm } from './PaymentForm';
 import { paymentsApi } from './hooks';
 
 export function PaymentEditorPage({ id, direction = 'RECEIPT' }: { id?: string; direction?: 'RECEIPT' | 'DISBURSEMENT' }) {
   const t = useT();
   const navigate = useNavigate();
-  const goList = () => navigate({ to: '/payments' });
-  const item = paymentsApi.useItem(id ?? '');
-
-  if (!id) {
-    const title = direction === 'DISBURSEMENT' ? t.payments.newDisbursementTitle : t.payments.newReceiptTitle;
-    return <div><PageHeader title={title} back={<BackLink to="/payments" label={t.nav.payments} />} /><PaymentForm mode="create" direction={direction} onSaved={goList} /></div>;
-  }
-
+  const createTitle = direction === 'DISBURSEMENT' ? t.payments.newDisbursementTitle : t.payments.newReceiptTitle;
   return (
-    <QueryState
-      query={item}
-      loading={<SkeletonForm fields={6} />}
-      onRetry
-      notFound={
-        <NotFound
-          title={t.notFound.recordTitle}
-          message={t.notFound.recordMessage}
-          action={<Button onClick={goList}>{t.notFound.backToList}</Button>}
-        />
-      }
-    >
-      {(data) => {
-        const readOnly = data.status !== 'DRAFT';
-        return (
-          <div>
-            <PageHeader title={readOnly ? t.payments.view : t.payments.editPayment} back={<BackLink to="/payments" label={t.nav.payments} />} />
-            <PaymentForm mode="edit" payment={data} onSaved={goList} readOnly={readOnly} />
-          </div>
-        );
+    <DocumentEditorPage
+      id={id}
+      config={{
+        useItem: paymentsApi.useItem,
+        onDone: () => navigate({ to: '/payments' }),
+        back: <BackLink to="/payments" label={t.nav.payments} />,
+        titles: { create: createTitle, edit: t.payments.editPayment, view: t.payments.view },
+        renderForm: ({ mode, doc, readOnly, onSaved }) => (
+          <PaymentForm mode={mode} payment={doc} direction={direction} onSaved={onSaved} readOnly={readOnly} />
+        ),
       }}
-    </QueryState>
+    />
   );
 }
