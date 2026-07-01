@@ -53,7 +53,7 @@ A shared `documentHeaderSchema` + `documentLineFormSchema` + `safeAmount` + `EMP
 `vendorInvoiceNo`). Scope is invoice + bill only — payments (allocations) and journals (balanced
 debit/credit) editors are different shapes and stay separate.
 
-**DocumentEditorPage** / **DocumentEditorPageConfig** *(decision 2026-07-02 — design converged, not yet built)*
+**DocumentEditorPage** / **DocumentEditorPageConfig** *(decision 2026-07-02 — BUILT; `src/features/documents/DocumentEditorPage.tsx` + `.test.tsx`, 6 tests)*
 The route-level wrapper that concentrates the editor-page lifecycle shared by the invoice/bill/payment
 editor pages — the load/mode/not-found sibling of `DocumentListPage`, sitting *above* the form body (so
 it does **not** touch the "editors stay separate" decision; the tax/balance/allocation bodies remain
