@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm, type Path } from 'react-hook-form';
 import { Plus } from 'lucide-react';
-import { toast } from 'sonner';
 import type { ZodType } from 'zod';
 import type { UseMutationResult } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -10,13 +9,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { PartnerSelect } from '@/features/partners/PartnerSelect';
-import { applyApiErrorToForm } from '@/lib/api/form-errors';
 import { useT } from '@/lib/i18n/useT';
 import { cn } from '@/lib/utils';
 import type { ApiError } from '@/lib/api/errors';
 import { accountsApi } from '@/features/accounts/hooks';
 import { DocumentTotals } from './DocumentTotals';
 import { DocumentLineRow } from './DocumentLineRow';
+import { ReadOnlyBanner } from './ReadOnlyBanner';
+import { useDocumentSubmit } from './useDocumentSubmit';
 import { EMPTY_LINE, safeAmount, type DocumentHeaderValues } from './documentFormSchema';
 
 export interface DocumentEditorLabels {
@@ -89,6 +89,7 @@ export function DocumentEditor<
         : config.emptyForm) as never,
   });
   const lines = useFieldArray({ control: form.control, name: 'lines' as never });
+  const handlers = useDocumentSubmit(form, onSaved);
 
   const watched = form.watch('lines' as Path<TFormValues>) as DocumentHeaderValues['lines'] | undefined;
   const previewLines = useMemo(
@@ -100,12 +101,10 @@ export function DocumentEditor<
   );
 
   function onSubmit(values: TFormValues) {
-    const onError = (err: unknown) => applyApiErrorToForm(err, form, t);
-    const onSuccess = () => { toast.success(t.crud.saved); onSaved(); };
     if (mode === 'edit' && doc) {
-      update.mutate({ id: doc.id, data: config.toPayload(values) as unknown as TUpdate }, { onSuccess, onError });
+      update.mutate({ id: doc.id, data: config.toPayload(values) as unknown as TUpdate }, handlers);
     } else {
-      create.mutate(config.toPayload(values), { onSuccess, onError });
+      create.mutate(config.toPayload(values), handlers);
     }
   }
 
@@ -113,12 +112,13 @@ export function DocumentEditor<
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit as never)} className="space-y-6" noValidate>
-      {readOnly ? (
-        <div className="rounded-md border border-muted bg-muted/40 px-4 py-2 text-sm text-muted-foreground">
-          {doc?.status === 'VOID' ? labels.readOnlyVoid : labels.readOnlyPosted}
-          {doc && config.docRef(doc) ? ` (${config.docRef(doc)})` : ''}
-        </div>
-      ) : null}
+      <ReadOnlyBanner
+        show={!!readOnly}
+        status={doc?.status}
+        docRef={doc ? config.docRef(doc) : null}
+        postedLabel={labels.readOnlyPosted}
+        voidLabel={labels.readOnlyVoid}
+      />
       <div className={cn('grid grid-cols-2 gap-4', config.extraHeaderField ? 'md:grid-cols-5' : 'md:grid-cols-4')}>
         <div className="space-y-1.5">
           <Label>{labels.partner}</Label>
