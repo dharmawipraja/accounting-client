@@ -76,6 +76,18 @@ different lifecycle shape. The four wrappers have **no** direct tests today, so 
 test surface (`DocumentEditorPage.test.tsx`) for the currently-unverified load/not-found/readOnly/navigate
 logic; the per-feature form tests are unchanged.
 
+**useDocumentSubmit** / **ReadOnlyBanner** *(decision 2026-07-02 — BUILT)*
+The two byte-identical seams shared by the document-family form bodies, extracted from
+`DocumentEditor` + `PaymentForm` + `JournalEntryForm` (candidate 1(b)). `useDocumentSubmit(form, onSaved)`
+(`src/features/documents/useDocumentSubmit.ts`) concentrates the shared save policy — on success
+`toast.success(t.crud.saved)` + `onSaved()`, on error `applyApiErrorToForm(err, form, t)` — and returns
+the `{ onSuccess, onError }` mutation callbacks each form passes to `create`/`update` `.mutate(payload, handlers)`;
+used by all three (journal is create-only). `ReadOnlyBanner` (`src/features/documents/ReadOnlyBanner.tsx`)
+concentrates the posted/void banner styling + the VOID-vs-POSTED label choice + the ` (ref)` suffix; used
+by `DocumentEditor` + `PaymentForm` (journal has no readOnly path). The create-vs-edit `mutate` branch was
+**deliberately left in each form** — it is entangled with each form's payload building and payment's
+allocation guard, so folding it would move complexity rather than concentrate it.
+
 **Resource-hooks factories** *(decision 2026-06-26)*
 The CRUD hook factory is split along the Document / master-data line over a shared
 private `createCrudHooks` core (list/pagedList/create/update/remove): `createMasterDataHooks`
