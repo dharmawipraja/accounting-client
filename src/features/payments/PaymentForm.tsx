@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { PartnerSelect } from '@/features/partners/PartnerSelect';
 import { AccountSelect } from '@/features/accounts/AccountSelect';
-import { applyApiErrorToForm } from '@/lib/api/form-errors';
+import { ReadOnlyBanner } from '@/features/documents/ReadOnlyBanner';
+import { useDocumentSubmit } from '@/features/documents/useDocumentSubmit';
 import { Money } from '@/lib/money/money';
 import { useT } from '@/lib/i18n/useT';
 import { useOpenDocuments } from './useOpenDocuments';
@@ -47,6 +47,7 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
 
   const partnerId = form.watch('partnerId');
   const openDocuments = useOpenDocuments(direction, partnerId);
+  const handlers = useDocumentSubmit(form, onSaved);
 
   const [amounts, setAmounts] = useState<Record<string, string>>(() => {
     const seed: Record<string, string> = {};
@@ -81,11 +82,10 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
   function onSubmit(values: PaymentHeaderValues) {
     if (!validateAllocations()) return;
     const payload = { direction, partnerId: values.partnerId, date: values.date, cashAccountId: values.cashAccountId, description: values.description || undefined, allocations: buildAllocations() };
-    const onError = (err: unknown) => applyApiErrorToForm(err, form, t);
     if (mode === 'edit' && payment) {
-      update.mutate({ id: payment.id, data: payload }, { onSuccess: () => { toast.success(t.crud.saved); onSaved(); }, onError });
+      update.mutate({ id: payment.id, data: payload }, handlers);
     } else {
-      create.mutate(payload, { onSuccess: () => { toast.success(t.crud.saved); onSaved(); }, onError });
+      create.mutate(payload, handlers);
     }
   }
 
@@ -93,12 +93,13 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
-      {readOnly ? (
-        <div className="rounded-md border border-muted bg-muted/40 px-4 py-2 text-sm text-muted-foreground">
-          {payment?.status === 'VOID' ? t.payments.readOnlyVoid : t.payments.readOnlyPosted}
-          {payment?.ref ? ` (${payment.ref})` : ''}
-        </div>
-      ) : null}
+      <ReadOnlyBanner
+        show={!!readOnly}
+        status={payment?.status}
+        docRef={payment?.ref}
+        postedLabel={t.payments.readOnlyPosted}
+        voidLabel={t.payments.readOnlyVoid}
+      />
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <div className="space-y-1.5">
