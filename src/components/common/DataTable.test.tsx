@@ -21,3 +21,13 @@ it('shows an empty state when there are no rows', () => {
   render(<DataTable columns={columns} data={[]} />);
   expect(screen.getByText(/tidak ada data/i)).toBeInTheDocument();
 });
+
+it('right-aligns a column whose meta.align is "right" (header + cell)', () => {
+  const alignedCols = [
+    col.accessor('code', { header: 'Kode' }),
+    col.accessor('name', { header: 'Nama', meta: { align: 'right' } }),
+  ];
+  render(<DataTable columns={alignedCols} data={[{ code: '1', name: 'Kas' }]} />);
+  expect(screen.getByRole('columnheader', { name: 'Nama' })).toHaveClass('text-right');
+  expect(screen.getByRole('cell', { name: 'Kas' })).toHaveClass('text-right');
+});

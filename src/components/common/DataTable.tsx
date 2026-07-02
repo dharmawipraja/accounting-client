@@ -1,5 +1,6 @@
 import {
   type ColumnDef,
+  type RowData,
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
@@ -14,6 +15,17 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { EmptyState } from './EmptyState';
+
+declare module '@tanstack/react-table' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface ColumnMeta<TData extends RowData, TValue> {
+    /** Horizontal alignment applied to this column's header + body cells. */
+    align?: 'left' | 'right' | 'center';
+  }
+}
+
+const alignClass = (align?: 'left' | 'right' | 'center') =>
+  align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : undefined;
 
 interface DataTableProps<TData> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -39,7 +51,7 @@ export function DataTable<TData>({ columns, data, emptyMessage }: DataTableProps
           {table.getHeaderGroups().map((hg) => (
             <TableRow key={hg.id}>
               {hg.headers.map((h) => (
-                <TableHead key={h.id}>
+                <TableHead key={h.id} className={alignClass(h.column.columnDef.meta?.align)}>
                   {h.isPlaceholder
                     ? null
                     : flexRender(h.column.columnDef.header, h.getContext())}
@@ -52,7 +64,7 @@ export function DataTable<TData>({ columns, data, emptyMessage }: DataTableProps
           {table.getRowModel().rows.map((row) => (
             <TableRow key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
+                <TableCell key={cell.id} className={alignClass(cell.column.columnDef.meta?.align)}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
               ))}
