@@ -1,17 +1,8 @@
-import { useState } from 'react';
-import { PageHeader } from '@/components/common/PageHeader';
-import { BackLink } from '@/components/common/BackLink';
-import { toApiDate, isRangeValid } from '@/lib/format/date';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { useT } from '@/lib/i18n/useT';
-import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
-import { ReportDateControls } from './ReportDateControls';
-import { ReportContent } from './ReportContent';
-import { StatementView, type StatementRow } from './StatementView';
-import { useReport } from './useReport';
+import { StatementReportPage } from './StatementReportPage';
+import type { StatementRow } from './StatementView';
 import { incomeStatementReportSchema, type IncomeStatementReport, type ReportLine } from './schema';
-
-function yearStart(): string { const d = new Date(); return toApiDate(new Date(d.getFullYear(), 0, 1)); }
 
 function buildRows(is: IncomeStatementReport, t: Messages): StatementRow[] {
   const rows: StatementRow[] = [];
@@ -35,14 +26,15 @@ function buildRows(is: IncomeStatementReport, t: Messages): StatementRow[] {
 
 export function IncomeStatementPage() {
   const t = useT();
-  const [from, setFrom] = useState(yearStart);
-  const [to, setTo] = useState(() => toApiDate(new Date()));
-  const query = useReport('/reports/income-statement', { from, to }, incomeStatementReportSchema, isRangeValid(from, to));
   return (
-    <div>
-      <PageHeader title={t.reports.incomeStatement} back={<BackLink to="/reports" label={t.nav.reports} />} />
-      <ReportDateControls mode="range" from={from} to={to} onRange={(f, tt) => { setFrom(f); setTo(tt); }} />
-      <ReportContent query={query} loading={<SkeletonForm fields={5} />}>{(is) => <StatementView rows={buildRows(is, t)} />}</ReportContent>
-    </div>
+    <StatementReportPage<IncomeStatementReport>
+      config={{
+        title: t.reports.incomeStatement,
+        path: '/reports/income-statement',
+        schema: incomeStatementReportSchema,
+        mode: 'range',
+        buildRows,
+      }}
+    />
   );
 }

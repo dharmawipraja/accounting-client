@@ -1,16 +1,9 @@
-import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { PageHeader } from '@/components/common/PageHeader';
-import { BackLink } from '@/components/common/BackLink';
 import { Money } from '@/lib/money/money';
-import { toApiDate } from '@/lib/format/date';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { useT } from '@/lib/i18n/useT';
-import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
-import { ReportDateControls } from './ReportDateControls';
-import { ReportContent } from './ReportContent';
-import { StatementView, type StatementRow } from './StatementView';
-import { useReport } from './useReport';
+import { StatementReportPage } from './StatementReportPage';
+import type { StatementRow } from './StatementView';
 import { balanceSheetReportSchema, type BalanceSheetReport } from './schema';
 
 /** The balance-sheet report can emit subtype values beyond the account schema
@@ -41,20 +34,18 @@ function buildRows(bs: BalanceSheetReport, t: Messages): StatementRow[] {
 
 export function BalanceSheetPage() {
   const t = useT();
-  const [asOf, setAsOf] = useState(() => toApiDate(new Date()));
-  const query = useReport('/reports/balance-sheet', { asOf }, balanceSheetReportSchema);
   return (
-    <div>
-      <PageHeader title={t.reports.balanceSheet} back={<BackLink to="/reports" label={t.nav.reports} />} />
-      <ReportDateControls mode="asOf" asOf={asOf} onAsOf={setAsOf} />
-      <ReportContent query={query} loading={<SkeletonForm fields={5} />}>
-        {(bs) => (
-          <div className="space-y-3">
-            <StatementView rows={buildRows(bs, t)} />
-            <Badge variant={bs.balanced ? 'default' : 'destructive'}>{bs.balanced ? t.reports.balanced : t.reports.unbalanced}</Badge>
-          </div>
-        )}
-      </ReportContent>
-    </div>
+    <StatementReportPage<BalanceSheetReport>
+      config={{
+        title: t.reports.balanceSheet,
+        path: '/reports/balance-sheet',
+        schema: balanceSheetReportSchema,
+        mode: 'asOf',
+        buildRows,
+        footer: (bs) => (
+          <Badge variant={bs.balanced ? 'default' : 'destructive'}>{bs.balanced ? t.reports.balanced : t.reports.unbalanced}</Badge>
+        ),
+      }}
+    />
   );
 }
