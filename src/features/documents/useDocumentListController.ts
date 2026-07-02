@@ -1,11 +1,10 @@
 import { useMemo, useState } from 'react';
-import { toast } from 'sonner';
 import type { ReactNode } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
 import type { ApiError } from '@/lib/api/errors';
 import type { Role } from '@/stores/session';
-import { toastApiError } from '@/lib/api/toastApiError';
+import { mutationFeedback } from '@/lib/api/mutationFeedback';
 import { useT } from '@/lib/i18n/useT';
 
 export interface PageEnvelope<T> { data: T[]; total: number; limit: number; offset: number }
@@ -128,14 +127,11 @@ export function useDocumentListController<T extends { id: string }>(
     if (!def) return;
     const close = () => setPending(null);
     if (pending.kind === 'delete') {
-      (def.mutation as IdMutation).mutate(pending.doc.id, {
-        onSuccess: () => { toast.success(def.success); close(); },
-        onError: () => { toast.error(t.common.error); close(); },
-      });
+      (def.mutation as IdMutation).mutate(pending.doc.id, mutationFeedback({ t, success: def.success, onClose: close }));
     } else {
       (def.mutation as KeyedMutation).mutate(
         { id: pending.doc.id, idempotencyKey: pending.idempotencyKey! },
-        { onSuccess: () => { toast.success(def.success); close(); }, onError: (e) => { toastApiError(e, t); close(); } },
+        mutationFeedback({ t, success: def.success, errorMode: 'domain', onClose: close }),
       );
     }
   }

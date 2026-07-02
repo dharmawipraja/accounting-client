@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
-import { toast } from 'sonner';
 import type { UseMutationResult } from '@tanstack/react-query';
 import type { ApiError } from '@/lib/api/errors';
+import { mutationFeedback } from '@/lib/api/mutationFeedback';
 import { useT } from '@/lib/i18n/useT';
 
 export interface MasterDataActionHandlers<TItem> {
@@ -37,10 +37,7 @@ export function useMasterDataListController<TItem extends { id: string; isActive
       onToggleActive: (item) =>
         item.isActive
           ? setConfirm({ kind: 'deactivate', item })
-          : actions.activate.mutate(item.id, {
-              onSuccess: () => toast.success(t.crud.activated),
-              onError: () => toast.error(t.common.error),
-            }),
+          : actions.activate.mutate(item.id, mutationFeedback({ t, success: t.crud.activated })),
       onDelete: (item) => setConfirm({ kind: 'delete', item }),
     }),
     [actions, t],
@@ -50,10 +47,7 @@ export function useMasterDataListController<TItem extends { id: string; isActive
     if (!confirm) return;
     const action = confirm.kind === 'deactivate' ? actions.deactivate : actions.remove;
     const okMsg = confirm.kind === 'deactivate' ? t.crud.deactivated : t.crud.deleted;
-    action.mutate(confirm.item.id, {
-      onSuccess: () => { toast.success(okMsg); setConfirm(null); },
-      onError: () => toast.error(t.common.error),
-    });
+    action.mutate(confirm.item.id, mutationFeedback({ t, success: okMsg, onClose: () => setConfirm(null) }));
   }
 
   const confirmProps = {
