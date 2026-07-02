@@ -88,6 +88,21 @@ by `DocumentEditor` + `PaymentForm` (journal has no readOnly path). The create-v
 **deliberately left in each form** — it is entangled with each form's payload building and payment's
 allocation guard, so folding it would move complexity rather than concentrate it.
 
+**columnKit** / **documentColumns** *(decision 2026-07-02 — BUILT)*
+The register-table column builders that concentrate the previously hand-rolled column-assembly glue
+(candidate 2). Generic builders in `src/components/common/columnKit.tsx` — `textColumn` (em-dash fallback),
+`dateColumn` (`slice(0,10)` + `formatDateID`), `moneyColumn`/`moneyDisplayColumn` (`MoneyText`, right-aligned),
+`activeStatusColumn` (`StatusBadge`), `masterActionsColumn` (`RowActions`) — used by all seven `columns.tsx`.
+Document-specific builders in `src/features/documents/documentColumns.tsx` — `docStatusColumn`,
+`paymentStatusColumn`, and `documentActionsColumn` (invoice/bill/payment; journals keep their bespoke
+POSTED+MANUAL reverse action). Money columns are now **right-aligned**: `DataTable` reads a new
+`columnDef.meta.align` (an augmented `ColumnMeta`) and applies `text-right`/`text-center` to header + cell,
+fixing the drift where `MoneyText` documented itself as "right-aligned" but `text-right` was never wired.
+`documentActionsColumn` takes a `renderOpenLink(row, label)` closure so each feature supplies its route-typed
+`<Link>` (same route-literal-preservation trick as `DocumentEditorPageConfig` / `DocumentListConfig.newControl`).
+The leaf renderers (`MoneyText` / `StatusBadge` / `StatusChip` / `formatDateID`) were already deep — only the
+column-assembly adapter was duplicated.
+
 **Resource-hooks factories** *(decision 2026-06-26)*
 The CRUD hook factory is split along the Document / master-data line over a shared
 private `createCrudHooks` core (list/pagedList/create/update/remove): `createMasterDataHooks`
