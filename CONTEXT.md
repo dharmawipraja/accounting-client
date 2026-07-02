@@ -193,12 +193,17 @@ keyed=domain), `useMasterDataListController` (deactivate/delete/activate — pla
 error too (was success-only), and Periods now toasts success/error at all (previously silent via bare
 `onSettled` — a real feedback gap). `onClose` is omitted for the immediate master-data activate (no dialog).
 
-**Resource-hooks factories** *(decision 2026-06-26)*
+**Resource-hooks factories** *(decision 2026-06-26; journals folded in 2026-07-02)*
 The CRUD hook factory is split along the Document / master-data line over a shared
 private `createCrudHooks` core (list/pagedList/create/update/remove): `createMasterDataHooks`
 adds activate/deactivate (no detail view) for accounts/partners/tax-codes;
-`createDocumentHooks` adds `useItem` (no activate/deactivate) for sales-invoices/payments/
-purchase-bills, whose draft/post/void lifecycle transitions go through `useDocumentAction`.
+`createDocumentHooks` adds `useItem` (no activate/deactivate) and `useAction(verb)` for
+sales-invoices/payments/purchase-bills/**journals**, whose draft/post/void(/reverse) lifecycle
+transitions go through `useDocumentAction`. **All four Documents are now on the factory** —
+journals (previously hand-rolled) folded in via the optional `listItemSchema` (`TListItem` generic),
+which lets its register row (`JournalEntryListItem` — omits `lines`, adds totalDebit/lineCount)
+differ from the detail (`JournalEntry`); `journals/hooks.ts` is now config + thin typed wrappers
+(`useJournalEntries` over `usePagedList`, post/reverse over `useAction`).
 
 **MasterDataFormDialog** / **MasterDataListPage** / **useMasterDataListController** *(decision 2026-06-27 — design converged, not yet built)*
 The master-data layer's deepenings — the activate/deactivate/delete siblings of `DocumentEditor`
