@@ -135,6 +135,18 @@ gating; keeps its own `yearStart`), and Trial Balance (columnar `ReportTable` + 
 stay bespoke; forcing them through one config would degenerate it into a render-prop bag. `ReportContent`
 (a shallow pass-through over `QueryState`) is still shared with the table-family report pages and kept.
 
+**Dashboard report queries** *(decision 2026-07-02 — BUILT)*
+The dashboard's three financial-summary cards (balance sheet / income statement / cash flow) reuse the
+reports feature's schemas + `useReport` (`queryKeys.report(path, params)`) instead of a parallel narrow
+schema + a `queryKeys.reports.*` key family (round-2 candidate 2). `dashboard/hooks.ts`
+`useBalanceSheet`/`useIncomeStatement`/`useCashFlow` delegate to
+`useReport(path, params, <reports schema>, enabled)`, so one schema is the single home for each endpoint's
+contract and a dashboard card shares one cache entry with its report page when the date params coincide (no
+double fetch). zod keeps the full hierarchical shape the card ignores. The former `dashboard/schema.ts`
+report schemas and the `queryKeys.reports` namespace are deleted; only `draftCountSchema` (the
+draft-journal count — a `/ledger/journal-entries?status=DRAFT&limit=1` query, a *separate* concern) remains,
+now keyed `queryKeys.draftCount()`.
+
 **Resource-hooks factories** *(decision 2026-06-26)*
 The CRUD hook factory is split along the Document / master-data line over a shared
 private `createCrudHooks` core (list/pagedList/create/update/remove): `createMasterDataHooks`
