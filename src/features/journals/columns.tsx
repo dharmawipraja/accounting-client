@@ -3,9 +3,8 @@ import { Link } from '@tanstack/react-router';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { JournalStatusChip } from '@/components/common/statusChips';
-import { MoneyText } from '@/components/common/MoneyText';
+import { textColumn, dateColumn, moneyColumn } from '@/components/common/columnKit';
 import { RoleGate } from '@/components/common/RoleGate';
-import { formatDateID } from '@/lib/format/date';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { journalSourceLabel } from './sourceLabel';
 import type { JournalEntryListItem } from './schema';
@@ -17,12 +16,12 @@ export function buildJournalColumns(
   handlers: { onDelete: (e: JournalEntryListItem) => void; onPost: (e: JournalEntryListItem) => void; onReverse: (e: JournalEntryListItem) => void },
 ) {
   return [
-    col.accessor('entryRef', { header: t.journals.entryRef, cell: (c) => c.getValue() ?? '—' }),
-    col.accessor('date', { header: t.journals.date, cell: (c) => formatDateID(c.getValue().slice(0, 10)) }),
+    textColumn<JournalEntryListItem>('entryRef', t.journals.entryRef),
+    dateColumn<JournalEntryListItem>('date', t.journals.date),
     col.accessor('description', { header: t.journals.description, cell: (c) => c.getValue() }),
     col.accessor('sourceType', { header: t.journals.sourceType, cell: (c) => <Badge variant="outline">{journalSourceLabel(t, c.getValue())}</Badge> }),
     col.accessor('status', { header: t.journals.status, cell: (c) => <JournalStatusChip status={c.getValue()} t={t} /> }),
-    col.accessor('totalDebit', { header: t.journals.totalDebit, cell: (c) => <MoneyText value={c.getValue()} /> }),
+    moneyColumn<JournalEntryListItem>('totalDebit', t.journals.totalDebit),
     col.accessor('lineCount', { header: t.journals.lineCount, cell: (c) => c.getValue() }),
     col.display({
       id: 'actions',
