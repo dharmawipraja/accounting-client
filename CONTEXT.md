@@ -180,6 +180,19 @@ escape hatch for **periods** (`close`/`reopen` — bespoke key shape, never a fa
 until it is folded onto the factory (round-3 candidate 2). Scope of this change: invoice/bill/payment (6 action hooks);
 journals + periods keep raw `useDocumentAction`.
 
+**mutationFeedback** *(decision 2026-07-02 — BUILT; `src/lib/api/mutationFeedback.ts`)*
+The shared confirm-action result policy (round-3 candidate 3) — the list-side analog of `useDocumentSubmit`.
+`mutationFeedback({ t, success, errorMode?, onClose? })` (`src/lib/api/mutationFeedback.ts`) returns the
+`{ onSuccess, onError }` to spread into `mutation.mutate(vars, …)`: on success `toast.success(success)` +
+`onClose?()`; on error route via `toastApiError` (`errorMode:'domain'` — the idempotency-keyed lifecycle and
+period actions, so SoD/closed-period errors get their real messages) or `toast.error(t.common.error)`
+(`'plain'`, the default) + `onClose?()`. The three confirm state machines stay bespoke (ADR-0001 — divergent
+action shapes); only the result *policy* concentrates. Adopters: `useDocumentListController` (delete=plain,
+keyed=domain), `useMasterDataListController` (deactivate/delete/activate — plain), `PeriodsPage`
+(close/reopen/generate/year-end — domain). **Two drifts closed:** master-data now closes its confirm dialog on
+error too (was success-only), and Periods now toasts success/error at all (previously silent via bare
+`onSettled` — a real feedback gap). `onClose` is omitted for the immediate master-data activate (no dialog).
+
 **Resource-hooks factories** *(decision 2026-06-26)*
 The CRUD hook factory is split along the Document / master-data line over a shared
 private `createCrudHooks` core (list/pagedList/create/update/remove): `createMasterDataHooks`
