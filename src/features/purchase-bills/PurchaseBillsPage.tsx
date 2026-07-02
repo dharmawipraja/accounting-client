@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useEntityLabelMap } from '@/lib/hooks/useEntityLabelMap';
 import { useT } from '@/lib/i18n/useT';
 import { partnersApi } from '@/features/partners/hooks';
 import { DocumentListPage } from '@/features/documents/DocumentListPage';
@@ -13,15 +13,11 @@ import type { PurchaseBill } from './schema';
 
 export function PurchaseBillsPage() {
   const t = useT();
-  const partners = partnersApi.useList();
   const remove = purchaseBillsApi.useRemove();
   const post = usePostBill();
   const voidBill = useVoidBill();
 
-  const partnerName = useMemo(() => {
-    const map = new Map((partners.data ?? []).map((p) => [p.id, p.name]));
-    return (id: string) => map.get(id) ?? id;
-  }, [partners.data]);
+  const partnerName = useEntityLabelMap(partnersApi.useList, (p) => p.name);
 
   const config: DocumentListConfig<PurchaseBill> = {
     title: t.purchaseBills.title,

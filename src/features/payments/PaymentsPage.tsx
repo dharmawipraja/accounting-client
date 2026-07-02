@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useEntityLabelMap } from '@/lib/hooks/useEntityLabelMap';
 import { useT } from '@/lib/i18n/useT';
 import { partnersApi } from '@/features/partners/hooks';
 import { accountsApi } from '@/features/accounts/hooks';
@@ -14,20 +14,12 @@ import type { Payment } from './schema';
 
 export function PaymentsPage() {
   const t = useT();
-  const partners = partnersApi.useList();
-  const accounts = accountsApi.useList();
   const remove = paymentsApi.useRemove();
   const post = usePostPayment();
   const voidPayment = useVoidPayment();
 
-  const partnerName = useMemo(() => {
-    const map = new Map((partners.data ?? []).map((p) => [p.id, p.name]));
-    return (id: string) => map.get(id) ?? id;
-  }, [partners.data]);
-  const accountName = useMemo(() => {
-    const map = new Map((accounts.data ?? []).map((a) => [a.id, `${a.code} — ${a.name}`]));
-    return (id: string) => map.get(id) ?? id;
-  }, [accounts.data]);
+  const partnerName = useEntityLabelMap(partnersApi.useList, (p) => p.name);
+  const accountName = useEntityLabelMap(accountsApi.useList, (a) => `${a.code} — ${a.name}`);
 
   const config: DocumentListConfig<Payment> = {
     title: t.payments.title,

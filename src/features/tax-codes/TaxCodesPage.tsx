@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
 import { accountsApi } from '@/features/accounts/hooks';
+import { useEntityLabelMap } from '@/lib/hooks/useEntityLabelMap';
 import { useT } from '@/lib/i18n/useT';
 import { MasterDataListPage } from '@/features/master-data/MasterDataListPage';
 import { buildTaxCodeColumns } from './columns';
@@ -11,11 +11,7 @@ const LIMIT = 20;
 
 export function TaxCodesPage() {
   const t = useT();
-  const accounts = accountsApi.useList();
-  const accountLabel = useMemo(() => {
-    const map = new Map((accounts.data ?? []).map((a) => [a.id, `${a.code} — ${a.name}`]));
-    return (id: string) => map.get(id) ?? '—';
-  }, [accounts.data]);
+  const accountLabel = useEntityLabelMap(accountsApi.useList, (a) => `${a.code} — ${a.name}`, '—');
 
   return (
     <MasterDataListPage<TaxCode>

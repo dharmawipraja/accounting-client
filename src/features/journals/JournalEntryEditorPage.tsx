@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { JournalStatusChip } from '@/components/common/statusChips';
@@ -10,6 +9,7 @@ import { QueryState } from '@/components/common/QueryState';
 import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { MoneyText } from '@/components/common/MoneyText';
 import { formatDateID } from '@/lib/format/date';
+import { useEntityLabelMap } from '@/lib/hooks/useEntityLabelMap';
 import { useT } from '@/lib/i18n/useT';
 import { accountsApi } from '@/features/accounts/hooks';
 import { JournalEntryForm } from './JournalEntryForm';
@@ -20,11 +20,7 @@ export function JournalEntryEditorPage({ id }: { id?: string }) {
   const navigate = useNavigate();
   const goList = () => navigate({ to: '/journals' });
   const item = useJournalEntry(id ?? '');
-  const accounts = accountsApi.useList();
-  const accountName = useMemo(() => {
-    const map = new Map((accounts.data ?? []).map((a) => [a.id, `${a.code} — ${a.name}`]));
-    return (aid: string) => map.get(aid) ?? aid;
-  }, [accounts.data]);
+  const accountName = useEntityLabelMap(accountsApi.useList, (a) => `${a.code} — ${a.name}`);
 
   if (!id) {
     return <div><PageHeader title={t.journals.newEntry} back={<BackLink to="/journals" label={t.nav.journals} />} /><JournalEntryForm onSaved={goList} /></div>;
