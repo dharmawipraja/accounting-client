@@ -15,6 +15,17 @@ const cfg = (key: string, basePath: string) => ({ keys: createResourceKeys(key),
 const masterWidgets = createMasterDataHooks<Widget, { name: string }, { name: string }>(cfg('widgets', '/widgets'));
 const docWidgets = createDocumentHooks<Widget, { name: string }, { name: string }>(cfg('docwidgets', '/docwidgets'));
 
+// A resource whose register row differs from the detail (like journals).
+const listWidgetSchema = z.object({ id: z.string(), summary: z.string() });
+type ListWidget = z.infer<typeof listWidgetSchema>;
+const splitWidgets = createDocumentHooks<Widget, { name: string }, unknown, ListWidget>({
+  keys: createResourceKeys('splitwidgets'),
+  basePath: '/splitwidgets',
+  itemSchema: widgetSchema,
+  listItemSchema: listWidgetSchema,
+  paginated: true,
+});
+
 function wrapper({ children }: { children: React.ReactNode }) {
   const qc = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
@@ -106,6 +117,22 @@ describe('createDocumentHooks', () => {
     const { result } = renderHook(() => docWidgets.useRemove(), { wrapper });
     await result.current.mutateAsync('9');
     expect(method).toBe('DELETE');
+  });
+
+  it('usePagedList parses the register rows with listItemSchema (row != detail)', async () => {
+    server.use(http.get(`${API}/splitwidgets`, () =>
+      HttpResponse.json({ data: [{ id: '1', summary: 'S' }], total: 1, limit: 20, offset: 0 }),
+    ));
+    const { result } = renderHook(() => splitWidgets.usePagedList({ limit: 20, offset: 0 }), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.data).toEqual([{ id: '1', summary: 'S' }]);
+  });
+
+  it('useItem still parses with the detail itemSchema even when listItemSchema differs', async () => {
+    server.use(http.get(`${API}/splitwidgets/9`, () => HttpResponse.json({ id: '9', name: 'Z' })));
+    const { result } = renderHook(() => splitWidgets.useItem('9'), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual({ id: '9', name: 'Z' });
   });
 
   it('useAction posts to /:id/{action} with the idempotency key, from the factory basePath/keys', async () => {

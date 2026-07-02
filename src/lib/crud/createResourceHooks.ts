@@ -10,14 +10,21 @@ import { apiFetch } from '@/lib/api/client';
 import type { ApiError } from '@/lib/api/errors';
 import { useDocumentAction, type DocumentActionKind } from './useDocumentAction';
 
-export interface ResourceConfig<TItem> {
+export interface ResourceConfig<TItem, TListItem = TItem> {
   keys: ResourceKeys;
   basePath: string;
   itemSchema: ZodType<TItem>;
   /**
+   * The register-row schema, for resources whose list row differs from the detail
+   * item (e.g. journals: the list omits `lines` and adds totalDebit/lineCount).
+   * useList/usePagedList resolve to TListItem; useItem/useCreate stay TItem.
+   * Defaults to itemSchema (list row == detail).
+   */
+  listItemSchema?: ZodType<TListItem>;
+  /**
    * Set to true for resources whose list endpoint returns a pagination envelope
-   * { data: TItem[], total: number, limit: number, offset: number }.
-   * useList will unwrap the envelope and still resolve to TItem[], so consumers
+   * { data: TListItem[], total: number, limit: number, offset: number }.
+   * useList will unwrap the envelope and still resolve to TListItem[], so consumers
    * are unchanged. Requests limit=200 to preserve the old "show all" behaviour.
    * Default: false (bare array).
    */
@@ -40,10 +47,13 @@ export function createResourceKeys(key: string): ResourceKeys {
 
 // Shared CRUD core: the hooks common to every resource shape. Not exported —
 // consumed by the two shape-specific factories below.
-function createCrudHooks<TItem, TCreate, TUpdate>(config: ResourceConfig<TItem>) {
+function createCrudHooks<TItem, TCreate, TUpdate, TListItem = TItem>(config: ResourceConfig<TItem, TListItem>) {
   const { basePath, itemSchema, paginated = false } = config;
   const keys = config.keys;
-  const listSchema = itemSchema.array();
+  // Register-row schema: the list-item schema when the row differs from the detail,
+  // else the detail item schema (list row == detail).
+  const listItemSchema = (config.listItemSchema ?? itemSchema) as ZodType<TListItem>;
+  const listSchema = listItemSchema.array();
   const envelopeSchema = z.object({
     data: listSchema,
     total: z.number(),
@@ -54,8 +64,8 @@ function createCrudHooks<TItem, TCreate, TUpdate>(config: ResourceConfig<TItem>)
   const invalidate = (qc: ReturnType<typeof useQueryClient>) =>
     qc.invalidateQueries({ queryKey: keys.all });
 
-  function useList(): UseQueryResult<TItem[], ApiError> {
-    return useQuery<TItem[], ApiError>({
+  function useList(): UseQueryResult<TListItem[], ApiError> {
+    return useQuery<TListItem[], ApiError>({
       queryKey: keys.list(),
       queryFn: paginated
         ? async () => {
@@ -69,7 +79,7 @@ function createCrudHooks<TItem, TCreate, TUpdate>(config: ResourceConfig<TItem>)
     });
   }
 
-  type Envelope = { data: TItem[]; total: number; limit: number; offset: number };
+  type Envelope = { data: TListItem[]; total: number; limit: number; offset: number };
   function usePagedList(
     query: Record<string, string | number | undefined> = {},
   ): UseQueryResult<Envelope, ApiError> {
@@ -147,10 +157,10 @@ export function createMasterDataHooks<TItem, TCreate = unknown, TUpdate = unknow
 
 // Documents (sales invoices, payments, purchase bills): a draft -> post -> void
 // lifecycle (transitions via useDocumentAction) plus a detail view (useItem).
-export function createDocumentHooks<TItem, TCreate = unknown, TUpdate = unknown>(
-  config: ResourceConfig<TItem>,
+export function createDocumentHooks<TItem, TCreate = unknown, TUpdate = unknown, TListItem = TItem>(
+  config: ResourceConfig<TItem, TListItem>,
 ) {
-  const core = createCrudHooks<TItem, TCreate, TUpdate>(config);
+  const core = createCrudHooks<TItem, TCreate, TUpdate, TListItem>(config);
 
   function useItem(id: string): UseQueryResult<TItem, ApiError> {
     return useQuery<TItem, ApiError>({
