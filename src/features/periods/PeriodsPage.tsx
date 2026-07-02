@@ -9,6 +9,7 @@ import { QueryState } from '@/components/common/QueryState';
 import { RoleGate } from '@/components/common/RoleGate';
 import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { formatDateID } from '@/lib/format/date';
+import { mutationFeedback } from '@/lib/api/mutationFeedback';
 import { useT } from '@/lib/i18n/useT';
 import { usePeriods, useYearEndStatus } from './usePeriods';
 import { useGeneratePeriods, useClosePeriod, useReopenPeriod, useRunYearEnd, useReopenYear } from './mutations';
@@ -46,10 +47,19 @@ export function PeriodsPage() {
   } as const;
   const dialog = pending ? dialogs[pending.kind] : null;
 
+  const successByKind: Record<Exclude<Pending, null>['kind'], string> = {
+    close: t.periods.closeSuccess,
+    reopen: t.periods.reopenSuccess,
+    generate: t.periods.generateSuccess,
+    runYearEnd: t.periods.runYearEndSuccess,
+    reopenYear: t.periods.reopenYearSuccess,
+  };
+
   function confirmRun() {
     if (!pending) return;
     const idempotencyKey = crypto.randomUUID();
-    const done = { onSettled: () => setPending(null) };
+    // period actions are idempotency-keyed and surface domain errors (SoD / closed period)
+    const done = mutationFeedback({ t, success: successByKind[pending.kind], errorMode: 'domain', onClose: () => setPending(null) });
     if (pending.kind === 'close') close.mutate({ id: pending.period.id, idempotencyKey }, done);
     else if (pending.kind === 'reopen') reopen.mutate({ id: pending.period.id, idempotencyKey }, done);
     else if (pending.kind === 'generate') generate.mutate({ fiscalYear, idempotencyKey }, done);

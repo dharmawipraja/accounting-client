@@ -472,6 +472,11 @@ export const id = {
     reopenYear: 'Buka Kembali Tahun',
     confirmYearEnd: 'Menjalankan tutup buku akhir tahun memindahkan laba/rugi ke Laba Ditahan dan mengunci tahun fiskal. Lanjutkan?',
     confirmReopenYear: 'Buka kembali tahun fiskal yang sudah ditutup?',
+    closeSuccess: 'Periode ditutup',
+    reopenSuccess: 'Periode dibuka kembali',
+    generateSuccess: 'Periode dibuat',
+    runYearEndSuccess: 'Tutup buku akhir tahun selesai',
+    reopenYearSuccess: 'Tahun dibuka kembali',
     closeAllFirst: 'Tutup semua periode sebelum tutup buku tahun',
   },
   audit: {

@@ -2,12 +2,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { afterEach, expect, it } from 'vitest';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import { toast } from 'sonner';
 import { API, periodFixtures } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
+import { id as messages } from '@/lib/i18n/messages.id';
 import { PeriodsPage } from './PeriodsPage';
 
+vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
+beforeEach(() => vi.clearAllMocks());
 afterEach(() => useSession.getState().clear());
 
 function renderPage(role: 'ADMIN' | 'APPROVER' | 'VIEWER' = 'ADMIN') {
@@ -61,6 +65,20 @@ it('year-end panel: not closed shows the run action; ADMIN runs it', async () =>
   const dialog = await screen.findByRole('alertdialog');
   await user.click(within(dialog).getByRole('button', { name: 'Tutup Buku Akhir Tahun' }));
   await waitFor(() => expect(ranFor).toMatchObject({ fiscalYear: thisYear }));
+});
+
+it('surfaces a domain error toast when a period close fails (previously silent)', async () => {
+  server.use(
+    http.get(`${API}/ledger/periods`, () => HttpResponse.json(periodFixtures(2026))),
+    http.post(`${API}/ledger/periods/:id/close`, () => HttpResponse.json({ code: 'SEGREGATION_OF_DUTIES', message: 'x' }, { status: 403 })),
+  );
+  renderPage();
+  await screen.findByText('Januari');
+  const user = userEvent.setup();
+  await user.click(screen.getAllByRole('button', { name: 'Tutup' })[0]);
+  const dialog = await screen.findByRole('alertdialog');
+  await user.click(within(dialog).getByRole('button', { name: 'Tutup' }));
+  await waitFor(() => expect(toast.error).toHaveBeenCalledWith(messages.roles.segregationOfDuties));
 });
 
 it('VIEWER sees no action buttons', async () => {
