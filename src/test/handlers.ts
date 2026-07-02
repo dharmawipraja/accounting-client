@@ -45,8 +45,8 @@ export const balanceSheetFixture = (asOf: string) => ({
 });
 export const incomeStatementFixture = (from: string, to: string) => ({
   from, to,
-  revenue: '2000000.0000', cogs: '0.0000', grossProfit: '2000000.0000',
-  operatingExpense: '0.0000', operatingProfit: '2000000.0000', otherIncome: '0.0000',
+  revenue: '2000000.0000', revenueLines: [], cogs: '0.0000', cogsLines: [], grossProfit: '2000000.0000',
+  operatingExpense: '0.0000', operatingExpenseLines: [], operatingProfit: '2000000.0000', otherIncome: '0.0000',
   otherExpense: '0.0000', profitBeforeTax: '2000000.0000', taxExpense: '0.0000',
   netIncome: '1750000.0000',
 });

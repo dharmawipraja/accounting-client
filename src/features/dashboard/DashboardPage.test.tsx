@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { startOfMonth } from 'date-fns';
 import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it } from 'vitest';
-import { API } from '@/test/handlers';
+import { API, cashFlowFixture, incomeStatementFixture } from '@/test/handlers';
 import { server } from '@/test/server';
 import { toApiDate } from '@/lib/format/date';
 import { useSession } from '@/stores/session';
@@ -51,7 +51,7 @@ it('refetches the period cards with the new range when a preset is clicked', asy
   server.use(
     http.get(`${API}/reports/income-statement`, ({ request }) => {
       lastFrom = new URL(request.url).searchParams.get('from');
-      return HttpResponse.json({ from: lastFrom, to: '2026-06-30', revenue: '2000000.0000', netIncome: '1750000.0000' });
+      return HttpResponse.json(incomeStatementFixture(lastFrom ?? '', '2026-06-30'));
     }),
   );
   renderPage();
@@ -72,7 +72,7 @@ it('shows an error + retry when cash-flow fails, leaving other cards intact', as
       calls += 1;
       return calls === 1
         ? HttpResponse.json({ code: 'INTERNAL', message: 'boom' }, { status: 500 })
-        : HttpResponse.json({ from: '2026-01-01', to: '2026-06-13', netChange: '750000.0000', kasAkhir: '1234000.0000' });
+        : HttpResponse.json(cashFlowFixture('2026-01-01', '2026-06-13'));
     }),
   );
   renderPage();
@@ -90,7 +90,7 @@ it('disables the period queries and shows a hint when the custom range is invali
     http.get(`${API}/reports/income-statement`, ({ request }) => {
       const from = new URL(request.url).searchParams.get('from') ?? '';
       seenFrom.push(from);
-      return HttpResponse.json({ from, to: '2026-06-30', revenue: '2000000.0000', netIncome: '1750000.0000' });
+      return HttpResponse.json(incomeStatementFixture(from, '2026-06-30'));
     }),
   );
   renderPage();

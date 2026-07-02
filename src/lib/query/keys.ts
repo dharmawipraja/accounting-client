@@ -8,13 +8,9 @@ export const queryKeys = {
   payments: createResourceKeys('payments'),
   purchaseBills: createResourceKeys('purchaseBills'),
   journalEntries: createResourceKeys('journalEntries'),
-  reports: {
-    all: ['reports'] as const,
-    balanceSheet: (asOf: string) => ['reports', 'balance-sheet', asOf] as const,
-    incomeStatement: (from: string, to: string) => ['reports', 'income-statement', from, to] as const,
-    cashFlow: (from: string, to: string) => ['reports', 'cash-flow', from, to] as const,
-    draftCount: () => ['reports', 'draft-count'] as const,
-  },
+  /** Dashboard's draft-journal count. The three financial statements the dashboard
+   *  shows are cached under `report(path, params)` via the reports feature's useReport. */
+  draftCount: () => ['dashboard', 'draft-count'] as const,
   periods: {
     all: ['periods'] as const,
     list: (fiscalYear: number) => ['periods', 'list', fiscalYear] as const,

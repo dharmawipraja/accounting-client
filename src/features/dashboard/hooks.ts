@@ -2,44 +2,36 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { apiFetch } from '@/lib/api/client';
 import type { ApiError } from '@/lib/api/errors';
 import { queryKeys } from '@/lib/query/keys';
+import { useReport } from '@/features/reports/useReport';
 import {
-  balanceSheetSchema,
-  cashFlowSchema,
-  draftCountSchema,
-  incomeStatementSchema,
-  type BalanceSheet,
-  type CashFlow,
-  type DraftCount,
-  type IncomeStatement,
-} from './schema';
+  balanceSheetReportSchema,
+  cashFlowReportSchema,
+  incomeStatementReportSchema,
+  type BalanceSheetReport,
+  type CashFlowReport,
+  type IncomeStatementReport,
+} from '@/features/reports/schema';
+import { draftCountSchema, type DraftCount } from './schema';
 
-export function useBalanceSheet(asOf: string): UseQueryResult<BalanceSheet, ApiError> {
-  return useQuery<BalanceSheet, ApiError>({
-    queryKey: queryKeys.reports.balanceSheet(asOf),
-    queryFn: () => apiFetch('/reports/balance-sheet', { query: { asOf }, schema: balanceSheetSchema }),
-    enabled: !!asOf,
-  });
+// The three financial statements reuse the reports feature's schema + query key
+// (`useReport` → queryKeys.report(path, params)), so the dashboard card and the
+// report page share one schema and one cache entry. The dashboard reads only the
+// summary fields; zod keeps the full hierarchical shape it ignores.
+export function useBalanceSheet(asOf: string): UseQueryResult<BalanceSheetReport, ApiError> {
+  return useReport('/reports/balance-sheet', { asOf }, balanceSheetReportSchema, !!asOf);
 }
 
-export function useIncomeStatement(from: string, to: string, enabled: boolean): UseQueryResult<IncomeStatement, ApiError> {
-  return useQuery<IncomeStatement, ApiError>({
-    queryKey: queryKeys.reports.incomeStatement(from, to),
-    queryFn: () => apiFetch('/reports/income-statement', { query: { from, to }, schema: incomeStatementSchema }),
-    enabled,
-  });
+export function useIncomeStatement(from: string, to: string, enabled: boolean): UseQueryResult<IncomeStatementReport, ApiError> {
+  return useReport('/reports/income-statement', { from, to }, incomeStatementReportSchema, enabled);
 }
 
-export function useCashFlow(from: string, to: string, enabled: boolean): UseQueryResult<CashFlow, ApiError> {
-  return useQuery<CashFlow, ApiError>({
-    queryKey: queryKeys.reports.cashFlow(from, to),
-    queryFn: () => apiFetch('/reports/cash-flow', { query: { from, to }, schema: cashFlowSchema }),
-    enabled,
-  });
+export function useCashFlow(from: string, to: string, enabled: boolean): UseQueryResult<CashFlowReport, ApiError> {
+  return useReport('/reports/cash-flow', { from, to }, cashFlowReportSchema, enabled);
 }
 
 export function useDraftCount(): UseQueryResult<DraftCount, ApiError> {
   return useQuery<DraftCount, ApiError>({
-    queryKey: queryKeys.reports.draftCount(),
+    queryKey: queryKeys.draftCount(),
     queryFn: () => apiFetch('/ledger/journal-entries', { query: { status: 'DRAFT', limit: 1 }, schema: draftCountSchema }),
   });
 }
