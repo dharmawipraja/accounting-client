@@ -1,7 +1,6 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Badge } from '@/components/ui/badge';
-import { StatusBadge } from '@/components/common/StatusBadge';
-import { RowActions } from '@/components/common/RowActions';
+import { activeStatusColumn, masterActionsColumn } from '@/components/common/columnKit';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { formatRatePercent } from './rate';
 import type { TaxCode, TaxKind } from './schema';
@@ -24,18 +23,7 @@ export function buildTaxCodeColumns(
     col.accessor('kind', { header: t.taxCodes.kind, cell: (c) => <Badge variant="outline">{t.taxCodes[KIND_KEY[c.getValue()]]}</Badge> }),
     col.accessor('rate', { header: t.taxCodes.rate, cell: (c) => <span className="font-mono tabular-nums">{formatRatePercent(c.getValue())}</span> }),
     col.accessor('taxAccountId', { header: t.taxCodes.taxAccount, cell: (c) => accountLabel(c.getValue()) }),
-    col.accessor('isActive', { header: t.crud.status, cell: (c) => <StatusBadge active={c.getValue()} /> }),
-    col.display({
-      id: 'actions',
-      header: '',
-      cell: (c) => (
-        <RowActions
-          onEdit={() => handlers.onEdit(c.row.original)}
-          active={c.row.original.isActive}
-          onToggleActive={() => handlers.onToggleActive(c.row.original)}
-          onDelete={() => handlers.onDelete(c.row.original)}
-        />
-      ),
-    }),
+    activeStatusColumn<TaxCode>(t.crud.status),
+    masterActionsColumn<TaxCode>(handlers),
   ];
 }

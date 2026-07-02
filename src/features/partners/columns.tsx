@@ -1,7 +1,6 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Badge } from '@/components/ui/badge';
-import { StatusBadge } from '@/components/common/StatusBadge';
-import { RowActions } from '@/components/common/RowActions';
+import { textColumn, activeStatusColumn, masterActionsColumn } from '@/components/common/columnKit';
 import type { Messages } from '@/lib/i18n/messages.id';
 import type { Partner } from './schema';
 
@@ -14,7 +13,7 @@ export function buildPartnerColumns(
   return [
     col.accessor('code', { header: t.partners.code }),
     col.accessor('name', { header: t.partners.name }),
-    col.accessor('npwp', { header: t.partners.npwp, cell: (c) => c.getValue() ?? '—' }),
+    textColumn<Partner>('npwp', t.partners.npwp),
     col.display({
       id: 'type',
       header: t.partners.type,
@@ -25,18 +24,7 @@ export function buildPartnerColumns(
         </div>
       ),
     }),
-    col.accessor('isActive', { header: t.crud.status, cell: (c) => <StatusBadge active={c.getValue()} /> }),
-    col.display({
-      id: 'actions',
-      header: '',
-      cell: (c) => (
-        <RowActions
-          onEdit={() => handlers.onEdit(c.row.original)}
-          active={c.row.original.isActive}
-          onToggleActive={() => handlers.onToggleActive(c.row.original)}
-          onDelete={() => handlers.onDelete(c.row.original)}
-        />
-      ),
-    }),
+    activeStatusColumn<Partner>(t.crud.status),
+    masterActionsColumn<Partner>(handlers),
   ];
 }
