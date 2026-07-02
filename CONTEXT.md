@@ -122,6 +122,15 @@ TaxCodesPage, JournalEntryEditorPage, PurchaseBillsPage, SalesInvoicesPage); eac
 The combobox a11y/keyboard/empty-state surface — previously authored three times — becomes the test
 surface once.
 
+**Pagination** *(decision 2026-07-02 — BUILT)*
+The single offset pager for both list shapes (round-2 candidate 3). `Pagination`
+(`src/components/common/Pagination.tsx`) takes union props: `total` (total-known — the paginated-envelope
+lists `DocumentListPage`/`MasterDataListPage`: "showing from–to of total" label + Next off at
+`offset+limit >= total`) XOR `count` (total-inferred — the bare-array `/audit` log: no label + Next off at
+`count < limit`). The separate `OffsetPager` was deleted and its `audit.prev/next` i18n folded into
+`common.prev/next` (identical copy). Two adapters over one offset-stepping concept, the
+total-known-vs-inferred seam named explicitly.
+
 **StatementReportPage** *(decision 2026-07-02 — BUILT)*
 The shared shell for the three hierarchical statement reports — balance sheet, income statement,
 cash flow (candidate 3). `StatementReportPage({ config })` (`src/features/reports/StatementReportPage.tsx`)
