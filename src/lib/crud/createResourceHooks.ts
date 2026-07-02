@@ -8,6 +8,7 @@ import {
 import { z, type ZodType } from 'zod';
 import { apiFetch } from '@/lib/api/client';
 import type { ApiError } from '@/lib/api/errors';
+import { useDocumentAction, type DocumentActionKind } from './useDocumentAction';
 
 export interface ResourceConfig<TItem> {
   keys: ResourceKeys;
@@ -159,6 +160,13 @@ export function createDocumentHooks<TItem, TCreate = unknown, TUpdate = unknown>
     });
   }
 
+  // The draft -> post -> void/reverse lifecycle transitions. Binds each verb to
+  // this resource's keys + basePath, so features declare identity once (here) and
+  // derive named action hooks: `usePostInvoice = () => salesInvoicesApi.useAction('post')`.
+  function useAction(action: DocumentActionKind) {
+    return useDocumentAction({ keys: core.keys, basePath: core.basePath, action });
+  }
+
   return {
     keys: core.keys,
     useList: core.useList,
@@ -167,6 +175,7 @@ export function createDocumentHooks<TItem, TCreate = unknown, TUpdate = unknown>
     useCreate: core.useCreate,
     useUpdate: core.useUpdate,
     useRemove: core.useRemove,
+    useAction,
   };
 }
 

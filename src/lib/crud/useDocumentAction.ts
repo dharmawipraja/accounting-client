@@ -2,6 +2,11 @@ import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/r
 import { apiFetch } from '@/lib/api/client';
 import type { ApiError } from '@/lib/api/errors';
 
+/** The document lifecycle verbs the CRUD factory's `useAction` builder accepts.
+ *  Raw `useDocumentAction` keeps an open `action: string` for non-document
+ *  actions (periods' close/reopen). */
+export type DocumentActionKind = 'post' | 'void' | 'reverse';
+
 /** A document lifecycle action (post/void/reverse): POST {basePath}/:id/{action} with an
  *  Idempotency-Key, invalidating the resource list on success. */
 export function useDocumentAction<TResult = unknown>(config: {

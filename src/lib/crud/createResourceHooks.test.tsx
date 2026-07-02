@@ -107,6 +107,20 @@ describe('createDocumentHooks', () => {
     await result.current.mutateAsync('9');
     expect(method).toBe('DELETE');
   });
+
+  it('useAction posts to /:id/{action} with the idempotency key, from the factory basePath/keys', async () => {
+    let hit = '';
+    let seenKey: string | null = null;
+    server.use(http.post(`${API}/docwidgets/9/post`, ({ request }) => {
+      hit = 'post';
+      seenKey = request.headers.get('Idempotency-Key');
+      return HttpResponse.json({});
+    }));
+    const { result } = renderHook(() => docWidgets.useAction('post'), { wrapper });
+    await result.current.mutateAsync({ id: '9', idempotencyKey: 'k-123' });
+    expect(hit).toBe('post');
+    expect(seenKey).toBe('k-123');
+  });
 });
 
 it('usePagedList returns the envelope and forwards limit/offset query params', async () => {
