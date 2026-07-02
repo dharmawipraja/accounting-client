@@ -103,6 +103,19 @@ fixing the drift where `MoneyText` documented itself as "right-aligned" but `tex
 The leaf renderers (`MoneyText` / `StatusBadge` / `StatusChip` / `formatDateID`) were already deep — only the
 column-assembly adapter was duplicated.
 
+**StatementReportPage** *(decision 2026-07-02 — BUILT)*
+The shared shell for the three hierarchical statement reports — balance sheet, income statement,
+cash flow (candidate 3). `StatementReportPage({ config })` (`src/features/reports/StatementReportPage.tsx`)
+owns the `PageHeader` + `BackLink` + `ReportDateControls` + `useReport` + `ReportContent` + `StatementView`
+shell and the `yearStart()` default range-start (previously duplicated verbatim across the trio + GL).
+`StatementReportConfig` supplies `title`, `path`, `schema`, `mode` (`'asOf'` single-date vs `'range'`
+from/to, gated on `isRangeValid`), the one per-report seam `buildRows(data, t) => StatementRow[]`, and an
+optional `footer(data, t)` (balance sheet's balanced/unbalanced `Badge`). Scope is the hierarchical trio
+only — Aging (master-detail + dynamic buckets + kind), General Ledger (extra `AccountSelect` + empty-state
+gating; keeps its own `yearStart`), and Trial Balance (columnar `ReportTable` + client-side balanced check)
+stay bespoke; forcing them through one config would degenerate it into a render-prop bag. `ReportContent`
+(a shallow pass-through over `QueryState`) is still shared with the table-family report pages and kept.
+
 **Resource-hooks factories** *(decision 2026-06-26)*
 The CRUD hook factory is split along the Document / master-data line over a shared
 private `createCrudHooks` core (list/pagedList/create/update/remove): `createMasterDataHooks`
