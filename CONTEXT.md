@@ -122,6 +122,19 @@ TaxCodesPage, JournalEntryEditorPage, PurchaseBillsPage, SalesInvoicesPage); eac
 The combobox a11y/keyboard/empty-state surface — previously authored three times — becomes the test
 surface once.
 
+**FieldError** *(decision 2026-07-02 — BUILT; `src/components/common/FieldError.tsx`)*
+The shared leaf for form field-error display (round-2 candidate 4). `FieldError`
+(`src/components/common/FieldError.tsx`) renders the `role="alert"` + `text-sm text-destructive` markup for a
+message, or nothing when the message is falsy — concentrating the alert a11y-role + destructive styling that
+was inlined ~23× across eight forms (MasterDataFormDialog, Partner/TaxCode dialogs, DocumentEditor,
+PaymentForm, JournalEntryForm, LoginForm). Callers still resolve the message (`msg`/`err` namespace lookups,
+fixed labels, `errors.root?.message`), so the leaf stays dumb (`message?: string | null`). Two intentionally
+distinct sites are **not** migrated — `AllocationTable` (`text-xs`, in-cell) and `DocumentTotals`
+(bare `text-destructive`, tax-preview error) — to preserve their different sizing. This also closes an
+inconsistency: `AccountFormDialog` previously showed **no** per-field errors (only the shared root/code
+block); it now shows a required message for `name` like its Partner/TaxCode siblings. A leaf, not a
+structural deepening — adopted for breadth (one home for the convention) + a11y consistency.
+
 **Pagination** *(decision 2026-07-02 — BUILT)*
 The single offset pager for both list shapes (round-2 candidate 3). `Pagination`
 (`src/components/common/Pagination.tsx`) takes union props: `total` (total-known — the paginated-envelope
