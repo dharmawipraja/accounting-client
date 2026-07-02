@@ -103,6 +103,25 @@ fixing the drift where `MoneyText` documented itself as "right-aligned" but `tex
 The leaf renderers (`MoneyText` / `StatusBadge` / `StatusChip` / `formatDateID`) were already deep — only the
 column-assembly adapter was duplicated.
 
+**EntitySelect** / **EntityMultiSelect** / **useEntitySelect** / **useEntityLabelMap** *(decision 2026-07-02 — BUILT; `src/components/common/EntitySelect.tsx` + `src/lib/hooks/useEntityLabelMap.ts`)*
+The deepening of the three master-data combobox widgets (round-2 candidate 1). A shared
+`useEntitySelect(adapter)` (`src/components/common/EntitySelect.tsx`) concentrates the load
+(`useList` → `data ?? []`), the domain filter + sort-by-code, open-state, and a `status`
+(loading/error/ready), behind an `EntitySelectAdapter<T>` = `{ useList, getValue, getLabel,
+getSearchText?, filter? }`. Two thin faces sit over it: `EntitySelect` (single; value `string`,
+close-on-select) and `EntityMultiSelect` (multi; value `string[]`, toggle, chips via `getChipLabel?`),
+sharing an internal `EntityCommand` option-list — `CommandInput` + a `CommandEmpty` that now
+**distinguishes loading vs error vs no-data** (previously always "no data") + the `Check` indicator +
+the `role="combobox"` a11y. The public `AccountSelect` / `PartnerSelect` / `TaxCodeMultiSelect` become
+thin per-entity adapters (unchanged props, so the 8 call sites don't move) supplying `useList` +
+`getLabel` (`code — name`) + `getSearchText` (`code name`) + a `filter` (postable+active /
+customer-vendor / allowedKinds). Separately, **`useEntityLabelMap`** (`src/lib/hooks/`) concentrates the
+`useList` + id→label `Map` + `?? id` fallback that six list/editor pages hand-build (PaymentsPage ×2,
+TaxCodesPage, JournalEntryEditorPage, PurchaseBillsPage, SalesInvoicesPage); each passes its own
+`toLabel` (`name` vs `code — name`), so the format stays per-site while the load+map plumbing lives once.
+The combobox a11y/keyboard/empty-state surface — previously authored three times — becomes the test
+surface once.
+
 **StatementReportPage** *(decision 2026-07-02 — BUILT)*
 The shared shell for the three hierarchical statement reports — balance sheet, income statement,
 cash flow (candidate 3). `StatementReportPage({ config })` (`src/features/reports/StatementReportPage.tsx`)
