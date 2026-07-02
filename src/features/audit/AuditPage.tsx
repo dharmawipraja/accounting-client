@@ -10,7 +10,7 @@ import { QueryState } from '@/components/common/QueryState';
 import { useRole } from '@/components/common/RoleGate';
 import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { useT } from '@/lib/i18n/useT';
-import { OffsetPager } from './OffsetPager';
+import { Pagination } from '@/components/common/Pagination';
 import { useAuditLog, type AuditFilters } from './useAuditLog';
 import { AUDIT_METHODS, formatAuditTime, type AuditEntry } from './schema';
 
@@ -101,7 +101,7 @@ function AuditContent() {
                 </TableBody>
               </Table>
             </div>
-            <OffsetPager offset={offset} limit={LIMIT} count={rows.length} onChange={setOffset} />
+            <Pagination offset={offset} limit={LIMIT} count={rows.length} onChange={setOffset} />
           </>
         )}
       </QueryState>

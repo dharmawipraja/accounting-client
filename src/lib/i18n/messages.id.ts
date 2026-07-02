@@ -490,8 +490,6 @@ export const id = {
     params: 'Params',
     detail: 'Detail Permintaan',
     empty: 'Tidak ada aktivitas',
-    prev: 'Sebelumnya',
-    next: 'Berikutnya',
   },
   settings: {
     title: 'Pengaturan Perusahaan',
