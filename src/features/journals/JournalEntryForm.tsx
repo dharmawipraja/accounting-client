@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useDocumentSubmit } from '@/features/documents/useDocumentSubmit';
+import { FieldError } from '@/components/common/FieldError';
 import { Money } from '@/lib/money/money';
 import { useT } from '@/lib/i18n/useT';
 import { JournalLineRow, type JournalLineState } from './JournalLineRow';
@@ -87,9 +88,9 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
         <JournalTotals lines={lines} />
       </div>
 
-      {form.formState.errors.date ? <p role="alert" className="text-sm text-destructive">{t.journals.required}</p> : null}
-      {form.formState.errors.description ? <p role="alert" className="text-sm text-destructive">{t.journals.required}</p> : null}
-      {form.formState.errors.root ? <p role="alert" className="text-sm text-destructive">{form.formState.errors.root.message}</p> : null}
+      <FieldError message={form.formState.errors.date ? t.journals.required : undefined} />
+      <FieldError message={form.formState.errors.description ? t.journals.required : undefined} />
+      <FieldError message={form.formState.errors.root?.message} />
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onSaved}>{t.common.cancel}</Button>

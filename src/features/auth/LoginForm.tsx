@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { FieldError } from '@/components/common/FieldError';
 import { ApiError } from '@/lib/api/errors';
 import { useT } from '@/lib/i18n/useT';
 import { useLogin } from './useLogin';
@@ -62,11 +63,7 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
                 autoComplete="username"
                 {...form.register('email')}
               />
-              {form.formState.errors.email && (
-                <p role="alert" className="text-sm text-destructive">
-                  {VALIDATION_MESSAGES.email}
-                </p>
-              )}
+              <FieldError message={form.formState.errors.email ? VALIDATION_MESSAGES.email : undefined} />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="password">{t.auth.password}</Label>
@@ -76,17 +73,9 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
                 autoComplete="current-password"
                 {...form.register('password')}
               />
-              {form.formState.errors.password && (
-                <p role="alert" className="text-sm text-destructive">
-                  {VALIDATION_MESSAGES.password}
-                </p>
-              )}
+              <FieldError message={form.formState.errors.password ? VALIDATION_MESSAGES.password : undefined} />
             </div>
-            {form.formState.errors.root && (
-              <p role="alert" className="text-sm text-destructive">
-                {form.formState.errors.root.message}
-              </p>
-            )}
+            <FieldError message={form.formState.errors.root?.message} />
             <Button
               type="submit"
               className="w-full"

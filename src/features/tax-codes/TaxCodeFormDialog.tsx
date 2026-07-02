@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/select';
 import { AccountSelect } from '@/features/accounts/AccountSelect';
 import { MasterDataFormDialog } from '@/features/master-data/MasterDataFormDialog';
+import { FieldError } from '@/components/common/FieldError';
 import { useT } from '@/lib/i18n/useT';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { taxCodesApi } from './hooks';
@@ -110,9 +111,7 @@ function TaxCodeCreateFields({ form }: { form: UseFormReturn<TaxCodeCreateValues
         <div className="space-y-1.5">
           <Label htmlFor="rate">{t.taxCodes.rate} (%)</Label>
           <Input id="rate" inputMode="decimal" {...form.register('ratePercent')} />
-          {form.formState.errors.ratePercent ? (
-            <p role="alert" className="text-sm text-destructive">{err(t, form.formState.errors.ratePercent.message as string)}</p>
-          ) : null}
+          <FieldError message={err(t, form.formState.errors.ratePercent?.message as string | undefined)} />
         </div>
         <div className="space-y-1.5">
           <Label>{t.taxCodes.taxAccount}</Label>
@@ -122,9 +121,7 @@ function TaxCodeCreateFields({ form }: { form: UseFormReturn<TaxCodeCreateValues
             placeholder={t.taxCodes.selectAccount}
             aria-label={t.taxCodes.taxAccount}
           />
-          {form.formState.errors.taxAccountId ? (
-            <p role="alert" className="text-sm text-destructive">{err(t, form.formState.errors.taxAccountId.message as string)}</p>
-          ) : null}
+          <FieldError message={err(t, form.formState.errors.taxAccountId?.message as string | undefined)} />
         </div>
       </div>
     </>
@@ -142,9 +139,7 @@ function TaxCodeEditFields({ form }: { form: UseFormReturn<TaxCodeEditValues> })
       <div className="space-y-1.5">
         <Label htmlFor="erate">{t.taxCodes.rate} (%)</Label>
         <Input id="erate" inputMode="decimal" {...form.register('ratePercent')} />
-        {form.formState.errors.ratePercent ? (
-          <p role="alert" className="text-sm text-destructive">{err(t, form.formState.errors.ratePercent.message as string)}</p>
-        ) : null}
+        <FieldError message={err(t, form.formState.errors.ratePercent?.message as string | undefined)} />
       </div>
       <label className="flex items-center gap-2 text-sm">
         <Checkbox checked={form.watch('isActive')} onCheckedChange={(v) => form.setValue('isActive', v === true)} />

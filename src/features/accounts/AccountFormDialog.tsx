@@ -7,6 +7,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { MasterDataFormDialog } from '@/features/master-data/MasterDataFormDialog';
+import { FieldError } from '@/components/common/FieldError';
 import { useT } from '@/lib/i18n/useT';
 import { SUBTYPE_META, SUBTYPE_VALUES, subtypeLabel, cashFlowCategoryLabel, type AccountSubtype } from './account-meta';
 import { accountsApi } from './hooks';
@@ -87,6 +88,7 @@ function AccountCreateFields({ form }: { form: UseFormReturn<AccountCreateValues
         </Field>
         <Field label={t.accounts.name} htmlFor="name">
           <Input id="name" {...form.register('name')} />
+          <FieldError message={form.formState.errors.name ? t.accounts.required : undefined} />
         </Field>
       </div>
 
@@ -144,6 +146,7 @@ function AccountEditFields({ form }: { form: UseFormReturn<AccountEditValues> })
     <>
       <Field label={t.accounts.name} htmlFor="ename">
         <Input id="ename" {...form.register('name')} />
+        <FieldError message={form.formState.errors.name ? t.accounts.required : undefined} />
       </Field>
       <Field label={t.accounts.cashFlowCategory} htmlFor="ecf">
         <Select

@@ -9,6 +9,7 @@ import { PartnerSelect } from '@/features/partners/PartnerSelect';
 import { AccountSelect } from '@/features/accounts/AccountSelect';
 import { ReadOnlyBanner } from '@/features/documents/ReadOnlyBanner';
 import { useDocumentSubmit } from '@/features/documents/useDocumentSubmit';
+import { FieldError } from '@/components/common/FieldError';
 import { Money } from '@/lib/money/money';
 import { useT } from '@/lib/i18n/useT';
 import { useOpenDocuments } from './useOpenDocuments';
@@ -130,11 +131,11 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          {allocError ? <p role="alert" className="text-sm text-destructive">{allocError}</p> : null}
-          {form.formState.errors.partnerId ? <p role="alert" className="text-sm text-destructive">{t.salesInvoices.selectPartner}</p> : null}
-          {form.formState.errors.cashAccountId ? <p role="alert" className="text-sm text-destructive">{t.payments.selectCashAccount}</p> : null}
-          {form.formState.errors.date ? <p role="alert" className="text-sm text-destructive">{t.salesInvoices.required}</p> : null}
-          {form.formState.errors.root ? <p role="alert" className="text-sm text-destructive">{form.formState.errors.root.message}</p> : null}
+          <FieldError message={allocError} />
+          <FieldError message={form.formState.errors.partnerId ? t.salesInvoices.selectPartner : undefined} />
+          <FieldError message={form.formState.errors.cashAccountId ? t.payments.selectCashAccount : undefined} />
+          <FieldError message={form.formState.errors.date ? t.salesInvoices.required : undefined} />
+          <FieldError message={form.formState.errors.root?.message} />
         </div>
         <PaymentTotals amounts={amounts} />
       </div>

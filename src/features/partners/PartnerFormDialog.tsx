@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { MasterDataFormDialog } from '@/features/master-data/MasterDataFormDialog';
+import { FieldError } from '@/components/common/FieldError';
 import { useT } from '@/lib/i18n/useT';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { partnersApi } from './hooks';
@@ -110,16 +111,12 @@ function SharedFields({ form }: { form: UseFormReturn<any> }) {
         <div className="space-y-1.5">
           <Label htmlFor="npwp">{t.partners.npwp}</Label>
           <Input id="npwp" {...form.register('npwp')} />
-          {form.formState.errors.npwp ? (
-            <p role="alert" className="text-sm text-destructive">{msg(t, form.formState.errors.npwp.message as string)}</p>
-          ) : null}
+          <FieldError message={msg(t, form.formState.errors.npwp?.message as string | undefined)} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="email">{t.partners.email}</Label>
           <Input id="email" {...form.register('email')} />
-          {form.formState.errors.email ? (
-            <p role="alert" className="text-sm text-destructive">{msg(t, form.formState.errors.email.message as string)}</p>
-          ) : null}
+          <FieldError message={msg(t, form.formState.errors.email?.message as string | undefined)} />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-3">
@@ -150,9 +147,7 @@ function SharedFields({ form }: { form: UseFormReturn<any> }) {
           {t.partners.vendor}
         </label>
       </div>
-      {form.formState.errors.isCustomer ? (
-        <p role="alert" className="text-sm text-destructive">{msg(t, form.formState.errors.isCustomer.message as string)}</p>
-      ) : null}
+      <FieldError message={msg(t, form.formState.errors.isCustomer?.message as string | undefined)} />
     </>
   );
 }

@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import type { ZodType } from 'zod';
 import { FormDialog } from '@/components/common/FormDialog';
+import { FieldError } from '@/components/common/FieldError';
 import { applyApiErrorToForm } from '@/lib/api/form-errors';
 import { useT } from '@/lib/i18n/useT';
 
@@ -53,8 +54,8 @@ export function MasterDataFormDialog<TValues extends FieldValues>({
       pending={form.formState.isSubmitting}
     >
       {fields(form)}
-      {errors.root ? <p role="alert" className="text-sm text-destructive">{errors.root.message}</p> : null}
-      {errors.code ? <p role="alert" className="text-sm text-destructive">{errors.code.message}</p> : null}
+      <FieldError message={errors.root?.message} />
+      <FieldError message={errors.code?.message} />
     </FormDialog>
   );
 }

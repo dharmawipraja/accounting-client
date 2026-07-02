@@ -58,6 +58,16 @@ it('shows a duplicate-code field error on 409', async () => {
   expect(await screen.findByText(/kode sudah dipakai/i)).toBeInTheDocument();
 });
 
+it('shows a required field error for an empty name on submit', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  renderDialog(<AccountFormDialog open onOpenChange={vi.fn()} mode="create" />);
+  await user.type(screen.getByLabelText(/kode/i), '1-2000');
+  await pickSubtype(user); // leave name empty
+  await user.click(screen.getByRole('button', { name: /simpan/i }));
+  expect(await screen.findByText(/wajib diisi/i)).toBeInTheDocument();
+});
+
 it('edit form shows cash flow category and submits the updated value', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });

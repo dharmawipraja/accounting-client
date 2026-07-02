@@ -13,6 +13,7 @@ import { useT } from '@/lib/i18n/useT';
 import { cn } from '@/lib/utils';
 import type { ApiError } from '@/lib/api/errors';
 import { accountsApi } from '@/features/accounts/hooks';
+import { FieldError } from '@/components/common/FieldError';
 import { DocumentTotals } from './DocumentTotals';
 import { DocumentLineRow } from './DocumentLineRow';
 import { ReadOnlyBanner } from './ReadOnlyBanner';
@@ -174,10 +175,10 @@ export function DocumentEditor<
         <DocumentTotals nature={config.nature} settlementAccountId={settlementAccountId} lines={previewLines} />
       </div>
 
-      {errors.lines ? <p role="alert" className="text-sm text-destructive">{labels.atLeastOneLine}</p> : null}
-      {errors.partnerId ? <p role="alert" className="text-sm text-destructive">{labels.selectPartner}</p> : null}
-      {errors.date ? <p role="alert" className="text-sm text-destructive">{labels.required}</p> : null}
-      {errors.root ? <p role="alert" className="text-sm text-destructive">{errors.root.message}</p> : null}
+      <FieldError message={errors.lines ? labels.atLeastOneLine : undefined} />
+      <FieldError message={errors.partnerId ? labels.selectPartner : undefined} />
+      <FieldError message={errors.date ? labels.required : undefined} />
+      <FieldError message={errors.root?.message} />
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onSaved}>{t.common.cancel}</Button>

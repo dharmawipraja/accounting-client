@@ -112,6 +112,7 @@ export const id = {
     title: 'Bagan Akun',
     code: 'Kode',
     name: 'Nama',
+    required: 'Wajib diisi',
     type: 'Tipe',
     subtype: 'Subtipe',
     normalBalance: 'Saldo Normal',
