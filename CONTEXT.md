@@ -169,6 +169,17 @@ report schemas and the `queryKeys.reports` namespace are deleted; only `draftCou
 draft-journal count — a `/ledger/journal-entries?status=DRAFT&limit=1` query, a *separate* concern) remains,
 now keyed `queryKeys.draftCount()`.
 
+**createDocumentHooks.useAction** *(decision 2026-07-02 — BUILT; `src/lib/crud/createResourceHooks.ts` + `useDocumentAction.ts`)*
+The lifecycle-action-hook builder on the document CRUD factory (round-3 candidate 1). `createDocumentHooks(config)`
+now returns a `useAction(action: DocumentActionKind)` member that mints a `useDocumentAction`-backed hook from the
+factory's own `keys` + `basePath` — so a Document feature declares its resource identity once (the factory call) and
+derives named lifecycle-action hooks from it (`usePostInvoice = () => salesInvoicesApi.useAction('post')`) instead of
+re-supplying `{keys, basePath}` to `useDocumentAction` per hook. `DocumentActionKind = 'post' | 'void' | 'reverse'`
+(defined in `lib/crud/useDocumentAction.ts`); the raw `useDocumentAction` keeps its open `action: string` as the
+escape hatch for **periods** (`close`/`reopen` — bespoke key shape, never a factory instance) and for **journals**
+until it is folded onto the factory (round-3 candidate 2). Scope of this change: invoice/bill/payment (6 action hooks);
+journals + periods keep raw `useDocumentAction`.
+
 **Resource-hooks factories** *(decision 2026-06-26)*
 The CRUD hook factory is split along the Document / master-data line over a shared
 private `createCrudHooks` core (list/pagedList/create/update/remove): `createMasterDataHooks`
