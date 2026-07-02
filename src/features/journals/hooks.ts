@@ -1,13 +1,10 @@
-import { useMutation, useQuery, useQueryClient, type UseMutationResult, type UseQueryResult } from '@tanstack/react-query';
-import { apiFetch } from '@/lib/api/client';
-import type { ApiError } from '@/lib/api/errors';
-import { useDocumentAction } from '@/lib/crud/useDocumentAction';
+import { createDocumentHooks } from '@/lib/crud/createResourceHooks';
 import { queryKeys } from '@/lib/query/keys';
 import {
-  journalEntriesPageSchema,
   journalEntrySchema,
-  type JournalEntriesPage,
+  journalEntryListItemSchema,
   type JournalEntry,
+  type JournalEntryListItem,
   type JournalEntryCreatePayload,
 } from './schema';
 
@@ -20,40 +17,20 @@ export interface JournalEntriesParams {
   offset: number;
 }
 
-export function useJournalEntries(params: JournalEntriesParams): UseQueryResult<JournalEntriesPage, ApiError> {
-  return useQuery<JournalEntriesPage, ApiError>({
-    queryKey: queryKeys.journalEntries.list(params),
-    queryFn: () =>
-      apiFetch('/ledger/journal-entries', {
-        query: { status: params.status, sourceType: params.sourceType, from: params.from, to: params.to, limit: params.limit, offset: params.offset },
-        schema: journalEntriesPageSchema,
-      }),
-  });
-}
+// journals' register row (JournalEntryListItem — omits `lines`, adds totalDebit/lineCount)
+// differs from the detail (JournalEntry), so the factory gets a distinct listItemSchema.
+export const journalEntriesApi = createDocumentHooks<JournalEntry, JournalEntryCreatePayload, unknown, JournalEntryListItem>({
+  keys: queryKeys.journalEntries,
+  basePath: '/ledger/journal-entries',
+  itemSchema: journalEntrySchema,
+  listItemSchema: journalEntryListItemSchema,
+  paginated: true,
+});
 
-export function useJournalEntry(id: string): UseQueryResult<JournalEntry, ApiError> {
-  return useQuery<JournalEntry, ApiError>({
-    queryKey: queryKeys.journalEntries.item(id),
-    queryFn: () => apiFetch(`/ledger/journal-entries/${id}`, { schema: journalEntrySchema }),
-    enabled: !!id,
-  });
-}
-
-export function useCreateJournalEntry(): UseMutationResult<JournalEntry, ApiError, JournalEntryCreatePayload> {
-  const qc = useQueryClient();
-  return useMutation<JournalEntry, ApiError, JournalEntryCreatePayload>({
-    mutationFn: (data) => apiFetch('/ledger/journal-entries', { method: 'POST', body: data, schema: journalEntrySchema }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.journalEntries.all }),
-  });
-}
-
-export function useDeleteJournalEntry(): UseMutationResult<unknown, ApiError, string> {
-  const qc = useQueryClient();
-  return useMutation<unknown, ApiError, string>({
-    mutationFn: (id) => apiFetch(`/ledger/journal-entries/${id}`, { method: 'DELETE' }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.journalEntries.all }),
-  });
-}
-
-export const usePostJournalEntry = () => useDocumentAction({ keys: queryKeys.journalEntries, basePath: '/ledger/journal-entries', action: 'post' });
-export const useReverseJournalEntry = () => useDocumentAction({ keys: queryKeys.journalEntries, basePath: '/ledger/journal-entries', action: 'reverse' });
+export const useJournalEntries = (p: JournalEntriesParams) =>
+  journalEntriesApi.usePagedList({ status: p.status, sourceType: p.sourceType, from: p.from, to: p.to, limit: p.limit, offset: p.offset });
+export const useJournalEntry = (id: string) => journalEntriesApi.useItem(id);
+export const useCreateJournalEntry = journalEntriesApi.useCreate;
+export const useDeleteJournalEntry = journalEntriesApi.useRemove;
+export const usePostJournalEntry = () => journalEntriesApi.useAction('post');
+export const useReverseJournalEntry = () => journalEntriesApi.useAction('reverse');
