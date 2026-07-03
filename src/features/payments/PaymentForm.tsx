@@ -102,7 +102,7 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
         voidLabel={t.payments.readOnlyVoid}
       />
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
         <div className="space-y-1.5">
           <Label>{partnerLabel}</Label>
           <PartnerSelect value={form.watch('partnerId')} onChange={(id) => form.setValue('partnerId', id, { shouldValidate: true })} filter={direction === 'RECEIPT' ? 'customer' : 'vendor'} aria-label={partnerLabel} placeholder={partnerLabel} disabled={readOnly} />
@@ -132,9 +132,9 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
       <div className="flex items-start justify-between gap-4">
         <div>
           <FieldError message={allocError} />
-          <FieldError message={form.formState.errors.partnerId ? t.salesInvoices.selectPartner : undefined} />
+          <FieldError message={form.formState.errors.partnerId ? t.payments.selectPartner : undefined} />
           <FieldError message={form.formState.errors.cashAccountId ? t.payments.selectCashAccount : undefined} />
-          <FieldError message={form.formState.errors.date ? t.salesInvoices.required : undefined} />
+          <FieldError message={form.formState.errors.date ? t.payments.required : undefined} />
           <FieldError message={form.formState.errors.root?.message} />
         </div>
         <PaymentTotals amounts={amounts} />

@@ -1,7 +1,7 @@
-import { Badge } from '@/components/ui/badge';
 import { Money } from '@/lib/money/money';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { useT } from '@/lib/i18n/useT';
+import { BalancedChip } from '@/components/common/statusChips';
 import { StatementReportPage } from './StatementReportPage';
 import type { StatementRow } from './StatementView';
 import { balanceSheetReportSchema, type BalanceSheetReport } from './schema';
@@ -42,9 +42,7 @@ export function BalanceSheetPage() {
         schema: balanceSheetReportSchema,
         mode: 'asOf',
         buildRows,
-        footer: (bs) => (
-          <Badge variant={bs.balanced ? 'default' : 'destructive'}>{bs.balanced ? t.reports.balanced : t.reports.unbalanced}</Badge>
-        ),
+        footer: (bs) => <BalancedChip balanced={Boolean(bs.balanced)} t={t} />,
       }}
     />
   );

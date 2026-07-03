@@ -1,6 +1,8 @@
+import { SearchX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DataTable } from '@/components/common/DataTable';
+import { EmptyState } from '@/components/common/EmptyState';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Pagination } from '@/components/common/Pagination';
@@ -50,12 +52,29 @@ export function DocumentListPage<T extends { id: string }>({ config }: { config:
       </div>
 
       <QueryState query={c.page} loading={<SkeletonTable rows={8} cols={config.colCount} />} onRetry>
-        {(env) => (
-          <>
-            <DataTable columns={c.columns} data={c.applySearch(env.data)} />
-            <Pagination offset={c.offset} limit={c.limit} total={env.total} onChange={c.setOffset} />
-          </>
-        )}
+        {(env) => {
+          const rows = c.applySearch(env.data);
+          const empty = env.data.length === 0 ? (
+            <EmptyState
+              title={t.common.emptyTitle}
+              description={t.common.emptyHint}
+              action={config.newControl ? <RoleGate allow={newRole}>{config.newControl}</RoleGate> : undefined}
+            />
+          ) : (
+            <EmptyState
+              icon={SearchX}
+              title={t.common.noResults}
+              description={t.common.noResultsHint}
+              action={c.search ? <Button variant="outline" onClick={() => c.setSearch('')}>{t.common.clearSearch}</Button> : undefined}
+            />
+          );
+          return (
+            <>
+              <DataTable columns={c.columns} data={rows} empty={empty} />
+              <Pagination offset={c.offset} limit={c.limit} total={env.total} onChange={c.setOffset} />
+            </>
+          );
+        }}
       </QueryState>
 
       <ConfirmDialog {...c.dialog} />

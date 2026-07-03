@@ -125,15 +125,15 @@ export function PeriodsPage() {
 
       <div className="mt-6 space-y-2 rounded-lg border p-4">
         <h2 className="font-semibold">{t.periods.yearEndStatus}</h2>
-        {yearEnd.isLoading ? (
-          <Skeleton className="h-6 w-40" />
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            {closed
-              ? `${t.periods.closedOn} ${yearEnd.data?.closedAt ? formatDateID(yearEnd.data.closedAt.slice(0, 10)) : ''}`
-              : t.periods.notClosed}
-          </p>
-        )}
+        <QueryState query={yearEnd} loading={<Skeleton className="h-6 w-40" />} onRetry>
+          {(data) => (
+            <p className="text-sm text-muted-foreground">
+              {isYearClosed(data)
+                ? `${t.periods.closedOn} ${data?.closedAt ? formatDateID(data.closedAt.slice(0, 10)) : ''}`
+                : t.periods.notClosed}
+            </p>
+          )}
+        </QueryState>
         {!closed && anyOpen ? <p className="text-xs text-muted-foreground">{t.periods.closeAllFirst}</p> : null}
         <RoleGate allow={['ADMIN']}>
           {closed ? (

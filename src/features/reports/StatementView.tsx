@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCaption, TableCell, TableRow } from '@/components/ui/table';
 import { MoneyText } from '@/components/common/MoneyText';
 
 export interface StatementRow {
@@ -9,10 +9,11 @@ export interface StatementRow {
   border?: boolean;
 }
 
-export function StatementView({ rows }: { rows: StatementRow[] }) {
+export function StatementView({ rows, caption }: { rows: StatementRow[]; caption?: string }) {
   return (
     <div className="rounded-lg border">
       <Table>
+        {caption ? <TableCaption className="sr-only">{caption}</TableCaption> : null}
         <TableBody>
           {rows.map((r, i) => (
             <TableRow key={i} className={r.border ? 'border-t-2' : undefined}>

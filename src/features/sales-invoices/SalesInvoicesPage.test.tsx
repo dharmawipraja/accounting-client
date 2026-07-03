@@ -129,7 +129,7 @@ it('hides New for VIEWER', async () => {
     http.get(`${API}/partners`, () => HttpResponse.json({ data: [], total: 0, limit: 200, offset: 0 })),
   );
   renderPage();
-  expect(await screen.findByText(/tidak ada data/i)).toBeInTheDocument();
+  expect(await screen.findByText(/belum ada data/i)).toBeInTheDocument();
   expect(screen.queryByRole('link', { name: /faktur baru/i })).not.toBeInTheDocument();
 });
 

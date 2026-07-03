@@ -120,7 +120,7 @@ export function DocumentEditor<
         postedLabel={labels.readOnlyPosted}
         voidLabel={labels.readOnlyVoid}
       />
-      <div className={cn('grid grid-cols-2 gap-4', config.extraHeaderField ? 'md:grid-cols-5' : 'md:grid-cols-4')}>
+      <div className={cn('grid grid-cols-1 gap-4 sm:grid-cols-2', config.extraHeaderField ? 'md:grid-cols-5' : 'md:grid-cols-4')}>
         <div className="space-y-1.5">
           <Label>{labels.partner}</Label>
           <PartnerSelect value={form.watch('partnerId' as Path<TFormValues>) as string} onChange={(id) => form.setValue('partnerId' as Path<TFormValues>, id as never, { shouldValidate: true })} filter={config.partnerFilter} aria-label={labels.partner} placeholder={labels.selectPartner} disabled={readOnly} />

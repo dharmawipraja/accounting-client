@@ -25,7 +25,7 @@ it('shows an empty state and no New button for VIEWER', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
   server.use(http.get(`${API}/partners`, () => HttpResponse.json({ data: [], total: 0, limit: 200, offset: 0 })));
   renderPage();
-  expect(await screen.findByText(/tidak ada data/i)).toBeInTheDocument();
+  expect(await screen.findByText(/belum ada data/i)).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: /baru/i })).not.toBeInTheDocument();
 });
 

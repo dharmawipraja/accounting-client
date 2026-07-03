@@ -11,6 +11,7 @@ import { useRole } from '@/components/common/RoleGate';
 import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { useT } from '@/lib/i18n/useT';
 import { Pagination } from '@/components/common/Pagination';
+import { HttpStatusChip } from '@/components/common/statusChips';
 import { useAuditLog, type AuditFilters } from './useAuditLog';
 import { AUDIT_METHODS, formatAuditTime, type AuditEntry } from './schema';
 
@@ -89,12 +90,20 @@ function AuditContent() {
                     <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">{t.audit.empty}</TableCell></TableRow>
                   ) : (
                     rows.map((e) => (
-                      <TableRow key={e.id} className="cursor-pointer" onClick={() => setSelected(e)}>
+                      <TableRow
+                        key={e.id}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`${e.method} ${e.path}`}
+                        className="cursor-pointer focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring focus-visible:outline-none"
+                        onClick={() => setSelected(e)}
+                        onKeyDown={(ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); setSelected(e); } }}
+                      >
                         <TableCell className="whitespace-nowrap tabular-nums">{formatAuditTime(e.timestamp)}</TableCell>
                         <TableCell>{e.userRole ?? '—'}</TableCell>
                         <TableCell><Badge variant="outline">{e.method}</Badge></TableCell>
                         <TableCell className="max-w-xs truncate">{e.path}</TableCell>
-                        <TableCell><Badge variant={e.statusCode && e.statusCode < 400 ? 'default' : 'destructive'}>{e.statusCode ?? '—'}</Badge></TableCell>
+                        <TableCell><HttpStatusChip code={e.statusCode} /></TableCell>
                       </TableRow>
                     ))
                   )}
@@ -116,7 +125,7 @@ function AuditContent() {
                 <dt className="text-muted-foreground">{t.audit.waktu}</dt><dd>{formatAuditTime(selected.timestamp)}</dd>
                 <dt className="text-muted-foreground">{t.audit.pengguna}</dt><dd>{selected.userRole ?? '—'}{selected.userId ? ` (${selected.userId})` : ''}</dd>
                 <dt className="text-muted-foreground">{t.audit.status}</dt><dd>{selected.statusCode ?? '—'}</dd>
-                <dt className="text-muted-foreground">{t.audit.durasi}</dt><dd>{selected.durationMs ?? '—'} ms</dd>
+                <dt className="text-muted-foreground">{t.audit.durasi}</dt><dd>{selected.durationMs ?? '—'} {t.audit.ms}</dd>
                 <dt className="text-muted-foreground">{t.audit.ip}</dt><dd>{selected.ip ?? '—'}</dd>
               </dl>
               <div>

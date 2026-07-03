@@ -57,6 +57,7 @@ export function AgingPage({ kind }: { kind: 'AR' | 'AP' }) {
               columns={summaryColumns}
               rows={rep.partners}
               onRowClick={(p) => setSelected(p)}
+              rowLabel={(p) => p.partnerName}
               footer={
                 <TableRow>
                   <TableCell className="font-semibold">{t.reports.total}</TableCell>

@@ -27,6 +27,13 @@
   --success-foreground: #FFFFFF;
   --warning: #B95000;
   --warning-foreground: #FFFFFF;
+  /* AA-safe foregrounds for tinted (10 percent fill) status chips and soft
+     buttons. Base tones sit at the 4.5:1 edge on white; the tint pushes them
+     under, so tinted text and icons use these deeper shades. Verified >=4.6:1. */
+  --success-strong: #007A51;
+  --warning-strong: #B24D00;
+  --info-strong: #006BC7;
+  --destructive-strong: #C52720;
   --border: #D5D9DC;
   --input: #D5D9DC;
   --ring: #006FCF;
@@ -66,6 +73,12 @@
   --success-foreground: #00130C;
   --warning: #D9772E;
   --warning-foreground: #1A1A1A;
+  /* On navy, base success and warning already clear AA on their tints; info and
+     error need lighter shades over the deeper 20 percent dark tint. Verified >=4.6:1. */
+  --success-strong: #2FA37A;
+  --warning-strong: #D9772E;
+  --info-strong: #4793DD;
+  --destructive-strong: #E8776F;
   --border: rgba(255, 255, 255, 0.12);
   --input: rgba(255, 255, 255, 0.15);
   --ring: #4DA3E8;
@@ -105,6 +118,10 @@
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+  --color-success-strong: var(--success-strong);
+  --color-warning-strong: var(--warning-strong);
+  --color-info-strong: var(--info-strong);
+  --color-destructive-strong: var(--destructive-strong);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);

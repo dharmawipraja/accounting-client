@@ -13,10 +13,12 @@ interface ReportTableProps<T> {
   columns: ReportColumn<T>[];
   rows: T[];
   onRowClick?: (row: T) => void;
+  /** Accessible name for an interactive row (required for keyboard/SR users when `onRowClick` is set). */
+  rowLabel?: (row: T) => string;
   footer?: ReactNode;
 }
 
-export function ReportTable<T>({ columns, rows, onRowClick, footer }: ReportTableProps<T>) {
+export function ReportTable<T>({ columns, rows, onRowClick, rowLabel, footer }: ReportTableProps<T>) {
   return (
     <div className="rounded-lg border">
       <Table>
@@ -32,7 +34,20 @@ export function ReportTable<T>({ columns, rows, onRowClick, footer }: ReportTabl
             <TableRow
               key={ri}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
-              className={onRowClick ? 'cursor-pointer' : undefined}
+              onKeyDown={
+                onRowClick
+                  ? (e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onRowClick(row);
+                      }
+                    }
+                  : undefined
+              }
+              role={onRowClick ? 'button' : undefined}
+              tabIndex={onRowClick ? 0 : undefined}
+              aria-label={onRowClick ? rowLabel?.(row) : undefined}
+              className={onRowClick ? 'cursor-pointer focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring focus-visible:outline-none' : undefined}
             >
               {columns.map((c, ci) => (
                 <TableCell key={ci} className={c.align === 'right' ? 'text-right tabular-nums' : undefined}>{c.cell(row)}</TableCell>

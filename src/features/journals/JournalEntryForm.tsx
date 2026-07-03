@@ -53,7 +53,7 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         <div className="space-y-1.5">
           <Label htmlFor="jdate">{t.journals.date}</Label>
           <Input id="jdate" type="date" aria-label={t.journals.date} {...form.register('date')} />

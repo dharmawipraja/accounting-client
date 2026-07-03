@@ -82,7 +82,7 @@ function AccountCreateFields({ form }: { form: UseFormReturn<AccountCreateValues
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label={t.accounts.code} htmlFor="code">
           <Input id="code" {...form.register('code')} />
         </Field>
@@ -103,7 +103,7 @@ function AccountCreateFields({ form }: { form: UseFormReturn<AccountCreateValues
         </Select>
       </Field>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label={t.accounts.normalBalance} htmlFor="nb">
           <Select
             value={form.watch('normalBalance')}

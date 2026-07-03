@@ -87,7 +87,7 @@ function CreateFields({ form }: { form: UseFormReturn<PartnerCreateValues> }) {
   const t = useT();
   return (
     <>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="code">{t.partners.code}</Label>
           <Input id="code" {...form.register('code')} />
@@ -107,7 +107,7 @@ function SharedFields({ form }: { form: UseFormReturn<any> }) {
   const t = useT();
   return (
     <>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="npwp">{t.partners.npwp}</Label>
           <Input id="npwp" {...form.register('npwp')} />
@@ -119,7 +119,7 @@ function SharedFields({ form }: { form: UseFormReturn<any> }) {
           <FieldError message={msg(t, form.formState.errors.email?.message as string | undefined)} />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="phone">{t.partners.phone}</Label>
           <Input id="phone" {...form.register('phone')} />

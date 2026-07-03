@@ -53,7 +53,7 @@ export function StatementReportPage<T>({ config }: { config: StatementReportConf
       )}
       <ReportContent query={query} loading={<SkeletonForm fields={5} />}>
         {(data) => {
-          const statement = <StatementView rows={config.buildRows(data, t)} />;
+          const statement = <StatementView rows={config.buildRows(data, t)} caption={config.title} />;
           return config.footer ? (
             <div className="space-y-3">
               {statement}

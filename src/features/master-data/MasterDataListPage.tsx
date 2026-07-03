@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, SearchX } from 'lucide-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type { ApiError } from '@/lib/api/errors';
@@ -7,6 +7,7 @@ import type { Role } from '@/stores/session';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DataTable } from '@/components/common/DataTable';
+import { EmptyState } from '@/components/common/EmptyState';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Pagination } from '@/components/common/Pagination';
 import { QueryState } from '@/components/common/QueryState';
@@ -81,9 +82,27 @@ export function MasterDataListPage<TItem extends { id: string; isActive: boolean
       <QueryState query={query} loading={<SkeletonTable rows={8} cols={config.skeletonCols ?? 4} />} onRetry>
         {(env) => {
           const rows = env.data.filter((item) => match(item, c.search));
+          const empty = env.data.length === 0 ? (
+            <EmptyState
+              title={t.common.emptyTitle}
+              description={t.common.emptyHint}
+              action={
+                <RoleGate allow={config.newRole ?? DEFAULT_ROLES}>
+                  <Button onClick={() => c.setCreating(true)}><Plus className="size-4" /> {t.crud.new}</Button>
+                </RoleGate>
+              }
+            />
+          ) : (
+            <EmptyState
+              icon={SearchX}
+              title={t.common.noResults}
+              description={t.common.noResultsHint}
+              action={c.search ? <Button variant="outline" onClick={() => c.setSearch('')}>{t.common.clearSearch}</Button> : undefined}
+            />
+          );
           return (
             <>
-              {renderRows(rows, columns)}
+              {rows.length === 0 ? empty : renderRows(rows, columns)}
               <Pagination offset={c.offset} limit={limit} total={env.total} onChange={c.setOffset} />
             </>
           );

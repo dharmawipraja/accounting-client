@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
   type ColumnDef,
   type RowData,
@@ -32,9 +33,11 @@ interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
   data: TData[];
   emptyMessage?: string;
+  /** Custom empty state (e.g. a teaching state with a create action). Falls back to `emptyMessage`. */
+  empty?: ReactNode;
 }
 
-export function DataTable<TData>({ columns, data, emptyMessage }: DataTableProps<TData>) {
+export function DataTable<TData>({ columns, data, emptyMessage, empty }: DataTableProps<TData>) {
   const table = useReactTable({
     data,
     columns,
@@ -42,7 +45,7 @@ export function DataTable<TData>({ columns, data, emptyMessage }: DataTableProps
     getSortedRowModel: getSortedRowModel(),
   });
 
-  if (data.length === 0) return <EmptyState message={emptyMessage} />;
+  if (data.length === 0) return <>{empty ?? <EmptyState message={emptyMessage} />}</>;
 
   return (
     <div className="rounded-lg border">

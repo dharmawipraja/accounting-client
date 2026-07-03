@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Badge } from '@/components/ui/badge';
 import { TableCell, TableRow } from '@/components/ui/table';
+import { BalancedChip } from '@/components/common/statusChips';
 import { PageHeader } from '@/components/common/PageHeader';
 import { MoneyText } from '@/components/common/MoneyText';
 import { Money } from '@/lib/money/money';
@@ -36,6 +36,7 @@ export function TrialBalancePage({ onOpenAccount }: { onOpenAccount: (accountId:
                 columns={columns}
                 rows={tb.rows}
                 onRowClick={(r) => onOpenAccount(r.accountId)}
+                rowLabel={(r) => `${r.code} ${r.name}`}
                 footer={
                   <TableRow>
                     <TableCell colSpan={2} className="font-semibold">{t.reports.total}</TableCell>
@@ -44,7 +45,7 @@ export function TrialBalancePage({ onOpenAccount }: { onOpenAccount: (accountId:
                   </TableRow>
                 }
               />
-              <Badge variant={balanced ? 'default' : 'destructive'}>{balanced ? t.reports.balanced : t.reports.unbalanced}</Badge>
+              <BalancedChip balanced={balanced} t={t} />
             </div>
           );
         }}

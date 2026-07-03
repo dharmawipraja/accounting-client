@@ -86,7 +86,7 @@ function TaxCodeCreateFields({ form }: { form: UseFormReturn<TaxCodeCreateValues
   const t = useT();
   return (
     <>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="code">{t.taxCodes.code}</Label>
           <Input id="code" {...form.register('code')} />
@@ -107,9 +107,9 @@ function TaxCodeCreateFields({ form }: { form: UseFormReturn<TaxCodeCreateValues
         </Select>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="rate">{t.taxCodes.rate} (%)</Label>
+          <Label htmlFor="rate">{t.taxCodes.rateLabel}</Label>
           <Input id="rate" inputMode="decimal" {...form.register('ratePercent')} />
           <FieldError message={err(t, form.formState.errors.ratePercent?.message as string | undefined)} />
         </div>
@@ -137,7 +137,7 @@ function TaxCodeEditFields({ form }: { form: UseFormReturn<TaxCodeEditValues> })
         <Input id="ename" {...form.register('name')} />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="erate">{t.taxCodes.rate} (%)</Label>
+        <Label htmlFor="erate">{t.taxCodes.rateLabel}</Label>
         <Input id="erate" inputMode="decimal" {...form.register('ratePercent')} />
         <FieldError message={err(t, form.formState.errors.ratePercent?.message as string | undefined)} />
       </div>

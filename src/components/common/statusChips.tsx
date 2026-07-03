@@ -1,4 +1,4 @@
-import { CheckCircle2, Ban, PencilLine, RotateCcw, Lock, LockOpen, ArrowDownLeft, ArrowUpRight, Circle, CircleDashed } from 'lucide-react';
+import { CheckCircle2, Ban, PencilLine, RotateCcw, Lock, LockOpen, ArrowDownLeft, ArrowUpRight, Circle, CircleDashed, AlertTriangle } from 'lucide-react';
 import type { Messages } from '@/lib/i18n/messages.id';
 import { documentStatusLabel } from '@/features/documents/statusLabel';
 import { StatusChip } from './StatusChip';
@@ -37,4 +37,20 @@ export function DirectionChip({ direction, t }: { direction: string; t: Messages
   return direction === 'DISBURSEMENT'
     ? <StatusChip tone="info" icon={ArrowUpRight} label={t.payments.directionDisbursement} />
     : <StatusChip tone="info" icon={ArrowDownLeft} label={t.payments.directionReceipt} />;
+}
+
+/** Trial-balance / balance-sheet balance indicator: balanced = success, else error.
+ *  Icon + text so the state never rests on colour alone. */
+export function BalancedChip({ balanced, t }: { balanced: boolean; t: Messages }) {
+  return balanced
+    ? <StatusChip tone="success" icon={CheckCircle2} label={t.reports.balanced} />
+    : <StatusChip tone="error" icon={AlertTriangle} label={t.reports.unbalanced} />;
+}
+
+/** HTTP response status: 2xx/3xx = success, 4xx/5xx = error, unknown = neutral.
+ *  The code itself is the label; the icon carries the pass/fail meaning. */
+export function HttpStatusChip({ code }: { code: number | null | undefined }) {
+  if (code == null) return <StatusChip tone="neutral" icon={Circle} label="—" />;
+  const ok = code < 400;
+  return <StatusChip tone={ok ? 'success' : 'error'} icon={ok ? CheckCircle2 : AlertTriangle} label={String(code)} />;
 }
