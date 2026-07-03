@@ -1,5 +1,4 @@
 import { useNavigate } from '@tanstack/react-router';
-import { BackLink } from '@/components/common/BackLink';
 import { useT } from '@/lib/i18n/useT';
 import { DocumentEditor } from '@/features/documents/DocumentEditor';
 import { DocumentEditorPage } from '@/features/documents/DocumentEditorPage';
@@ -16,7 +15,7 @@ export function InvoiceEditorPage({ id }: { id?: string }) {
       config={{
         useItem: salesInvoicesApi.useItem,
         onDone: () => navigate({ to: '/sales-invoices' }),
-        back: <BackLink to="/sales-invoices" label={t.nav.salesInvoices} />,
+        parent: { to: '/sales-invoices', label: t.nav.salesInvoices },
         titles: { create: t.salesInvoices.newInvoice, edit: t.salesInvoices.editInvoice, view: t.salesInvoices.view },
         renderForm: ({ mode, doc, readOnly, onSaved }) => (
           <DocumentEditor config={editorConfig} mode={mode} doc={doc} readOnly={readOnly} onSaved={onSaved} />

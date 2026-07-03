@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { PageHeader } from '@/components/common/PageHeader';
-import { BackLink } from '@/components/common/BackLink';
 import { MoneyText } from '@/components/common/MoneyText';
 import { Money } from '@/lib/money/money';
 import { formatDateID, toApiDate } from '@/lib/format/date';
@@ -49,7 +48,7 @@ export function AgingPage({ kind }: { kind: 'AR' | 'AP' }) {
 
   return (
     <div>
-      <PageHeader title={title} back={<BackLink to="/reports" label={t.nav.reports} />} />
+      <PageHeader title={title} parent={{ to: '/reports', label: t.nav.reports }} />
       <ReportDateControls mode="asOf" asOf={asOf} onAsOf={setAsOf} />
       <ReportContent query={query} loading={<SkeletonTable rows={6} cols={4} />}>
         {(rep) => (

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { NotFound } from '@/components/common/NotFound';
-import { PageHeader } from '@/components/common/PageHeader';
+import { PageHeader, type PageParent } from '@/components/common/PageHeader';
 import { QueryState } from '@/components/common/QueryState';
 import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { useT } from '@/lib/i18n/useT';
@@ -14,8 +14,8 @@ export interface DocumentEditorPageConfig<T extends { id: string; status: string
   /** Navigate-on-save and the not-found "back to list" action. Feature-supplied so
    *  the TanStack route literal keeps its type (mirrors DocumentListConfig.newControl). */
   onDone: () => void;
-  /** Pre-rendered <BackLink> for the PageHeader. */
-  back: ReactNode;
+  /** Breadcrumb parent (link back to the list) shown above the page title. */
+  parent: PageParent;
   titles: { create: string; edit: string; view: string };
   /** The one seam: maps the loaded doc onto the feature's form body. */
   renderForm: (ctx: { mode: 'create' | 'edit'; doc?: T; readOnly: boolean; onSaved: () => void }) => ReactNode;
@@ -37,7 +37,7 @@ export function DocumentEditorPage<T extends { id: string; status: string }>({
   if (!id) {
     return (
       <div>
-        <PageHeader title={config.titles.create} back={config.back} />
+        <PageHeader title={config.titles.create} parent={config.parent} />
         {config.renderForm({ mode: 'create', readOnly: false, onSaved: config.onDone })}
       </div>
     );
@@ -60,7 +60,7 @@ export function DocumentEditorPage<T extends { id: string; status: string }>({
         const readOnly = doc.status !== 'DRAFT';
         return (
           <div>
-            <PageHeader title={readOnly ? config.titles.view : config.titles.edit} back={config.back} />
+            <PageHeader title={readOnly ? config.titles.view : config.titles.edit} parent={config.parent} />
             {config.renderForm({ mode: 'edit', doc, readOnly, onSaved: config.onDone })}
           </div>
         );

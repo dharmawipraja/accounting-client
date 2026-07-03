@@ -31,7 +31,7 @@ it('asOf mode: renders the title + statement row and fetches with an asOf param 
   }));
   renderWithRouter(<StatementReportPage config={baseConfig()} />);
   expect(await screen.findByText('Nilai')).toBeInTheDocument();
-  expect(screen.getByText('Laporan Uji')).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Laporan Uji' })).toBeInTheDocument();
   await waitFor(() => expect(seen?.get('asOf')).toMatch(/^\d{4}-\d{2}-\d{2}$/));
   expect(seen!.get('from')).toBeNull();
 });

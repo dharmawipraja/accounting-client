@@ -2,7 +2,6 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import type { ZodType } from 'zod';
 import { PageHeader } from '@/components/common/PageHeader';
-import { BackLink } from '@/components/common/BackLink';
 import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { toApiDate, isRangeValid } from '@/lib/format/date';
 import type { Messages } from '@/lib/i18n/messages.id';
@@ -31,7 +30,7 @@ export interface StatementReportConfig<T> {
 }
 
 /** The shared shell for the hierarchical statement reports (balance sheet /
- *  income statement / cash flow): header + back link + date controls + query +
+ *  income statement / cash flow): header + breadcrumb + date controls + query +
  *  StatementView. Each report supplies only its path/schema/mode/title/buildRows. */
 export function StatementReportPage<T>({ config }: { config: StatementReportConfig<T> }) {
   const t = useT();
@@ -46,7 +45,7 @@ export function StatementReportPage<T>({ config }: { config: StatementReportConf
 
   return (
     <div>
-      <PageHeader title={config.title} back={<BackLink to="/reports" label={t.nav.reports} />} />
+      <PageHeader title={config.title} parent={{ to: '/reports', label: t.nav.reports }} />
       {isRange ? (
         <ReportDateControls mode="range" from={from} to={to} onRange={(f, tt) => { setFrom(f); setTo(tt); }} />
       ) : (

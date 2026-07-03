@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { PageHeader } from '@/components/common/PageHeader';
-import { BackLink } from '@/components/common/BackLink';
 import { MoneyText } from '@/components/common/MoneyText';
 import { AccountSelect } from '@/features/accounts/AccountSelect';
 import { normalBalanceLabel, type NormalBalance } from '@/features/accounts/account-meta';
@@ -33,7 +32,7 @@ export function GeneralLedgerPage({ initialAccountId }: { initialAccountId?: str
   ];
   return (
     <div>
-      <PageHeader title={t.reports.generalLedger} back={<BackLink to="/reports" label={t.nav.reports} />} />
+      <PageHeader title={t.reports.generalLedger} parent={{ to: '/reports', label: t.nav.reports }} />
       <div className="mb-4 flex flex-wrap items-end gap-3">
         <div className="space-y-1.5">
           <span className="text-sm font-medium">{t.reports.account}</span>

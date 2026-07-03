@@ -33,7 +33,7 @@ it('AR: renders Umur Piutang + a partner row; asOf drives the fetch; clicking a 
   }));
   renderPage('AR');
   expect(await screen.findByText('PT Pelanggan')).toBeInTheDocument();
-  expect(screen.getByText('Umur Piutang')).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Umur Piutang' })).toBeInTheDocument();
   expect(screen.getByText('Pelanggan')).toBeInTheDocument(); // partner-column header
   await waitFor(() => expect(seenAsOf).toMatch(/^\d{4}-\d{2}-\d{2}$/)); // default asOf = today
   expect(screen.queryByText('INV/2026/000012')).not.toBeInTheDocument(); // hidden until clicked
@@ -46,7 +46,7 @@ it('AP: requests /reports/ap-aging and shows Umur Utang + the Vendor label', asy
   let called = false;
   server.use(http.get(`${API}/reports/ap-aging`, () => { called = true; return HttpResponse.json(fixture('2026-06-30', 'AP')); }));
   renderPage('AP');
-  expect(await screen.findByText('Umur Utang')).toBeInTheDocument(); // title (immediate)
+  expect(await screen.findByRole('heading', { name: 'Umur Utang' })).toBeInTheDocument(); // title (immediate)
   expect(await screen.findByText('Vendor')).toBeInTheDocument(); // partner-column header (after data)
   expect(called).toBe(true);
 });

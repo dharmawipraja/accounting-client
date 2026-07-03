@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { PageHeader } from '@/components/common/PageHeader';
-import { BackLink } from '@/components/common/BackLink';
 import { MoneyText } from '@/components/common/MoneyText';
 import { Money } from '@/lib/money/money';
 import { toApiDate } from '@/lib/format/date';
@@ -26,7 +25,7 @@ export function TrialBalancePage({ onOpenAccount }: { onOpenAccount: (accountId:
   ];
   return (
     <div>
-      <PageHeader title={t.reports.trialBalance} back={<BackLink to="/reports" label={t.nav.reports} />} />
+      <PageHeader title={t.reports.trialBalance} parent={{ to: '/reports', label: t.nav.reports }} />
       <ReportDateControls mode="asOf" asOf={asOf} onAsOf={setAsOf} />
       <ReportContent query={query} loading={<SkeletonTable rows={6} cols={4} />}>
         {(tb) => {

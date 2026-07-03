@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, it, vi } from 'vitest';
 import type { UseQueryResult } from '@tanstack/react-query';
+import { renderWithRouter } from '@/test/renderWithRouter';
 import { id as messages } from '@/lib/i18n/messages.id';
 import { ApiError } from '@/lib/api/errors';
 import { DocumentEditorPage, type DocumentEditorPageConfig } from './DocumentEditorPage';
@@ -26,17 +27,21 @@ function makeConfig(query: UseQueryResult<Doc, ApiError>, onDone = vi.fn()): Doc
   return {
     useItem: () => query,
     onDone,
-    back: <span>kembali</span>,
+    parent: { to: '/sales-invoices', label: 'kembali' },
     titles: { create: 'Buat Dokumen', edit: 'Ubah Dokumen', view: 'Lihat Dokumen' },
     renderForm: ({ mode, readOnly }) => <div>{`form:${mode}:${String(readOnly)}`}</div>,
   };
 }
 
-it('create mode (no id) renders the create title and form without consulting the query', () => {
-  render(<DocumentEditorPage config={makeConfig(fakeQuery({}))} />);
-  expect(screen.getByText('Buat Dokumen')).toBeInTheDocument();
+// The header/breadcrumb branches render a TanStack <Link>, so they need a router
+// (and an async first query, since RouterProvider mounts on the next tick). The
+// loading / not-found / error branches render no Link, so plain render() suffices.
+
+it('create mode (no id) renders the create title + breadcrumb and the form without consulting the query', async () => {
+  renderWithRouter(<DocumentEditorPage config={makeConfig(fakeQuery({}))} />);
+  expect(await screen.findByRole('heading', { name: 'Buat Dokumen' })).toBeInTheDocument();
   expect(screen.getByText('form:create:false')).toBeInTheDocument();
-  expect(screen.getByText('kembali')).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'kembali' })).toBeInTheDocument();
 });
 
 it('edit mode shows a loading skeleton while the item is fetching', () => {
@@ -57,15 +62,15 @@ it('edit mode renders record-not-found on a 404 and wires back-to-list to onDone
   expect(onDone).toHaveBeenCalledTimes(1);
 });
 
-it('edit mode on a DRAFT doc renders the edit title and an editable form', () => {
-  render(<DocumentEditorPage config={makeConfig(fakeQuery({ data: { id: 'd1', status: 'DRAFT' } }))} id="d1" />);
-  expect(screen.getByText('Ubah Dokumen')).toBeInTheDocument();
+it('edit mode on a DRAFT doc renders the edit title and an editable form', async () => {
+  renderWithRouter(<DocumentEditorPage config={makeConfig(fakeQuery({ data: { id: 'd1', status: 'DRAFT' } }))} id="d1" />);
+  expect(await screen.findByRole('heading', { name: 'Ubah Dokumen' })).toBeInTheDocument();
   expect(screen.getByText('form:edit:false')).toBeInTheDocument();
 });
 
-it('edit mode on a POSTED doc renders the view title and a read-only form', () => {
-  render(<DocumentEditorPage config={makeConfig(fakeQuery({ data: { id: 'd1', status: 'POSTED' } }))} id="d1" />);
-  expect(screen.getByText('Lihat Dokumen')).toBeInTheDocument();
+it('edit mode on a POSTED doc renders the view title and a read-only form', async () => {
+  renderWithRouter(<DocumentEditorPage config={makeConfig(fakeQuery({ data: { id: 'd1', status: 'POSTED' } }))} id="d1" />);
+  expect(await screen.findByRole('heading', { name: 'Lihat Dokumen' })).toBeInTheDocument();
   expect(screen.getByText('form:edit:true')).toBeInTheDocument();
 });
 
