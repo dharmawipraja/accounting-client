@@ -1,5 +1,5 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router';
-import { AppShell } from '@/components/common/AppShell';
+import { AppShell } from '@/components/app-shell';
 import { ErrorState } from '@/components/common/ErrorState';
 import { NotFound } from '@/components/common/NotFound';
 import { requireAuth } from '@/features/auth/guard';

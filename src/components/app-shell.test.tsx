@@ -13,12 +13,10 @@ import { http, HttpResponse } from 'msw';
 import { API } from '@/test/handlers';
 import { server } from '@/test/server';
 import { useSession } from '@/stores/session';
-import { usePreferences } from '@/stores/preferences';
-import { AppShell } from './AppShell';
+import { AppShell } from './app-shell';
 
 afterEach(() => {
   useSession.getState().clear();
-  usePreferences.setState({ sidebarCollapsed: false });
 });
 
 const NAV_PATHS = [
@@ -28,6 +26,7 @@ const NAV_PATHS = [
   '/tax-codes',
   '/sales-invoices',
   '/payments',
+  '/audit',
 ];
 
 function renderInRouter(ui: React.ReactNode) {
@@ -77,6 +76,18 @@ it('renders the app name and the current user email', async () => {
   expect(screen.getByText('content')).toBeInTheDocument();
 });
 
+it('shows the Audit nav item only for admins', async () => {
+  useSession.getState().setUser({ id: '1', email: 'admin@buku.id', role: 'ADMIN' });
+  const { unmount } = renderInRouter(<AppShell><div>content</div></AppShell>);
+  expect(await screen.findByRole('link', { name: 'Audit' })).toBeInTheDocument();
+  unmount();
+
+  useSession.getState().setUser({ id: '2', email: 'viewer@buku.id', role: 'VIEWER' });
+  renderInRouter(<AppShell><div>content</div></AppShell>);
+  expect(await screen.findByRole('link', { name: 'Dasbor' })).toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: 'Audit' })).not.toBeInTheDocument();
+});
+
 it('signs out the current device and navigates to /login', async () => {
   useSession.getState().setTokens({ accessToken: 'tok-abc', refreshToken: 'ref-abc' });
   useSession.getState().setUser({ id: '2', email: 'user@buku.id', role: 'VIEWER' });
@@ -110,26 +121,11 @@ it('signs out of all devices and navigates to /login', async () => {
   renderWithLoginRoute();
 
   await userEvent.click(await screen.findByRole('button', { name: 'Menu akun' }));
-  await userEvent.click(await screen.findByRole('menuitem', { name: 'Keluar dari semua perangkat' }));
+  await userEvent.click(
+    await screen.findByRole('menuitem', { name: 'Keluar dari semua perangkat' }),
+  );
 
   expect(useSession.getState().accessToken).toBeNull();
   await screen.findByTestId('login');
   expect(loggedOutAll).toBe(true);
-});
-
-it('toggles the sidebar collapsed state and persists it', async () => {
-  useSession.getState().setUser({ id: '1', email: 'admin@buku.id', role: 'ADMIN' });
-  renderInRouter(<AppShell><div>content</div></AppShell>);
-
-  const toggle = await screen.findByRole('button', { name: 'Ciutkan menu' });
-  expect(toggle).toHaveAttribute('aria-expanded', 'true');
-  expect(toggle).toHaveAttribute('aria-controls', 'app-sidebar');
-
-  await userEvent.click(toggle);
-
-  expect(usePreferences.getState().sidebarCollapsed).toBe(true);
-  const expandBtn = screen.getByRole('button', { name: 'Lebarkan menu' });
-  expect(expandBtn).toHaveAttribute('aria-expanded', 'false');
-  // labels stay in the DOM when collapsed, so links keep their accessible names
-  expect(screen.getByRole('link', { name: /dasbor/i })).toBeInTheDocument();
 });

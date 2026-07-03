@@ -63,6 +63,7 @@ export const id = {
     settings: 'Pengaturan',
     collapseSidebar: 'Ciutkan menu',
     expandSidebar: 'Lebarkan menu',
+    toggleSidebar: 'Buka atau tutup menu',
   },
   dashboard: {
     totalAssets: 'Total Aset',
