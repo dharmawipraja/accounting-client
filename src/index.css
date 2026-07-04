@@ -197,4 +197,5 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
   .animate-shimmer::after { animation: none; }
+  .animate-pulse { animation: none; }
 }

@@ -527,6 +527,7 @@ export const id = {
   settings: {
     title: 'Pengaturan Perusahaan',
     legalName: 'Nama Resmi',
+    legalNameRequired: 'Nama resmi wajib diisi',
     npwp: 'NPWP',
     address: 'Alamat',
     fiscalYearStart: 'Awal Tahun Fiskal',

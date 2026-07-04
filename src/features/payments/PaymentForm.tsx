@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -51,14 +51,15 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
   const openDocuments = useOpenDocuments(direction, partnerId);
   const handlers = useDocumentSubmit(form, onSaved);
 
-  const [amounts, setAmounts] = useState<Record<string, string>>(() => {
+  const initialAmounts = useMemo<Record<string, string>>(() => {
     const seed: Record<string, string> = {};
     payment?.allocations.forEach((a) => {
       const docId = direction === 'RECEIPT' ? a.salesInvoiceId : a.purchaseBillId;
       if (docId) seed[docId] = a.amount;
     });
     return seed;
-  });
+  }, [payment, direction]);
+  const [amounts, setAmounts] = useState<Record<string, string>>(initialAmounts);
   const [allocError, setAllocError] = useState<string | null>(null);
 
   function buildAllocations() {
@@ -93,6 +94,16 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
 
   const partnerLabel = direction === 'RECEIPT' ? t.payments.partner : t.payments.partnerVendor;
 
+  // Allocation amounts live outside react-hook-form, so fold them into the dirty
+  // check that guards Cancel — otherwise editing only an allocation would be
+  // discarded silently (form.formState.isDirty stays false).
+  const allocationsDirty = useMemo(() => {
+    const keys = new Set([...Object.keys(initialAmounts), ...Object.keys(amounts)]);
+    for (const k of keys) if ((initialAmounts[k] ?? '') !== (amounts[k] ?? '')) return true;
+    return false;
+  }, [initialAmounts, amounts]);
+  const dirty = form.formState.isDirty || allocationsDirty;
+
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
       <ReadOnlyBanner
@@ -107,14 +118,17 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
         <div className="space-y-1.5">
           <Label>{partnerLabel}</Label>
           <PartnerSelect value={form.watch('partnerId')} onChange={(id) => form.setValue('partnerId', id, { shouldValidate: true })} filter={direction === 'RECEIPT' ? 'customer' : 'vendor'} aria-label={partnerLabel} placeholder={partnerLabel} disabled={readOnly} />
+          <FieldError message={form.formState.errors.partnerId ? t.payments.selectPartner : undefined} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="pdate">{t.payments.date}</Label>
           <Input id="pdate" type="date" aria-label={t.payments.date} disabled={readOnly} {...form.register('date')} />
+          <FieldError message={form.formState.errors.date ? t.payments.required : undefined} />
         </div>
         <div className="space-y-1.5">
           <Label>{t.payments.cashAccount}</Label>
           <AccountSelect value={form.watch('cashAccountId')} onChange={(id) => form.setValue('cashAccountId', id, { shouldValidate: true })} aria-label={t.payments.cashAccount} placeholder={t.payments.selectCashAccount} disabled={readOnly} />
+          <FieldError message={form.formState.errors.cashAccountId ? t.payments.selectCashAccount : undefined} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="pdesc">{t.payments.description}</Label>
@@ -133,16 +147,13 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
       <div className="flex items-start justify-between gap-4">
         <div>
           <FieldError message={allocError} />
-          <FieldError message={form.formState.errors.partnerId ? t.payments.selectPartner : undefined} />
-          <FieldError message={form.formState.errors.cashAccountId ? t.payments.selectCashAccount : undefined} />
-          <FieldError message={form.formState.errors.date ? t.payments.required : undefined} />
           <FieldError message={form.formState.errors.root?.message} />
         </div>
         <PaymentTotals amounts={amounts} />
       </div>
 
       <div className="flex justify-end gap-2">
-        <DiscardGuardButton dirty={form.formState.isDirty} onDiscard={onSaved} />
+        <DiscardGuardButton dirty={dirty} onDiscard={onSaved} />
         {readOnly ? null : <Button type="submit" disabled={create.isPending || update.isPending}>{t.payments.savePayment}</Button>}
       </div>
     </form>

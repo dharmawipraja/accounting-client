@@ -149,6 +149,7 @@ export function PeriodsPage() {
         onOpenChange={(o) => { if (!o) setPending(null); }}
         title={dialog?.title ?? ''}
         description={dialog?.description}
+        detail={pending && 'period' in pending ? monthLabel(pending.period) : undefined}
         confirmLabel={dialog?.confirmLabel ?? ''}
         destructive={dialog?.destructive}
         pending={isMutating}

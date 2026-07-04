@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { AccountSelect } from '@/features/accounts/AccountSelect';
 import { MoneyInput } from '@/components/common/MoneyInput';
+import { MoneyText } from '@/components/common/MoneyText';
 import { TaxCodeMultiSelect } from '@/features/tax-codes/TaxCodeMultiSelect';
 import { Money } from '@/lib/money/money';
 import type { DocumentHeaderValues } from './documentFormSchema';
@@ -33,8 +34,8 @@ export function DocumentLineRow<TForm extends DocumentHeaderValues>({
   const p = (field: string) => `lines.${index}.${field}` as Path<TForm>;
   const line = form.watch(`lines.${index}` as Path<TForm>) as DocumentHeaderValues['lines'][number];
   const amount = (() => {
-    try { return Money.from(line.quantity || '0').times(line.unitPrice || '0').toRupiah(); }
-    catch { return Money.zero().toRupiah(); }
+    try { return Money.from(line.quantity || '0').times(line.unitPrice || '0').toApi(); }
+    catch { return Money.zero().toApi(); }
   })();
 
   return (
@@ -50,7 +51,7 @@ export function DocumentLineRow<TForm extends DocumentHeaderValues>({
       <TableCell className="min-w-40">
         <TaxCodeMultiSelect value={line.taxCodeIds} onChange={(ids) => form.setValue(p('taxCodeIds'), ids as never)} allowedKinds={allowedTaxKinds} aria-label={labels.taxes} placeholder={labels.taxes} disabled={readOnly} />
       </TableCell>
-      <TableCell className="text-right font-mono tabular-nums">{amount}</TableCell>
+      <TableCell className="text-right"><MoneyText value={amount} /></TableCell>
       <TableCell>{readOnly ? null : <Button type="button" variant="ghost" size="icon" aria-label={labels.removeLine} onClick={onRemove}><Trash2 className="size-4" /></Button>}</TableCell>
     </TableRow>
   );

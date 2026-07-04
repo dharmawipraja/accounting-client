@@ -60,10 +60,12 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
         <div className="space-y-1.5">
           <Label htmlFor="jdate">{t.journals.date}</Label>
           <Input id="jdate" type="date" aria-label={t.journals.date} {...form.register('date')} />
+          <FieldError message={form.formState.errors.date ? t.journals.required : undefined} />
         </div>
         <div className="space-y-1.5 md:col-span-2">
           <Label htmlFor="jdesc">{t.journals.description}</Label>
           <Input id="jdesc" aria-label={t.journals.description} {...form.register('description')} />
+          <FieldError message={form.formState.errors.description ? t.journals.required : undefined} />
         </div>
       </div>
 
@@ -91,8 +93,6 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
         <JournalTotals lines={lines} />
       </div>
 
-      <FieldError message={form.formState.errors.date ? t.journals.required : undefined} />
-      <FieldError message={form.formState.errors.description ? t.journals.required : undefined} />
       <FieldError message={form.formState.errors.root?.message} />
 
       <div className="flex flex-wrap items-center justify-end gap-3">

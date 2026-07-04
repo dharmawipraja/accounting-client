@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { PageHeader } from '@/components/common/PageHeader';
 import { QueryState } from '@/components/common/QueryState';
+import { FieldError } from '@/components/common/FieldError';
 import { useRole } from '@/components/common/RoleGate';
 import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { applyApiErrorToForm } from '@/lib/api/form-errors';
@@ -64,7 +65,7 @@ function SettingsForm({ settings }: { settings: CompanySettings }) {
       <div className="space-y-1.5">
         <Label htmlFor="legalName">{t.settings.legalName}</Label>
         <Input id="legalName" disabled={!isAdmin} {...form.register('legalName')} />
-        {form.formState.errors.legalName ? <p className="text-xs text-destructive">{form.formState.errors.legalName.message}</p> : null}
+        <FieldError message={form.formState.errors.legalName ? t.settings.legalNameRequired : undefined} />
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="npwp">{t.settings.npwp}</Label>
