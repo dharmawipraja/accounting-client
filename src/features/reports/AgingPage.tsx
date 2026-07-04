@@ -6,6 +6,7 @@ import { Money } from '@/lib/money/money';
 import { formatDateID, toApiDate } from '@/lib/format/date';
 import { useT } from '@/lib/i18n/useT';
 import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
+import { ExportCsvButton } from '@/components/common/ExportCsvButton';
 import { ReportDateControls } from './ReportDateControls';
 import { ReportContent } from './ReportContent';
 import { ReportTable, MoneyCell, type ReportColumn } from './ReportTable';
@@ -51,8 +52,14 @@ export function AgingPage({ kind }: { kind: 'AR' | 'AP' }) {
       <PageHeader title={title} parent={{ to: '/reports', label: t.nav.reports }} />
       <ReportDateControls mode="asOf" asOf={asOf} onAsOf={setAsOf} />
       <ReportContent query={query} loading={<SkeletonTable rows={6} cols={4} />}>
-        {(rep) => (
+        {(rep) => {
+          const bucketHeaders = AGING_BUCKETS.map((b) => (b === 'Current' ? t.reports.lancar : b));
+          const csvRows = rep.partners.map((p) => [p.partnerName, ...AGING_BUCKETS.map((b) => p.buckets[b] ?? '0'), partnerTotal(p)]);
+          return (
           <div className="space-y-4">
+            <div className="flex justify-end">
+              <ExportCsvButton filename={title} headers={[partnerLabel, ...bucketHeaders, t.reports.total]} rows={csvRows} />
+            </div>
             <ReportTable<AgingPartner>
               columns={summaryColumns}
               rows={rep.partners}
@@ -77,7 +84,8 @@ export function AgingPage({ kind }: { kind: 'AR' | 'AP' }) {
               </div>
             ) : null}
           </div>
-        )}
+          );
+        }}
       </ReportContent>
     </div>
   );

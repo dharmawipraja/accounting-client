@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { BookText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FieldError } from '@/components/common/FieldError';
@@ -44,12 +44,27 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
   }
 
   return (
-    <div className="flex min-h-svh items-center justify-center bg-muted p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle className="text-xl">{t.auth.loginTitle}</CardTitle>
-        </CardHeader>
-        <CardContent>
+    <div className="flex min-h-svh flex-col lg:grid lg:grid-cols-2">
+      {/* Brand panel: the premium navy identity, committed to the first impression. */}
+      <div className="flex flex-col justify-between gap-8 bg-sidebar p-8 text-sidebar-foreground lg:p-12">
+        <div className="flex items-center gap-2">
+          <BookText className="size-6" aria-hidden="true" />
+          <span className="text-lg font-semibold">{t.app.name}</span>
+        </div>
+        <div className="hidden lg:block">
+          <p className="text-2xl font-semibold tracking-tight text-balance">{t.auth.brandHeadline}</p>
+          <p className="mt-3 max-w-sm text-sm text-sidebar-foreground/70">{t.auth.brandSub}</p>
+        </div>
+        <p className="hidden text-xs text-sidebar-foreground/60 lg:block">{t.app.tagline}</p>
+      </div>
+
+      {/* Form panel */}
+      <div className="flex flex-1 items-center justify-center bg-background p-6">
+        <div className="w-full max-w-sm space-y-8">
+          <div className="space-y-1.5">
+            <h1 className="text-2xl font-semibold tracking-tight">{t.auth.loginTitle}</h1>
+            <p className="text-sm text-muted-foreground">{t.auth.loginSubtitle}</p>
+          </div>
           <form
             className="space-y-4"
             onSubmit={form.handleSubmit(onSubmit)}
@@ -84,8 +99,8 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
               {t.auth.signIn}
             </Button>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

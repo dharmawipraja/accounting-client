@@ -9,11 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { PartnerSelect } from '@/features/partners/PartnerSelect';
-import { useT } from '@/lib/i18n/useT';
 import { cn } from '@/lib/utils';
 import type { ApiError } from '@/lib/api/errors';
 import { accountsApi } from '@/features/accounts/hooks';
 import { FieldError } from '@/components/common/FieldError';
+import { DiscardGuardButton } from '@/components/common/DiscardGuardButton';
 import { DocumentTotals } from './DocumentTotals';
 import { DocumentLineRow } from './DocumentLineRow';
 import { ReadOnlyBanner } from './ReadOnlyBanner';
@@ -75,7 +75,6 @@ export function DocumentEditor<
   TCreate,
   TUpdate = Partial<TCreate>,
 >({ config, mode, doc, readOnly, onSaved, startEmpty }: DocumentEditorProps<TItem, TFormValues, TCreate, TUpdate>) {
-  const t = useT();
   const { create, update, labels } = config;
   const accounts = accountsApi.useList();
   const settlementAccountId = accounts.data?.find((a) => a.code === config.settlementAccountCode)?.id;
@@ -181,7 +180,7 @@ export function DocumentEditor<
       <FieldError message={errors.root?.message} />
 
       <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onSaved}>{t.common.cancel}</Button>
+        <DiscardGuardButton dirty={form.formState.isDirty} onDiscard={onSaved} />
         {readOnly ? null : <Button type="submit" disabled={create.isPending || update.isPending}>{labels.saveDraft}</Button>}
       </div>
     </form>

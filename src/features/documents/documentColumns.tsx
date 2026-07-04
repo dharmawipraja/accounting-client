@@ -55,15 +55,16 @@ export function documentActionsColumn<T extends { id: string; status: string }>(
     cell: ({ row }) => {
       const d = row.original;
       return (
-        <div className="flex justify-end gap-1">
+        <div className="flex items-center justify-end gap-1.5">
           {d.status === 'DRAFT' ? (
             <>
               <RoleGate allow={['ACCOUNTANT', 'APPROVER', 'ADMIN']}>
                 {cfg.renderOpenLink(d, cfg.labels.edit)}
                 <Button variant="ghost" size="sm" className="text-destructive" onClick={() => cfg.onDelete(d)}>{cfg.labels.delete}</Button>
               </RoleGate>
+              {/* Post writes to the general ledger — give it distinct (outline) weight so it never reads as a twin of the ghost Edit link. */}
               <RoleGate allow={['APPROVER', 'ADMIN']}>
-                <Button variant="ghost" size="sm" onClick={() => cfg.onPost(d)}>{cfg.labels.post}</Button>
+                <Button variant="outline" size="sm" onClick={() => cfg.onPost(d)}>{cfg.labels.post}</Button>
               </RoleGate>
             </>
           ) : (
@@ -71,7 +72,7 @@ export function documentActionsColumn<T extends { id: string; status: string }>(
               {cfg.renderOpenLink(d, cfg.labels.view)}
               {d.status === 'POSTED' ? (
                 <RoleGate allow={['APPROVER', 'ADMIN']}>
-                  <Button variant="ghost" size="sm" className="text-destructive" onClick={() => cfg.onVoid(d)}>{cfg.labels.void}</Button>
+                  <Button variant="outline" size="sm" className="text-destructive" onClick={() => cfg.onVoid(d)}>{cfg.labels.void}</Button>
                 </RoleGate>
               ) : null}
             </>

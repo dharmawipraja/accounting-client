@@ -10,6 +10,7 @@ import { AccountSelect } from '@/features/accounts/AccountSelect';
 import { ReadOnlyBanner } from '@/features/documents/ReadOnlyBanner';
 import { useDocumentSubmit } from '@/features/documents/useDocumentSubmit';
 import { FieldError } from '@/components/common/FieldError';
+import { DiscardGuardButton } from '@/components/common/DiscardGuardButton';
 import { Money } from '@/lib/money/money';
 import { useT } from '@/lib/i18n/useT';
 import { useOpenDocuments } from './useOpenDocuments';
@@ -141,7 +142,7 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
       </div>
 
       <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onSaved}>{t.common.cancel}</Button>
+        <DiscardGuardButton dirty={form.formState.isDirty} onDiscard={onSaved} />
         {readOnly ? null : <Button type="submit" disabled={create.isPending || update.isPending}>{t.payments.savePayment}</Button>}
       </div>
     </form>

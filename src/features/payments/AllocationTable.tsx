@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { EmptyState } from '@/components/common/EmptyState';
 import { MoneyText } from '@/components/common/MoneyText';
+import { MoneyInput } from '@/components/common/MoneyInput';
 import { Money } from '@/lib/money/money';
 import { formatDateID } from '@/lib/format/date';
 import { useT } from '@/lib/i18n/useT';
@@ -44,16 +44,12 @@ export function AllocationTable({ documents, amounts, onAmountChange, readOnly, 
                 <TableCell>{doc.dueDate ? formatDateID(doc.dueDate.slice(0, 10)) : '—'}</TableCell>
                 <TableCell className="text-right"><MoneyText value={doc.outstanding} /></TableCell>
                 <TableCell className="w-40">
-                  <Input
-                    className="text-right font-mono tabular-nums"
-                    inputMode="decimal"
+                  <MoneyInput
+                    allowNegative={false}
                     aria-label={`${t.payments.allocation} ${doc.ref ?? doc.id}`}
                     value={amounts[doc.id] ?? ''}
                     disabled={readOnly}
-                    onChange={(e) => {
-                      const next = e.target.value;
-                      if (next === '' || /^\d*\.?\d{0,4}$/.test(next)) onAmountChange(doc.id, next);
-                    }}
+                    onChange={(raw) => onAmountChange(doc.id, raw)}
                   />
                   {over ? <p role="alert" className="text-xs text-destructive">{t.payments.overAllocated}</p> : null}
                 </TableCell>

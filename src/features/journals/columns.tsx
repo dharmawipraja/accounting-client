@@ -29,20 +29,21 @@ export function buildJournalColumns(
       cell: (c) => {
         const e = c.row.original;
         return (
-          <div className="flex justify-end gap-1">
+          <div className="flex items-center justify-end gap-1.5">
             <Button asChild variant="ghost" size="sm"><Link to="/journals/$id" params={{ id: e.id }}>{t.journals.view}</Link></Button>
             {e.status === 'DRAFT' ? (
               <>
                 <RoleGate allow={['ACCOUNTANT', 'APPROVER', 'ADMIN']}>
                   <Button variant="ghost" size="sm" className="text-destructive" onClick={() => handlers.onDelete(e)}>{t.common.delete}</Button>
                 </RoleGate>
+                {/* Post commits the entry to the ledger — distinct outline weight vs the ghost View/Delete. */}
                 <RoleGate allow={['APPROVER', 'ADMIN']}>
-                  <Button variant="ghost" size="sm" onClick={() => handlers.onPost(e)}>{t.journals.post}</Button>
+                  <Button variant="outline" size="sm" onClick={() => handlers.onPost(e)}>{t.journals.post}</Button>
                 </RoleGate>
               </>
             ) : e.status === 'POSTED' && e.sourceType === 'MANUAL' ? (
               <RoleGate allow={['APPROVER', 'ADMIN']}>
-                <Button variant="ghost" size="sm" className="text-destructive" onClick={() => handlers.onReverse(e)}>{t.journals.reverse}</Button>
+                <Button variant="outline" size="sm" className="text-destructive" onClick={() => handlers.onReverse(e)}>{t.journals.reverse}</Button>
               </RoleGate>
             ) : null}
           </div>

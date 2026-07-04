@@ -5,6 +5,7 @@ import {
 	SidebarContent,
 	SidebarGroup,
 	SidebarGroupContent,
+	SidebarGroupLabel,
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
@@ -16,7 +17,7 @@ import { useT } from "@/lib/i18n/useT";
 export function AppSidebar() {
 	const t = useT();
 	const matchRoute = useMatchRoute();
-	const navItems = useNavItems();
+	const navGroups = useNavItems();
 
 	return (
 		<Sidebar collapsible="icon">
@@ -33,32 +34,35 @@ export function AppSidebar() {
 				</SidebarMenu>
 			</SidebarHeader>
 			<SidebarContent>
-				<SidebarGroup>
-					<SidebarGroupContent>
-						<SidebarMenu>
-							{navItems.map((item) => {
-								const Icon = item.icon;
-								const isActive = Boolean(
-									matchRoute({ to: item.to, fuzzy: true }),
-								);
-								return (
-									<SidebarMenuItem key={item.to}>
-										<SidebarMenuButton
-											asChild
-											isActive={isActive}
-											tooltip={item.label}
-										>
-											<Link to={item.to}>
-												<Icon className="shrink-0" />
-												<span>{item.label}</span>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-								);
-							})}
-						</SidebarMenu>
-					</SidebarGroupContent>
-				</SidebarGroup>
+				{navGroups.map((group, gi) => (
+					<SidebarGroup key={group.label ?? `group-${gi}`}>
+						{group.label ? <SidebarGroupLabel>{group.label}</SidebarGroupLabel> : null}
+						<SidebarGroupContent>
+							<SidebarMenu>
+								{group.items.map((item) => {
+									const Icon = item.icon;
+									const isActive = Boolean(
+										matchRoute({ to: item.to, fuzzy: true }),
+									);
+									return (
+										<SidebarMenuItem key={item.to}>
+											<SidebarMenuButton
+												asChild
+												isActive={isActive}
+												tooltip={item.label}
+											>
+												<Link to={item.to}>
+													<Icon className="shrink-0" />
+													<span>{item.label}</span>
+												</Link>
+											</SidebarMenuButton>
+										</SidebarMenuItem>
+									);
+								})}
+							</SidebarMenu>
+						</SidebarGroupContent>
+					</SidebarGroup>
+				))}
 			</SidebarContent>
 		</Sidebar>
 	);

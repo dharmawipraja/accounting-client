@@ -11,12 +11,14 @@ interface Props {
   error?: boolean;
   onRetry?: () => void;
   hint?: string;
+  /** When the card is wrapped in a link, lift its border on parent-group hover so it reads as clickable. */
+  interactive?: boolean;
 }
 
-export function SummaryCard({ title, value, loading, error, onRetry, hint }: Props) {
+export function SummaryCard({ title, value, loading, error, onRetry, hint, interactive }: Props) {
   const t = useT();
   return (
-    <Card>
+    <Card className={interactive ? 'transition-colors group-hover:border-primary' : undefined}>
       <CardHeader>
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
       </CardHeader>

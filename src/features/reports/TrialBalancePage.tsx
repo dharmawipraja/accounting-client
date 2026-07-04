@@ -7,6 +7,7 @@ import { Money } from '@/lib/money/money';
 import { toApiDate } from '@/lib/format/date';
 import { useT } from '@/lib/i18n/useT';
 import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
+import { ExportCsvButton } from '@/components/common/ExportCsvButton';
 import { ReportDateControls } from './ReportDateControls';
 import { ReportContent } from './ReportContent';
 import { ReportTable, MoneyCell, type ReportColumn } from './ReportTable';
@@ -32,6 +33,13 @@ export function TrialBalancePage({ onOpenAccount }: { onOpenAccount: (accountId:
           const balanced = Money.from(tb.totalDebit).eq(Money.from(tb.totalCredit));
           return (
             <div className="space-y-3">
+              <div className="flex justify-end">
+                <ExportCsvButton
+                  filename={t.reports.trialBalance}
+                  headers={[t.reports.kode, t.reports.nama, t.reports.debit, t.reports.kredit]}
+                  rows={tb.rows.map((r) => [r.code, r.name, r.debit, r.credit])}
+                />
+              </div>
               <ReportTable<TrialBalanceRow>
                 columns={columns}
                 rows={tb.rows}

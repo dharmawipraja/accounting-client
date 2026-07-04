@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useDocumentSubmit } from '@/features/documents/useDocumentSubmit';
 import { FieldError } from '@/components/common/FieldError';
+import { DiscardGuardButton } from '@/components/common/DiscardGuardButton';
 import { Money } from '@/lib/money/money';
 import { useT } from '@/lib/i18n/useT';
 import { JournalLineRow, type JournalLineState } from './JournalLineRow';
@@ -34,6 +35,8 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
   const removeLine = (i: number) => setLines((prev) => prev.filter((_, idx) => idx !== i));
 
   const balanced = isBalanced(lines);
+  const started = lines.some((l) => hasValue(l.debit) || hasValue(l.credit));
+  const dirty = form.formState.isDirty || started || lines.some((l) => l.accountId || l.description);
 
   function onSubmit(values: HeaderValues) {
     if (!balanced) return;
@@ -92,8 +95,9 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
       <FieldError message={form.formState.errors.description ? t.journals.required : undefined} />
       <FieldError message={form.formState.errors.root?.message} />
 
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onSaved}>{t.common.cancel}</Button>
+      <div className="flex flex-wrap items-center justify-end gap-3">
+        {started && !balanced ? <p className="text-sm text-muted-foreground">{t.journals.unbalancedEntry}</p> : null}
+        <DiscardGuardButton dirty={dirty} onDiscard={onSaved} />
         <Button type="submit" disabled={!balanced || create.isPending}>{t.journals.saveEntry}</Button>
       </div>
     </form>

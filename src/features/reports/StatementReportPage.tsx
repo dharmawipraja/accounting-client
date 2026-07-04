@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import type { ZodType } from 'zod';
 import { PageHeader } from '@/components/common/PageHeader';
+import { ExportCsvButton } from '@/components/common/ExportCsvButton';
 import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { toApiDate, isRangeValid } from '@/lib/format/date';
 import type { Messages } from '@/lib/i18n/messages.id';
@@ -53,14 +54,19 @@ export function StatementReportPage<T>({ config }: { config: StatementReportConf
       )}
       <ReportContent query={query} loading={<SkeletonForm fields={5} />}>
         {(data) => {
-          const statement = <StatementView rows={config.buildRows(data, t)} caption={config.title} />;
-          return config.footer ? (
+          const rows = config.buildRows(data, t);
+          return (
             <div className="space-y-3">
-              {statement}
-              {config.footer(data, t)}
+              <div className="flex justify-end">
+                <ExportCsvButton
+                  filename={config.title}
+                  headers={[t.reports.keterangan, t.reports.jumlah]}
+                  rows={rows.map((r) => [r.label, r.amount ?? ''])}
+                />
+              </div>
+              <StatementView rows={rows} caption={config.title} />
+              {config.footer ? config.footer(data, t) : null}
             </div>
-          ) : (
-            statement
           );
         }}
       </ReportContent>
