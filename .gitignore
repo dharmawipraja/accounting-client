@@ -32,5 +32,6 @@ dist-ssr
 # Environment variables
 .env
 
-# Claude
+# AI Agents
 .claude
+.impeccable
