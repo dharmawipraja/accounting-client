@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { CalendarRange } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyState } from '@/components/common/EmptyState';
 import { PeriodStatusChip } from '@/components/common/statusChips';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
@@ -80,11 +82,16 @@ export function PeriodsPage() {
 
       <QueryState query={periods} loading={<SkeletonTable rows={6} cols={3} />} onRetry>
         {(rows) => rows.length === 0 ? (
-          <div className="space-y-3 rounded-lg border p-6 text-center">
-            <p className="text-sm text-muted-foreground">{t.periods.noPeriods}</p>
-            <RoleGate allow={['APPROVER', 'ADMIN']}>
-              <Button onClick={() => setPending({ kind: 'generate' })}>{t.periods.generate}</Button>
-            </RoleGate>
+          <div className="rounded-lg border">
+            <EmptyState
+              icon={CalendarRange}
+              description={t.periods.noPeriods}
+              action={
+                <RoleGate allow={['APPROVER', 'ADMIN']}>
+                  <Button onClick={() => setPending({ kind: 'generate' })}>{t.periods.generate}</Button>
+                </RoleGate>
+              }
+            />
           </div>
         ) : (
           <div className="rounded-lg border">

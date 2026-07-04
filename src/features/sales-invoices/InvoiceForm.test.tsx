@@ -5,6 +5,7 @@ import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it, vi } from 'vitest';
 import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
+import { inRouter } from '@/test/utils';
 import { useSession } from '@/stores/session';
 import { DocumentEditor } from '@/features/documents/DocumentEditor';
 import { useInvoiceEditorConfig } from './editorConfig';
@@ -22,9 +23,9 @@ const accounts = [
 ];
 const partners = [{ id: 'c1', code: 'CUST-1', name: 'Toko A', isCustomer: true, isVendor: false, isActive: true }];
 
-function renderForm(ui: React.ReactNode) {
+function renderForm(ui: React.ReactElement) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-  return render(<QueryClientProvider client={qc}>{ui}</QueryClientProvider>);
+  return render(<QueryClientProvider client={qc}>{inRouter(ui)}</QueryClientProvider>);
 }
 
 it('creates a draft: picks partner + line and posts the lines payload', async () => {
@@ -48,7 +49,7 @@ it('creates a draft: picks partner + line and posts the lines payload', async ()
   const onSaved = vi.fn();
   renderForm(<InvoiceEditorHarness mode="create" onSaved={onSaved} />);
 
-  await user.click(screen.getByRole('combobox', { name: /pelanggan/i }));
+  await user.click(await screen.findByRole('combobox', { name: /pelanggan/i }));
   await user.click(await screen.findByRole('option', { name: /CUST-1/i }));
   await user.type(screen.getByLabelText(/tanggal/i), '2026-06-13');
   await user.type(screen.getByLabelText(/deskripsi/i), 'Jasa konsultasi');
@@ -57,7 +58,7 @@ it('creates a draft: picks partner + line and posts the lines payload', async ()
   await user.clear(screen.getByLabelText(/qty/i));
   await user.type(screen.getByLabelText(/qty/i), '2');
   await user.type(screen.getByLabelText(/harga satuan/i), '500000');
-  await user.click(screen.getByRole('button', { name: /simpan draf/i }));
+  await user.click(await screen.findByRole('button', { name: /simpan draf/i }));
 
   await waitFor(() => expect(posted).toBeTruthy());
   expect(posted).toMatchObject({ partnerId: 'c1', date: '2026-06-13', lines: [{ accountId: 'rev', quantity: '2', unitPrice: '500000' }] });
@@ -73,7 +74,7 @@ it('blocks save with no lines / no partner', async () => {
     http.get(`${API}/tax/codes`, () => HttpResponse.json(paged([]))),
   );
   renderForm(<InvoiceEditorHarness mode="create" onSaved={vi.fn()} startEmpty />);
-  await user.click(screen.getByRole('button', { name: /simpan draf/i }));
+  await user.click(await screen.findByRole('button', { name: /simpan draf/i }));
   // empty submit shows the line/partner/date validation errors
   expect((await screen.findAllByText(/minimal satu baris|pilih pelanggan|wajib diisi/i)).length).toBeGreaterThan(0);
 });

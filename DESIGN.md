@@ -111,7 +111,7 @@ Calm and motivated only. Overlays (dialogs, menus, tooltips) animate open/close 
 
 - **Full interactive states.** Every data view handles loading, empty, error, and not-found, via `QueryState` + the composed skeletons. Never a bare spinner or a success-only screen.
 - **Consistency locks.** One accent colour (blue), one radius scale (8px). Do not add a second accent or mixed corner radii.
-- **No em-dashes** in user-facing copy; use a comma, period, or parentheses.
+- **No em-dashes** in user-facing copy; use a comma, period, or parentheses. The one exception is a lone em-dash (`—`) as a null-value placeholder in data displays (a missing figure or field), which is a conventional table glyph, not prose.
 - **Real components, real data.** No `<div>` fake screenshots, no placeholder/lorem text, no fake-precise numbers in shipped UI.
 - **Motion must be motivated** (feedback, hierarchy, or a state change) and reduced-motion-safe. No animation for its own sake.
 - **YAGNI.** Build the state or variant a screen actually needs.

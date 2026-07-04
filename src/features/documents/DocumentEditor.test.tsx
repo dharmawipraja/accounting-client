@@ -6,6 +6,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { z } from 'zod';
 import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
+import { inRouter } from '@/test/utils';
 import { useSession } from '@/stores/session';
 import { useT } from '@/lib/i18n/useT';
 import { createDocumentHooks, createResourceKeys } from '@/lib/crud/createResourceHooks';
@@ -55,9 +56,9 @@ function Harness({ withExtra = false, ...props }: { withExtra?: boolean; mode: '
   return <DocumentEditor config={config} {...props} />;
 }
 
-function renderEditor(ui: React.ReactNode) {
+function renderEditor(ui: React.ReactElement) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-  return render(<QueryClientProvider client={qc}>{ui}</QueryClientProvider>);
+  return render(<QueryClientProvider client={qc}>{inRouter(ui)}</QueryClientProvider>);
 }
 
 function baseHandlers() {
@@ -80,7 +81,7 @@ it('creates a draft and posts the payload', async () => {
   const onSaved = vi.fn();
   renderEditor(<Harness mode="create" onSaved={onSaved} />);
 
-  await user.click(screen.getByRole('combobox', { name: /pelanggan/i }));
+  await user.click(await screen.findByRole('combobox', { name: /pelanggan/i }));
   await user.click(await screen.findByRole('option', { name: /CUST-1/i }));
   await user.type(screen.getByLabelText(/tanggal/i), '2026-06-25');
   await user.type(screen.getByLabelText(/deskripsi/i), 'Jasa konsultasi');
@@ -89,7 +90,7 @@ it('creates a draft and posts the payload', async () => {
   await user.clear(screen.getByLabelText(/qty/i));
   await user.type(screen.getByLabelText(/qty/i), '2');
   await user.type(screen.getByLabelText(/harga satuan/i), '500000');
-  await user.click(screen.getByRole('button', { name: /simpan draf/i }));
+  await user.click(await screen.findByRole('button', { name: /simpan draf/i }));
 
   await waitFor(() => expect(posted).toBeTruthy());
   expect(posted).toMatchObject({ partnerId: 'c1', date: '2026-06-25', lines: [{ accountId: 'ar', quantity: '2', unitPrice: '500000' }] });
@@ -101,7 +102,7 @@ it('blocks save when empty (validation errors)', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
   baseHandlers();
   renderEditor(<Harness mode="create" onSaved={vi.fn()} startEmpty />);
-  await user.click(screen.getByRole('button', { name: /simpan draf/i }));
+  await user.click(await screen.findByRole('button', { name: /simpan draf/i }));
   expect((await screen.findAllByText(/minimal satu baris|pilih pelanggan|wajib diisi/i)).length).toBeGreaterThan(0);
 });
 

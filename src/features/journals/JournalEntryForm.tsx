@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useDocumentSubmit } from '@/features/documents/useDocumentSubmit';
 import { FieldError } from '@/components/common/FieldError';
-import { DiscardGuardButton } from '@/components/common/DiscardGuardButton';
+import { useUnsavedGuard, UnsavedGuardDialog } from '@/components/common/useUnsavedGuard';
 import { Money } from '@/lib/money/money';
 import { useT } from '@/lib/i18n/useT';
 import { JournalLineRow, type JournalLineState } from './JournalLineRow';
@@ -27,7 +27,8 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
   const t = useT();
   const create = useCreateJournalEntry();
   const form = useForm<HeaderValues>({ resolver: zodResolver(headerSchema), defaultValues: { date: '', description: '' } });
-  const handlers = useDocumentSubmit(form, onSaved);
+  const leavingRef = useRef(false);
+  const handlers = useDocumentSubmit(form, () => { leavingRef.current = true; onSaved(); });
   const [lines, setLines] = useState<JournalLineState[]>(() => [emptyLine(), emptyLine()]);
 
   const setLine = (i: number, patch: Partial<JournalLineState>) => setLines((prev) => prev.map((l, idx) => (idx === i ? { ...l, ...patch } : l)));
@@ -37,6 +38,7 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
   const balanced = isBalanced(lines);
   const started = lines.some((l) => hasValue(l.debit) || hasValue(l.credit));
   const dirty = form.formState.isDirty || started || lines.some((l) => l.accountId || l.description);
+  const guard = useUnsavedGuard(() => dirty && !leavingRef.current);
 
   function onSubmit(values: HeaderValues) {
     if (!balanced) return;
@@ -97,9 +99,10 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
 
       <div className="flex flex-wrap items-center justify-end gap-3">
         {started && !balanced ? <p className="text-sm text-muted-foreground">{t.journals.unbalancedEntry}</p> : null}
-        <DiscardGuardButton dirty={dirty} onDiscard={onSaved} />
+        <Button type="button" variant="outline" onClick={onSaved}>{t.common.cancel}</Button>
         <Button type="submit" disabled={!balanced || create.isPending}>{t.journals.saveEntry}</Button>
       </div>
+      <UnsavedGuardDialog guard={guard} />
     </form>
   );
 }

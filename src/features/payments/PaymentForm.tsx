@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -10,7 +10,7 @@ import { AccountSelect } from '@/features/accounts/AccountSelect';
 import { ReadOnlyBanner } from '@/features/documents/ReadOnlyBanner';
 import { useDocumentSubmit } from '@/features/documents/useDocumentSubmit';
 import { FieldError } from '@/components/common/FieldError';
-import { DiscardGuardButton } from '@/components/common/DiscardGuardButton';
+import { useUnsavedGuard, UnsavedGuardDialog } from '@/components/common/useUnsavedGuard';
 import { Money } from '@/lib/money/money';
 import { useT } from '@/lib/i18n/useT';
 import { useOpenDocuments } from './useOpenDocuments';
@@ -49,7 +49,8 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
 
   const partnerId = form.watch('partnerId');
   const openDocuments = useOpenDocuments(direction, partnerId);
-  const handlers = useDocumentSubmit(form, onSaved);
+  const leavingRef = useRef(false);
+  const handlers = useDocumentSubmit(form, () => { leavingRef.current = true; onSaved(); });
 
   const initialAmounts = useMemo<Record<string, string>>(() => {
     const seed: Record<string, string> = {};
@@ -103,6 +104,7 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
     return false;
   }, [initialAmounts, amounts]);
   const dirty = form.formState.isDirty || allocationsDirty;
+  const guard = useUnsavedGuard(() => dirty && !leavingRef.current);
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
@@ -153,9 +155,10 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
       </div>
 
       <div className="flex justify-end gap-2">
-        <DiscardGuardButton dirty={dirty} onDiscard={onSaved} />
+        <Button type="button" variant="outline" onClick={onSaved}>{t.common.cancel}</Button>
         {readOnly ? null : <Button type="submit" disabled={create.isPending || update.isPending}>{t.payments.savePayment}</Button>}
       </div>
+      <UnsavedGuardDialog guard={guard} />
     </form>
   );
 }

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm, type Path } from 'react-hook-form';
 import { Plus } from 'lucide-react';
@@ -10,10 +10,11 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { PartnerSelect } from '@/features/partners/PartnerSelect';
 import { cn } from '@/lib/utils';
+import { useT } from '@/lib/i18n/useT';
 import type { ApiError } from '@/lib/api/errors';
 import { accountsApi } from '@/features/accounts/hooks';
 import { FieldError } from '@/components/common/FieldError';
-import { DiscardGuardButton } from '@/components/common/DiscardGuardButton';
+import { useUnsavedGuard, UnsavedGuardDialog } from '@/components/common/useUnsavedGuard';
 import { DocumentTotals } from './DocumentTotals';
 import { DocumentLineRow } from './DocumentLineRow';
 import { ReadOnlyBanner } from './ReadOnlyBanner';
@@ -76,6 +77,7 @@ export function DocumentEditor<
   TUpdate = Partial<TCreate>,
 >({ config, mode, doc, readOnly, onSaved, startEmpty }: DocumentEditorProps<TItem, TFormValues, TCreate, TUpdate>) {
   const { create, update, labels } = config;
+  const t = useT();
   const accounts = accountsApi.useList();
   const settlementAccountId = accounts.data?.find((a) => a.code === config.settlementAccountCode)?.id;
 
@@ -89,7 +91,8 @@ export function DocumentEditor<
         : config.emptyForm) as never,
   });
   const lines = useFieldArray({ control: form.control, name: 'lines' as never });
-  const handlers = useDocumentSubmit(form, onSaved);
+  const leavingRef = useRef(false);
+  const handlers = useDocumentSubmit(form, () => { leavingRef.current = true; onSaved(); });
 
   const watched = form.watch('lines' as Path<TFormValues>) as DocumentHeaderValues['lines'] | undefined;
   const previewLines = useMemo(
@@ -109,6 +112,8 @@ export function DocumentEditor<
   }
 
   const errors = form.formState.errors as Record<string, { message?: string } | undefined>;
+  const dirty = form.formState.isDirty;
+  const guard = useUnsavedGuard(() => dirty && !leavingRef.current);
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit as never)} className="space-y-6" noValidate>
@@ -181,9 +186,10 @@ export function DocumentEditor<
       <FieldError message={errors.root?.message} />
 
       <div className="flex justify-end gap-2">
-        <DiscardGuardButton dirty={form.formState.isDirty} onDiscard={onSaved} />
+        <Button type="button" variant="outline" onClick={onSaved}>{t.common.cancel}</Button>
         {readOnly ? null : <Button type="submit" disabled={create.isPending || update.isPending}>{labels.saveDraft}</Button>}
       </div>
+      <UnsavedGuardDialog guard={guard} />
     </form>
   );
 }

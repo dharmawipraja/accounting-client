@@ -1,5 +1,6 @@
 import { MoneyText } from '@/components/common/MoneyText';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useT } from '@/lib/i18n/useT';
 
 interface Props {
@@ -23,8 +24,8 @@ export function DashboardHero({ assets, liabilities, equity, loading, error, onR
       </p>
       {loading ? (
         <div className="mt-2 space-y-3">
-          <div className="h-10 w-56 animate-pulse rounded bg-white/10" />
-          <div className="h-5 w-40 animate-pulse rounded bg-white/10" />
+          <Skeleton variant="pulse" className="h-10 w-56 bg-white/10" />
+          <Skeleton variant="pulse" className="h-5 w-40 bg-white/10" />
         </div>
       ) : error ? (
         <div className="mt-2 space-y-2">

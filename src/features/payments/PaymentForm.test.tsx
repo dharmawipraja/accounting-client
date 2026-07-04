@@ -5,6 +5,7 @@ import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it, vi } from 'vitest';
 import { API, openInvoiceFixture, paged } from '@/test/handlers';
 import { server } from '@/test/server';
+import { inRouter } from '@/test/utils';
 import { useSession } from '@/stores/session';
 import { PaymentForm } from './PaymentForm';
 import type { Payment } from './schema';
@@ -14,9 +15,9 @@ afterEach(() => useSession.getState().clear());
 const accounts = [{ id: 'a1', code: '1-1000', name: 'Kas', type: 'ASSET', subtype: 'CURRENT_ASSET', normalBalance: 'DEBIT', isPostable: true, isActive: true, parentId: null }];
 const partners = [{ id: 'p1', code: 'CUST-1', name: 'Toko A', isCustomer: true, isVendor: false, isActive: true }];
 
-function renderForm(ui: React.ReactNode) {
+function renderForm(ui: React.ReactElement) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-  return render(<QueryClientProvider client={qc}>{ui}</QueryClientProvider>);
+  return render(<QueryClientProvider client={qc}>{inRouter(ui)}</QueryClientProvider>);
 }
 
 function commonHandlers() {
@@ -39,7 +40,7 @@ it('allocates via Lunasi and posts the RECEIPT payload', async () => {
   const onSaved = vi.fn();
   renderForm(<PaymentForm mode="create" onSaved={onSaved} />);
 
-  await user.click(screen.getByRole('combobox', { name: /pelanggan/i }));
+  await user.click(await screen.findByRole('combobox', { name: /pelanggan/i }));
   await user.click(await screen.findByRole('option', { name: /CUST-1/i }));
   await user.type(screen.getByLabelText(/tanggal/i), '2026-06-16');
   await user.click(screen.getByRole('combobox', { name: /akun kas/i }));
@@ -57,7 +58,7 @@ it('blocks save when nothing is allocated', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
   commonHandlers();
   renderForm(<PaymentForm mode="create" onSaved={vi.fn()} />);
-  await user.click(screen.getByRole('combobox', { name: /pelanggan/i }));
+  await user.click(await screen.findByRole('combobox', { name: /pelanggan/i }));
   await user.click(await screen.findByRole('option', { name: /CUST-1/i }));
   await user.type(screen.getByLabelText(/tanggal/i), '2026-06-16');
   await user.click(screen.getByRole('combobox', { name: /akun kas/i }));
@@ -73,7 +74,7 @@ it('blocks save when an allocation exceeds the invoice outstanding', async () =>
   const onSaved = vi.fn();
   renderForm(<PaymentForm mode="create" onSaved={onSaved} />);
 
-  await user.click(screen.getByRole('combobox', { name: /pelanggan/i }));
+  await user.click(await screen.findByRole('combobox', { name: /pelanggan/i }));
   await user.click(await screen.findByRole('option', { name: /CUST-1/i }));
   await user.type(screen.getByLabelText(/tanggal/i), '2026-06-16');
   await user.click(screen.getByRole('combobox', { name: /akun kas/i }));
@@ -108,7 +109,7 @@ it('allocates via Lunasi and posts the DISBURSEMENT payload', async () => {
   const onSaved = vi.fn();
   renderForm(<PaymentForm mode="create" direction="DISBURSEMENT" onSaved={onSaved} />);
 
-  await user.click(screen.getByRole('combobox', { name: /vendor/i }));
+  await user.click(await screen.findByRole('combobox', { name: /vendor/i }));
   await user.click(await screen.findByRole('option', { name: /VEND-1/i }));
   await user.type(screen.getByLabelText(/tanggal/i), '2026-06-16');
   await user.click(screen.getByRole('combobox', { name: /akun kas/i }));

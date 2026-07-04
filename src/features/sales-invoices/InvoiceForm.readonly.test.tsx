@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it, vi } from 'vitest';
 import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
+import { inRouter } from '@/test/utils';
 import { useSession } from '@/stores/session';
 import { DocumentEditor } from '@/features/documents/DocumentEditor';
 import { useInvoiceEditorConfig } from './editorConfig';
@@ -24,9 +25,9 @@ const posted: SalesInvoice = {
   lines: [{ id: 'l1', lineNo: 1, description: 'Jasa', accountId: 'rev', quantity: '1.0000', unitPrice: '1000000.0000', amount: '1000000.0000', taxCodeIds: [] }],
 };
 
-function renderForm(ui: React.ReactNode) {
+function renderForm(ui: React.ReactElement) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return render(<QueryClientProvider client={qc}>{ui}</QueryClientProvider>);
+  return render(<QueryClientProvider client={qc}>{inRouter(ui)}</QueryClientProvider>);
 }
 
 it('renders a posted invoice read-only: disabled fields, banner, no Save', async () => {

@@ -5,6 +5,7 @@ import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it, vi } from 'vitest';
 import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
+import { inRouter } from '@/test/utils';
 import { useSession } from '@/stores/session';
 import { DocumentEditor } from '@/features/documents/DocumentEditor';
 import { useBillEditorConfig } from './editorConfig';
@@ -22,9 +23,9 @@ const accounts = [
 ];
 const partners = [{ id: 'v1', code: 'VEND-1', name: 'PT Pemasok', isCustomer: false, isVendor: true, isActive: true }];
 
-function renderForm(ui: React.ReactNode) {
+function renderForm(ui: React.ReactElement) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-  return render(<QueryClientProvider client={qc}>{ui}</QueryClientProvider>);
+  return render(<QueryClientProvider client={qc}>{inRouter(ui)}</QueryClientProvider>);
 }
 
 it('creates a draft: vendor + line → posts the purchase payload with vendorInvoiceNo', async () => {
@@ -43,7 +44,7 @@ it('creates a draft: vendor + line → posts the purchase payload with vendorInv
   const onSaved = vi.fn();
   renderForm(<BillEditorHarness mode="create" onSaved={onSaved} />);
 
-  await user.click(screen.getByRole('combobox', { name: /vendor/i }));
+  await user.click(await screen.findByRole('combobox', { name: /vendor/i }));
   await user.click(await screen.findByRole('option', { name: /VEND-1/i }));
   await user.type(screen.getByLabelText(/tanggal/i), '2026-06-15');
   await user.type(screen.getByLabelText(/no\. faktur vendor/i), 'VINV-1');
@@ -54,7 +55,7 @@ it('creates a draft: vendor + line → posts the purchase payload with vendorInv
   await user.type(screen.getByLabelText(/qty/i), '1');
   await user.type(screen.getByLabelText(/harga satuan/i), '1000000');
 
-  await user.click(screen.getByRole('button', { name: /simpan draf/i }));
+  await user.click(await screen.findByRole('button', { name: /simpan draf/i }));
   await waitFor(() => expect(posted).toBeTruthy());
   // purchase-specific create payload: vendor partner + vendorInvoiceNo + the line
   expect(posted).toMatchObject({ partnerId: 'v1', date: '2026-06-15', vendorInvoiceNo: 'VINV-1', lines: [{ accountId: 'exp', quantity: '1', unitPrice: '1000000' }] });
@@ -70,6 +71,6 @@ it('blocks save with no lines / no partner', async () => {
     http.get(`${API}/tax/codes`, () => HttpResponse.json(paged([]))),
   );
   renderForm(<BillEditorHarness mode="create" onSaved={vi.fn()} startEmpty />);
-  await user.click(screen.getByRole('button', { name: /simpan draf/i }));
+  await user.click(await screen.findByRole('button', { name: /simpan draf/i }));
   expect((await screen.findAllByText(/minimal satu baris|pilih vendor|wajib diisi/i)).length).toBeGreaterThan(0);
 });

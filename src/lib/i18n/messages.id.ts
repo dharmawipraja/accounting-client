@@ -206,7 +206,9 @@ export const id = {
   documents: {
     subtotal: 'Subtotal (DPP)',
     ppn: 'PPN',
+    ppnHelp: 'Pajak Pertambahan Nilai, ditambahkan ke nilai faktur.',
     pphWithheld: 'PPh Dipotong',
+    pphHelp: 'Pajak Penghasilan yang dipotong dan dikurangi dari pembayaran.',
     total: 'Total Tagihan',
     calculating: 'Menghitung…',
     paymentStatus: 'Status Bayar',

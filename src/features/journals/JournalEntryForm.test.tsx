@@ -5,6 +5,7 @@ import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it, vi } from 'vitest';
 import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
+import { inRouter } from '@/test/utils';
 import { useSession } from '@/stores/session';
 import { JournalEntryForm } from './JournalEntryForm';
 
@@ -15,9 +16,9 @@ const accounts = [
   { id: 'a2', code: '4-1000', name: 'Pendapatan', type: 'REVENUE', subtype: 'REVENUE', normalBalance: 'CREDIT', isPostable: true, isActive: true, parentId: null },
 ];
 
-function renderForm(ui: React.ReactNode) {
+function renderForm(ui: React.ReactElement) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-  return render(<QueryClientProvider client={qc}>{ui}</QueryClientProvider>);
+  return render(<QueryClientProvider client={qc}>{inRouter(ui)}</QueryClientProvider>);
 }
 
 it('creates a balanced entry: debit + credit across two accounts → posts the payload', async () => {
@@ -32,7 +33,7 @@ it('creates a balanced entry: debit + credit across two accounts → posts the p
   const onSaved = vi.fn();
   renderForm(<JournalEntryForm onSaved={onSaved} />);
 
-  await user.type(screen.getByLabelText(/tanggal/i), '2026-06-16');
+  await user.type(await screen.findByLabelText(/tanggal/i), '2026-06-16');
   await user.type(screen.getByLabelText(/keterangan/i), 'Jurnal uji');
   const combos = screen.getAllByRole('combobox', { name: /akun/i });
   await user.click(combos[0]);
@@ -56,7 +57,7 @@ it('keeps Save disabled while unbalanced', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
   server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
   renderForm(<JournalEntryForm onSaved={vi.fn()} />);
-  expect(screen.getByRole('button', { name: /simpan/i })).toBeDisabled();
+  expect(await screen.findByRole('button', { name: /simpan/i })).toBeDisabled();
   await user.click(screen.getAllByRole('combobox', { name: /akun/i })[0]);
   await user.click(await screen.findByRole('option', { name: /1-1000/i }));
   await user.type(screen.getAllByLabelText('Debit')[0], '100000');
