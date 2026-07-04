@@ -28,6 +28,7 @@ export function DocumentListPage<T extends { id: string }>({ config }: { config:
         {config.search ? (
           <div className="max-w-xs space-y-1">
             <Input
+              aria-label={config.search.placeholder ?? t.common.search}
               placeholder={config.search.placeholder ?? t.common.search}
               value={c.search}
               onChange={(e) => c.setSearch(e.target.value)}

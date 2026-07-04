@@ -17,7 +17,7 @@ export function NotFound({
 }) {
   const t = useT();
   return (
-    <div className="flex flex-col items-center justify-center gap-3 p-12 text-center">
+    <div role="status" className="flex flex-col items-center justify-center gap-3 p-12 text-center">
       <p className="text-6xl font-extrabold tracking-tight text-muted-foreground/40">404</p>
       <p className="text-lg font-semibold">{title ?? t.notFound.pageTitle}</p>
       <p className="max-w-sm text-sm text-muted-foreground">{message ?? t.notFound.pageMessage}</p>

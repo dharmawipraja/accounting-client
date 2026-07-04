@@ -41,7 +41,7 @@ export function JournalEntryEditorPage({ id }: { id?: string }) {
       {(je) => (
         <div className="space-y-4">
           <PageHeader title={`${t.journals.view}${je.entryRef ? ` · ${je.entryRef}` : ''}`} parent={{ to: '/journals', label: t.nav.journals }} />
-          <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 md:grid-cols-4">
             <div><div className="text-muted-foreground">{t.journals.date}</div><div>{formatDateID(je.date.slice(0, 10))}</div></div>
             <div className="md:col-span-2"><div className="text-muted-foreground">{t.journals.description}</div><div>{je.description}</div></div>
             <div><div className="text-muted-foreground">{t.journals.status}</div><JournalStatusChip status={je.status} t={t} /></div>

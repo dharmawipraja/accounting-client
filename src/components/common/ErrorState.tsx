@@ -27,7 +27,7 @@ export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () =>
   const { kind, title, message, showRetry, traceId } = describeError(error, t);
   const Icon = ICONS[kind];
   return (
-    <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-8 text-center">
+    <div role="alert" className="flex flex-col items-center justify-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-8 text-center">
       <Icon className="size-6 text-destructive" />
       <p className="font-medium">{title}</p>
       <p className="max-w-sm text-sm text-muted-foreground">{message}</p>

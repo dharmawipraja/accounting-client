@@ -56,7 +56,7 @@ export function ReportsIndexPage() {
                 >
                   <Card className="h-full transition-colors hover:border-primary">
                     <CardHeader className="flex-row items-start gap-3 space-y-0">
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-info-strong">
                         <Icon className="size-5" aria-hidden="true" />
                       </span>
                       <div className="space-y-1">

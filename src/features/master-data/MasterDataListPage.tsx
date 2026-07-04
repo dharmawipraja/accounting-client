@@ -75,7 +75,7 @@ export function MasterDataListPage<TItem extends { id: string; isActive: boolean
       />
 
       <div className="mb-4 max-w-xs space-y-1">
-        <Input placeholder={t.common.search} value={c.search} onChange={(e) => c.setSearch(e.target.value)} />
+        <Input aria-label={t.common.search} placeholder={t.common.search} value={c.search} onChange={(e) => c.setSearch(e.target.value)} />
         <p className="text-xs text-muted-foreground">{t.common.searchOnThisPage}</p>
       </div>
 
