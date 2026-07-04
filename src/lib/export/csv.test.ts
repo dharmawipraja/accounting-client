@@ -14,3 +14,19 @@ it('quotes cells containing comma, quote, or newline and escapes inner quotes', 
 it('renders null/undefined as empty and numbers as-is', () => {
   expect(toCsv(['a', 'b', 'c'], [[null, undefined, 42]])).toBe('a,b,c\r\n,,42');
 });
+
+it('neutralizes spreadsheet formula-injection on non-numeric cells', () => {
+  expect(toCsv(['x'], [['=1+1']])).toBe("x\r\n'=1+1");
+  expect(toCsv(['x'], [['@SUM(A1)']])).toBe("x\r\n'@SUM(A1)");
+  expect(toCsv(['x'], [['-2+3+cmd|calc']])).toBe("x\r\n'-2+3+cmd|calc");
+  // still CSV-quoted when it also contains a comma/quote
+  expect(toCsv(['x'], [['=HYPERLINK("http://evil","x")']])).toBe(
+    'x\r\n"\'=HYPERLINK(""http://evil"",""x"")"',
+  );
+});
+
+it('leaves genuine numbers (including negatives) untouched for spreadsheet math', () => {
+  expect(toCsv(['x'], [['-1500.0000']])).toBe('x\r\n-1500.0000');
+  expect(toCsv(['x'], [['1500']])).toBe('x\r\n1500');
+  expect(toCsv(['x'], [[-42]])).toBe('x\r\n-42');
+});

@@ -4,8 +4,19 @@
 
 export type CsvCell = string | number | null | undefined;
 
+/** A plain (possibly negative) number, which must stay numeric for the spreadsheet. */
+const NUMERIC = /^-?\d+(\.\d+)?$/;
+/** Leading chars a spreadsheet may execute as a formula (Excel/Sheets/LibreOffice). */
+const FORMULA_TRIGGER = /^[=+\-@\t\r]/;
+
 function escapeCell(value: CsvCell): string {
-  const s = value == null ? '' : String(value);
+  let s = value == null ? '' : String(value);
+  // CSV formula-injection guard: a leading = + - @ tab or CR can run as a formula
+  // when the file is opened. Prefix a quote on non-numeric text so a partner name
+  // or description can't smuggle one; genuine numbers (incl. -1500.00) are left as-is.
+  if (s !== '' && FORMULA_TRIGGER.test(s) && !NUMERIC.test(s)) {
+    s = `'${s}`;
+  }
   return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
