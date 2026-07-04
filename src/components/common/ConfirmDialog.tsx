@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,6 +17,8 @@ interface ConfirmDialogProps {
   onOpenChange: (open: boolean) => void;
   title: string;
   description?: string;
+  /** Per-item detail (e.g. which document + amount) shown below the description. */
+  detail?: ReactNode;
   confirmLabel: string;
   onConfirm: () => void;
   pending?: boolean;
@@ -27,6 +30,7 @@ export function ConfirmDialog({
   onOpenChange,
   title,
   description,
+  detail,
   confirmLabel,
   onConfirm,
   pending,
@@ -40,6 +44,7 @@ export function ConfirmDialog({
           <AlertDialogTitle>{title}</AlertDialogTitle>
           {description ? <AlertDialogDescription>{description}</AlertDialogDescription> : null}
         </AlertDialogHeader>
+        {detail ? <div className="rounded-md border bg-muted/40 px-3 py-2 text-sm">{detail}</div> : null}
         <AlertDialogFooter>
           <AlertDialogCancel>{t.common.cancel}</AlertDialogCancel>
           <AlertDialogAction

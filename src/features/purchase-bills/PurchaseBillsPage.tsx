@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { MoneyText } from '@/components/common/MoneyText';
 import { useEntityLabelMap } from '@/lib/hooks/useEntityLabelMap';
 import { useT } from '@/lib/i18n/useT';
 import { partnersApi } from '@/features/partners/hooks';
@@ -36,6 +37,12 @@ export function PurchaseBillsPage() {
       { value: 'VOID', label: documentStatusLabel(t, 'VOID') },
     ] }],
     search: { predicate: (bill, q) => (bill.billRef ?? '').toLowerCase().includes(q) || partnerName(bill.partnerId).toLowerCase().includes(q) },
+    describeDoc: (bill) => (
+      <div className="flex items-center justify-between gap-4">
+        <span className="truncate">{[bill.billRef, partnerName(bill.partnerId)].filter(Boolean).join(' · ')}</span>
+        <MoneyText value={bill.total} />
+      </div>
+    ),
     newControl: <Button asChild><Link to="/purchase-bills/new"><Plus className="size-4" /> {t.purchaseBills.newBill}</Link></Button>,
   };
 

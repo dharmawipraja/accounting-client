@@ -6,6 +6,7 @@ import { useT } from '@/lib/i18n/useT';
 import { partnersApi } from '@/features/partners/hooks';
 import { accountsApi } from '@/features/accounts/hooks';
 import { DocumentListPage } from '@/features/documents/DocumentListPage';
+import { MoneyText } from '@/components/common/MoneyText';
 import type { DocumentListConfig } from '@/features/documents/useDocumentListController';
 import { documentStatusLabel } from '@/features/documents/statusLabel';
 import { buildPaymentColumns } from './columns';
@@ -45,6 +46,12 @@ export function PaymentsPage() {
       ] },
     ],
     search: { predicate: (p, q) => (p.ref ?? '').toLowerCase().includes(q) || partnerName(p.partnerId).toLowerCase().includes(q) },
+    describeDoc: (p) => (
+      <div className="flex items-center justify-between gap-4">
+        <span className="truncate">{[p.ref, partnerName(p.partnerId)].filter(Boolean).join(' · ')}</span>
+        <MoneyText value={p.amount ?? '0'} />
+      </div>
+    ),
     newControl: (
       <div className="flex gap-2">
         <Button asChild variant="outline"><Link to="/payments/new" search={{ direction: 'RECEIPT' }}><Plus className="size-4" /> {t.payments.directionReceipt}</Link></Button>

@@ -123,10 +123,12 @@ export function DocumentEditor<
         <div className="space-y-1.5">
           <Label>{labels.partner}</Label>
           <PartnerSelect value={form.watch('partnerId' as Path<TFormValues>) as string} onChange={(id) => form.setValue('partnerId' as Path<TFormValues>, id as never, { shouldValidate: true })} filter={config.partnerFilter} aria-label={labels.partner} placeholder={labels.selectPartner} disabled={readOnly} />
+          <FieldError message={errors.partnerId ? labels.selectPartner : undefined} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="date">{labels.date}</Label>
           <Input id="date" type="date" aria-label={labels.date} disabled={readOnly} {...form.register('date' as Path<TFormValues>)} />
+          <FieldError message={errors.date ? labels.required : undefined} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="dueDate">{labels.dueDate}</Label>
@@ -165,6 +167,8 @@ export function DocumentEditor<
         </Table>
       </div>
 
+      <FieldError message={errors.lines ? labels.atLeastOneLine : undefined} />
+
       <div className="flex items-start justify-between gap-4">
         {readOnly ? <div /> : (
           <Button type="button" variant="outline" onClick={() => lines.append({ ...EMPTY_LINE } as never)}>
@@ -174,9 +178,6 @@ export function DocumentEditor<
         <DocumentTotals nature={config.nature} settlementAccountId={settlementAccountId} lines={previewLines} />
       </div>
 
-      <FieldError message={errors.lines ? labels.atLeastOneLine : undefined} />
-      <FieldError message={errors.partnerId ? labels.selectPartner : undefined} />
-      <FieldError message={errors.date ? labels.required : undefined} />
       <FieldError message={errors.root?.message} />
 
       <div className="flex justify-end gap-2">

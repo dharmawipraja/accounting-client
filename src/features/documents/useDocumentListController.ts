@@ -53,6 +53,9 @@ export interface DocumentListConfig<T extends { id: string }> {
   initialFilters?: Record<string, string>;
   /** Page size. Default 20. */
   limit?: number;
+  /** Optional per-document detail rendered inside the confirm dialog (e.g. ref + amount)
+   *  so lifecycle actions like Post / Void name the exact document, not just generic prose. */
+  describeDoc?: (doc: T) => ReactNode;
 }
 
 const HANDLER_NAME: Record<ActionKind, 'onPost' | 'onVoid' | 'onReverse' | 'onDelete'> = {
@@ -78,6 +81,7 @@ export interface DocumentListController<T> {
     onOpenChange: (open: boolean) => void;
     title: string;
     description?: string;
+    detail?: ReactNode;
     confirmLabel: string;
     destructive: boolean;
     pending: boolean;
@@ -151,6 +155,7 @@ export function useDocumentListController<T extends { id: string }>(
       onOpenChange: (o: boolean) => { if (!o) setPending(null); },
       title: activeDef?.confirm.title ?? '',
       description: activeDef?.confirm.description,
+      detail: pending ? config.describeDoc?.(pending.doc) : undefined,
       confirmLabel: activeDef?.confirm.label ?? '',
       destructive: pending?.kind !== 'post',
       pending: anyPending,

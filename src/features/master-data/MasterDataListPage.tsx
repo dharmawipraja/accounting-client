@@ -43,6 +43,10 @@ export interface MasterDataListConfig<TItem extends { id: string; isActive: bool
 }
 
 const DEFAULT_ROLES: Role[] = ['ACCOUNTANT', 'APPROVER', 'ADMIN'];
+/** When searching, fetch the whole (bounded) master-data set in one page and filter
+ *  client-side. Large enough for any realistic chart-of-accounts / partner list; if a
+ *  set ever exceeds it, the UI shows an honest "results may be incomplete" note. */
+const SEARCH_LIMIT = 500;
 
 function defaultSearch(item: { code?: string; name?: string }, q: string): boolean {
   if (!q) return true;
@@ -56,7 +60,11 @@ export function MasterDataListPage<TItem extends { id: string; isActive: boolean
   const t = useT();
   const limit = config.limit ?? 20;
   const c = useMasterDataListController<TItem>(config.actions, limit);
-  const query = config.usePagedList({ limit, offset: c.offset });
+  // Active search fetches the whole set and filters client-side (dataset-wide),
+  // instead of the page-scoped filter the document lists still use pending a
+  // backend `q` param. Safe because master data is small and bounded.
+  const searching = c.search.trim() !== '';
+  const query = config.usePagedList(searching ? { limit: SEARCH_LIMIT, offset: 0 } : { limit, offset: c.offset });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const columns: ColumnDef<TItem, any>[] = config.columns(c.handlers);
   const match = config.search ?? defaultSearch;
@@ -74,9 +82,8 @@ export function MasterDataListPage<TItem extends { id: string; isActive: boolean
         }
       />
 
-      <div className="mb-4 max-w-xs space-y-1">
+      <div className="mb-4 max-w-xs">
         <Input aria-label={t.common.search} placeholder={t.common.search} value={c.search} onChange={(e) => c.setSearch(e.target.value)} />
-        <p className="text-xs text-muted-foreground">{t.common.searchOnThisPage}</p>
       </div>
 
       <QueryState query={query} loading={<SkeletonTable rows={8} cols={config.skeletonCols ?? 4} />} onRetry>
@@ -103,7 +110,13 @@ export function MasterDataListPage<TItem extends { id: string; isActive: boolean
           return (
             <>
               {rows.length === 0 ? empty : renderRows(rows, columns)}
-              <Pagination offset={c.offset} limit={limit} total={env.total} onChange={c.setOffset} />
+              {searching ? (
+                env.total > env.data.length ? (
+                  <p className="mt-3 text-xs text-muted-foreground">{t.common.searchPartial}</p>
+                ) : null
+              ) : (
+                <Pagination offset={c.offset} limit={limit} total={env.total} onChange={c.setOffset} />
+              )}
             </>
           );
         }}

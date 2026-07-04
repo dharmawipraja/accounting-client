@@ -16,6 +16,7 @@ export const id = {
     next: 'Berikutnya',
     paginationShowing: 'Menampilkan {from}–{to} dari {total}',
     searchOnThisPage: 'Pencarian berlaku untuk halaman ini',
+    searchPartial: 'Data terlalu banyak untuk pencarian menyeluruh; hasil mungkin tidak lengkap.',
     skipToContent: 'Lewati ke konten utama',
     emptyTitle: 'Belum ada data',
     emptyHint: 'Mulai dengan menambahkan entri pertama Anda.',

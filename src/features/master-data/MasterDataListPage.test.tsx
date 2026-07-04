@@ -117,6 +117,28 @@ it('typing in search resets offset to 0', async () => {
   await waitFor(() => expect(lastOffset).toBe('0'));
 });
 
+// 1b. Search spans the whole dataset, not just the current page
+it('search finds a record that is not on the current page', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+
+  const manyItems: MdItem[] = Array.from({ length: 25 }, (_, i) => ({
+    id: `m${i}`, code: `CODE-${i}`, name: `Item ${i}`, isActive: true,
+  }));
+  server.use(pagedHandler(manyItems));
+
+  renderPage();
+  await screen.findByText('Item 0');
+
+  // advance to page 2 — "Item 3" (page 1) is no longer visible
+  await user.click(screen.getByRole('button', { name: /berikutnya/i }));
+  await waitFor(() => expect(screen.queryByText('Item 3')).not.toBeInTheDocument());
+
+  // searching still finds it (fetches the whole set and filters client-side)
+  await user.type(screen.getByPlaceholderText(messages.common.search), 'Item 3');
+  expect(await screen.findByText('Item 3')).toBeInTheDocument();
+});
+
 // 2. Toggling active row opens deactivate confirm → confirming calls deactivate + success toast
 it('toggling active row opens deactivate confirm and calls deactivate on confirm', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
