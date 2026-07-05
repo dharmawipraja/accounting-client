@@ -193,12 +193,20 @@ recommended). The covered endpoints are:
   `POST /v1/ledger/journal-entries/:id/post`,
   `POST /v1/ledger/journal-entries/:id/reverse`,
   `POST /v1/ledger/opening-balances`.
-- **Year-end close:** `POST /v1/close/year-end`.
+- **Year-end close:** `POST /v1/close/year-end`,
+  `POST /v1/close/year-end/:fiscalYear/reopen`.
 
 Behavior:
 
 - **Replay** — a repeated call with the same key and identical body returns the
   original response (201/200) without re-executing the write. Safe to retry.
+- **Retry after a timeout (408) or network failure — reuse the SAME key.** A
+  408 does _not_ mean the write failed: the server may still finish it after
+  responding. Retrying with the same key is always safe (you get a replay, or
+  a `409` while it's still running — back off and retry the same key). Retrying
+  with a _new_ key can create a duplicate invoice/payment.
+- **Keys are scoped per user** — two different users may use the same key
+  independently; a key never replays another user's response.
 - **Body/endpoint mismatch** — same key with a different request body or a different
   endpoint → **`422 VALIDATION_FAILED`**.
 - **In-flight** — same key while the first request is still being processed →
@@ -209,8 +217,8 @@ Behavior:
 > **Not covered:** `POST /v1/partners`, `POST /v1/ledger/accounts`,
 > `POST /v1/tax/codes` — these are already idempotent by virtue of their unique
 > `code` constraint (duplicate → `409 CONFLICT`). `POST /v1/ledger/periods/generate`
-> and non-create mutations (`PATCH`, `DELETE`, `*/deactivate`, `*/reopen`) are also
-> not covered.
+> and non-create mutations (`PATCH`, `DELETE`, `*/deactivate`, period `*/reopen`) are
+> also not covered. (Year-end close reopen **is** covered — see above.)
 
 ### Pagination
 
@@ -438,8 +446,11 @@ POST /journal-entries/preview   the balanced debit/credit journal a document WOU
 A **read-only, non-persisting** dry run that returns the exact balanced journal entry a
 document would generate — use it to show the accountant the debits/credits **before**
 they save/post. It runs the **same posting logic as a real post** (it cannot diverge),
-writes nothing, and needs **no `Idempotency-Key`**. The request is discriminated by
-`nature`:
+writes nothing, and needs **no `Idempotency-Key`**. An optional **`date`**
+(`YYYY-MM-DD`) makes the preview also reproduce the **`409`** a real post would give
+when that date falls in a closed period or closed fiscal year — send the document's
+date to catch that error at preview time instead of at post time. The request is
+discriminated by `nature`:
 
 - **`SALE` / `PURCHASE`** — same body as `POST /tax/calculate`:
 
@@ -448,7 +459,11 @@ writes nothing, and needs **no `Idempotency-Key`**. The request is discriminated
     "nature": "SALE", // or "PURCHASE"
     "settlementAccountId": "<uuid>",
     "lines": [
-      { "accountId": "<uuid>", "amount": "1000000.0000", "taxCodeIds": ["<uuid>"] },
+      {
+        "accountId": "<uuid>",
+        "amount": "1000000.0000",
+        "taxCodeIds": ["<uuid>"],
+      },
     ],
   }
   ```
@@ -604,9 +619,13 @@ no auth.
 
 - `GET    /v1/reports/balance-sheet?asOf=` · any · Neraca
 - `GET    /v1/reports/income-statement?from=&to=` · any · Laba Rugi
-- `GET    /v1/reports/general-ledger?accountId=&from=&to=` · any · Buku Besar
-- `GET    /v1/reports/ar-aging?asOf=` · any · AR aging
-- `GET    /v1/reports/ap-aging?asOf=` · any · AP aging
+- `GET    /v1/reports/general-ledger?accountId=&from=&to=` · any · Buku Besar —
+  span capped at **366 days** (`422` beyond); response carries `truncated: true`
+  when the 10,000-line cap cut the list (narrow the range; `closingBalance` stays
+  correct either way)
+- `GET    /v1/reports/ar-aging?asOf=` · any · AR aging — response carries a
+  `truncated` flag (10,000 open-document cap)
+- `GET    /v1/reports/ap-aging?asOf=` · any · AP aging — same `truncated` flag
 - `GET    /v1/reports/cash-flow?from=&to=` · any · Arus Kas
 
 ### Sales invoices
@@ -664,7 +683,7 @@ no auth.
 ### Close
 
 - `POST   /v1/close/year-end` · ADMIN · run year-end close (`{ fiscalYear }`) · **requires `Idempotency-Key`**
-- `POST   /v1/close/year-end/:fy/reopen` · ADMIN · reopen a closed year
+- `POST   /v1/close/year-end/:fy/reopen` · ADMIN · reopen a closed year · **requires `Idempotency-Key`**
 - `GET    /v1/close/year-end/:fy` · any · close status (404 if none)
 
 ### Company

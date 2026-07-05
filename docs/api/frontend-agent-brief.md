@@ -58,6 +58,9 @@ lifecycles, money), follow the guide.
    journal create/post/reverse, and opening-balances. Store the key before sending so
    you can replay the same key on retry without changing the body. A missing key →
    `422`; same key + different body/endpoint → `422`; in-flight → `409`.
+   **Reuse the SAME key when retrying after a 408 timeout or network failure** — the
+   original write may still have succeeded server-side; a new key can duplicate it.
+   Keys are scoped per authenticated user.
    (Partners/accounts/tax-codes creates are NOT covered — their unique `code` handles
    deduplication.)
 8. **Pagination is mixed.** Seven list endpoints return the envelope
@@ -89,6 +92,12 @@ lifecycles, money), follow the guide.
     `{ lines:[{accountId,accountCode,accountName,debit,credit}], totalDebit, totalCredit,
 balanced }` (4dp strings, inactive side `"0.0000"`). Use it for a live preview panel
     in the document editor; it validates like a real post (same `422`s) but writes nothing.
+    Pass the document's `date` (optional) to also get the `409` a real post would give
+    for a closed period/year.
+13. **Line-count cap.** All `lines`/`allocations` arrays (invoices, bills, payments,
+    tax calc, journal preview) accept at most **100 items** → `400` beyond. GL report
+    spans are capped at **366 days** (`422`); GL/aging responses carry a `truncated`
+    flag when the 10,000-row cap fired.
 
 ## Do / Don't
 

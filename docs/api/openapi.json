@@ -774,7 +774,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
-            "description": "Unique key to make this write safely retryable.",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
             "required": true,
             "schema": {
               "type": "string"
@@ -883,7 +883,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
-            "description": "Unique key to make this write safely retryable.",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
             "required": true,
             "schema": {
               "type": "string"
@@ -925,7 +925,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
-            "description": "Unique key to make this write safely retryable.",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
             "required": true,
             "schema": {
               "type": "string"
@@ -959,7 +959,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
-            "description": "Unique key to make this write safely retryable.",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
             "required": true,
             "schema": {
               "type": "string"
@@ -1562,7 +1562,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
-            "description": "Unique key to make this write safely retryable.",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
             "required": true,
             "schema": {
               "type": "string"
@@ -1712,7 +1712,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
-            "description": "Unique key to make this write safely retryable.",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
             "required": true,
             "schema": {
               "type": "string"
@@ -1754,7 +1754,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
-            "description": "Unique key to make this write safely retryable.",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
             "required": true,
             "schema": {
               "type": "string"
@@ -1857,7 +1857,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
-            "description": "Unique key to make this write safely retryable.",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
             "required": true,
             "schema": {
               "type": "string"
@@ -2007,7 +2007,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
-            "description": "Unique key to make this write safely retryable.",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
             "required": true,
             "schema": {
               "type": "string"
@@ -2049,7 +2049,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
-            "description": "Unique key to make this write safely retryable.",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
             "required": true,
             "schema": {
               "type": "string"
@@ -2161,7 +2161,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
-            "description": "Unique key to make this write safely retryable.",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
             "required": true,
             "schema": {
               "type": "string"
@@ -2270,7 +2270,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
-            "description": "Unique key to make this write safely retryable.",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
             "required": true,
             "schema": {
               "type": "string"
@@ -2312,7 +2312,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
-            "description": "Unique key to make this write safely retryable.",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
             "required": true,
             "schema": {
               "type": "string"
@@ -2611,7 +2611,7 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
-            "description": "Unique key to make this write safely retryable.",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
             "required": true,
             "schema": {
               "type": "string"
@@ -2658,6 +2658,15 @@
             "in": "path",
             "schema": {
               "type": "number"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Unique key to make this write safely retryable. On ANY retry — including after a 408 timeout or a network failure — reuse the SAME key: the original request may still have succeeded server-side, and a fresh key would duplicate the write. Replays return the original response; a still-running original returns 409.",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -4905,6 +4914,11 @@
             "enum": ["SALE", "PURCHASE", "PAYMENT"],
             "type": "string"
           },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Intended posting date. When present, the preview also reproduces the 409 a real post would give for a closed period or closed fiscal year."
+          },
           "settlementAccountId": {
             "type": "string",
             "format": "uuid",
@@ -5289,13 +5303,25 @@
               "$ref": "#/components/schemas/GeneralLedgerLineDto"
             }
           },
+          "truncated": {
+            "type": "boolean",
+            "description": "True when lines were cut off at the server-side cap (10,000); narrow the date range to see the rest. closingBalance stays the true as-of balance either way."
+          },
           "closingBalance": {
             "type": "string",
             "example": "1000.0000",
             "description": "Decimal monetary amount as a string, fixed 4 decimal places."
           }
         },
-        "required": ["account", "from", "to", "openingBalance", "lines", "closingBalance"]
+        "required": [
+          "account",
+          "from",
+          "to",
+          "openingBalance",
+          "lines",
+          "truncated",
+          "closingBalance"
+        ]
       },
       "AgingDocumentDto": {
         "type": "object",
@@ -5387,6 +5413,10 @@
             "type": "string",
             "format": "date"
           },
+          "truncated": {
+            "type": "boolean",
+            "description": "True when open documents were cut off at the server-side cap (10,000); totals cover only the included documents."
+          },
           "partners": {
             "type": "array",
             "items": {
@@ -5406,7 +5436,14 @@
             "description": "Decimal monetary amount as a string, fixed 4 decimal places."
           }
         },
-        "required": ["kind", "asOf", "partners", "totalsByBucket", "totalOutstanding"]
+        "required": [
+          "kind",
+          "asOf",
+          "truncated",
+          "partners",
+          "totalsByBucket",
+          "totalOutstanding"
+        ]
       },
       "CashFlowLineDto": {
         "type": "object",
