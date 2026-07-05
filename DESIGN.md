@@ -25,7 +25,7 @@ colors:
     sidebar: "#00175A"            # navy nav surface
     sidebar-foreground: "#FFFFFF"
     sidebar-accent: "#12306F"     # active/hover fill
-    sidebar-ring: "#4DA3E8"       # active left-bar + focus on navy
+    sidebar-ring: "#4DA3E8"       # focus ring on navy
   dark:                           # premium navy (not a grey inversion)
     background: "#000C3D"
     foreground: "#FFFFFF"
@@ -78,11 +78,11 @@ Use the **semantic tokens** in components (`bg-primary`, `text-muted-foreground`
 
 ## 4. Spacing & layout
 
-An 8px base grid with generous spacing. The **app shell** is a fixed **navy sidebar beside bright content**: the navy `#00175A` left nav (active item = a lighter-navy fill plus a 3px blue left-bar, no layout shift) next to a white header and a soft-grey content area holding white cards. Cards use roughly 24px padding, an 8px radius, and a soft navy-tinted shadow. Data-table rows are comfortably tall (~56px) with right-aligned tabular amounts. Whitespace signals quality; screens never feel crowded.
+An 8px base grid with generous spacing. The **app shell** is a fixed **navy sidebar beside bright content**: the navy `#00175A` left nav (active item = a filled lighter-navy pill in `#12306F` with full-white, medium-weight text) next to a white header and a soft-grey content area holding white cards. Cards use roughly 24px padding, an 8px radius, and a soft navy-tinted shadow. Data-table rows are comfortably tall (~56px) with right-aligned tabular amounts. Whitespace signals quality; screens never feel crowded.
 
 ## 5. Components & patterns
 
-- **Sidebar nav**: navy surface, white brand, muted-blue links; active = blue left-bar (from the `--sidebar-*` tokens).
+- **Sidebar nav**: navy surface, white brand, muted-blue links (white at 70%); active and hover = a filled lighter-navy pill in `--sidebar-accent` (`#12306F`) with full-white text, medium weight on active (from the `--sidebar-*` tokens).
 - **Dashboard hero**: a navy premium panel showing the financial position, with Total Aset dominant and `Kewajiban = Ekuitas` (the accounting equation) as supporting figures.
 - **Summary cards**: title + tabular figure + hint, each with its own loading and error/retry state.
 - **Status chips** (`StatusChip` + the domain mappers in `src/components/common/statusChips.tsx`): pill chips that always pair an **icon and text** with a semantic tone, never colour alone:
