@@ -49,6 +49,9 @@ export interface DocumentEditorConfig<
   emptyForm: TFormValues;
   toFormValues: (item: TItem) => TFormValues;
   toPayload: (values: TFormValues) => TCreate;
+  /** Edit-mode payload. The update DTOs accept fewer fields than the create DTOs
+   *  (no partnerId: the partner is fixed once the document exists). */
+  toUpdatePayload: (values: TFormValues) => TUpdate;
   create: UseMutationResult<TItem, ApiError, TCreate>;
   update: UseMutationResult<TItem, ApiError, { id: string; data: TUpdate }>;
   labels: DocumentEditorLabels;
@@ -105,7 +108,7 @@ export function DocumentEditor<
 
   function onSubmit(values: TFormValues) {
     if (mode === 'edit' && doc) {
-      update.mutate({ id: doc.id, data: config.toPayload(values) as unknown as TUpdate }, handlers);
+      update.mutate({ id: doc.id, data: config.toUpdatePayload(values) }, handlers);
     } else {
       create.mutate(config.toPayload(values), handlers);
     }
@@ -127,7 +130,8 @@ export function DocumentEditor<
       <div className={cn('grid grid-cols-1 gap-4 sm:grid-cols-2', config.extraHeaderField ? 'md:grid-cols-5' : 'md:grid-cols-4')}>
         <div className="space-y-1.5">
           <Label>{labels.partner}</Label>
-          <PartnerSelect value={form.watch('partnerId' as Path<TFormValues>) as string} onChange={(id) => form.setValue('partnerId' as Path<TFormValues>, id as never, { shouldValidate: true })} filter={config.partnerFilter} aria-label={labels.partner} placeholder={labels.selectPartner} disabled={readOnly} />
+          {/* The update DTOs have no partnerId, so the partner is locked once the document exists. */}
+          <PartnerSelect value={form.watch('partnerId' as Path<TFormValues>) as string} onChange={(id) => form.setValue('partnerId' as Path<TFormValues>, id as never, { shouldValidate: true })} filter={config.partnerFilter} aria-label={labels.partner} placeholder={labels.selectPartner} disabled={readOnly || mode === 'edit'} />
           <FieldError message={errors.partnerId ? labels.selectPartner : undefined} />
         </div>
         <div className="space-y-1.5">

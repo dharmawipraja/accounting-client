@@ -4,9 +4,16 @@ import { Button } from '@/components/ui/button';
 import { NotFound } from '@/components/common/NotFound';
 import { PageHeader, type PageParent } from '@/components/common/PageHeader';
 import { QueryState } from '@/components/common/QueryState';
+import { hasRole, useRole } from '@/components/common/RoleGate';
 import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { useT } from '@/lib/i18n/useT';
 import type { ApiError } from '@/lib/api/errors';
+import type { Role } from '@/stores/session';
+
+/** Document create/update is ACCOUNTANT/APPROVER/ADMIN per the API role matrix.
+ *  The backend enforces this; the page re-checks it so a VIEWER navigating here
+ *  by URL never sees a live form (defense-in-depth, same pattern as AuditPage). */
+const EDITOR_ROLES: Role[] = ['ACCOUNTANT', 'APPROVER', 'ADMIN'];
 
 export interface DocumentEditorPageConfig<T extends { id: string; status: string }> {
   /** The loader hook, e.g. salesInvoicesApi.useItem. Disabled internally when id is empty. */
@@ -17,6 +24,9 @@ export interface DocumentEditorPageConfig<T extends { id: string; status: string
   /** Breadcrumb parent (link back to the list) shown above the page title. */
   parent: PageParent;
   titles: { create: string; edit: string; view: string };
+  /** Force every loaded document read-only regardless of status. For resources the
+   *  API cannot update (payments: create / post / void / delete only). */
+  forceReadOnly?: boolean;
   /** The one seam: maps the loaded doc onto the feature's form body. */
   renderForm: (ctx: { mode: 'create' | 'edit'; doc?: T; readOnly: boolean; onSaved: () => void }) => ReactNode;
 }
@@ -32,9 +42,18 @@ export function DocumentEditorPage<T extends { id: string; status: string }>({
   id?: string;
 }) {
   const t = useT();
+  const canEdit = hasRole(useRole(), EDITOR_ROLES);
   const item = config.useItem(id ?? '');
 
   if (!id) {
+    if (!canEdit) {
+      return (
+        <div>
+          <PageHeader title={config.titles.create} parent={config.parent} />
+          <p className="text-sm text-muted-foreground">{t.roles.forbidden}</p>
+        </div>
+      );
+    }
     return (
       <div>
         <PageHeader title={config.titles.create} parent={config.parent} />
@@ -57,7 +76,7 @@ export function DocumentEditorPage<T extends { id: string; status: string }>({
       }
     >
       {(doc) => {
-        const readOnly = doc.status !== 'DRAFT';
+        const readOnly = config.forceReadOnly || doc.status !== 'DRAFT' || !canEdit;
         return (
           <div>
             <PageHeader title={readOnly ? config.titles.view : config.titles.edit} parent={config.parent} />

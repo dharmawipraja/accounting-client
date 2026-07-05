@@ -54,4 +54,5 @@ export type PurchaseBillCreatePayload = {
   description?: string;
   lines: { description: string; accountId: string; quantity: string; unitPrice: string; taxCodeIds: string[] }[];
 };
-export type PurchaseBillUpdatePayload = Partial<PurchaseBillCreatePayload>;
+// UpdatePurchaseBillDto accepts no partnerId: the partner is fixed once created.
+export type PurchaseBillUpdatePayload = Partial<Omit<PurchaseBillCreatePayload, 'partnerId'>>;

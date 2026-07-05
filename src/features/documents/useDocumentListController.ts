@@ -12,7 +12,7 @@ export interface PageEnvelope<T> { data: T[]; total: number; limit: number; offs
 export type LifecycleKind = 'post' | 'void' | 'reverse';
 export type ActionKind = LifecycleKind | 'delete';
 
-export type KeyedMutation = UseMutationResult<unknown, ApiError, { id: string; idempotencyKey: string }>;
+export type KeyedMutation = UseMutationResult<unknown, ApiError, { id: string; idempotencyKey?: string }>;
 export type IdMutation = UseMutationResult<unknown, ApiError, string>;
 
 export interface ActionConfig<K extends ActionKind> {
@@ -62,7 +62,7 @@ const HANDLER_NAME: Record<ActionKind, 'onPost' | 'onVoid' | 'onReverse' | 'onDe
   post: 'onPost', void: 'onVoid', reverse: 'onReverse', delete: 'onDelete',
 };
 
-type Pending<T> = { kind: ActionKind; doc: T; idempotencyKey?: string };
+type Pending<T> = { kind: ActionKind; doc: T };
 
 export interface DocumentListController<T> {
   page: UseQueryResult<PageEnvelope<T>, ApiError>;
@@ -118,8 +118,7 @@ export function useDocumentListController<T extends { id: string }>(
   const columns = useMemo(() => {
     const handlers: ActionHandlers<T> = {};
     for (const kind of Object.keys(config.actions) as ActionKind[]) {
-      handlers[HANDLER_NAME[kind]] = (doc: T) =>
-        setPending({ kind, doc, idempotencyKey: kind === 'delete' ? undefined : crypto.randomUUID() });
+      handlers[HANDLER_NAME[kind]] = (doc: T) => setPending({ kind, doc });
     }
     return config.columns(handlers);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -133,8 +132,10 @@ export function useDocumentListController<T extends { id: string }>(
     if (pending.kind === 'delete') {
       (def.mutation as IdMutation).mutate(pending.doc.id, mutationFeedback({ t, success: def.success, onClose: close }));
     } else {
+      // No explicit key: apiFetch auto-mints one per (path) and keeps it until the
+      // action succeeds, so retrying after an error replays the same key.
       (def.mutation as KeyedMutation).mutate(
-        { id: pending.doc.id, idempotencyKey: pending.idempotencyKey! },
+        { id: pending.doc.id },
         mutationFeedback({ t, success: def.success, errorMode: 'domain', onClose: close }),
       );
     }

@@ -63,6 +63,19 @@ describe('trial balance + general ledger schemas', () => {
     expect(r.lines[0].entryRef).toBe('JE/2026/000004');
     expect(r.closingBalance).toBe('1000000.0000');
   });
+
+  // The spec marks GeneralLedgerLineDto.entryRef nullable — a null must not
+  // fail the whole report parse (same class as the lines/allocations incident).
+  it('general ledger tolerates a null entryRef', () => {
+    const r = generalLedgerSchema.parse({
+      account: { id: 'a1', code: '1-1000', name: 'Kas', normalBalance: 'DEBIT' },
+      from: null, to: null,
+      openingBalance: '0.0000',
+      lines: [{ date: '2026-03-01', entryRef: null, description: null, debit: '1000000.0000', credit: '0.0000', runningBalance: '1000000.0000' }],
+      closingBalance: '1000000.0000',
+    });
+    expect(r.lines[0].entryRef).toBeNull();
+  });
 });
 
 describe('aging report schema', () => {
@@ -81,5 +94,20 @@ describe('aging report schema', () => {
     expect(r.partners[0].buckets['31-60']).toBe('1000000.0000');
     expect(r.partners[0].documents[0].ref).toBe('INV/2026/000012');
     expect(r.totalOutstanding).toBe('1000000.0000');
+  });
+
+  // AgingDocumentDto.ref is nullable in the spec.
+  it('tolerates a null document ref', () => {
+    const r = agingReportSchema.parse({
+      kind: 'AR', asOf: '2026-06-30',
+      partners: [{
+        partnerId: 'p1', partnerName: 'PT Pelanggan',
+        documents: [{ ref: null, date: '2026-04-01', dueDate: null, total: '1000000.0000', paidAsOf: '0.0000', outstanding: '1000000.0000', bucket: '31-60' }],
+        buckets: { Current: '0.0000', '1-30': '0.0000', '31-60': '1000000.0000', '61-90': '0.0000', '>90': '0.0000' },
+      }],
+      totalsByBucket: { Current: '0.0000', '1-30': '0.0000', '31-60': '1000000.0000', '61-90': '0.0000', '>90': '0.0000' },
+      totalOutstanding: '1000000.0000',
+    });
+    expect(r.partners[0].documents[0].ref).toBeNull();
   });
 });

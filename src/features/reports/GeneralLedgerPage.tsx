@@ -24,7 +24,7 @@ export function GeneralLedgerPage({ initialAccountId }: { initialAccountId?: str
   const query = useReport('/reports/general-ledger', { accountId: accountId || undefined, from, to }, generalLedgerSchema, enabled);
   const columns: ReportColumn<GeneralLedgerLine>[] = [
     { header: t.reports.tanggal, cell: (l) => formatDateID(l.date.slice(0, 10)) },
-    { header: t.reports.ref, cell: (l) => l.entryRef },
+    { header: t.reports.ref, cell: (l) => l.entryRef ?? '' },
     { header: t.reports.deskripsi, cell: (l) => l.description ?? '' },
     { header: t.reports.debit, align: 'right', cell: (l) => <MoneyCell value={l.debit} /> },
     { header: t.reports.kredit, align: 'right', cell: (l) => <MoneyCell value={l.credit} /> },

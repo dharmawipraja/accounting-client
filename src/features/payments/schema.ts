@@ -37,5 +37,4 @@ export type PaymentCreatePayload = {
   description?: string;
   allocations: PaymentAllocationInput[];
 };
-export type PaymentUpdatePayload = Partial<PaymentCreatePayload>;
 export type PaymentHeaderValues = { partnerId: string; date: string; cashAccountId: string; description: string };

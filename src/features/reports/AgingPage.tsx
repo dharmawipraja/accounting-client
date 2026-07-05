@@ -36,7 +36,7 @@ export function AgingPage({ kind }: { kind: 'AR' | 'AP' }) {
   ];
 
   const docColumns: ReportColumn<AgingDocument>[] = [
-    { header: t.reports.ref, cell: (d) => d.ref },
+    { header: t.reports.ref, cell: (d) => d.ref ?? '' },
     { header: t.reports.tanggal, cell: (d) => formatDateID(d.date.slice(0, 10)) },
     { header: t.reports.jatuhTempo, cell: (d) => (d.dueDate ? formatDateID(d.dueDate.slice(0, 10)) : '') },
     { header: t.reports.total, align: 'right', cell: (d) => <MoneyText value={d.total} /> },

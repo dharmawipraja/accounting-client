@@ -25,6 +25,9 @@ export function refreshAccessToken(): Promise<string | null> {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({ refreshToken }),
+        // A hung refresh would otherwise block the whole 401-retry chain forever;
+        // a timeout lands in the catch below and counts as transient (session kept).
+        signal: AbortSignal.timeout(30_000),
       });
       if (!res.ok) {
         // Only a genuine auth rejection ends the session; a transient server

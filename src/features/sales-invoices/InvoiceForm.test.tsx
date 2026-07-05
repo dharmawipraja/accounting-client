@@ -65,6 +65,41 @@ it('creates a draft: picks partner + line and posts the lines payload', async ()
   await waitFor(() => expect(onSaved).toHaveBeenCalled());
 });
 
+it('edit mode: PATCH body omits partnerId and the partner select is locked', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  server.use(
+    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: partners.length, limit: 200, offset: 0 })),
+    http.get(`${API}/tax/codes`, () => HttpResponse.json(paged([]))),
+  );
+  const draft: import('./schema').SalesInvoice = {
+    id: 'i1', invoiceNumber: null, invoiceRef: null, postedBy: null, postedAt: null, journalEntryId: null,
+    partnerId: 'c1', date: '2026-06-13T00:00:00.000Z', dueDate: null, description: 'Inv 1', status: 'DRAFT',
+    subtotal: '1000000.0000', taxTotal: '0.0000', withholdingTotal: '0.0000', total: '1000000.0000',
+    amountPaid: '0.0000', outstanding: '1000000.0000', paymentStatus: 'UNPAID',
+    lines: [{ id: 'l1', lineNo: 1, description: 'Jasa', accountId: 'rev', quantity: '2.0000', unitPrice: '500000.0000', amount: '1000000.0000', taxCodeIds: [] }],
+  };
+  let patched: Record<string, unknown> | null = null;
+  server.use(http.patch(`${API}/sales-invoices/:id`, async ({ request }) => {
+    patched = (await request.json()) as Record<string, unknown>;
+    return HttpResponse.json({ ...draft, description: 'updated' });
+  }));
+  const onSaved = vi.fn();
+  renderForm(<InvoiceEditorHarness mode="edit" invoice={draft} onSaved={onSaved} />);
+
+  // UpdateSalesInvoiceDto has no partnerId: the partner is fixed once created.
+  expect(await screen.findByRole('combobox', { name: /pelanggan/i })).toBeDisabled();
+
+  await user.type(screen.getByLabelText(/deskripsi/i), ' updated');
+  await user.click(await screen.findByRole('button', { name: /simpan draf/i }));
+
+  await waitFor(() => expect(patched).toBeTruthy());
+  expect(patched).not.toHaveProperty('partnerId');
+  expect(patched).toMatchObject({ date: '2026-06-13' });
+  await waitFor(() => expect(onSaved).toHaveBeenCalled());
+});
+
 it('blocks save with no lines / no partner', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });

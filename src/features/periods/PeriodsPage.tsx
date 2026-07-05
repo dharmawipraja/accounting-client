@@ -59,14 +59,15 @@ export function PeriodsPage() {
 
   function confirmRun() {
     if (!pending) return;
-    const idempotencyKey = crypto.randomUUID();
-    // period actions are idempotency-keyed and surface domain errors (SoD / closed period)
+    // No explicit idempotency key: apiFetch auto-mints one per (path + body) and
+    // keeps it until the action succeeds, so retrying after an error replays it.
+    // Period actions surface domain errors (SoD / closed period).
     const done = mutationFeedback({ t, success: successByKind[pending.kind], errorMode: 'domain', onClose: () => setPending(null) });
-    if (pending.kind === 'close') close.mutate({ id: pending.period.id, idempotencyKey }, done);
-    else if (pending.kind === 'reopen') reopen.mutate({ id: pending.period.id, idempotencyKey }, done);
-    else if (pending.kind === 'generate') generate.mutate({ fiscalYear, idempotencyKey }, done);
-    else if (pending.kind === 'runYearEnd') runYearEnd.mutate({ fiscalYear, idempotencyKey }, done);
-    else reopenYear.mutate({ fiscalYear, idempotencyKey }, done);
+    if (pending.kind === 'close') close.mutate({ id: pending.period.id }, done);
+    else if (pending.kind === 'reopen') reopen.mutate({ id: pending.period.id }, done);
+    else if (pending.kind === 'generate') generate.mutate({ fiscalYear }, done);
+    else if (pending.kind === 'runYearEnd') runYearEnd.mutate({ fiscalYear }, done);
+    else reopenYear.mutate({ fiscalYear }, done);
   }
 
   return (

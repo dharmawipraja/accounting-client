@@ -173,8 +173,9 @@ export function createDocumentHooks<TItem, TCreate = unknown, TUpdate = unknown,
   // The draft -> post -> void/reverse lifecycle transitions. Binds each verb to
   // this resource's keys + basePath, so features declare identity once (here) and
   // derive named action hooks: `usePostInvoice = () => salesInvoicesApi.useAction('post')`.
-  function useAction(action: DocumentActionKind) {
-    return useDocumentAction({ keys: core.keys, basePath: core.basePath, action });
+  // `alsoInvalidate` lists other resources' keys the action changes server-side.
+  function useAction(action: DocumentActionKind, alsoInvalidate?: readonly (readonly unknown[])[]) {
+    return useDocumentAction({ keys: core.keys, basePath: core.basePath, action, alsoInvalidate });
   }
 
   return {

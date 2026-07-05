@@ -35,6 +35,13 @@ export function useInvoiceEditorConfig(): DocumentEditorConfig<SalesInvoice, Inv
       description: v.description || undefined,
       lines: v.lines.map((l) => ({ description: l.description, accountId: l.accountId, quantity: l.quantity, unitPrice: l.unitPrice, taxCodeIds: l.taxCodeIds })),
     }),
+    // UpdateSalesInvoiceDto: {date, dueDate, description, lines} — no partnerId.
+    toUpdatePayload: (v) => ({
+      date: v.date,
+      dueDate: v.dueDate || undefined,
+      description: v.description || undefined,
+      lines: v.lines.map((l) => ({ description: l.description, accountId: l.accountId, quantity: l.quantity, unitPrice: l.unitPrice, taxCodeIds: l.taxCodeIds })),
+    }),
     create: salesInvoicesApi.useCreate(),
     update: salesInvoicesApi.useUpdate(),
     labels,

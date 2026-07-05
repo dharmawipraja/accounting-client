@@ -239,10 +239,8 @@ export const handlers = [
     const body = (await request.json()) as Record<string, unknown>;
     return HttpResponse.json({ ...paymentFixtures()[0], id: 'pay9', status: 'DRAFT', ...body });
   }),
-  http.patch(`${API}/payments/:id`, async ({ request, params }) => {
-    const body = (await request.json()) as Record<string, unknown>;
-    return HttpResponse.json({ ...paymentFixtures()[0], id: params.id, ...body });
-  }),
+  // NOTE: deliberately no PATCH /payments/:id — the live API has no payment update
+  // endpoint (create/post/void/delete only). Keep the mock surface matching live.
   http.delete(`${API}/payments/:id`, () => HttpResponse.json({})),
   http.post(`${API}/payments/:id/post`, ({ params }) => HttpResponse.json({ ...paymentFixtures()[0], id: params.id, status: 'POSTED', number: 1, ref: 'PAY-RCV/2026/000001', fiscalYear: 2026 })),
   http.post(`${API}/payments/:id/void`, ({ params }) => HttpResponse.json({ ...paymentFixtures()[0], id: params.id, status: 'VOID' })),

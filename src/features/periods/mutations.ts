@@ -4,7 +4,7 @@ import type { ApiError } from '@/lib/api/errors';
 import { useDocumentAction } from '@/lib/crud/useDocumentAction';
 import { queryKeys } from '@/lib/query/keys';
 
-type YearArgs = { fiscalYear: number; idempotencyKey: string };
+type YearArgs = { fiscalYear: number; idempotencyKey?: string };
 
 export function useGeneratePeriods() {
   const qc = useQueryClient();

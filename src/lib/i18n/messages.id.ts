@@ -61,6 +61,8 @@ export const id = {
     brandHeadline: 'Pembukuan perusahaan Anda, rapi dan tepercaya.',
     brandSub: 'Kelola akun, transaksi, jurnal, dan laporan keuangan dalam satu tempat.',
     invalidCredentials: 'Email atau kata sandi salah',
+    emailInvalid: 'Email tidak valid',
+    passwordRequired: 'Kata sandi wajib diisi',
   },
   nav: {
     dashboard: 'Dasbor',
@@ -339,6 +341,7 @@ export const id = {
     voided: 'Pembayaran dibatalkan',
     readOnlyPosted: 'Pembayaran sudah diposting, hanya-baca.',
     readOnlyVoid: 'Pembayaran dibatalkan, hanya-baca.',
+    readOnlyDraft: 'Pembayaran tidak dapat diubah setelah disimpan. Hapus draf ini lalu buat pembayaran baru untuk mengoreksi.',
     statusAll: 'Semua',
     directionReceipt: 'Terima',
     directionDisbursement: 'Bayar',

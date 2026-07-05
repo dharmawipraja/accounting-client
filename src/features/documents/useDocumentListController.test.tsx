@@ -34,7 +34,9 @@ function makeConfig(over: Partial<DocumentListConfig<Doc>>, captureHandlers: (h:
   };
 }
 
-it('mints an idempotency key for post but not for delete', () => {
+// Idempotency keys are auto-minted inside apiFetch (stable per path until success),
+// so the controller passes only the id for lifecycle actions.
+it('passes {id} to lifecycle mutations and the bare id to delete', () => {
   const postSpy = vi.fn((_v: unknown, o: { onSuccess: () => void }) => o.onSuccess());
   const delSpy = vi.fn((_v: unknown, o: { onSuccess: () => void }) => o.onSuccess());
   let handlers!: ActionHandlers<Doc>;
@@ -49,10 +51,7 @@ it('mints an idempotency key for post but not for delete', () => {
 
   act(() => handlers.onPost!({ id: 'x1', name: 'A' }));
   act(() => result.current.dialog.onConfirm());
-  expect(postSpy).toHaveBeenCalledWith(
-    expect.objectContaining({ id: 'x1', idempotencyKey: expect.any(String) }),
-    expect.anything(),
-  );
+  expect(postSpy).toHaveBeenCalledWith({ id: 'x1' }, expect.anything());
 
   act(() => handlers.onDelete!({ id: 'x2', name: 'B' }));
   act(() => result.current.dialog.onConfirm());

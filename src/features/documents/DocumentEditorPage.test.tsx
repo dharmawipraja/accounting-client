@@ -1,11 +1,17 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { renderWithRouter } from '@/test/renderWithRouter';
 import { id as messages } from '@/lib/i18n/messages.id';
 import { ApiError } from '@/lib/api/errors';
+import { useSession } from '@/stores/session';
 import { DocumentEditorPage, type DocumentEditorPageConfig } from './DocumentEditorPage';
+
+// Document mutations are ACCOUNTANT/APPROVER/ADMIN per the role matrix; the page
+// itself re-checks the role (defense-in-depth beyond hiding the nav links).
+beforeEach(() => useSession.getState().setUser({ id: 'u1', email: 'a@b.c', role: 'ACCOUNTANT' }));
+afterEach(() => useSession.getState().clear());
 
 type Doc = { id: string; status: string };
 
@@ -70,6 +76,20 @@ it('edit mode on a DRAFT doc renders the edit title and an editable form', async
 
 it('edit mode on a POSTED doc renders the view title and a read-only form', async () => {
   renderWithRouter(<DocumentEditorPage config={makeConfig(fakeQuery({ data: { id: 'd1', status: 'POSTED' } }))} id="d1" />);
+  expect(await screen.findByRole('heading', { name: 'Lihat Dokumen' })).toBeInTheDocument();
+  expect(screen.getByText('form:edit:true')).toBeInTheDocument();
+});
+
+it('create mode shows forbidden (no form) to a VIEWER', async () => {
+  useSession.getState().setUser({ id: 'u2', email: 'v@b.c', role: 'VIEWER' });
+  renderWithRouter(<DocumentEditorPage config={makeConfig(fakeQuery({}))} />);
+  expect(await screen.findByText(messages.roles.forbidden)).toBeInTheDocument();
+  expect(screen.queryByText(/^form:/)).not.toBeInTheDocument();
+});
+
+it('edit mode on a DRAFT doc is read-only for a VIEWER', async () => {
+  useSession.getState().setUser({ id: 'u2', email: 'v@b.c', role: 'VIEWER' });
+  renderWithRouter(<DocumentEditorPage config={makeConfig(fakeQuery({ data: { id: 'd1', status: 'DRAFT' } }))} id="d1" />);
   expect(await screen.findByRole('heading', { name: 'Lihat Dokumen' })).toBeInTheDocument();
   expect(screen.getByText('form:edit:true')).toBeInTheDocument();
 });

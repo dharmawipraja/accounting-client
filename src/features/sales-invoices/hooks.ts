@@ -18,5 +18,6 @@ export const salesInvoicesApi = createDocumentHooks<
   paginated: true,
 });
 
-export const usePostInvoice = () => salesInvoicesApi.useAction('post');
-export const useVoidInvoice = () => salesInvoicesApi.useAction('void');
+// Posting/voiding writes a journal entry — keep the journals list fresh too.
+export const usePostInvoice = () => salesInvoicesApi.useAction('post', [queryKeys.journalEntries.all]);
+export const useVoidInvoice = () => salesInvoicesApi.useAction('void', [queryKeys.journalEntries.all]);

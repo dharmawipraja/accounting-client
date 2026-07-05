@@ -38,7 +38,6 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
   const t = useT();
   const direction = payment?.direction ?? directionProp;
   const create = paymentsApi.useCreate();
-  const update = paymentsApi.useUpdate();
 
   const form = useForm<PaymentHeaderValues>({
     resolver: zodResolver(headerSchema),
@@ -84,13 +83,11 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
   }
 
   function onSubmit(values: PaymentHeaderValues) {
+    // The API has no payment update endpoint; existing payments are read-only.
+    if (mode === 'edit') return;
     if (!validateAllocations()) return;
     const payload = { direction, partnerId: values.partnerId, date: values.date, cashAccountId: values.cashAccountId, description: values.description || undefined, allocations: buildAllocations() };
-    if (mode === 'edit' && payment) {
-      update.mutate({ id: payment.id, data: payload }, handlers);
-    } else {
-      create.mutate(payload, handlers);
-    }
+    create.mutate(payload, handlers);
   }
 
   const partnerLabel = direction === 'RECEIPT' ? t.payments.partner : t.payments.partnerVendor;
@@ -114,12 +111,28 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
         docRef={payment?.ref}
         postedLabel={t.payments.readOnlyPosted}
         voidLabel={t.payments.readOnlyVoid}
+        draftLabel={t.payments.readOnlyDraft}
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
         <div className="space-y-1.5">
           <Label>{partnerLabel}</Label>
-          <PartnerSelect value={form.watch('partnerId')} onChange={(id) => form.setValue('partnerId', id, { shouldValidate: true })} filter={direction === 'RECEIPT' ? 'customer' : 'vendor'} aria-label={partnerLabel} placeholder={partnerLabel} disabled={readOnly} />
+          <PartnerSelect
+            value={form.watch('partnerId')}
+            onChange={(id) => {
+              // Allocations are keyed by document id; another partner's documents
+              // must never ride along into the payload. Discard them on switch.
+              if (id !== form.getValues('partnerId')) {
+                setAmounts({});
+                setAllocError(null);
+              }
+              form.setValue('partnerId', id, { shouldValidate: true });
+            }}
+            filter={direction === 'RECEIPT' ? 'customer' : 'vendor'}
+            aria-label={partnerLabel}
+            placeholder={partnerLabel}
+            disabled={readOnly}
+          />
           <FieldError message={form.formState.errors.partnerId ? t.payments.selectPartner : undefined} />
         </div>
         <div className="space-y-1.5">
@@ -156,7 +169,7 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onSaved}>{t.common.cancel}</Button>
-        {readOnly ? null : <Button type="submit" disabled={create.isPending || update.isPending}>{t.payments.savePayment}</Button>}
+        {readOnly ? null : <Button type="submit" disabled={create.isPending}>{t.payments.savePayment}</Button>}
       </div>
       <UnsavedGuardDialog guard={guard} />
     </form>

@@ -122,6 +122,42 @@ it('allocates via Lunasi and posts the DISBURSEMENT payload', async () => {
   await waitFor(() => expect(onSaved).toHaveBeenCalled());
 });
 
+it('discards allocations when the partner changes (no cross-partner submit)', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  const twoPartners = [
+    ...partners,
+    { id: 'p2', code: 'CUST-2', name: 'Toko B', isCustomer: true, isVendor: false, isActive: true },
+  ];
+  server.use(
+    http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
+    http.get(`${API}/partners`, () => HttpResponse.json({ data: twoPartners, total: 2, limit: 200, offset: 0 })),
+    // The only open invoice belongs to p1 (CUST-1).
+    http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [openInvoiceFixture()], total: 1, limit: 200, offset: 0 })),
+  );
+  let posted = false;
+  server.use(http.post(`${API}/payments`, () => { posted = true; return HttpResponse.json({}, { status: 500 }); }));
+  const onSaved = vi.fn();
+  renderForm(<PaymentForm mode="create" onSaved={onSaved} />);
+
+  // Allocate against CUST-1's invoice, then switch to CUST-2.
+  await user.click(await screen.findByRole('combobox', { name: /pelanggan/i }));
+  await user.click(await screen.findByRole('option', { name: /CUST-1/i }));
+  await user.type(screen.getByLabelText(/tanggal/i), '2026-06-16');
+  await user.click(screen.getByRole('combobox', { name: /akun kas/i }));
+  await user.click(await screen.findByRole('option', { name: /1-1000/i }));
+  await user.click(await screen.findByRole('button', { name: /lunasi/i }));
+
+  await user.click(screen.getByRole('combobox', { name: /pelanggan/i }));
+  await user.click(await screen.findByRole('option', { name: /CUST-2/i }));
+
+  // The stale allocation must not survive: saving now has nothing allocated.
+  await user.click(screen.getByRole('button', { name: /simpan/i }));
+  expect(await screen.findByText(/minimal satu faktur/i)).toBeInTheDocument();
+  expect(posted).toBe(false);
+  expect(onSaved).not.toHaveBeenCalled();
+});
+
 it('renders a posted payment read-only', async () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
   commonHandlers();

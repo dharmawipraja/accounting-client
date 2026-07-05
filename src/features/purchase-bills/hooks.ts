@@ -18,5 +18,6 @@ export const purchaseBillsApi = createDocumentHooks<
   paginated: true,
 });
 
-export const usePostBill = () => purchaseBillsApi.useAction('post');
-export const useVoidBill = () => purchaseBillsApi.useAction('void');
+// Posting/voiding writes a journal entry — keep the journals list fresh too.
+export const usePostBill = () => purchaseBillsApi.useAction('post', [queryKeys.journalEntries.all]);
+export const useVoidBill = () => purchaseBillsApi.useAction('void', [queryKeys.journalEntries.all]);

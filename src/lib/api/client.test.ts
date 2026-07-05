@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 import { API } from '@/test/handlers';
 import { server } from '@/test/server';
@@ -41,6 +41,66 @@ describe('apiFetch', () => {
     );
     await apiFetch('/whoami');
     expect(seen).toBe('Bearer tok-9');
+  });
+
+  // A hung backend must not leave the UI on an infinite spinner / disabled Save:
+  // the request aborts and surfaces as a retryable offline-class ApiError.
+  it('times out a hung request with a status-0 TIMEOUT ApiError', async () => {
+    server.use(http.get(`${API}/slow`, async () => { await delay(2_000); return HttpResponse.json({ ok: true }); }));
+    await expect(apiFetch('/slow', { auth: false, timeoutMs: 50 })).rejects.toMatchObject({
+      status: 0,
+      code: 'TIMEOUT',
+    });
+  });
+
+  // The guide requires one key per LOGICAL request: a manual retry after a failure
+  // (lost response, 5xx) must replay the same key so the server can dedupe, and a
+  // key is only retired once the request has actually succeeded.
+  it('reuses the same auto key when an identical POST is retried after a failure', async () => {
+    const keys: (string | null)[] = [];
+    let calls = 0;
+    server.use(
+      http.post(`${API}/docs`, ({ request }) => {
+        keys.push(request.headers.get('Idempotency-Key'));
+        calls += 1;
+        if (calls === 1) return HttpResponse.json({ code: 'BOOM' }, { status: 500 });
+        return HttpResponse.json({ ok: true });
+      }),
+    );
+    await expect(apiFetch('/docs', { method: 'POST', body: { a: 1 }, auth: false })).rejects.toBeInstanceOf(ApiError);
+    await apiFetch('/docs', { method: 'POST', body: { a: 1 }, auth: false });
+    expect(keys[0]).toBeTruthy();
+    expect(keys[1]).toBe(keys[0]);
+  });
+
+  it('mints a fresh auto key once the previous identical POST succeeded', async () => {
+    const keys: (string | null)[] = [];
+    server.use(
+      http.post(`${API}/docs`, ({ request }) => {
+        keys.push(request.headers.get('Idempotency-Key'));
+        return HttpResponse.json({ ok: true });
+      }),
+    );
+    await apiFetch('/docs', { method: 'POST', body: { a: 1 }, auth: false });
+    await apiFetch('/docs', { method: 'POST', body: { a: 1 }, auth: false });
+    expect(keys[0]).toBeTruthy();
+    expect(keys[1]).not.toBe(keys[0]);
+  });
+
+  it('uses distinct auto keys for different POST bodies', async () => {
+    const keys: (string | null)[] = [];
+    let calls = 0;
+    server.use(
+      http.post(`${API}/docs`, ({ request }) => {
+        keys.push(request.headers.get('Idempotency-Key'));
+        calls += 1;
+        return HttpResponse.json({ code: 'BOOM' }, { status: 500 });
+      }),
+    );
+    await expect(apiFetch('/docs', { method: 'POST', body: { a: 1 }, auth: false })).rejects.toBeInstanceOf(ApiError);
+    await expect(apiFetch('/docs', { method: 'POST', body: { a: 2 }, auth: false })).rejects.toBeInstanceOf(ApiError);
+    expect(calls).toBe(2);
+    expect(keys[1]).not.toBe(keys[0]);
   });
 
   it('sets the Idempotency-Key header when provided', async () => {

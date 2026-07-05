@@ -16,12 +16,6 @@ const schema = z.object({
 });
 type FormValues = z.infer<typeof schema>;
 
-// Distinct Bahasa validation messages that do NOT match the field label text
-const VALIDATION_MESSAGES = {
-  email: 'Email tidak valid',
-  password: 'Kata sandi wajib diisi',
-} as const;
-
 export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
   const t = useT();
   const login = useLogin();
@@ -78,7 +72,7 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
                 autoComplete="username"
                 {...form.register('email')}
               />
-              <FieldError message={form.formState.errors.email ? VALIDATION_MESSAGES.email : undefined} />
+              <FieldError message={form.formState.errors.email ? t.auth.emailInvalid : undefined} />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="password">{t.auth.password}</Label>
@@ -88,7 +82,7 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
                 autoComplete="current-password"
                 {...form.register('password')}
               />
-              <FieldError message={form.formState.errors.password ? VALIDATION_MESSAGES.password : undefined} />
+              <FieldError message={form.formState.errors.password ? t.auth.passwordRequired : undefined} />
             </div>
             <FieldError message={form.formState.errors.root?.message} />
             <Button

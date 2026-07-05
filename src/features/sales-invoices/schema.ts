@@ -56,4 +56,5 @@ export type SalesInvoiceCreatePayload = {
     taxCodeIds: string[];
   }[];
 };
-export type SalesInvoiceUpdatePayload = Partial<SalesInvoiceCreatePayload>;
+// UpdateSalesInvoiceDto accepts no partnerId: the partner is fixed once created.
+export type SalesInvoiceUpdatePayload = Partial<Omit<SalesInvoiceCreatePayload, 'partnerId'>>;

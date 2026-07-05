@@ -37,6 +37,14 @@ export function useBillEditorConfig(): DocumentEditorConfig<PurchaseBill, BillFo
       description: v.description || undefined,
       lines: v.lines.map((l) => ({ description: l.description, accountId: l.accountId, quantity: l.quantity, unitPrice: l.unitPrice, taxCodeIds: l.taxCodeIds })),
     }),
+    // UpdatePurchaseBillDto: {date, dueDate, vendorInvoiceNo, description, lines} — no partnerId.
+    toUpdatePayload: (v) => ({
+      date: v.date,
+      dueDate: v.dueDate || undefined,
+      vendorInvoiceNo: v.vendorInvoiceNo || undefined,
+      description: v.description || undefined,
+      lines: v.lines.map((l) => ({ description: l.description, accountId: l.accountId, quantity: l.quantity, unitPrice: l.unitPrice, taxCodeIds: l.taxCodeIds })),
+    }),
     create: purchaseBillsApi.useCreate(),
     update: purchaseBillsApi.useUpdate(),
     labels,

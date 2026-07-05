@@ -5,7 +5,7 @@ import { NotFound } from '@/components/common/NotFound';
 import { requireAuth } from '@/features/auth/guard';
 
 export const Route = createFileRoute('/_app')({
-  beforeLoad: () => requireAuth(),
+  beforeLoad: ({ location }) => requireAuth(location.href),
   component: function AppLayout() {
     return (
       <AppShell>

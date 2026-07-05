@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { formatDateID } from '@/lib/format/date';
+import { format, parseISO } from 'date-fns';
+import { id as idLocale } from 'date-fns/locale';
 
 export const auditEntrySchema = z.object({
   id: z.string(),
@@ -19,6 +20,9 @@ export const auditListSchema = z.array(auditEntrySchema);
 
 export const AUDIT_METHODS = ['POST', 'PATCH', 'PUT', 'DELETE'] as const;
 
+/** Audit timestamps carry a UTC instant; render it as LOCAL wall-clock time
+ *  (slicing the raw string would show UTC digits — 7 hours off for WIB users,
+ *  and the wrong calendar date near midnight). */
 export function formatAuditTime(ts: string): string {
-  return `${formatDateID(ts.slice(0, 10))} ${ts.slice(11, 19)}`;
+  return format(parseISO(ts), 'dd/MM/yyyy HH:mm:ss', { locale: idLocale });
 }

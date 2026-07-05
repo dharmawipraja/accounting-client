@@ -16,6 +16,9 @@ export function PaymentEditorPage({ id, direction = 'RECEIPT' }: { id?: string; 
         onDone: () => navigate({ to: '/payments' }),
         parent: { to: '/payments', label: t.nav.payments },
         titles: { create: createTitle, edit: t.payments.editPayment, view: t.payments.view },
+        // The API has no payment update endpoint (create/post/void/delete only):
+        // existing payments always open read-only, drafts included.
+        forceReadOnly: true,
         renderForm: ({ mode, doc, readOnly, onSaved }) => (
           <PaymentForm mode={mode} payment={doc} direction={direction} onSaved={onSaved} readOnly={readOnly} />
         ),

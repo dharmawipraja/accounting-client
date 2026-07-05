@@ -43,6 +43,7 @@ function useTestConfig(withExtra: boolean): DocumentEditorConfig<TestItem, Docum
     emptyForm: { partnerId: '', date: '', dueDate: '', description: '', lines: [{ ...EMPTY_LINE }] },
     toFormValues: (item) => ({ partnerId: item.partnerId, date: '2026-06-25', dueDate: '', description: '', lines: [{ ...EMPTY_LINE, accountId: 'ar', unitPrice: '1000' }] }),
     toPayload: (v) => ({ partnerId: v.partnerId, date: v.date, dueDate: v.dueDate || undefined, description: v.description || undefined, lines: v.lines }),
+    toUpdatePayload: (v) => ({ date: v.date, dueDate: v.dueDate || undefined, description: v.description || undefined, lines: v.lines }),
     create: testApi.useCreate(),
     update: testApi.useUpdate(),
     labels: labels(t),

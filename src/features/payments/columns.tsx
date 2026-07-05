@@ -36,7 +36,9 @@ export function buildPaymentColumns(
       onPost: handlers.onPost,
       onVoid: handlers.onVoid,
       onDelete: handlers.onDelete,
-      labels: { edit: t.common.edit, view: t.payments.view, delete: t.common.delete, post: t.payments.post, void: t.payments.void },
+      // Payments cannot be edited (no update endpoint): draft rows open read-only,
+      // so the DRAFT open-link label is "view" too.
+      labels: { edit: t.payments.view, view: t.payments.view, delete: t.common.delete, post: t.payments.post, void: t.payments.void },
     }),
   ];
 }

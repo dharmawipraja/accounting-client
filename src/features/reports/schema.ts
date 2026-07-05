@@ -80,7 +80,7 @@ export type TrialBalance = z.infer<typeof trialBalanceSchema>;
 
 export const generalLedgerLineSchema = z.object({
   date: z.string(),
-  entryRef: z.string(),
+  entryRef: z.string().nullish(), // nullable in the spec (GeneralLedgerLineDto)
   description: z.string().nullish(),
   debit: moneyString,
   credit: moneyString,
@@ -104,7 +104,7 @@ export const generalLedgerSchema = z.object({
 export type GeneralLedger = z.infer<typeof generalLedgerSchema>;
 
 export const agingDocumentSchema = z.object({
-  ref: z.string(),
+  ref: z.string().nullish(), // nullable in the spec (AgingDocumentDto)
   date: z.string(),
   dueDate: z.string().nullish(),
   total: moneyString,
