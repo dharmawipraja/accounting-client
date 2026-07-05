@@ -2,6 +2,10 @@
 
 React 19 (+ React Compiler) · TypeScript strict · TanStack Router (file-based) + Query v5 · shadcn/ui · Tailwind v4 · zod v4 · decimal.js · Vitest 4 + RTL + MSW v2. Package manager: pnpm.
 
+## Product context
+
+**`/PRODUCT.md`** carries the strategic "who/what/why": register (product), users (the internal finance team of one company, under segregation of duties), purpose (an auditable single-company Indonesian accounting system of record built to SAK/PSAK), plus brand personality, anti-references, and 5 design principles. Read it alongside **`/DESIGN.md`** (the visual "how it looks", below).
+
 ## Design system
 
 Follow **`/DESIGN.md`** (the Buku design system). Apply the **design tokens**: colors are CSS variables in `src/index.css` (`:root` light, `.dark` premium-navy); the typeface is **Public Sans**; radius is 8px; shadows are navy-tinted; money uses **tabular figures** at weight 600. Primary blue `#006FCF` is the single action/accent color; deep navy `#00175A` is the premium surface (sidebar, dark mode). Use the semantic tokens (`--success`, `--warning`, `--destructive`) — never raw hex in components.
