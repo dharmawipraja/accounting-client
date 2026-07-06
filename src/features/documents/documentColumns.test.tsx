@@ -53,6 +53,31 @@ it('documentActionsColumn shows edit/delete/post on a DRAFT row for an authorize
   expect(screen.queryByText('Batalkan')).not.toBeInTheDocument();
 });
 
+it('documentActionsColumn shows a Duplicate link (when provided) on any status, role-gated', () => {
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  const col = documentActionsColumn<Doc>({
+    renderOpenLink: (d, label) => <a href={`/x/${d.id}`}>{label}</a>,
+    renderDuplicateLink: (d, label) => <a href={`/new?from=${d.id}`}>{label}</a>,
+    onPost: noop, onVoid: noop, onDelete: noop,
+    labels: { ...labels, duplicate: 'Duplikat' },
+  });
+  render(<DataTable columns={[col]} data={[{ id: 'd9', status: 'POSTED', paymentStatus: 'PAID' }]} />);
+  const dup = screen.getByRole('link', { name: 'Duplikat' });
+  expect(dup).toHaveAttribute('href', '/new?from=d9');
+});
+
+it('documentActionsColumn hides the Duplicate link from a VIEWER', () => {
+  useSession.getState().setUser({ id: '1', email: 'v@b.c', role: 'VIEWER' });
+  const col = documentActionsColumn<Doc>({
+    renderOpenLink: (d, label) => <a href={`/x/${d.id}`}>{label}</a>,
+    renderDuplicateLink: (d, label) => <a href={`/new?from=${d.id}`}>{label}</a>,
+    onPost: noop, onVoid: noop, onDelete: noop,
+    labels: { ...labels, duplicate: 'Duplikat' },
+  });
+  render(<DataTable columns={[col]} data={[{ id: 'd9', status: 'POSTED', paymentStatus: 'PAID' }]} />);
+  expect(screen.queryByRole('link', { name: 'Duplikat' })).not.toBeInTheDocument();
+});
+
 it('documentActionsColumn shows view + void on a POSTED row', () => {
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
   const col = documentActionsColumn<Doc>({

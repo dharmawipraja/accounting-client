@@ -35,7 +35,7 @@ function makeConfig(query: UseQueryResult<Doc, ApiError>, onDone = vi.fn()): Doc
     onDone,
     parent: { to: '/sales-invoices', label: 'kembali' },
     titles: { create: 'Buat Dokumen', edit: 'Ubah Dokumen', view: 'Lihat Dokumen' },
-    renderForm: ({ mode, readOnly }) => <div>{`form:${mode}:${String(readOnly)}`}</div>,
+    renderForm: ({ mode, readOnly, doc }) => <div>{`form:${mode}:${String(readOnly)}:${doc?.id ?? 'none'}`}</div>,
   };
 }
 
@@ -46,7 +46,7 @@ function makeConfig(query: UseQueryResult<Doc, ApiError>, onDone = vi.fn()): Doc
 it('create mode (no id) renders the create title + breadcrumb and the form without consulting the query', async () => {
   renderWithRouter(<DocumentEditorPage config={makeConfig(fakeQuery({}))} />);
   expect(await screen.findByRole('heading', { name: 'Buat Dokumen' })).toBeInTheDocument();
-  expect(screen.getByText('form:create:false')).toBeInTheDocument();
+  expect(screen.getByText('form:create:false:none')).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'kembali' })).toBeInTheDocument();
 });
 
@@ -71,13 +71,13 @@ it('edit mode renders record-not-found on a 404 and wires back-to-list to onDone
 it('edit mode on a DRAFT doc renders the edit title and an editable form', async () => {
   renderWithRouter(<DocumentEditorPage config={makeConfig(fakeQuery({ data: { id: 'd1', status: 'DRAFT' } }))} id="d1" />);
   expect(await screen.findByRole('heading', { name: 'Ubah Dokumen' })).toBeInTheDocument();
-  expect(screen.getByText('form:edit:false')).toBeInTheDocument();
+  expect(screen.getByText('form:edit:false:d1')).toBeInTheDocument();
 });
 
 it('edit mode on a POSTED doc renders the view title and a read-only form', async () => {
   renderWithRouter(<DocumentEditorPage config={makeConfig(fakeQuery({ data: { id: 'd1', status: 'POSTED' } }))} id="d1" />);
   expect(await screen.findByRole('heading', { name: 'Lihat Dokumen' })).toBeInTheDocument();
-  expect(screen.getByText('form:edit:true')).toBeInTheDocument();
+  expect(screen.getByText('form:edit:true:d1')).toBeInTheDocument();
 });
 
 // While /auth/me is still hydrating (token present, user null), the role is
@@ -102,7 +102,17 @@ it('edit mode on a DRAFT doc is read-only for a VIEWER', async () => {
   useSession.getState().setUser({ id: 'u2', email: 'v@b.c', role: 'VIEWER' });
   renderWithRouter(<DocumentEditorPage config={makeConfig(fakeQuery({ data: { id: 'd1', status: 'DRAFT' } }))} id="d1" />);
   expect(await screen.findByRole('heading', { name: 'Lihat Dokumen' })).toBeInTheDocument();
-  expect(screen.getByText('form:edit:true')).toBeInTheDocument();
+  expect(screen.getByText('form:edit:true:d1')).toBeInTheDocument();
+});
+
+// Duplicate: with duplicateFromId (and no id), fetch the source doc and render a
+// CREATE-mode form pre-filled from it — a new draft, not an edit of the source.
+it('duplicate mode prefills a create form from the source document', async () => {
+  const source = fakeQuery({ data: { id: 'src1', status: 'POSTED' } });
+  renderWithRouter(<DocumentEditorPage config={makeConfig(source)} duplicateFromId="src1" />);
+  expect(await screen.findByRole('heading', { name: 'Buat Dokumen' })).toBeInTheDocument();
+  // create mode, editable, prefilled from src1
+  expect(screen.getByText('form:create:false:src1')).toBeInTheDocument();
 });
 
 it('edit mode on a non-404 error falls through to the error state (not notFound, not data)', () => {

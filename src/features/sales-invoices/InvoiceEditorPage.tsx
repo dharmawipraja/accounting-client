@@ -5,13 +5,14 @@ import { DocumentEditorPage } from '@/features/documents/DocumentEditorPage';
 import { useInvoiceEditorConfig } from './editorConfig';
 import { salesInvoicesApi } from './hooks';
 
-export function InvoiceEditorPage({ id }: { id?: string }) {
+export function InvoiceEditorPage({ id, duplicateFromId }: { id?: string; duplicateFromId?: string }) {
   const t = useT();
   const navigate = useNavigate();
   const editorConfig = useInvoiceEditorConfig();
   return (
     <DocumentEditorPage
       id={id}
+      duplicateFromId={duplicateFromId}
       config={{
         useItem: salesInvoicesApi.useItem,
         onDone: () => navigate({ to: '/sales-invoices' }),

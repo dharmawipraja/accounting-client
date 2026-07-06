@@ -25,10 +25,13 @@ export function buildBillColumns(
       renderOpenLink: (bill, label) => (
         <Button asChild variant="ghost" size="sm"><Link to="/purchase-bills/$id/edit" params={{ id: bill.id }}>{label}</Link></Button>
       ),
+      renderDuplicateLink: (bill, label) => (
+        <Link to="/purchase-bills/new" search={{ from: bill.id }}>{label}</Link>
+      ),
       onPost: handlers.onPost,
       onVoid: handlers.onVoid,
       onDelete: handlers.onDelete,
-      labels: { edit: t.common.edit, view: t.purchaseBills.view, delete: t.common.delete, post: t.purchaseBills.post, void: t.purchaseBills.void },
+      labels: { edit: t.common.edit, view: t.purchaseBills.view, delete: t.common.delete, post: t.purchaseBills.post, void: t.purchaseBills.void, duplicate: t.common.duplicate },
     }),
   ];
 }

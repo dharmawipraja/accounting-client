@@ -37,14 +37,18 @@ export interface DocumentEditorPageConfig<T extends { id: string; status: string
 export function DocumentEditorPage<T extends { id: string; status: string }>({
   config,
   id,
+  duplicateFromId,
 }: {
   config: DocumentEditorPageConfig<T>;
   id?: string;
+  /** Create a new draft pre-filled from this existing document (Duplicate). */
+  duplicateFromId?: string;
 }) {
   const t = useT();
   const roleReady = useRoleReady();
   const canEdit = hasRole(useRole(), EDITOR_ROLES);
   const item = config.useItem(id ?? '');
+  const source = config.useItem(!id && duplicateFromId ? duplicateFromId : '');
 
   // Token present but /auth/me not hydrated yet: the role is unknown, so
   // neither the form nor "forbidden" is correct — show the loading skeleton.
@@ -59,6 +63,20 @@ export function DocumentEditorPage<T extends { id: string; status: string }>({
           <PageHeader title={config.titles.create} parent={config.parent} />
           <p className="text-sm text-muted-foreground">{t.roles.forbidden}</p>
         </div>
+      );
+    }
+    // Duplicate: fetch the source doc, then render a CREATE form pre-filled from it
+    // (a fresh draft — never an edit of the source).
+    if (duplicateFromId) {
+      return (
+        <QueryState query={source} loading={<SkeletonForm fields={6} />} onRetry>
+          {(doc) => (
+            <div>
+              <PageHeader title={config.titles.create} parent={config.parent} />
+              {config.renderForm({ mode: 'create', doc, readOnly: false, onSaved: config.onDone })}
+            </div>
+          )}
+        </QueryState>
       );
     }
     return (

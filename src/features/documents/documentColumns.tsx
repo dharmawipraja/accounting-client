@@ -38,10 +38,12 @@ export interface DocumentActionsConfig<T extends { id: string; status: string }>
    *  so the TanStack route literal keeps its type. Used for both the DRAFT "edit"
    *  link and the non-draft "view" link (same route, different label). */
   renderOpenLink: (row: T, label: string) => ReactNode;
+  /** Optional route-typed "duplicate into a new draft" link (invoices/bills). */
+  renderDuplicateLink?: (row: T, label: string) => ReactNode;
   onPost: (row: T) => void;
   onVoid: (row: T) => void;
   onDelete: (row: T) => void;
-  labels: { edit: string; view: string; delete: string; post: string; void: string };
+  labels: { edit: string; view: string; delete: string; post: string; void: string; duplicate?: string };
 }
 
 /** The invoice/bill/payment per-row action column: DRAFT -> edit/delete/post
@@ -54,8 +56,15 @@ export function documentActionsColumn<T extends { id: string; status: string }>(
     header: '',
     cell: ({ row }) => {
       const d = row.original;
+      const duplicate =
+        cfg.renderDuplicateLink && cfg.labels.duplicate ? (
+          <RoleGate allow={['ACCOUNTANT', 'APPROVER', 'ADMIN']}>
+            <Button asChild variant="ghost" size="sm">{cfg.renderDuplicateLink(d, cfg.labels.duplicate)}</Button>
+          </RoleGate>
+        ) : null;
       return (
         <div className="flex items-center justify-end gap-1.5">
+          {duplicate}
           {d.status === 'DRAFT' ? (
             <>
               <RoleGate allow={['ACCOUNTANT', 'APPROVER', 'ADMIN']}>

@@ -27,6 +27,7 @@ export const id = {
     discardMessage: 'Perubahan yang belum disimpan akan hilang.',
     discard: 'Buang',
     exportCsv: 'Ekspor CSV',
+    duplicate: 'Duplikat',
     maxLines: 'Maksimal 100 baris per dokumen',
   },
   errors: {

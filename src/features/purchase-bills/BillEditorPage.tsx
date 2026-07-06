@@ -5,13 +5,14 @@ import { DocumentEditorPage } from '@/features/documents/DocumentEditorPage';
 import { useBillEditorConfig } from './editorConfig';
 import { purchaseBillsApi } from './hooks';
 
-export function BillEditorPage({ id }: { id?: string }) {
+export function BillEditorPage({ id, duplicateFromId }: { id?: string; duplicateFromId?: string }) {
   const t = useT();
   const navigate = useNavigate();
   const editorConfig = useBillEditorConfig();
   return (
     <DocumentEditorPage
       id={id}
+      duplicateFromId={duplicateFromId}
       config={{
         useItem: purchaseBillsApi.useItem,
         onDone: () => navigate({ to: '/purchase-bills' }),

@@ -24,10 +24,13 @@ export function buildInvoiceColumns(
       renderOpenLink: (inv, label) => (
         <Button asChild variant="ghost" size="sm"><Link to="/sales-invoices/$id/edit" params={{ id: inv.id }}>{label}</Link></Button>
       ),
+      renderDuplicateLink: (inv, label) => (
+        <Link to="/sales-invoices/new" search={{ from: inv.id }}>{label}</Link>
+      ),
       onPost: handlers.onPost,
       onVoid: handlers.onVoid,
       onDelete: handlers.onDelete,
-      labels: { edit: t.common.edit, view: t.salesInvoices.view, delete: t.common.delete, post: t.salesInvoices.post, void: t.salesInvoices.void },
+      labels: { edit: t.common.edit, view: t.salesInvoices.view, delete: t.common.delete, post: t.salesInvoices.post, void: t.salesInvoices.void, duplicate: t.common.duplicate },
     }),
   ];
 }
