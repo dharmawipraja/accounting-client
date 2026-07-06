@@ -9,7 +9,7 @@ import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { MoneyText } from '@/components/common/MoneyText';
 import { formatDateID } from '@/lib/format/date';
 import { useEntityLabelMap } from '@/lib/hooks/useEntityLabelMap';
-import { hasRole, useRole } from '@/components/common/RoleGate';
+import { hasRole, useRole, useRoleReady } from '@/components/common/RoleGate';
 import { useT } from '@/lib/i18n/useT';
 import { accountsApi } from '@/features/accounts/hooks';
 import { JournalEntryForm } from './JournalEntryForm';
@@ -19,9 +19,14 @@ export function JournalEntryEditorPage({ id }: { id?: string }) {
   const t = useT();
   const navigate = useNavigate();
   const goList = () => navigate({ to: '/journals' });
+  const roleReady = useRoleReady();
   const canEdit = hasRole(useRole(), ['ACCOUNTANT', 'APPROVER', 'ADMIN']);
   const item = useJournalEntry(id ?? '');
+
   const accountName = useEntityLabelMap(accountsApi.useList, (a) => `${a.code} — ${a.name}`);
+
+  // Role unknown while /auth/me hydrates: loading, not a premature forbidden.
+  if (!roleReady) return <SkeletonForm fields={6} />;
 
   if (!id) {
     // Journal creation is ACCOUNTANT/APPROVER/ADMIN (role matrix); re-check here so

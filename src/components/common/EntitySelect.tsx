@@ -25,15 +25,18 @@ export interface EntitySelectAdapter<T> {
 type Status = 'loading' | 'error' | 'ready';
 
 /** The shared depth: load + coalesce + domain-filter + code-sort + fetch status.
- *  Recomputed each render (small lists) so a changing `filter` never goes stale. */
-function useEntitySelect<T>(adapter: EntitySelectAdapter<T>): { options: T[]; status: Status } {
+ *  Recomputed each render (small lists) so a changing `filter` never goes stale.
+ *  `all` is the unfiltered list: the CURRENT value may reference an entity that
+ *  is no longer pickable (deactivated / non-postable) — its label must survive. */
+function useEntitySelect<T>(adapter: EntitySelectAdapter<T>): { options: T[]; all: T[]; status: Status } {
   const list = adapter.useList();
   const search = adapter.getSearchText ?? adapter.getLabel;
-  const options = (list.data ?? [])
+  const all = list.data ?? [];
+  const options = all
     .filter((x) => (adapter.filter ? adapter.filter(x) : true))
     .sort((a, b) => search(a).localeCompare(search(b)));
   const status: Status = list.isLoading ? 'loading' : list.isError ? 'error' : 'ready';
-  return { options, status };
+  return { options, all, status };
 }
 
 function emptyText(status: Status, t: Messages): string {
@@ -98,8 +101,10 @@ export function EntitySelect<T>({
 }: CommonProps & { adapter: EntitySelectAdapter<T>; value?: string; onChange: (id: string) => void }) {
   const t = useT();
   const [open, setOpen] = useState(false);
-  const { options, status } = useEntitySelect(adapter);
-  const selected = options.find((o) => adapter.getValue(o) === value);
+  const { options, all, status } = useEntitySelect(adapter);
+  // Resolve the displayed label from the UNFILTERED list so a historical
+  // reference to a now-deactivated entity stays legible.
+  const selected = all.find((o) => adapter.getValue(o) === value);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -147,8 +152,10 @@ export function EntityMultiSelect<T>({
 }) {
   const t = useT();
   const [open, setOpen] = useState(false);
-  const { options, status } = useEntitySelect(adapter);
-  const selected = options.filter((o) => value.includes(adapter.getValue(o)));
+  const { options, all, status } = useEntitySelect(adapter);
+  // Chips resolve from the UNFILTERED list: an applied-then-deactivated entity
+  // is still part of the value and must stay visible.
+  const selected = all.filter((o) => value.includes(adapter.getValue(o)));
   const chip = getChipLabel ?? adapter.getLabel;
   const toggle = (id: string) => onChange(value.includes(id) ? value.filter((v) => v !== id) : [...value, id]);
   return (

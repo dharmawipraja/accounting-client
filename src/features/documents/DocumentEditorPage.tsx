@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { NotFound } from '@/components/common/NotFound';
 import { PageHeader, type PageParent } from '@/components/common/PageHeader';
 import { QueryState } from '@/components/common/QueryState';
-import { hasRole, useRole } from '@/components/common/RoleGate';
+import { hasRole, useRole, useRoleReady } from '@/components/common/RoleGate';
 import { SkeletonForm } from '@/components/common/skeletons/SkeletonForm';
 import { useT } from '@/lib/i18n/useT';
 import type { ApiError } from '@/lib/api/errors';
@@ -42,8 +42,15 @@ export function DocumentEditorPage<T extends { id: string; status: string }>({
   id?: string;
 }) {
   const t = useT();
+  const roleReady = useRoleReady();
   const canEdit = hasRole(useRole(), EDITOR_ROLES);
   const item = config.useItem(id ?? '');
+
+  // Token present but /auth/me not hydrated yet: the role is unknown, so
+  // neither the form nor "forbidden" is correct — show the loading skeleton.
+  if (!roleReady) {
+    return <SkeletonForm fields={6} />;
+  }
 
   if (!id) {
     if (!canEdit) {

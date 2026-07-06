@@ -103,6 +103,45 @@ describe('apiFetch', () => {
     expect(keys[1]).not.toBe(keys[0]);
   });
 
+  // /tax/calculate and /journal-entries/preview are read-only dry runs the spec
+  // does NOT cover with idempotency. They fire on every debounced keystroke and
+  // often fail by design (422 unbalanced, 409 closed period) — auto-keying them
+  // would fill the pending-key cache and could evict a genuinely pending create
+  // key, which is the duplicate-write scenario the cache exists to prevent.
+  it('does not auto-assign an Idempotency-Key to the read-only preview endpoints', async () => {
+    const keys: Record<string, string | null> = {};
+    server.use(
+      http.post(`${API}/tax/calculate`, ({ request }) => {
+        keys.tax = request.headers.get('Idempotency-Key');
+        return HttpResponse.json({ ok: true });
+      }),
+      http.post(`${API}/journal-entries/preview`, ({ request }) => {
+        keys.preview = request.headers.get('Idempotency-Key');
+        return HttpResponse.json({ ok: true });
+      }),
+    );
+    await apiFetch('/tax/calculate', { method: 'POST', body: { a: 1 }, auth: false });
+    await apiFetch('/journal-entries/preview', { method: 'POST', body: { a: 1 }, auth: false });
+    expect(keys.tax).toBeNull();
+    expect(keys.preview).toBeNull();
+  });
+
+  it('discards pending auto keys when the session is cleared', async () => {
+    const keys: (string | null)[] = [];
+    server.use(
+      http.post(`${API}/docs`, ({ request }) => {
+        keys.push(request.headers.get('Idempotency-Key'));
+        return HttpResponse.json({ code: 'BOOM' }, { status: 500 });
+      }),
+    );
+    useSession.getState().setTokens({ accessToken: 'a', refreshToken: 'b' });
+    await expect(apiFetch('/docs', { method: 'POST', body: { a: 1 } })).rejects.toBeInstanceOf(ApiError);
+    useSession.getState().clear();
+    useSession.getState().setTokens({ accessToken: 'a2', refreshToken: 'b2' });
+    await expect(apiFetch('/docs', { method: 'POST', body: { a: 1 } })).rejects.toBeInstanceOf(ApiError);
+    expect(keys[1]).not.toBe(keys[0]);
+  });
+
   it('sets the Idempotency-Key header when provided', async () => {
     let key: string | null = null;
     server.use(

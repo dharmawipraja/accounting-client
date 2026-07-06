@@ -11,8 +11,18 @@ export function requireAuth(redirectTo?: string): void {
 }
 
 /** Only in-app absolute paths may be used as a post-login destination — anything
- *  external or protocol-relative ('//host') would be an open redirect. */
+ *  external, protocol-relative ('//host'), or backslash-tricked ('/\\host',
+ *  which browsers normalize like '//host') would be an open redirect. As a
+ *  backstop, the value is resolved against the app origin and must stay there. */
 export function sanitizeRedirect(value: unknown): string | undefined {
-  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) return undefined;
-  return value;
+  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//') || value.includes('\\')) {
+    return undefined;
+  }
+  try {
+    const resolved = new URL(value, window.location.origin);
+    if (resolved.origin !== window.location.origin) return undefined;
+    return resolved.pathname + resolved.search + resolved.hash;
+  } catch {
+    return undefined;
+  }
 }

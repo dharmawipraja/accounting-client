@@ -64,6 +64,17 @@ describe('trial balance + general ledger schemas', () => {
     expect(r.closingBalance).toBe('1000000.0000');
   });
 
+  // Server caps GL at 10,000 lines and flags it; the client must parse the flag
+  // (default false keeps older fixtures valid).
+  it('general ledger parses the truncated flag and defaults it to false', () => {
+    const base = {
+      account: { id: 'a1', code: '1-1000', name: 'Kas', normalBalance: 'DEBIT' },
+      from: null, to: null, openingBalance: '0.0000', lines: [], closingBalance: '0.0000',
+    };
+    expect(generalLedgerSchema.parse({ ...base, truncated: true }).truncated).toBe(true);
+    expect(generalLedgerSchema.parse(base).truncated).toBe(false);
+  });
+
   // The spec marks GeneralLedgerLineDto.entryRef nullable — a null must not
   // fail the whole report parse (same class as the lines/allocations incident).
   it('general ledger tolerates a null entryRef', () => {
@@ -94,6 +105,16 @@ describe('aging report schema', () => {
     expect(r.partners[0].buckets['31-60']).toBe('1000000.0000');
     expect(r.partners[0].documents[0].ref).toBe('INV/2026/000012');
     expect(r.totalOutstanding).toBe('1000000.0000');
+  });
+
+  it('parses the truncated flag and defaults it to false', () => {
+    const base = {
+      kind: 'AR', asOf: '2026-06-30', partners: [],
+      totalsByBucket: { Current: '0.0000', '1-30': '0.0000', '31-60': '0.0000', '61-90': '0.0000', '>90': '0.0000' },
+      totalOutstanding: '0.0000',
+    };
+    expect(agingReportSchema.parse({ ...base, truncated: true }).truncated).toBe(true);
+    expect(agingReportSchema.parse(base).truncated).toBe(false);
   });
 
   // AgingDocumentDto.ref is nullable in the spec.

@@ -122,7 +122,12 @@ function SettingsForm({ settings }: { settings: CompanySettings }) {
 
       <ConfirmDialog
         open={confirmOpen}
-        onOpenChange={setConfirmOpen}
+        onOpenChange={(open) => {
+          setConfirmOpen(open);
+          // Cancel/escape/outside-click: the switch was already flipped in the
+          // form — restore the SAVED value so the screen doesn't misreport SoD.
+          if (!open) form.setValue('segregationOfDutiesEnabled', settings.segregationOfDutiesEnabled);
+        }}
         title={t.settings.sod}
         description={t.settings.confirmDisableSod}
         confirmLabel={t.settings.save}

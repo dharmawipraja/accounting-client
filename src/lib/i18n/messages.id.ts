@@ -26,6 +26,7 @@ export const id = {
     discardMessage: 'Perubahan yang belum disimpan akan hilang.',
     discard: 'Buang',
     exportCsv: 'Ekspor CSV',
+    maxLines: 'Maksimal 100 baris per dokumen',
   },
   errors: {
     offline: { title: 'Tidak ada koneksi', message: 'Periksa koneksi internet Anda lalu coba lagi.' },
@@ -328,6 +329,7 @@ export const id = {
     noOpenInvoices: 'Tidak ada faktur terbuka untuk pelanggan ini',
     selectPartnerFirst: 'Pilih mitra untuk melihat dokumen terbuka',
     overAllocated: 'Melebihi sisa tagihan',
+    tooManyAllocations: 'Maksimal 100 alokasi per pembayaran',
     atLeastOneAllocation: 'Alokasikan minimal satu faktur',
     savePayment: 'Simpan',
     post: 'Posting',
@@ -403,6 +405,9 @@ export const id = {
     deleted: 'Draf dihapus',
   },
   reports: {
+    spanTooLong: 'Rentang tanggal Buku Besar maksimal 366 hari. Persempit rentang lalu coba lagi.',
+    truncatedGl: 'Sebagian baris tidak ditampilkan karena melebihi batas 10.000 baris. Persempit rentang tanggal; saldo akhir tetap benar.',
+    truncatedAging: 'Sebagian dokumen tidak disertakan karena melebihi batas 10.000 dokumen. Total dan ekspor CSV hanya mencakup dokumen yang ditampilkan.',
     title: 'Laporan',
     groupStatements: 'Laporan Keuangan',
     groupLedger: 'Buku Besar',
@@ -486,6 +491,7 @@ export const id = {
     openingBalancesDesc: 'Bukukan saldo awal buku besar saat mulai menggunakan aplikasi. Dibukukan sebagai jurnal OPENING.',
     openingBalancesDate: 'Per Tanggal',
     postOpeningBalances: 'Posting Saldo Awal',
+    openingBalancesMaxHint: 'Maksimal 100 baris per posting. Untuk bagan akun yang lebih besar, posting saldo awal dalam beberapa tahap.',
     openingBalancesPlugHint: 'Selisih debit dan kredit akan dibukukan otomatis ke akun ekuitas Saldo Awal (3-9000).',
     openingBalancesSuccess: 'Saldo awal diposting',
     title: 'Tutup Buku',

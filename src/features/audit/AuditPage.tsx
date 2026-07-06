@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { PageHeader } from '@/components/common/PageHeader';
 import { QueryState } from '@/components/common/QueryState';
-import { useRole } from '@/components/common/RoleGate';
+import { useRole, useRoleReady } from '@/components/common/RoleGate';
 import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { useT } from '@/lib/i18n/useT';
 import { Pagination } from '@/components/common/Pagination';
@@ -20,7 +20,17 @@ const LIMIT = 50;
 
 export function AuditPage() {
   const t = useT();
+  const roleReady = useRoleReady();
   const role = useRole();
+  // Role unknown while /auth/me hydrates: loading, not a premature forbidden.
+  if (!roleReady) {
+    return (
+      <div>
+        <PageHeader title={t.audit.title} />
+        <SkeletonTable rows={8} cols={5} />
+      </div>
+    );
+  }
   if (role !== 'ADMIN') {
     return (
       <div>

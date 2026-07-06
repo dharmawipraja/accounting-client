@@ -17,6 +17,10 @@ export const journalPreviewSchema = z.object({
       credit: moneyString,
     }),
   ),
+  // Required in JournalPreviewResponseDto; nullish keeps parsing tolerant.
+  totalDebit: moneyString.nullish(),
+  totalCredit: moneyString.nullish(),
+  balanced: z.boolean().nullish(),
 });
 export type JournalPreview = z.infer<typeof journalPreviewSchema>;
 

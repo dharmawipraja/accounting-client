@@ -19,7 +19,7 @@ import { DocumentTotals } from './DocumentTotals';
 import { DocumentLineRow } from './DocumentLineRow';
 import { ReadOnlyBanner } from './ReadOnlyBanner';
 import { useDocumentSubmit } from './useDocumentSubmit';
-import { EMPTY_LINE, safeAmount, type DocumentHeaderValues } from './documentFormSchema';
+import { EMPTY_LINE, MAX_LINES, safeAmount, type DocumentHeaderValues } from './documentFormSchema';
 
 export interface DocumentEditorLabels {
   partner: string; selectPartner: string; date: string; dueDate: string; description: string;
@@ -107,6 +107,9 @@ export function DocumentEditor<
   );
 
   function onSubmit(values: TFormValues) {
+    // Re-entrancy guard beyond the disabled button: a second identical create
+    // while the first is in flight would share its auto Idempotency-Key.
+    if (create.isPending || update.isPending) return;
     if (mode === 'edit' && doc) {
       update.mutate({ id: doc.id, data: config.toUpdatePayload(values) }, handlers);
     } else {
@@ -176,11 +179,11 @@ export function DocumentEditor<
         </Table>
       </div>
 
-      <FieldError message={errors.lines ? labels.atLeastOneLine : undefined} />
+      <FieldError message={errors.lines ? (errors.lines.message === 'tooManyLines' ? t.common.maxLines : labels.atLeastOneLine) : undefined} />
 
       <div className="flex items-start justify-between gap-4">
         {readOnly ? <div /> : (
-          <Button type="button" variant="outline" onClick={() => lines.append({ ...EMPTY_LINE } as never)}>
+          <Button type="button" variant="outline" disabled={lines.fields.length >= MAX_LINES} onClick={() => lines.append({ ...EMPTY_LINE } as never)}>
             <Plus className="size-4" /> {labels.addLine}
           </Button>
         )}

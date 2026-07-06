@@ -1,5 +1,6 @@
-import { afterEach, describe, expect, it } from 'vitest';
-import { useSession } from './session';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { queryClient } from '@/lib/query/client';
+import { crossTabLogout, useSession } from './session';
 
 afterEach(() => { useSession.getState().clear(); localStorage.clear(); });
 
@@ -24,14 +25,24 @@ describe('session store', () => {
   });
 
   // "Logout all devices" in one tab must not leave sibling tabs writing with
-  // their still-in-memory tokens (SoD/audit gap).
-  it('clears the in-memory session when another tab removes buku.session', () => {
-    useSession.getState().setTokens({ accessToken: 'a', refreshToken: 'b' });
-    useSession.getState().setUser({ id: '1', email: 'x@y.z', role: 'ADMIN' });
-    window.dispatchEvent(new StorageEvent('storage', { key: 'buku.session', newValue: null }));
-    expect(useSession.getState().accessToken).toBeNull();
-    expect(useSession.getState().user).toBeNull();
-    expect(useSession.getState().status).toBe('anonymous');
+  // their still-in-memory tokens (SoD/audit gap) — nor showing cached financial
+  // data on a protected route.
+  it('clears the session + query cache and leaves for /login when another tab logs out', () => {
+    const clearSpy = vi.spyOn(queryClient, 'clear').mockImplementation(() => {});
+    const replaceSpy = vi.spyOn(crossTabLogout, 'leaveToLogin').mockImplementation(() => {});
+    try {
+      useSession.getState().setTokens({ accessToken: 'a', refreshToken: 'b' });
+      useSession.getState().setUser({ id: '1', email: 'x@y.z', role: 'ADMIN' });
+      window.dispatchEvent(new StorageEvent('storage', { key: 'buku.session', newValue: null }));
+      expect(useSession.getState().accessToken).toBeNull();
+      expect(useSession.getState().user).toBeNull();
+      expect(useSession.getState().status).toBe('anonymous');
+      expect(clearSpy).toHaveBeenCalled();
+      expect(replaceSpy).toHaveBeenCalled();
+    } finally {
+      clearSpy.mockRestore();
+      replaceSpy.mockRestore();
+    }
   });
 
   it('adopts rotated tokens from another tab, keeping the user', () => {

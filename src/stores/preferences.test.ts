@@ -4,7 +4,7 @@ import { usePreferences } from './preferences';
 
 // The store is a module singleton; reset it (and its persisted copy) per test.
 afterEach(() => {
-  usePreferences.setState({ dashboardPeriod: computePeriod('year', new Date()), sidebarCollapsed: false });
+  usePreferences.setState({ dashboardPeriod: computePeriod('year', new Date()) });
   localStorage.clear();
 });
 
@@ -18,19 +18,5 @@ it('persists a set dashboardPeriod to localStorage', () => {
   expect(localStorage.getItem('buku.prefs')).toContain('"preset":"custom"');
 });
 
-it('defaults sidebarCollapsed to false', () => {
-  expect(usePreferences.getState().sidebarCollapsed).toBe(false);
-});
 
-it('toggleSidebar flips sidebarCollapsed', () => {
-  usePreferences.getState().toggleSidebar();
-  expect(usePreferences.getState().sidebarCollapsed).toBe(true);
-  usePreferences.getState().toggleSidebar();
-  expect(usePreferences.getState().sidebarCollapsed).toBe(false);
-});
 
-it('persists sidebarCollapsed to localStorage', () => {
-  usePreferences.getState().setSidebarCollapsed(true);
-  expect(usePreferences.getState().sidebarCollapsed).toBe(true);
-  expect(localStorage.getItem('buku.prefs')).toContain('"sidebarCollapsed":true');
-});

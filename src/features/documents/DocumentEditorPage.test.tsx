@@ -80,6 +80,17 @@ it('edit mode on a POSTED doc renders the view title and a read-only form', asyn
   expect(screen.getByText('form:edit:true')).toBeInTheDocument();
 });
 
+// While /auth/me is still hydrating (token present, user null), the role is
+// UNKNOWN — render the loading skeleton, never a premature "forbidden".
+it('create mode shows a skeleton (not forbidden) while the role is unhydrated', () => {
+  useSession.getState().clear();
+  useSession.getState().setTokens({ accessToken: 'tok', refreshToken: 'r' });
+  const { container } = render(<DocumentEditorPage config={makeConfig(fakeQuery({}))} />);
+  expect(container.querySelector('[data-slot="skeleton"]')).toBeInTheDocument();
+  expect(screen.queryByText(messages.roles.forbidden)).not.toBeInTheDocument();
+  expect(screen.queryByText(/^form:/)).not.toBeInTheDocument();
+});
+
 it('create mode shows forbidden (no form) to a VIEWER', async () => {
   useSession.getState().setUser({ id: 'u2', email: 'v@b.c', role: 'VIEWER' });
   renderWithRouter(<DocumentEditorPage config={makeConfig(fakeQuery({}))} />);

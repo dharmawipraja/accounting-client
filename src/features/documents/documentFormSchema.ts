@@ -12,12 +12,15 @@ export const documentLineFormSchema = z.object({
 });
 export type DocumentLineFormValues = z.infer<typeof documentLineFormSchema>;
 
+/** The API caps every lines/allocations array at 100 items (400 beyond). */
+export const MAX_LINES = 100;
+
 export const documentHeaderSchema = z.object({
   partnerId: z.string().min(1, 'selectPartner'),
   date: z.string().min(1, 'required'),
   dueDate: z.string(),
   description: z.string(),
-  lines: z.array(documentLineFormSchema).min(1, 'atLeastOneLine'),
+  lines: z.array(documentLineFormSchema).min(1, 'atLeastOneLine').max(MAX_LINES, 'tooManyLines'),
 });
 export type DocumentHeaderValues = z.infer<typeof documentHeaderSchema>;
 

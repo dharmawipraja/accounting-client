@@ -32,6 +32,11 @@ describe('sanitizeRedirect', () => {
     expect(sanitizeRedirect('https://evil.example')).toBeUndefined();
     expect(sanitizeRedirect('//evil.example')).toBeUndefined();
   });
+  it('rejects the backslash bypass forms browsers normalize to //', () => {
+    expect(sanitizeRedirect('/\\evil.example')).toBeUndefined();
+    expect(sanitizeRedirect('\\/evil.example')).toBeUndefined();
+    expect(sanitizeRedirect('/foo\\..\\bar')).toBeUndefined();
+  });
   it('rejects non-strings and empty values', () => {
     expect(sanitizeRedirect(undefined)).toBeUndefined();
     expect(sanitizeRedirect(42)).toBeUndefined();

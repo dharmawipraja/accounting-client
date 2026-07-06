@@ -42,6 +42,22 @@ it('seeds the status filter from initialStatus (deep-link to DRAFT)', async () =
   await waitFor(() => expect(seenStatus).toBe('DRAFT'));
 });
 
+// The search box must reach the server as ?q= — the adapter used to drop it,
+// making the box a silent no-op.
+it('typing in the search box sends ?q= to the server', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  let seenQ: string | null = null;
+  server.use(http.get(`${API}/ledger/journal-entries`, ({ request }) => {
+    seenQ = new URL(request.url).searchParams.get('q');
+    return HttpResponse.json({ data: journalEntryListFixture(), total: 5, limit: 20, offset: 0 });
+  }));
+  renderPage();
+  await screen.findByText('Draf 1');
+  await user.type(screen.getByPlaceholderText('Cari'), 'penjualan');
+  await waitFor(() => expect(seenQ).toBe('penjualan'), { timeout: 2_000 });
+});
+
 it('APPROVER posts a draft with an idempotency key', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });

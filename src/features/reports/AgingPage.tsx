@@ -12,6 +12,7 @@ import { ReportContent } from './ReportContent';
 import { ReportTable, MoneyCell, type ReportColumn } from './ReportTable';
 import { useReport } from './useReport';
 import { agingReportSchema, AGING_BUCKETS, type AgingPartner, type AgingDocument } from './schema';
+import { TruncatedNotice } from './TruncatedNotice';
 
 function partnerTotal(p: AgingPartner): string {
   return AGING_BUCKETS.reduce((m, b) => m.plus(Money.from(p.buckets[b] ?? '0')), Money.zero()).toApi();
@@ -57,6 +58,7 @@ export function AgingPage({ kind }: { kind: 'AR' | 'AP' }) {
           const csvRows = rep.partners.map((p) => [p.partnerName, ...AGING_BUCKETS.map((b) => p.buckets[b] ?? '0'), partnerTotal(p)]);
           return (
           <div className="space-y-4">
+            <TruncatedNotice show={rep.truncated} message={t.reports.truncatedAging} />
             <div className="flex justify-end">
               <ExportCsvButton filename={title} headers={[partnerLabel, ...bucketHeaders, t.reports.total]} rows={csvRows} />
             </div>

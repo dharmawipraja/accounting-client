@@ -1,6 +1,8 @@
 /** CSV export helpers. Amounts are written as their raw 4dp API strings so a
  *  spreadsheet reads them as numbers; a UTF-8 BOM keeps Excel happy with the
- *  Indonesian labels. */
+ *  Indonesian labels. Delimiter is ';' — Indonesian-locale Excel uses ',' as
+ *  the DECIMAL symbol and ';' as the list separator, so a comma-delimited file
+ *  double-clicked open would land entirely in one column. */
 
 export type CsvCell = string | number | null | undefined;
 
@@ -17,11 +19,13 @@ function escapeCell(value: CsvCell): string {
   if (s !== '' && FORMULA_TRIGGER.test(s) && !NUMERIC.test(s)) {
     s = `'${s}`;
   }
-  return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  return /[";,\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
+const DELIMITER = ';';
+
 export function toCsv(headers: string[], rows: CsvCell[][]): string {
-  return [headers, ...rows].map((row) => row.map(escapeCell).join(',')).join('\r\n');
+  return [headers, ...rows].map((row) => row.map(escapeCell).join(DELIMITER)).join('\r\n');
 }
 
 /** Build a CSV and trigger a browser download. No-op-safe outside a DOM. */

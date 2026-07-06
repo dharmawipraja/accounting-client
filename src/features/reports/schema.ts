@@ -100,6 +100,8 @@ export const generalLedgerSchema = z.object({
   openingBalance: moneyString,
   lines: z.array(generalLedgerLineSchema),
   closingBalance: moneyString,
+  // Server-side 10,000-line cap fired; closingBalance stays correct either way.
+  truncated: z.boolean().default(false),
 });
 export type GeneralLedger = z.infer<typeof generalLedgerSchema>;
 
@@ -130,6 +132,8 @@ export const agingReportSchema = z.object({
   partners: z.array(agingPartnerSchema),
   totalsByBucket: agingBucketsSchema,
   totalOutstanding: moneyString,
+  // Server-side 10,000-document cap fired; totals cover only included documents.
+  truncated: z.boolean().default(false),
 });
 export type AgingReport = z.infer<typeof agingReportSchema>;
 

@@ -14,6 +14,7 @@ import {
 export interface JournalEntriesParams {
   status?: string;
   sourceType?: string;
+  q?: string;
   from?: string;
   to?: string;
   limit: number;
@@ -31,7 +32,7 @@ export const journalEntriesApi = createDocumentHooks<JournalEntry, JournalEntryC
 });
 
 export const useJournalEntries = (p: JournalEntriesParams) =>
-  journalEntriesApi.usePagedList({ status: p.status, sourceType: p.sourceType, from: p.from, to: p.to, limit: p.limit, offset: p.offset });
+  journalEntriesApi.usePagedList({ status: p.status, sourceType: p.sourceType, q: p.q, from: p.from, to: p.to, limit: p.limit, offset: p.offset });
 export const useJournalEntry = (id: string) => journalEntriesApi.useItem(id);
 export const useCreateJournalEntry = journalEntriesApi.useCreate;
 

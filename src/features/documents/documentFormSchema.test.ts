@@ -21,6 +21,16 @@ describe('documentHeaderSchema', () => {
     const r = documentHeaderSchema.safeParse({ partnerId: '', date: '', dueDate: '', description: '', lines: [] });
     expect(r.success).toBe(false);
   });
+  // The API caps lines arrays at 100 items (400 beyond) — reject before save.
+  it('rejects more than 100 lines', () => {
+    const line = { ...EMPTY_LINE, description: 'Jasa', accountId: 'a1', unitPrice: '1000' };
+    const r = documentHeaderSchema.safeParse({
+      partnerId: 'p1', date: '2026-06-25', dueDate: '', description: '',
+      lines: Array.from({ length: 101 }, () => ({ ...line })),
+    });
+    expect(r.success).toBe(false);
+  });
+
   it('accepts a valid header', () => {
     const r = documentHeaderSchema.safeParse({ partnerId: 'p1', date: '2026-06-25', dueDate: '', description: '', lines: [{ ...EMPTY_LINE, description: 'Jasa', accountId: 'a1', unitPrice: '1000' }] });
     expect(r.success).toBe(true);

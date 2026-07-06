@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it } from 'vitest';
 import { renderWithRouter } from '@/test/renderWithRouter';
@@ -45,4 +45,39 @@ it('with a preselected account: sends accountId + from and renders opening, a li
   expect(screen.getByText(/Saldo Akhir/i)).toBeInTheDocument();
   await waitFor(() => expect(seenAccountId).toBe('acc-kas'));
   expect(seenFrom).toMatch(/^\d{4}-01-01$/); // default from = year start
+});
+
+it('shows the truncated warning when the server capped the lines', async () => {
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  server.use(http.get(`${API}/reports/general-ledger`, () =>
+    HttpResponse.json({
+      account: { id: 'acc-kas', code: '1-1000', name: 'Kas', normalBalance: 'DEBIT' },
+      from: '2026-01-01', to: '2026-06-30', openingBalance: '0.0000',
+      lines: [], closingBalance: '0.0000', truncated: true,
+    }),
+  ));
+  renderPage('acc-kas');
+  expect(await screen.findByText(/melebihi batas 10\.000 baris/i)).toBeInTheDocument();
+});
+
+// The API rejects GL spans over 366 days with a 422 — prevent the request and
+// tell the user specifically, instead of a generic validation error.
+it('blocks spans over 366 days with a specific hint and no request', async () => {
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  let called = 0;
+  server.use(http.get(`${API}/reports/general-ledger`, () => {
+    called += 1;
+    return HttpResponse.json({
+      account: { id: 'acc-kas', code: '1-1000', name: 'Kas', normalBalance: 'DEBIT' },
+      from: '2026-01-01', to: '2026-06-30', openingBalance: '0.0000',
+      lines: [], closingBalance: '0.0000', truncated: false,
+    });
+  }));
+  renderPage('acc-kas');
+  await screen.findByText(/Saldo Akhir/i);
+  const callsBefore = called;
+  fireEvent.change(screen.getByLabelText('Dari'), { target: { value: '2024-01-01' } });
+  expect(await screen.findByText(/maksimal 366 hari/i)).toBeInTheDocument();
+  await new Promise((r) => setTimeout(r, 150));
+  expect(called).toBe(callsBefore); // no new fetch for the invalid span
 });

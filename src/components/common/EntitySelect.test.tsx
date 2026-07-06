@@ -45,6 +45,21 @@ it('single: shows the selected label in the trigger', () => {
   expect(screen.getByRole('combobox', { name: 'Pilih' })).toHaveTextContent('B-2 — Beta');
 });
 
+// Historical references must stay legible: a document may point at an entity
+// that has since been deactivated (filtered out of the PICKABLE options). The
+// current value's label resolves from the unfiltered list.
+it('single: keeps showing the label of a selected-but-filtered-out (inactive) item', () => {
+  render(<EntitySelect adapter={adapter(fakeQuery({ data: items }))} value="3" onChange={vi.fn()} aria-label="Pilih" />);
+  expect(screen.getByRole('combobox', { name: 'Pilih' })).toHaveTextContent('C-3 — Gamma');
+});
+
+it('multi: keeps the chip for a selected-but-filtered-out (inactive) item', () => {
+  render(<EntityMultiSelect adapter={adapter(fakeQuery({ data: items }))} value={['1', '3']} onChange={vi.fn()} aria-label="Pilih" />);
+  const trigger = screen.getByRole('combobox', { name: 'Pilih' });
+  expect(trigger).toHaveTextContent('A-1 — Alpha');
+  expect(trigger).toHaveTextContent('C-3 — Gamma');
+});
+
 it('distinguishes loading and error from no-data in the empty state', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   const { rerender } = render(<EntitySelect adapter={adapter(fakeQuery({ isLoading: true }))} onChange={vi.fn()} aria-label="Pilih" />);

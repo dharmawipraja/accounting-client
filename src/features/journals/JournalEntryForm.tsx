@@ -14,6 +14,7 @@ import { Money } from '@/lib/money/money';
 import { useT } from '@/lib/i18n/useT';
 import { JournalLineRow, type JournalLineState } from './JournalLineRow';
 import { JournalTotals } from './JournalTotals';
+import { MAX_LINES } from '@/features/documents/documentFormSchema';
 import { isBalanced } from './balance';
 import { RoleGate } from '@/components/common/RoleGate';
 import { useCreateAndPostJournalEntry, useCreateJournalEntry } from './hooks';
@@ -34,7 +35,7 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
   const [lines, setLines] = useState<JournalLineState[]>(() => [emptyLine(), emptyLine()]);
 
   const setLine = (i: number, patch: Partial<JournalLineState>) => setLines((prev) => prev.map((l, idx) => (idx === i ? { ...l, ...patch } : l)));
-  const addLine = () => setLines((prev) => [...prev, emptyLine()]);
+  const addLine = () => setLines((prev) => (prev.length >= MAX_LINES ? prev : [...prev, emptyLine()]));
   const removeLine = (i: number) => setLines((prev) => prev.filter((_, idx) => idx !== i));
 
   const balanced = isBalanced(lines);
@@ -57,13 +58,13 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
   }
 
   function onSubmit(values: HeaderValues) {
-    if (!balanced) return;
+    if (!balanced || create.isPending || createAndPost.isPending) return;
     create.mutate(buildPayload(values), handlers);
   }
 
   // One-step create-and-post (?post=true) — APPROVER/ADMIN only (role-gated below).
   const onSaveAndPost = form.handleSubmit((values) => {
-    if (!balanced) return;
+    if (!balanced || create.isPending || createAndPost.isPending) return;
     createAndPost.mutate(buildPayload(values), handlers);
   });
 
@@ -102,7 +103,7 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
       </div>
 
       <div className="flex items-start justify-between gap-4">
-        <Button type="button" variant="outline" onClick={addLine}><Plus className="size-4" /> {t.journals.addLine}</Button>
+        <Button type="button" variant="outline" disabled={lines.length >= MAX_LINES} onClick={addLine}><Plus className="size-4" /> {t.journals.addLine}</Button>
         <JournalTotals lines={lines} />
       </div>
 

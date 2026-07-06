@@ -13,6 +13,7 @@ function useJournalEntriesList(q: Record<string, string | number | undefined>) {
   return useJournalEntries({
     status: q.status as string | undefined,
     sourceType: q.sourceType as string | undefined,
+    q: q.q as string | undefined,
     limit: q.limit as number,
     offset: q.offset as number,
   });

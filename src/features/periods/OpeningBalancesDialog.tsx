@@ -15,6 +15,7 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components
 import { mutationFeedback } from '@/lib/api/mutationFeedback';
 import { Money } from '@/lib/money/money';
 import { useT } from '@/lib/i18n/useT';
+import { MAX_LINES } from '@/features/documents/documentFormSchema';
 import { JournalLineRow, type JournalLineState } from '@/features/journals/JournalLineRow';
 import { JournalTotals } from '@/features/journals/JournalTotals';
 import { usePostOpeningBalances } from './mutations';
@@ -96,12 +97,13 @@ export function OpeningBalancesDialog({ open, onOpenChange }: { open: boolean; o
           </div>
 
           <div className="flex items-start justify-between gap-4">
-            <Button type="button" variant="outline" onClick={() => setLines((prev) => [...prev, emptyLine()])}>
+            <Button type="button" variant="outline" disabled={lines.length >= MAX_LINES} onClick={() => setLines((prev) => (prev.length >= MAX_LINES ? prev : [...prev, emptyLine()]))}>
               <Plus className="size-4" /> {t.journals.addLine}
             </Button>
             <JournalTotals lines={lines} />
           </div>
           <p className="text-xs text-muted-foreground">{t.periods.openingBalancesPlugHint}</p>
+          <p className="text-xs text-muted-foreground">{t.periods.openingBalancesMaxHint}</p>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t.common.cancel}</Button>

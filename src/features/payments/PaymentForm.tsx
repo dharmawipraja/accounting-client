@@ -74,6 +74,8 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
   function validateAllocations(): boolean {
     const allocs = buildAllocations();
     if (allocs.length === 0) { setAllocError(t.payments.atLeastOneAllocation); return false; }
+    // The API caps allocations arrays at 100 items (400 beyond).
+    if (allocs.length > 100) { setAllocError(t.payments.tooManyAllocations); return false; }
     const over = openDocuments.some((doc) => {
       const v = amounts[doc.id];
       try { return v ? Money.from(v).gt(Money.from(doc.outstanding)) : false; } catch { return false; }
@@ -86,6 +88,7 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
   function onSubmit(values: PaymentHeaderValues) {
     // The API has no payment update endpoint; existing payments are read-only.
     if (mode === 'edit') return;
+    if (create.isPending) return; // re-entrancy guard beyond the disabled button
     if (!validateAllocations()) return;
     const payload = { direction, partnerId: values.partnerId, date: values.date, cashAccountId: values.cashAccountId, description: values.description || undefined, allocations: buildAllocations() };
     create.mutate(payload, handlers);

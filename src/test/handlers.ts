@@ -208,6 +208,7 @@ export const handlers = [
     const u = new URL(request.url).searchParams;
     let data = salesInvoiceFixtures().map((x) => ({ ...x, lines: undefined })); // live list omits lines
     const status = u.get('status'); if (status) data = data.filter((x) => x.status === status);
+    const partnerId = u.get('partnerId'); if (partnerId) data = data.filter((x) => x.partnerId === partnerId);
     data = data.filter((x) => matchesQ(u.get('q'), x.invoiceRef, x.description, partnerText(x.partnerId)));
     const limit = Number(u.get('limit') ?? '200');
     const offset = Number(u.get('offset') ?? '0');
@@ -246,6 +247,7 @@ export const handlers = [
     let data = paymentFixtures().map((x) => ({ ...x, allocations: undefined })); // live list omits allocations
     const status = u.get('status'); if (status) data = data.filter((x) => x.status === status);
     const direction = u.get('direction'); if (direction) data = data.filter((x) => x.direction === direction);
+    const partnerId = u.get('partnerId'); if (partnerId) data = data.filter((x) => x.partnerId === partnerId);
     data = data.filter((x) => matchesQ(u.get('q'), x.ref, x.description, partnerText(x.partnerId)));
     const limit = Number(u.get('limit') ?? '200');
     const offset = Number(u.get('offset') ?? '0');
@@ -267,7 +269,8 @@ export const handlers = [
       ? { accountId: 'ap', accountCode: '2-1000', accountName: 'Utang Usaha', debit: total, credit: '0.0000' }
       : { accountId: 'ar', accountCode: '1-1200', accountName: 'Piutang Usaha', debit: '0.0000', credit: total };
     if (body.direction === 'DISBURSEMENT') cash.credit = total; else cash.debit = total;
-    return HttpResponse.json({ lines: [cash, control] });
+    // Spec (JournalPreviewResponseDto) requires the totals + balanced flag too.
+    return HttpResponse.json({ lines: [cash, control], totalDebit: total, totalCredit: total, balanced: true });
   }),
 
   // NOTE: deliberately no PATCH /payments/:id — the live API has no payment update
@@ -281,6 +284,7 @@ export const handlers = [
     const u = new URL(request.url).searchParams;
     let data = purchaseBillFixtures().map((x) => ({ ...x, lines: undefined })); // live list omits lines
     const status = u.get('status'); if (status) data = data.filter((x) => x.status === status);
+    const partnerId = u.get('partnerId'); if (partnerId) data = data.filter((x) => x.partnerId === partnerId);
     data = data.filter((x) => matchesQ(u.get('q'), x.billRef, x.vendorInvoiceNo, x.description, partnerText(x.partnerId)));
     const limit = Number(u.get('limit') ?? '200');
     const offset = Number(u.get('offset') ?? '0');
@@ -334,7 +338,12 @@ export const handlers = [
   http.get(`${API}/ledger/journal-entries/:id`, ({ params }) => HttpResponse.json({ ...journalEntryDetailFixture(), id: params.id })),
   http.post(`${API}/ledger/journal-entries`, async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;
-    return HttpResponse.json({ ...journalEntryDetailFixture(), id: 'je9', status: 'DRAFT', ...body, lines: undefined });
+    // ?post=true = create-and-post (APPROVER/ADMIN): live returns a POSTED entry with a ref.
+    const post = new URL(request.url).searchParams.get('post') === 'true';
+    const lifecycle = post
+      ? { status: 'POSTED', entryNumber: 9, entryRef: 'JE/2026/000009', fiscalYear: 2026 }
+      : { status: 'DRAFT' };
+    return HttpResponse.json({ ...journalEntryDetailFixture(), id: 'je9', ...body, ...lifecycle, lines: undefined });
   }),
   http.delete(`${API}/ledger/journal-entries/:id`, () => HttpResponse.json({})),
   http.post(`${API}/ledger/journal-entries/:id/post`, ({ params }) =>
@@ -360,7 +369,18 @@ export const handlers = [
   http.post(`${API}/close/year-end/:fy/reopen`, ({ params }) => HttpResponse.json({ fiscalYear: Number(params.fy), status: 'OPEN' })),
 
   // --- audit log (Plan 9) ---
-  http.get(`${API}/audit`, () => HttpResponse.json(auditFixtures())),
+  http.get(`${API}/audit`, ({ request }) => {
+    // Live filters: userId, method, from, to, limit (max 200), offset — bare array response.
+    const u = new URL(request.url).searchParams;
+    let data = auditFixtures();
+    const userId = u.get('userId'); if (userId) data = data.filter((e) => e.userId === userId);
+    const method = u.get('method'); if (method) data = data.filter((e) => e.method === method);
+    const from = u.get('from'); if (from) data = data.filter((e) => e.timestamp.slice(0, 10) >= from);
+    const to = u.get('to'); if (to) data = data.filter((e) => e.timestamp.slice(0, 10) <= to);
+    const limit = Math.min(Number(u.get('limit') ?? '50'), 200);
+    const offset = Number(u.get('offset') ?? '0');
+    return HttpResponse.json(data.slice(offset, offset + limit));
+  }),
 
   // --- company settings (Plan 10) ---
   http.get(`${API}/company/settings`, () => HttpResponse.json(companySettingsFixture())),

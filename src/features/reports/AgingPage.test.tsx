@@ -50,3 +50,12 @@ it('AP: requests /reports/ap-aging and shows Umur Utang + the Vendor label', asy
   expect(await screen.findByText('Vendor')).toBeInTheDocument(); // partner-column header (after data)
   expect(called).toBe(true);
 });
+
+it('shows the truncated warning (partial totals) when the server capped the documents', async () => {
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  server.use(http.get(`${API}/reports/ar-aging`, () =>
+    HttpResponse.json({ ...fixture('2026-06-30', 'AR'), truncated: true }),
+  ));
+  renderPage('AR');
+  expect(await screen.findByText(/melebihi batas 10\.000 dokumen/i)).toBeInTheDocument();
+});
