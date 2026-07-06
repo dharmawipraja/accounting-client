@@ -16,6 +16,16 @@ export type AccountSubtype = z.infer<typeof accountSubtypeSchema>;
 
 // Item shape — hand-authored; reconciled against the live API in Plan 2b's first task.
 // Default zod strips unknown keys, so extra server fields are tolerated.
+import { moneyString } from '@/lib/schemas/common';
+
+export const accountBalanceSchema = z.object({
+  accountId: z.string(),
+  debit: moneyString,
+  credit: moneyString,
+  balance: moneyString, // normalBalance-signed net
+});
+export type AccountBalance = z.infer<typeof accountBalanceSchema>;
+
 export const accountSchema = z.object({
   id: z.string(),
   code: z.string(),

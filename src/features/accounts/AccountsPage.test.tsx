@@ -5,6 +5,7 @@ import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it } from 'vitest';
 import { API, paged } from '@/test/handlers';
 import { server } from '@/test/server';
+import { inRouter } from '@/test/utils';
 import { useSession } from '@/stores/session';
 import { AccountsPage } from './AccountsPage';
 
@@ -12,7 +13,7 @@ afterEach(() => useSession.getState().clear());
 
 function renderPage() {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-  return render(<QueryClientProvider client={qc}><AccountsPage /></QueryClientProvider>);
+  return render(<QueryClientProvider client={qc}>{inRouter(<AccountsPage />)}</QueryClientProvider>);
 }
 
 it('lists accounts grouped by type', async () => {

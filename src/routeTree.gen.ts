@@ -41,6 +41,7 @@ import { Route as AppPurchaseBillsNewRouteImport } from './app/routes/_app/purch
 import { Route as AppPaymentsNewRouteImport } from './app/routes/_app/payments.new'
 import { Route as AppJournalsNewRouteImport } from './app/routes/_app/journals.new'
 import { Route as AppJournalsIdRouteImport } from './app/routes/_app/journals.$id'
+import { Route as AppAccountsIdRouteImport } from './app/routes/_app/accounts.$id'
 import { Route as AppSalesInvoicesIdEditRouteImport } from './app/routes/_app/sales-invoices.$id.edit'
 import { Route as AppPurchaseBillsIdEditRouteImport } from './app/routes/_app/purchase-bills.$id.edit'
 import { Route as AppPaymentsIdEditRouteImport } from './app/routes/_app/payments.$id.edit'
@@ -205,6 +206,11 @@ const AppJournalsIdRoute = AppJournalsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AppJournalsRoute,
 } as any)
+const AppAccountsIdRoute = AppAccountsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppAccountsRoute,
+} as any)
 const AppSalesInvoicesIdEditRoute = AppSalesInvoicesIdEditRouteImport.update({
   id: '/$id/edit',
   path: '/$id/edit',
@@ -224,7 +230,7 @@ const AppPaymentsIdEditRoute = AppPaymentsIdEditRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/accounts': typeof AppAccountsRoute
+  '/accounts': typeof AppAccountsRouteWithChildren
   '/audit': typeof AppAuditRoute
   '/dashboard': typeof AppDashboardRoute
   '/journals': typeof AppJournalsRouteWithChildren
@@ -236,6 +242,7 @@ export interface FileRoutesByFullPath {
   '/sales-invoices': typeof AppSalesInvoicesRouteWithChildren
   '/settings': typeof AppSettingsRoute
   '/tax-codes': typeof AppTaxCodesRoute
+  '/accounts/$id': typeof AppAccountsIdRoute
   '/journals/$id': typeof AppJournalsIdRoute
   '/journals/new': typeof AppJournalsNewRoute
   '/payments/new': typeof AppPaymentsNewRoute
@@ -260,13 +267,14 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/accounts': typeof AppAccountsRoute
+  '/accounts': typeof AppAccountsRouteWithChildren
   '/audit': typeof AppAuditRoute
   '/dashboard': typeof AppDashboardRoute
   '/partners': typeof AppPartnersRoute
   '/periods': typeof AppPeriodsRoute
   '/settings': typeof AppSettingsRoute
   '/tax-codes': typeof AppTaxCodesRoute
+  '/accounts/$id': typeof AppAccountsIdRoute
   '/journals/$id': typeof AppJournalsIdRoute
   '/journals/new': typeof AppJournalsNewRoute
   '/payments/new': typeof AppPaymentsNewRoute
@@ -293,7 +301,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
-  '/_app/accounts': typeof AppAccountsRoute
+  '/_app/accounts': typeof AppAccountsRouteWithChildren
   '/_app/audit': typeof AppAuditRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/journals': typeof AppJournalsRouteWithChildren
@@ -305,6 +313,7 @@ export interface FileRoutesById {
   '/_app/sales-invoices': typeof AppSalesInvoicesRouteWithChildren
   '/_app/settings': typeof AppSettingsRoute
   '/_app/tax-codes': typeof AppTaxCodesRoute
+  '/_app/accounts/$id': typeof AppAccountsIdRoute
   '/_app/journals/$id': typeof AppJournalsIdRoute
   '/_app/journals/new': typeof AppJournalsNewRoute
   '/_app/payments/new': typeof AppPaymentsNewRoute
@@ -343,6 +352,7 @@ export interface FileRouteTypes {
     | '/sales-invoices'
     | '/settings'
     | '/tax-codes'
+    | '/accounts/$id'
     | '/journals/$id'
     | '/journals/new'
     | '/payments/new'
@@ -374,6 +384,7 @@ export interface FileRouteTypes {
     | '/periods'
     | '/settings'
     | '/tax-codes'
+    | '/accounts/$id'
     | '/journals/$id'
     | '/journals/new'
     | '/payments/new'
@@ -411,6 +422,7 @@ export interface FileRouteTypes {
     | '/_app/sales-invoices'
     | '/_app/settings'
     | '/_app/tax-codes'
+    | '/_app/accounts/$id'
     | '/_app/journals/$id'
     | '/_app/journals/new'
     | '/_app/payments/new'
@@ -665,6 +677,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppJournalsIdRouteImport
       parentRoute: typeof AppJournalsRoute
     }
+    '/_app/accounts/$id': {
+      id: '/_app/accounts/$id'
+      path: '/$id'
+      fullPath: '/accounts/$id'
+      preLoaderRoute: typeof AppAccountsIdRouteImport
+      parentRoute: typeof AppAccountsRoute
+    }
     '/_app/sales-invoices/$id/edit': {
       id: '/_app/sales-invoices/$id/edit'
       path: '/$id/edit'
@@ -688,6 +707,18 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AppAccountsRouteChildren {
+  AppAccountsIdRoute: typeof AppAccountsIdRoute
+}
+
+const AppAccountsRouteChildren: AppAccountsRouteChildren = {
+  AppAccountsIdRoute: AppAccountsIdRoute,
+}
+
+const AppAccountsRouteWithChildren = AppAccountsRoute._addFileChildren(
+  AppAccountsRouteChildren,
+)
 
 interface AppJournalsRouteChildren {
   AppJournalsIdRoute: typeof AppJournalsIdRoute
@@ -778,7 +809,7 @@ const AppSalesInvoicesRouteWithChildren =
   AppSalesInvoicesRoute._addFileChildren(AppSalesInvoicesRouteChildren)
 
 interface AppRouteChildren {
-  AppAccountsRoute: typeof AppAccountsRoute
+  AppAccountsRoute: typeof AppAccountsRouteWithChildren
   AppAuditRoute: typeof AppAuditRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppJournalsRoute: typeof AppJournalsRouteWithChildren
@@ -793,7 +824,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppAccountsRoute: AppAccountsRoute,
+  AppAccountsRoute: AppAccountsRouteWithChildren,
   AppAuditRoute: AppAuditRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppJournalsRoute: AppJournalsRouteWithChildren,

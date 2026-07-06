@@ -27,5 +27,7 @@ export const queryKeys = {
   taxCalc: (args: string) => ['taxCalc', args] as const,
   journalPreview: (args: string) => ['journalPreview', args] as const,
   closedPeriodPreview: (nature: string, date: string) => ['closedPeriodPreview', nature, date] as const,
+  accountBalance: (id: string, asOf: string) => ['accountBalance', id, asOf] as const,
+  account: (id: string) => ['account', id] as const,
   report: (path: string, params: unknown) => ['report', path, params] as const,
 };

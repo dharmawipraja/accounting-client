@@ -411,6 +411,8 @@ export const id = {
   },
   reports: {
     spanTooLong: 'Rentang tanggal Buku Besar maksimal 366 hari. Persempit rentang lalu coba lagi.',
+    balanceAsOf: 'Saldo per',
+    viewLedger: 'Buku Besar',
     truncatedGl: 'Sebagian baris tidak ditampilkan karena melebihi batas 10.000 baris. Persempit rentang tanggal; saldo akhir tetap benar.',
     truncatedAging: 'Sebagian dokumen tidak disertakan karena melebihi batas 10.000 dokumen. Total dan ekspor CSV hanya mencakup dokumen yang ditampilkan.',
     title: 'Laporan',

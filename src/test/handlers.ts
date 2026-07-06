@@ -168,6 +168,9 @@ export const handlers = [
   }),
   http.post(`${API}/ledger/accounts/:id/deactivate`, () => HttpResponse.json({})),
   http.delete(`${API}/ledger/accounts/:id`, () => HttpResponse.json({})),
+  http.get(`${API}/ledger/accounts/:id/balance`, ({ params }) =>
+    HttpResponse.json({ accountId: params.id, debit: '5000000.0000', credit: '1000000.0000', balance: '4000000.0000' })),
+  http.get(`${API}/ledger/accounts/:id`, ({ params }) => HttpResponse.json({ ...accountFixtures()[0], id: params.id })),
 
   http.get(`${API}/partners`, ({ request }) => {
     const u = new URL(request.url).searchParams;
