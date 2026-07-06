@@ -189,6 +189,7 @@ export const handlers = [
     return HttpResponse.json({ ...partnerFixtures()[0], id: params.id, ...body });
   }),
   http.post(`${API}/partners/:id/deactivate`, () => HttpResponse.json({})),
+  http.get(`${API}/partners/:id`, ({ params }) => HttpResponse.json({ ...partnerFixtures()[0], id: params.id })),
   http.delete(`${API}/partners/:id`, () => HttpResponse.json({})),
 
   http.get(`${API}/tax/codes`, ({ request }) => {

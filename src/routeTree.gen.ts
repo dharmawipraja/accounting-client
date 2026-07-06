@@ -39,6 +39,7 @@ import { Route as AppReportsArAgingRouteImport } from './app/routes/_app/reports
 import { Route as AppReportsApAgingRouteImport } from './app/routes/_app/reports.ap-aging'
 import { Route as AppPurchaseBillsNewRouteImport } from './app/routes/_app/purchase-bills.new'
 import { Route as AppPaymentsNewRouteImport } from './app/routes/_app/payments.new'
+import { Route as AppPartnersIdRouteImport } from './app/routes/_app/partners.$id'
 import { Route as AppJournalsNewRouteImport } from './app/routes/_app/journals.new'
 import { Route as AppJournalsIdRouteImport } from './app/routes/_app/journals.$id'
 import { Route as AppAccountsIdRouteImport } from './app/routes/_app/accounts.$id'
@@ -196,6 +197,11 @@ const AppPaymentsNewRoute = AppPaymentsNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AppPaymentsRoute,
 } as any)
+const AppPartnersIdRoute = AppPartnersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppPartnersRoute,
+} as any)
 const AppJournalsNewRoute = AppJournalsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -234,7 +240,7 @@ export interface FileRoutesByFullPath {
   '/audit': typeof AppAuditRoute
   '/dashboard': typeof AppDashboardRoute
   '/journals': typeof AppJournalsRouteWithChildren
-  '/partners': typeof AppPartnersRoute
+  '/partners': typeof AppPartnersRouteWithChildren
   '/payments': typeof AppPaymentsRouteWithChildren
   '/periods': typeof AppPeriodsRoute
   '/purchase-bills': typeof AppPurchaseBillsRouteWithChildren
@@ -245,6 +251,7 @@ export interface FileRoutesByFullPath {
   '/accounts/$id': typeof AppAccountsIdRoute
   '/journals/$id': typeof AppJournalsIdRoute
   '/journals/new': typeof AppJournalsNewRoute
+  '/partners/$id': typeof AppPartnersIdRoute
   '/payments/new': typeof AppPaymentsNewRoute
   '/purchase-bills/new': typeof AppPurchaseBillsNewRoute
   '/reports/ap-aging': typeof AppReportsApAgingRoute
@@ -270,13 +277,14 @@ export interface FileRoutesByTo {
   '/accounts': typeof AppAccountsRouteWithChildren
   '/audit': typeof AppAuditRoute
   '/dashboard': typeof AppDashboardRoute
-  '/partners': typeof AppPartnersRoute
+  '/partners': typeof AppPartnersRouteWithChildren
   '/periods': typeof AppPeriodsRoute
   '/settings': typeof AppSettingsRoute
   '/tax-codes': typeof AppTaxCodesRoute
   '/accounts/$id': typeof AppAccountsIdRoute
   '/journals/$id': typeof AppJournalsIdRoute
   '/journals/new': typeof AppJournalsNewRoute
+  '/partners/$id': typeof AppPartnersIdRoute
   '/payments/new': typeof AppPaymentsNewRoute
   '/purchase-bills/new': typeof AppPurchaseBillsNewRoute
   '/reports/ap-aging': typeof AppReportsApAgingRoute
@@ -305,7 +313,7 @@ export interface FileRoutesById {
   '/_app/audit': typeof AppAuditRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/journals': typeof AppJournalsRouteWithChildren
-  '/_app/partners': typeof AppPartnersRoute
+  '/_app/partners': typeof AppPartnersRouteWithChildren
   '/_app/payments': typeof AppPaymentsRouteWithChildren
   '/_app/periods': typeof AppPeriodsRoute
   '/_app/purchase-bills': typeof AppPurchaseBillsRouteWithChildren
@@ -316,6 +324,7 @@ export interface FileRoutesById {
   '/_app/accounts/$id': typeof AppAccountsIdRoute
   '/_app/journals/$id': typeof AppJournalsIdRoute
   '/_app/journals/new': typeof AppJournalsNewRoute
+  '/_app/partners/$id': typeof AppPartnersIdRoute
   '/_app/payments/new': typeof AppPaymentsNewRoute
   '/_app/purchase-bills/new': typeof AppPurchaseBillsNewRoute
   '/_app/reports/ap-aging': typeof AppReportsApAgingRoute
@@ -355,6 +364,7 @@ export interface FileRouteTypes {
     | '/accounts/$id'
     | '/journals/$id'
     | '/journals/new'
+    | '/partners/$id'
     | '/payments/new'
     | '/purchase-bills/new'
     | '/reports/ap-aging'
@@ -387,6 +397,7 @@ export interface FileRouteTypes {
     | '/accounts/$id'
     | '/journals/$id'
     | '/journals/new'
+    | '/partners/$id'
     | '/payments/new'
     | '/purchase-bills/new'
     | '/reports/ap-aging'
@@ -425,6 +436,7 @@ export interface FileRouteTypes {
     | '/_app/accounts/$id'
     | '/_app/journals/$id'
     | '/_app/journals/new'
+    | '/_app/partners/$id'
     | '/_app/payments/new'
     | '/_app/purchase-bills/new'
     | '/_app/reports/ap-aging'
@@ -663,6 +675,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPaymentsNewRouteImport
       parentRoute: typeof AppPaymentsRoute
     }
+    '/_app/partners/$id': {
+      id: '/_app/partners/$id'
+      path: '/$id'
+      fullPath: '/partners/$id'
+      preLoaderRoute: typeof AppPartnersIdRouteImport
+      parentRoute: typeof AppPartnersRoute
+    }
     '/_app/journals/new': {
       id: '/_app/journals/new'
       path: '/new'
@@ -734,6 +753,18 @@ const AppJournalsRouteChildren: AppJournalsRouteChildren = {
 
 const AppJournalsRouteWithChildren = AppJournalsRoute._addFileChildren(
   AppJournalsRouteChildren,
+)
+
+interface AppPartnersRouteChildren {
+  AppPartnersIdRoute: typeof AppPartnersIdRoute
+}
+
+const AppPartnersRouteChildren: AppPartnersRouteChildren = {
+  AppPartnersIdRoute: AppPartnersIdRoute,
+}
+
+const AppPartnersRouteWithChildren = AppPartnersRoute._addFileChildren(
+  AppPartnersRouteChildren,
 )
 
 interface AppPaymentsRouteChildren {
@@ -813,7 +844,7 @@ interface AppRouteChildren {
   AppAuditRoute: typeof AppAuditRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppJournalsRoute: typeof AppJournalsRouteWithChildren
-  AppPartnersRoute: typeof AppPartnersRoute
+  AppPartnersRoute: typeof AppPartnersRouteWithChildren
   AppPaymentsRoute: typeof AppPaymentsRouteWithChildren
   AppPeriodsRoute: typeof AppPeriodsRoute
   AppPurchaseBillsRoute: typeof AppPurchaseBillsRouteWithChildren
@@ -828,7 +859,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAuditRoute: AppAuditRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppJournalsRoute: AppJournalsRouteWithChildren,
-  AppPartnersRoute: AppPartnersRoute,
+  AppPartnersRoute: AppPartnersRouteWithChildren,
   AppPaymentsRoute: AppPaymentsRouteWithChildren,
   AppPeriodsRoute: AppPeriodsRoute,
   AppPurchaseBillsRoute: AppPurchaseBillsRouteWithChildren,

@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { afterEach, expect, it } from 'vitest';
 import { API, partnerFixtures } from '@/test/handlers';
 import { server } from '@/test/server';
+import { inRouter } from '@/test/utils';
 import { useSession } from '@/stores/session';
 import { PartnersPage } from './PartnersPage';
 
@@ -11,7 +12,7 @@ afterEach(() => useSession.getState().clear());
 
 function renderPage() {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return render(<QueryClientProvider client={qc}><PartnersPage /></QueryClientProvider>);
+  return render(<QueryClientProvider client={qc}>{inRouter(<PartnersPage />)}</QueryClientProvider>);
 }
 
 it('lists partners with type badges', async () => {

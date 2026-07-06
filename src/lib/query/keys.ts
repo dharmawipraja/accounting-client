@@ -29,5 +29,6 @@ export const queryKeys = {
   closedPeriodPreview: (nature: string, date: string) => ['closedPeriodPreview', nature, date] as const,
   accountBalance: (id: string, asOf: string) => ['accountBalance', id, asOf] as const,
   account: (id: string) => ['account', id] as const,
+  partner: (id: string) => ['partner', id] as const,
   report: (path: string, params: unknown) => ['report', path, params] as const,
 };

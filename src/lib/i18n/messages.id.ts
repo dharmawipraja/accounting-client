@@ -188,6 +188,13 @@ export const id = {
     atLeastOneType: 'Pilih minimal satu: Pelanggan atau Pemasok',
     invalidEmail: 'Email tidak valid',
     invalidNpwp: 'NPWP harus 15–16 digit',
+    statement: 'Rekening Koran',
+    arOutstanding: 'Piutang',
+    apOutstanding: 'Utang',
+    noInvoices: 'Belum ada faktur penjualan',
+    noBills: 'Belum ada faktur pembelian',
+    noPayments: 'Belum ada pembayaran',
+    noPaymentsHint: 'Pembayaran untuk mitra ini akan muncul di sini.',
   },
   taxCodes: {
     title: 'Kode Pajak',
