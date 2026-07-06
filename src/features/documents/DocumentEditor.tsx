@@ -14,11 +14,13 @@ import { useT } from '@/lib/i18n/useT';
 import type { ApiError } from '@/lib/api/errors';
 import { accountsApi } from '@/features/accounts/hooks';
 import { FieldError } from '@/components/common/FieldError';
+import { WarningNotice } from '@/components/common/WarningNotice';
 import { useUnsavedGuard, UnsavedGuardDialog } from '@/components/common/useUnsavedGuard';
 import { DocumentTotals } from './DocumentTotals';
 import { DocumentLineRow } from './DocumentLineRow';
 import { ReadOnlyBanner } from './ReadOnlyBanner';
 import { useDocumentSubmit } from './useDocumentSubmit';
+import { useClosedPeriodPreview } from './useClosedPeriodPreview';
 import { EMPTY_LINE, MAX_LINES, safeAmount, type DocumentHeaderValues } from './documentFormSchema';
 
 export interface DocumentEditorLabels {
@@ -117,6 +119,16 @@ export function DocumentEditor<
     }
   }
 
+  // Warn before post time when the document's date is in a closed period/year
+  // (the API's journal-entry preview reproduces the 409 a real post would give).
+  const watchedDate = form.watch('date' as Path<TFormValues>) as string | undefined;
+  const closedPeriod = useClosedPeriodPreview({
+    nature: config.nature,
+    settlementAccountId,
+    lines: previewLines,
+    date: watchedDate ?? '',
+  });
+
   const errors = form.formState.errors as Record<string, { message?: string } | undefined>;
   const dirty = form.formState.isDirty;
   const guard = useUnsavedGuard(() => dirty && !leavingRef.current);
@@ -130,6 +142,12 @@ export function DocumentEditor<
         postedLabel={labels.readOnlyPosted}
         voidLabel={labels.readOnlyVoid}
       />
+      {!readOnly ? (
+        <WarningNotice
+          show={closedPeriod.closed}
+          message={closedPeriod.kind === 'year' ? t.documents.closedYearWarning : t.documents.closedPeriodWarning}
+        />
+      ) : null}
       <div className={cn('grid grid-cols-1 gap-4 sm:grid-cols-2', config.extraHeaderField ? 'md:grid-cols-5' : 'md:grid-cols-4')}>
         <div className="space-y-1.5">
           <Label>{labels.partner}</Label>

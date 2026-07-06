@@ -65,6 +65,12 @@ it('creates a draft: picks partner + line and posts the lines payload', async ()
   await waitFor(() => expect(onSaved).toHaveBeenCalled());
 });
 
+// NOTE: the closed-period warning (useClosedPeriodPreview) is driven by the same
+// debounced-preview-off-form.watch('lines') path as the tax preview, which the
+// jsdom gotcha prevents triggering here (see document-editor-test-gotchas). The
+// hook is covered directly in useClosedPeriodPreview.test.tsx; the wiring is
+// verified live against the API.
+
 it('edit mode: PATCH body omits partnerId and the partner select is locked', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });

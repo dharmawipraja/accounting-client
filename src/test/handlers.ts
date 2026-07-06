@@ -262,7 +262,12 @@ export const handlers = [
   // debit cash / credit AR-control for the allocation total (RECEIPT; mirrored for
   // DISBURSEMENT), echoing the live JournalPreviewResponseDto lines.
   http.post(`${API}/journal-entries/preview`, async ({ request }) => {
-    const body = (await request.json()) as { direction?: string; cashAccountId?: string; allocations?: { amount: string }[] };
+    const body = (await request.json()) as { direction?: string; cashAccountId?: string; date?: string; allocations?: { amount: string }[]; lines?: { amount: string }[] };
+    // Live behaviour: an optional `date` reproduces the 409 a real post would give
+    // for a closed period. Mock rule: any date before fiscal year 2026 is closed.
+    if (body.date && body.date < '2026-01-01') {
+      return HttpResponse.json({ code: 'CLOSED_PERIOD', message: 'No open accounting period contains this date' }, { status: 409 });
+    }
     const total = (body.allocations ?? []).reduce((acc, a) => acc + Number(a.amount), 0).toFixed(4);
     const cash = { accountId: body.cashAccountId ?? 'a1', accountCode: '1-1000', accountName: 'Kas', debit: '0.0000', credit: '0.0000' };
     const control = body.direction === 'DISBURSEMENT'
