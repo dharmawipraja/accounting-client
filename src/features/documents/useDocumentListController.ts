@@ -23,12 +23,29 @@ export interface ActionConfig<K extends ActionKind> {
 }
 export type ActionsConfig = { [K in ActionKind]?: ActionConfig<K> };
 
-export interface FilterConfig {
+/** A button-group filter: options[0] is the ALL sentinel (value 'ALL' → param omitted). */
+export interface ButtonFilter {
+  kind?: 'buttons';
   /** server query-param name, e.g. 'status' | 'direction' | 'sourceType' */
   param: string;
-  /** options[0] is the ALL sentinel (value 'ALL' → param omitted from the query) */
   options: readonly { value: string; label: string }[];
 }
+/** A partner combobox filter (value = partner id; empty → param omitted). */
+export interface PartnerFilter {
+  kind: 'partner';
+  param: string;
+  /** restrict the partner list to customers or vendors */
+  partnerFilter?: 'customer' | 'vendor';
+  label: string;
+}
+/** A from/to date-range filter driving two server params (empty → omitted). */
+export interface DateRangeFilter {
+  kind: 'dateRange';
+  fromParam: string;
+  toParam: string;
+  label?: string;
+}
+export type FilterConfig = ButtonFilter | PartnerFilter | DateRangeFilter;
 
 export type ListHook<T> = (
   query: Record<string, string | number | undefined>,
@@ -99,7 +116,11 @@ export function useDocumentListController<T extends { id: string }>(
   const [search, setSearchState] = useState('');
   const [filterValues, setFilterValues] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
-    for (const f of config.filters ?? []) init[f.param] = config.initialFilters?.[f.param] ?? 'ALL';
+    for (const f of config.filters ?? []) {
+      if (f.kind === 'dateRange') { init[f.fromParam] = ''; init[f.toParam] = ''; }
+      else if (f.kind === 'partner') { init[f.param] = ''; }
+      else init[f.param] = config.initialFilters?.[f.param] ?? 'ALL';
+    }
     return init;
   });
   const [pending, setPending] = useState<Pending<T> | null>(null);
@@ -119,7 +140,8 @@ export function useDocumentListController<T extends { id: string }>(
     q: config.search && debouncedSearch.length >= 2 ? debouncedSearch : undefined,
   };
   for (const [param, value] of Object.entries(filterValues)) {
-    query[param] = value === 'ALL' ? undefined : value;
+    // 'ALL' (button sentinel) and '' (unset partner / date) both omit the param.
+    query[param] = value === 'ALL' || value === '' ? undefined : value;
   }
   const page = config.list(query);
 

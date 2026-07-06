@@ -10,6 +10,7 @@ import { QueryState } from '@/components/common/QueryState';
 import { RoleGate } from '@/components/common/RoleGate';
 import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { useT } from '@/lib/i18n/useT';
+import { ListFilters } from './ListFilters';
 import { useDocumentListController, type DocumentListConfig } from './useDocumentListController';
 
 export function DocumentListPage<T extends { id: string }>({ config }: { config: DocumentListConfig<T> }) {
@@ -35,20 +36,7 @@ export function DocumentListPage<T extends { id: string }>({ config }: { config:
             />
           </div>
         ) : null}
-        {(config.filters ?? []).map((f) => (
-          <div key={f.param} className="flex gap-1">
-            {f.options.map((o) => (
-              <Button
-                key={o.value}
-                size="sm"
-                variant={c.filterValues[f.param] === o.value ? 'default' : 'outline'}
-                onClick={() => c.setFilter(f.param, o.value)}
-              >
-                {o.label}
-              </Button>
-            ))}
-          </div>
-        ))}
+        <ListFilters filters={config.filters ?? []} values={c.filterValues} onChange={c.setFilter} />
       </div>
 
       <QueryState query={c.page} loading={<SkeletonTable rows={8} cols={config.colCount} />} onRetry>

@@ -22,6 +22,7 @@ export const id = {
     noResults: 'Tidak ada hasil',
     noResultsHint: 'Coba kata kunci lain atau hapus pencarian.',
     clearSearch: 'Hapus pencarian',
+    allPartners: 'Semua mitra',
     discardTitle: 'Buang perubahan?',
     discardMessage: 'Perubahan yang belum disimpan akan hilang.',
     discard: 'Buang',

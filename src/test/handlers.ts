@@ -337,6 +337,8 @@ export const handlers = [
     let data = journalEntryListFixture();
     if (status) data = data.filter((e) => e.status === status);
     if (sourceType) data = data.filter((e) => e.sourceType === sourceType);
+    const from = u.get('from'); if (from) data = data.filter((e) => e.date.slice(0, 10) >= from);
+    const to = u.get('to'); if (to) data = data.filter((e) => e.date.slice(0, 10) <= to);
     data = data.filter((e) => matchesQ(u.get('q'), e.entryRef, e.description));
     return HttpResponse.json({ data: data.slice(offset, offset + limit), total: data.length, limit, offset });
   }),

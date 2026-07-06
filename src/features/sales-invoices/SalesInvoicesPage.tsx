@@ -35,7 +35,7 @@ export function SalesInvoicesPage() {
       { value: 'DRAFT', label: documentStatusLabel(t, 'DRAFT') },
       { value: 'POSTED', label: documentStatusLabel(t, 'POSTED') },
       { value: 'VOID', label: documentStatusLabel(t, 'VOID') },
-    ] }],
+    ] }, { kind: 'partner', param: 'partnerId', partnerFilter: 'customer', label: t.salesInvoices.partner }],
     search: {}, // server-side ?q= (invoiceRef, description, customer name + code)
     describeDoc: (inv) => (
       <div className="flex items-center justify-between gap-4">

@@ -45,6 +45,7 @@ export function JournalsPage({ initialStatus }: { initialStatus?: 'DRAFT' | 'POS
         { value: 'ALL', label: t.journals.sourceAll },
         { value: 'MANUAL', label: t.journals.sourceManual },
       ] },
+      { kind: 'dateRange', fromParam: 'from', toParam: 'to', label: t.journals.date },
     ],
     initialFilters: initialStatus ? { status: initialStatus } : undefined,
     search: {}, // server-side ?q= (entryRef, description)

@@ -44,6 +44,7 @@ export function PaymentsPage() {
         { value: 'RECEIPT', label: t.payments.directionReceipt },
         { value: 'DISBURSEMENT', label: t.payments.directionDisbursement },
       ] },
+      { kind: 'partner', param: 'partnerId', label: t.payments.partner },
     ],
     search: {}, // server-side ?q= (ref, description, partner name + code)
     describeDoc: (p) => (

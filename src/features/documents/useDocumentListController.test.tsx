@@ -99,6 +99,25 @@ it('resets offset to 0 on filter change and on search change', () => {
   expect(result.current.offset).toBe(0);
 });
 
+// Partner + date-range filters default to empty (omitted from the query) and
+// map straight onto server params once set.
+it('inits partner + dateRange filters empty, omits them until set, then sends them', () => {
+  const listSpy = vi.fn();
+  const config = makeConfig({
+    filters: [
+      { kind: 'partner', param: 'partnerId', label: 'Mitra' },
+      { kind: 'dateRange', fromParam: 'from', toParam: 'to', label: 'Periode' },
+    ],
+  }, () => {}, listSpy);
+  const { result } = renderHook(() => useDocumentListController(config));
+
+  expect(listSpy).toHaveBeenLastCalledWith(expect.objectContaining({ partnerId: undefined, from: undefined, to: undefined }));
+
+  act(() => result.current.setFilter('partnerId', 'p1'));
+  act(() => result.current.setFilter('from', '2026-01-01'));
+  expect(listSpy).toHaveBeenLastCalledWith(expect.objectContaining({ partnerId: 'p1', from: '2026-01-01', to: undefined }));
+});
+
 it('routes delete errors to a plain toast and keyed errors to toastApiError', async () => {
   const mod = await import('@/lib/api/toastApiError');
   const toastApiError = vi.spyOn(mod, 'toastApiError');

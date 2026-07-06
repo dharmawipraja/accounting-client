@@ -35,7 +35,7 @@ export function PurchaseBillsPage() {
       { value: 'DRAFT', label: documentStatusLabel(t, 'DRAFT') },
       { value: 'POSTED', label: documentStatusLabel(t, 'POSTED') },
       { value: 'VOID', label: documentStatusLabel(t, 'VOID') },
-    ] }],
+    ] }, { kind: 'partner', param: 'partnerId', partnerFilter: 'vendor', label: t.purchaseBills.partner }],
     search: {}, // server-side ?q= (billRef, vendorInvoiceNo, description, vendor name + code)
     describeDoc: (bill) => (
       <div className="flex items-center justify-between gap-4">
