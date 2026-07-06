@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -39,6 +39,9 @@ function SettingsForm({ settings }: { settings: CompanySettings }) {
   const update = useUpdateCompanySettings();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pending, setPending] = useState<CompanySettingsForm | null>(null);
+  // Set when the dialog closes via Confirm so onOpenChange can tell an accepted
+  // save apart from a dismissal and skip the restore-to-saved-value below.
+  const confirmingRef = useRef(false);
   const form = useForm<CompanySettingsForm>({
     resolver: zodResolver(companySettingsFormSchema),
     defaultValues: toFormValues(settings),
@@ -126,14 +129,19 @@ function SettingsForm({ settings }: { settings: CompanySettings }) {
           setConfirmOpen(open);
           // Cancel/escape/outside-click: the switch was already flipped in the
           // form — restore the SAVED value so the screen doesn't misreport SoD.
-          if (!open) form.setValue('segregationOfDutiesEnabled', settings.segregationOfDutiesEnabled);
+          // Confirm closes the dialog too, but there we keep the flipped value
+          // since it is being saved (confirmingRef guards against reverting it).
+          if (!open && !confirmingRef.current) {
+            form.setValue('segregationOfDutiesEnabled', settings.segregationOfDutiesEnabled);
+          }
+          confirmingRef.current = false;
         }}
         title={t.settings.sod}
         description={t.settings.confirmDisableSod}
         confirmLabel={t.settings.save}
         destructive
         pending={update.isPending}
-        onConfirm={() => { setConfirmOpen(false); if (pending) save(pending); }}
+        onConfirm={() => { confirmingRef.current = true; setConfirmOpen(false); if (pending) save(pending); }}
       />
     </form>
   );

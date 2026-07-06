@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -11,7 +11,12 @@ import { DocumentEditorPage, type DocumentEditorPageConfig } from './DocumentEdi
 // Document mutations are ACCOUNTANT/APPROVER/ADMIN per the role matrix; the page
 // itself re-checks the role (defense-in-depth beyond hiding the nav links).
 beforeEach(() => useSession.getState().setUser({ id: 'u1', email: 'a@b.c', role: 'ACCOUNTANT' }));
-afterEach(() => useSession.getState().clear());
+// Unmount BEFORE clearing the session: clearing drops the token, which flips
+// useRoleReady() true with a null role, re-rendering a still-mounted plain-render
+// (routerless) test into the forbidden branch — whose breadcrumb <Link> then
+// throws "Cannot read properties of null (reading 'isServer')". cleanup() first
+// tears the tree down so the store change reaches nothing.
+afterEach(() => { cleanup(); useSession.getState().clear(); });
 
 type Doc = { id: string; status: string };
 

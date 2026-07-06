@@ -1,5 +1,5 @@
 import { Trash2 } from 'lucide-react';
-import type { Path, UseFormReturn } from 'react-hook-form';
+import { useWatch, type Path, type UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TableCell, TableRow } from '@/components/ui/table';
@@ -32,7 +32,13 @@ export function DocumentLineRow<TForm extends DocumentHeaderValues>({
 }) {
   // `lines.${index}.*` paths are valid because TForm extends DocumentHeaderValues (which has `lines`).
   const p = (field: string) => `lines.${index}.${field}` as Path<TForm>;
-  const line = form.watch(`lines.${index}` as Path<TForm>) as DocumentHeaderValues['lines'][number];
+  // useWatch (a hook), not form.watch (a method): this row is memoized by React
+  // Compiler, which caches form.watch's result and would freeze the controlled
+  // account/price/tax cells and the computed amount as the user edits.
+  const line = useWatch({
+    control: form.control,
+    name: `lines.${index}` as Path<TForm>,
+  }) as DocumentHeaderValues['lines'][number];
   const amount = (() => {
     try { return Money.from(line.quantity || '0').times(line.unitPrice || '0').toApi(); }
     catch { return Money.zero().toApi(); }

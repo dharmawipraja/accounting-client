@@ -1,4 +1,4 @@
-import type { UseFormReturn } from 'react-hook-form';
+import { useWatch, type UseFormReturn } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -72,11 +72,12 @@ function EditForm({ partner, open, onOpenChange }: { partner: Partner; open: boo
 
 function EditFields({ form }: { form: UseFormReturn<PartnerEditValues> }) {
   const t = useT();
+  const isActive = useWatch({ control: form.control, name: 'isActive' });
   return (
     <>
       <SharedFields form={form} />
       <label className="flex items-center gap-2 text-sm">
-        <Checkbox checked={form.watch('isActive')} onCheckedChange={(v) => form.setValue('isActive', v === true)} />
+        <Checkbox checked={isActive} onCheckedChange={(v) => form.setValue('isActive', v === true)} />
         {t.crud.active}
       </label>
     </>
@@ -105,6 +106,11 @@ function CreateFields({ form }: { form: UseFormReturn<PartnerCreateValues> }) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function SharedFields({ form }: { form: UseFormReturn<any> }) {
   const t = useT();
+  // useWatch, not form.watch: keeps these checkboxes reactive under React
+  // Compiler, which otherwise caches form.watch in this memoized component.
+  const { control } = form;
+  const isCustomer = useWatch({ control, name: 'isCustomer' });
+  const isVendor = useWatch({ control, name: 'isVendor' });
   return (
     <>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -133,7 +139,7 @@ function SharedFields({ form }: { form: UseFormReturn<any> }) {
         <label className="flex items-center gap-2 text-sm">
           <Checkbox
             aria-label={t.partners.customer}
-            checked={form.watch('isCustomer')}
+            checked={isCustomer}
             onCheckedChange={(v) => form.setValue('isCustomer', v === true)}
           />
           {t.partners.customer}
@@ -141,7 +147,7 @@ function SharedFields({ form }: { form: UseFormReturn<any> }) {
         <label className="flex items-center gap-2 text-sm">
           <Checkbox
             aria-label={t.partners.vendor}
-            checked={form.watch('isVendor')}
+            checked={isVendor}
             onCheckedChange={(v) => form.setValue('isVendor', v === true)}
           />
           {t.partners.vendor}

@@ -1,4 +1,4 @@
-import { Link, useMatchRoute } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { BookText } from "lucide-react";
 import {
 	Sidebar,
@@ -16,7 +16,11 @@ import { useT } from "@/lib/i18n/useT";
 
 export function AppSidebar() {
 	const t = useT();
-	const matchRoute = useMatchRoute();
+	// Derive the active item from the reactive pathname, not from useMatchRoute's
+	// stable callback: React Compiler treats that callback + item.to as unchanging
+	// inputs and caches the computed `isActive`, so the highlight went stale after
+	// client-side navigation. A pure comparison over `pathname` recomputes correctly.
+	const pathname = useLocation({ select: (l) => l.pathname });
 	const navGroups = useNavItems();
 
 	return (
@@ -41,9 +45,9 @@ export function AppSidebar() {
 							<SidebarMenu>
 								{group.items.map((item) => {
 									const Icon = item.icon;
-									const isActive = Boolean(
-										matchRoute({ to: item.to, fuzzy: true }),
-									);
+									const isActive =
+										pathname === item.to ||
+										pathname.startsWith(`${item.to}/`);
 									return (
 										<SidebarMenuItem key={item.to}>
 											<SidebarMenuButton

@@ -1,4 +1,4 @@
-import type { UseFormReturn } from 'react-hook-form';
+import { useWatch, type UseFormReturn } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -84,6 +84,11 @@ function EditForm({ taxCode, open, onOpenChange }: { taxCode: TaxCode; open: boo
 
 function TaxCodeCreateFields({ form }: { form: UseFormReturn<TaxCodeCreateValues> }) {
   const t = useT();
+  // useWatch, not form.watch: React Compiler caches form.watch's result in this
+  // memoized (prop-form) component, freezing the controlled inputs below.
+  const { control } = form;
+  const kind = useWatch({ control, name: 'kind' });
+  const taxAccountId = useWatch({ control, name: 'taxAccountId' });
   return (
     <>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -99,7 +104,7 @@ function TaxCodeCreateFields({ form }: { form: UseFormReturn<TaxCodeCreateValues
 
       <div className="space-y-1.5">
         <Label htmlFor="kind">{t.taxCodes.kind}</Label>
-        <Select value={form.watch('kind')} onValueChange={(v) => form.setValue('kind', v as TaxKind)}>
+        <Select value={kind} onValueChange={(v) => form.setValue('kind', v as TaxKind)}>
           <SelectTrigger id="kind" aria-label={t.taxCodes.kind}><SelectValue /></SelectTrigger>
           <SelectContent>
             {KIND_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{t.taxCodes[o.key]}</SelectItem>)}
@@ -116,7 +121,7 @@ function TaxCodeCreateFields({ form }: { form: UseFormReturn<TaxCodeCreateValues
         <div className="space-y-1.5">
           <Label>{t.taxCodes.taxAccount}</Label>
           <AccountSelect
-            value={form.watch('taxAccountId')}
+            value={taxAccountId}
             onChange={(id) => form.setValue('taxAccountId', id, { shouldValidate: true })}
             placeholder={t.taxCodes.selectAccount}
             aria-label={t.taxCodes.taxAccount}
@@ -130,6 +135,7 @@ function TaxCodeCreateFields({ form }: { form: UseFormReturn<TaxCodeCreateValues
 
 function TaxCodeEditFields({ form }: { form: UseFormReturn<TaxCodeEditValues> }) {
   const t = useT();
+  const isActive = useWatch({ control: form.control, name: 'isActive' });
   return (
     <>
       <div className="space-y-1.5">
@@ -142,7 +148,7 @@ function TaxCodeEditFields({ form }: { form: UseFormReturn<TaxCodeEditValues> })
         <FieldError message={err(t, form.formState.errors.ratePercent?.message as string | undefined)} />
       </div>
       <label className="flex items-center gap-2 text-sm">
-        <Checkbox checked={form.watch('isActive')} onCheckedChange={(v) => form.setValue('isActive', v === true)} />
+        <Checkbox checked={isActive} onCheckedChange={(v) => form.setValue('isActive', v === true)} />
         {t.crud.active}
       </label>
     </>

@@ -48,6 +48,26 @@ it('ADMIN: turning SoD off + Simpan asks for confirmation then PATCHes false', a
   await waitFor(() => expect(patched).toMatchObject({ segregationOfDutiesEnabled: false }));
 });
 
+// Confirming the disable must LEAVE the switch off: the PATCH persisted false,
+// so the control has to keep reporting off. Regression — the confirm path also
+// tripped the dialog's restore-on-close, snapping the switch back on even though
+// the save succeeded, so the screen looked like the toggle had reverted itself.
+it('ADMIN: confirming the SoD-disable leaves the switch off', async () => {
+  server.use(
+    http.get(`${API}/company/settings`, () => HttpResponse.json(companySettingsFixture())),
+    http.patch(`${API}/company/settings`, async ({ request }) => { const body = (await request.json()) as Record<string, unknown>; return HttpResponse.json({ ...companySettingsFixture(), ...body }); }),
+  );
+  renderPage('ADMIN');
+  await screen.findByLabelText('Nama Resmi');
+  const user = userEvent.setup();
+  await user.click(screen.getByRole('switch', { name: 'Segregasi Tugas' }));
+  await user.click(screen.getByRole('button', { name: 'Simpan' }));
+  const dialog = await screen.findByRole('alertdialog');
+  await user.click(within(dialog).getByRole('button', { name: 'Simpan' }));
+  await waitFor(() => expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument());
+  expect(screen.getByRole('switch', { name: 'Segregasi Tugas' })).not.toBeChecked();
+});
+
 // Cancelling the confirmation must restore the switch to the SAVED value —
 // otherwise the screen misreports the SoD control as off while the server
 // still has it on.

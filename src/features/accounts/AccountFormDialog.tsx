@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import type { UseFormReturn } from 'react-hook-form';
+import { useWatch, type UseFormReturn } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -71,7 +71,14 @@ function EditForm({ account, open, onOpenChange }: { account: Account; open: boo
 
 function AccountCreateFields({ form }: { form: UseFormReturn<AccountCreateValues> }) {
   const t = useT();
-  const subtype = form.watch('subtype');
+  // useWatch (a hook), not form.watch (a method): under React Compiler this
+  // component is memoized, and form.watch's result gets cached — so controlled
+  // inputs bound to it never update. useWatch subscribes reactively instead.
+  const { control } = form;
+  const subtype = useWatch({ control, name: 'subtype' });
+  const normalBalance = useWatch({ control, name: 'normalBalance' });
+  const cashFlowCategory = useWatch({ control, name: 'cashFlowCategory' });
+  const isPostable = useWatch({ control, name: 'isPostable' });
   useEffect(() => {
     const meta = SUBTYPE_META[subtype as AccountSubtype];
     if (meta) {
@@ -106,7 +113,7 @@ function AccountCreateFields({ form }: { form: UseFormReturn<AccountCreateValues
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label={t.accounts.normalBalance} htmlFor="nb">
           <Select
-            value={form.watch('normalBalance')}
+            value={normalBalance}
             onValueChange={(v) => form.setValue('normalBalance', v as 'DEBIT' | 'CREDIT')}
           >
             <SelectTrigger id="nb" aria-label={t.accounts.normalBalance}><SelectValue /></SelectTrigger>
@@ -118,7 +125,7 @@ function AccountCreateFields({ form }: { form: UseFormReturn<AccountCreateValues
         </Field>
         <Field label={t.accounts.cashFlowCategory} htmlFor="cf">
           <Select
-            value={form.watch('cashFlowCategory')}
+            value={cashFlowCategory}
             onValueChange={(v) => form.setValue('cashFlowCategory', v as AccountCreateValues['cashFlowCategory'])}
           >
             <SelectTrigger id="cf" aria-label={t.accounts.cashFlowCategory}><SelectValue /></SelectTrigger>
@@ -131,7 +138,7 @@ function AccountCreateFields({ form }: { form: UseFormReturn<AccountCreateValues
 
       <label className="flex items-center gap-2 text-sm">
         <Checkbox
-          checked={form.watch('isPostable')}
+          checked={isPostable}
           onCheckedChange={(v) => form.setValue('isPostable', v === true)}
         />
         {t.accounts.postable}
@@ -142,6 +149,9 @@ function AccountCreateFields({ form }: { form: UseFormReturn<AccountCreateValues
 
 function AccountEditFields({ form }: { form: UseFormReturn<AccountEditValues> }) {
   const t = useT();
+  const { control } = form;
+  const cashFlowCategory = useWatch({ control, name: 'cashFlowCategory' });
+  const isActive = useWatch({ control, name: 'isActive' });
   return (
     <>
       <Field label={t.accounts.name} htmlFor="ename">
@@ -150,7 +160,7 @@ function AccountEditFields({ form }: { form: UseFormReturn<AccountEditValues> })
       </Field>
       <Field label={t.accounts.cashFlowCategory} htmlFor="ecf">
         <Select
-          value={form.watch('cashFlowCategory')}
+          value={cashFlowCategory}
           onValueChange={(v) => form.setValue('cashFlowCategory', v as AccountEditValues['cashFlowCategory'])}
         >
           <SelectTrigger id="ecf" aria-label={t.accounts.cashFlowCategory}><SelectValue /></SelectTrigger>
@@ -160,7 +170,7 @@ function AccountEditFields({ form }: { form: UseFormReturn<AccountEditValues> })
         </Select>
       </Field>
       <label className="flex items-center gap-2 text-sm">
-        <Checkbox checked={form.watch('isActive')} onCheckedChange={(v) => form.setValue('isActive', v === true)} />
+        <Checkbox checked={isActive} onCheckedChange={(v) => form.setValue('isActive', v === true)} />
         {t.crud.active}
       </label>
     </>
