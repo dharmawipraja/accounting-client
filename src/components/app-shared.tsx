@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import {
 	BookText,
 	CalendarCheck,
+	ClipboardCheck,
 	FileChartColumn,
 	LayoutDashboard,
 	NotebookText,
@@ -22,6 +23,7 @@ type NavTo =
 	| "/purchase-bills"
 	| "/payments"
 	| "/journals"
+	| "/approvals"
 	| "/accounts"
 	| "/reports"
 	| "/periods"
@@ -67,6 +69,7 @@ export function useNavItems(): NavGroup[] {
 				{ to: "/purchase-bills", label: t.nav.purchaseBills, icon: ReceiptText },
 				{ to: "/payments", label: t.nav.payments, icon: Wallet },
 				{ to: "/journals", label: t.nav.journals, icon: NotebookText },
+				{ to: "/approvals", label: t.nav.approvals, icon: ClipboardCheck },
 			],
 		},
 		{
