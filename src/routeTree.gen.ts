@@ -29,7 +29,9 @@ import { Route as AppSalesInvoicesIndexRouteImport } from './app/routes/_app/sal
 import { Route as AppReportsIndexRouteImport } from './app/routes/_app/reports.index'
 import { Route as AppPurchaseBillsIndexRouteImport } from './app/routes/_app/purchase-bills.index'
 import { Route as AppPaymentsIndexRouteImport } from './app/routes/_app/payments.index'
+import { Route as AppPartnersIndexRouteImport } from './app/routes/_app/partners.index'
 import { Route as AppJournalsIndexRouteImport } from './app/routes/_app/journals.index'
+import { Route as AppAccountsIndexRouteImport } from './app/routes/_app/accounts.index'
 import { Route as AppSalesInvoicesNewRouteImport } from './app/routes/_app/sales-invoices.new'
 import { Route as AppReportsTrialBalanceRouteImport } from './app/routes/_app/reports.trial-balance'
 import { Route as AppReportsIncomeStatementRouteImport } from './app/routes/_app/reports.income-statement'
@@ -147,10 +149,20 @@ const AppPaymentsIndexRoute = AppPaymentsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppPaymentsRoute,
 } as any)
+const AppPartnersIndexRoute = AppPartnersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppPartnersRoute,
+} as any)
 const AppJournalsIndexRoute = AppJournalsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppJournalsRoute,
+} as any)
+const AppAccountsIndexRoute = AppAccountsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppAccountsRoute,
 } as any)
 const AppSalesInvoicesNewRoute = AppSalesInvoicesNewRouteImport.update({
   id: '/new',
@@ -269,7 +281,9 @@ export interface FileRoutesByFullPath {
   '/reports/income-statement': typeof AppReportsIncomeStatementRoute
   '/reports/trial-balance': typeof AppReportsTrialBalanceRoute
   '/sales-invoices/new': typeof AppSalesInvoicesNewRoute
+  '/accounts/': typeof AppAccountsIndexRoute
   '/journals/': typeof AppJournalsIndexRoute
+  '/partners/': typeof AppPartnersIndexRoute
   '/payments/': typeof AppPaymentsIndexRoute
   '/purchase-bills/': typeof AppPurchaseBillsIndexRoute
   '/reports/': typeof AppReportsIndexRoute
@@ -281,11 +295,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/accounts': typeof AppAccountsRouteWithChildren
   '/approvals': typeof AppApprovalsRoute
   '/audit': typeof AppAuditRoute
   '/dashboard': typeof AppDashboardRoute
-  '/partners': typeof AppPartnersRouteWithChildren
   '/periods': typeof AppPeriodsRoute
   '/settings': typeof AppSettingsRoute
   '/tax-codes': typeof AppTaxCodesRoute
@@ -303,7 +315,9 @@ export interface FileRoutesByTo {
   '/reports/income-statement': typeof AppReportsIncomeStatementRoute
   '/reports/trial-balance': typeof AppReportsTrialBalanceRoute
   '/sales-invoices/new': typeof AppSalesInvoicesNewRoute
+  '/accounts': typeof AppAccountsIndexRoute
   '/journals': typeof AppJournalsIndexRoute
+  '/partners': typeof AppPartnersIndexRoute
   '/payments': typeof AppPaymentsIndexRoute
   '/purchase-bills': typeof AppPurchaseBillsIndexRoute
   '/reports': typeof AppReportsIndexRoute
@@ -344,7 +358,9 @@ export interface FileRoutesById {
   '/_app/reports/income-statement': typeof AppReportsIncomeStatementRoute
   '/_app/reports/trial-balance': typeof AppReportsTrialBalanceRoute
   '/_app/sales-invoices/new': typeof AppSalesInvoicesNewRoute
+  '/_app/accounts/': typeof AppAccountsIndexRoute
   '/_app/journals/': typeof AppJournalsIndexRoute
+  '/_app/partners/': typeof AppPartnersIndexRoute
   '/_app/payments/': typeof AppPaymentsIndexRoute
   '/_app/purchase-bills/': typeof AppPurchaseBillsIndexRoute
   '/_app/reports/': typeof AppReportsIndexRoute
@@ -385,7 +401,9 @@ export interface FileRouteTypes {
     | '/reports/income-statement'
     | '/reports/trial-balance'
     | '/sales-invoices/new'
+    | '/accounts/'
     | '/journals/'
+    | '/partners/'
     | '/payments/'
     | '/purchase-bills/'
     | '/reports/'
@@ -397,11 +415,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
-    | '/accounts'
     | '/approvals'
     | '/audit'
     | '/dashboard'
-    | '/partners'
     | '/periods'
     | '/settings'
     | '/tax-codes'
@@ -419,7 +435,9 @@ export interface FileRouteTypes {
     | '/reports/income-statement'
     | '/reports/trial-balance'
     | '/sales-invoices/new'
+    | '/accounts'
     | '/journals'
+    | '/partners'
     | '/payments'
     | '/purchase-bills'
     | '/reports'
@@ -459,7 +477,9 @@ export interface FileRouteTypes {
     | '/_app/reports/income-statement'
     | '/_app/reports/trial-balance'
     | '/_app/sales-invoices/new'
+    | '/_app/accounts/'
     | '/_app/journals/'
+    | '/_app/partners/'
     | '/_app/payments/'
     | '/_app/purchase-bills/'
     | '/_app/reports/'
@@ -617,12 +637,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPaymentsIndexRouteImport
       parentRoute: typeof AppPaymentsRoute
     }
+    '/_app/partners/': {
+      id: '/_app/partners/'
+      path: '/'
+      fullPath: '/partners/'
+      preLoaderRoute: typeof AppPartnersIndexRouteImport
+      parentRoute: typeof AppPartnersRoute
+    }
     '/_app/journals/': {
       id: '/_app/journals/'
       path: '/'
       fullPath: '/journals/'
       preLoaderRoute: typeof AppJournalsIndexRouteImport
       parentRoute: typeof AppJournalsRoute
+    }
+    '/_app/accounts/': {
+      id: '/_app/accounts/'
+      path: '/'
+      fullPath: '/accounts/'
+      preLoaderRoute: typeof AppAccountsIndexRouteImport
+      parentRoute: typeof AppAccountsRoute
     }
     '/_app/sales-invoices/new': {
       id: '/_app/sales-invoices/new'
@@ -748,10 +782,12 @@ declare module '@tanstack/react-router' {
 
 interface AppAccountsRouteChildren {
   AppAccountsIdRoute: typeof AppAccountsIdRoute
+  AppAccountsIndexRoute: typeof AppAccountsIndexRoute
 }
 
 const AppAccountsRouteChildren: AppAccountsRouteChildren = {
   AppAccountsIdRoute: AppAccountsIdRoute,
+  AppAccountsIndexRoute: AppAccountsIndexRoute,
 }
 
 const AppAccountsRouteWithChildren = AppAccountsRoute._addFileChildren(
@@ -776,10 +812,12 @@ const AppJournalsRouteWithChildren = AppJournalsRoute._addFileChildren(
 
 interface AppPartnersRouteChildren {
   AppPartnersIdRoute: typeof AppPartnersIdRoute
+  AppPartnersIndexRoute: typeof AppPartnersIndexRoute
 }
 
 const AppPartnersRouteChildren: AppPartnersRouteChildren = {
   AppPartnersIdRoute: AppPartnersIdRoute,
+  AppPartnersIndexRoute: AppPartnersIndexRoute,
 }
 
 const AppPartnersRouteWithChildren = AppPartnersRoute._addFileChildren(
