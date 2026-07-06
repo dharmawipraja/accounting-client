@@ -2,6 +2,7 @@ import { Separator } from "@/components/ui/separator";
 import { CustomSidebarTrigger } from "@/components/custom-sidebar-trigger";
 import { NavUser } from "@/components/nav-user";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
+import { CommandPaletteHint } from "@/components/common/CommandPalette";
 import { useSession } from "@/stores/session";
 
 export function AppHeader() {
@@ -16,6 +17,7 @@ export function AppHeader() {
 						{email}
 					</span>
 				) : null}
+				<CommandPaletteHint />
 				<ThemeToggle />
 				<Separator
 					className="h-4 data-[orientation=vertical]:self-center"

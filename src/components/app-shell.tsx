@@ -3,6 +3,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppHeader } from "@/components/app-header";
 import { AppSidebar } from "@/components/app-sidebar";
+import { CommandPalette } from "@/components/common/CommandPalette";
 import { useHydrateSession } from "@/features/auth/useHydrateSession";
 import { useT } from "@/lib/i18n/useT";
 
@@ -22,6 +23,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 					{t.common.skipToContent}
 				</a>
 				<AppSidebar />
+				<CommandPalette />
 				<SidebarInset id="main-content" tabIndex={-1} className="p-4 md:p-6 outline-none">
 					<AppHeader />
 					<div className="flex flex-1 flex-col gap-4">{children}</div>

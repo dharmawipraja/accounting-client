@@ -30,6 +30,13 @@ export const id = {
     duplicate: 'Duplikat',
     maxLines: 'Maksimal 100 baris per dokumen',
   },
+  command: {
+    title: 'Palet Perintah',
+    description: 'Cari halaman atau tindakan untuk dijalankan.',
+    placeholder: 'Cari halaman atau tindakan...',
+    navigate: 'Buka halaman',
+    create: 'Buat baru',
+  },
   errors: {
     offline: { title: 'Tidak ada koneksi', message: 'Periksa koneksi internet Anda lalu coba lagi.' },
     unauthorized: { title: 'Sesi berakhir', message: 'Silakan masuk kembali untuk melanjutkan.' },

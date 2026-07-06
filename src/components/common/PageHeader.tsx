@@ -15,7 +15,9 @@ export type ParentRoute =
   | '/purchase-bills'
   | '/payments'
   | '/journals'
-  | '/reports';
+  | '/reports'
+  | '/accounts'
+  | '/partners';
 
 /** A one-level breadcrumb trail: a link back to `parent`, then the current page (the `title`). */
 export type PageParent = { to: ParentRoute; label: string };
