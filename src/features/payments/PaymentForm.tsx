@@ -15,6 +15,7 @@ import { Money } from '@/lib/money/money';
 import { useT } from '@/lib/i18n/useT';
 import { useOpenDocuments } from './useOpenDocuments';
 import { AllocationTable } from './AllocationTable';
+import { PaymentJournalPreview } from './PaymentJournalPreview';
 import { PaymentTotals } from './PaymentTotals';
 import { paymentsApi } from './hooks';
 import type { Payment, PaymentHeaderValues } from './schema';
@@ -166,6 +167,15 @@ export function PaymentForm({ mode, payment, onSaved, readOnly, direction: direc
         </div>
         <PaymentTotals amounts={amounts} />
       </div>
+
+      {readOnly ? null : (
+        <PaymentJournalPreview
+          direction={direction}
+          cashAccountId={form.watch('cashAccountId')}
+          date={form.watch('date')}
+          allocations={buildAllocations()}
+        />
+      )}
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onSaved}>{t.common.cancel}</Button>

@@ -5,6 +5,7 @@ import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
 import type { ApiError } from '@/lib/api/errors';
 import type { Role } from '@/stores/session';
 import { mutationFeedback } from '@/lib/api/mutationFeedback';
+import { useDebouncedValue } from '@/lib/hooks/useDebouncedValue';
 import { useT } from '@/lib/i18n/useT';
 
 export interface PageEnvelope<T> { data: T[]; total: number; limit: number; offset: number }
@@ -47,8 +48,9 @@ export interface DocumentListConfig<T extends { id: string }> {
   /** Roles allowed to see newControl. Default: ACCOUNTANT/APPROVER/ADMIN. */
   newRole?: Role[];
   filters?: FilterConfig[];
-  /** Omit to render no search box. `predicate` receives the row and the lowercased query. */
-  search?: { placeholder?: string; predicate: (doc: T, q: string) => boolean };
+  /** Omit to render no search box. Search is server-side (`?q=`): case-insensitive,
+   *  ANDed with the filters, spanning the whole dataset (envelope total follows). */
+  search?: { placeholder?: string };
   /** Seed filter values, e.g. { status: 'DRAFT' } for a deep-link. */
   initialFilters?: Record<string, string>;
   /** Page size. Default 20. */
@@ -75,7 +77,6 @@ export interface DocumentListController<T> {
   setFilter: (param: string, value: string) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   columns: ColumnDef<T, any>[];
-  applySearch: (rows: T[]) => T[];
   dialog: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -109,7 +110,14 @@ export function useDocumentListController<T extends { id: string }>(
     setOffset(0);
   };
 
-  const query: Record<string, string | number | undefined> = { limit, offset };
+  // Debounced so typing doesn't fire a request per keystroke; the API ignores a
+  // q under 2 characters, so it is omitted entirely.
+  const debouncedSearch = useDebouncedValue(search, 300).trim();
+  const query: Record<string, string | number | undefined> = {
+    limit,
+    offset,
+    q: config.search && debouncedSearch.length >= 2 ? debouncedSearch : undefined,
+  };
   for (const [param, value] of Object.entries(filterValues)) {
     query[param] = value === 'ALL' ? undefined : value;
   }
@@ -146,11 +154,6 @@ export function useDocumentListController<T extends { id: string }>(
 
   return {
     page, offset, limit, setOffset, search, setSearch, filterValues, setFilter, columns,
-    applySearch: (rows: T[]) => {
-      if (!config.search || !search) return rows;
-      const q = search.toLowerCase();
-      return rows.filter((r) => config.search!.predicate(r, q));
-    },
     dialog: {
       open: !!pending,
       onOpenChange: (o: boolean) => { if (!o) setPending(null); },

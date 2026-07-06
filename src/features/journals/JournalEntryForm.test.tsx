@@ -52,6 +52,45 @@ it('creates a balanced entry: debit + credit across two accounts → posts the p
   await waitFor(() => expect(onSaved).toHaveBeenCalled());
 });
 
+// APPROVER/ADMIN may create-and-post in one call (?post=true); ACCOUNTANT may not
+// (the API rejects it with 403), so the button is role-gated away entirely.
+it('ADMIN can save-and-post in one call via ?post=true', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
+  let postParam: string | null = null;
+  server.use(http.post(`${API}/ledger/journal-entries`, async ({ request }) => {
+    postParam = new URL(request.url).searchParams.get('post');
+    return HttpResponse.json({ id: 'je9', entryNumber: 4, entryRef: 'JE/2026/000004', fiscalYear: 2026, date: '2026-06-16T00:00:00.000Z', periodId: 'per6', description: 'Jurnal uji', sourceType: 'MANUAL', sourceId: null, status: 'POSTED', reversalOfId: null, reversedById: null });
+  }));
+  const onSaved = vi.fn();
+  renderForm(<JournalEntryForm onSaved={onSaved} />);
+
+  await user.type(await screen.findByLabelText(/tanggal/i), '2026-06-16');
+  await user.type(screen.getByLabelText(/keterangan/i), 'Jurnal uji');
+  await user.click(screen.getAllByRole('combobox', { name: /akun/i })[0]);
+  await user.click(await screen.findByRole('option', { name: /1-1000/i }));
+  await user.type(screen.getAllByLabelText('Debit')[0], '100000');
+  await user.click(screen.getAllByRole('combobox', { name: /akun/i })[1]);
+  await user.click(await screen.findByRole('option', { name: /4-1000/i }));
+  await user.type(screen.getAllByLabelText('Kredit')[1], '100000');
+
+  const saveAndPost = screen.getByRole('button', { name: /simpan & posting/i });
+  await waitFor(() => expect(saveAndPost).toBeEnabled());
+  await user.click(saveAndPost);
+
+  await waitFor(() => expect(postParam).toBe('true'));
+  await waitFor(() => expect(onSaved).toHaveBeenCalled());
+});
+
+it('ACCOUNTANT does not see the save-and-post button', async () => {
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
+  renderForm(<JournalEntryForm onSaved={vi.fn()} />);
+  expect(await screen.findByRole('button', { name: /^simpan$/i })).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /simpan & posting/i })).not.toBeInTheDocument();
+});
+
 it('keeps Save disabled while unbalanced', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });

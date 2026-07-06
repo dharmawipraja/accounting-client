@@ -12,6 +12,7 @@ import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { useT } from '@/lib/i18n/useT';
 import { Pagination } from '@/components/common/Pagination';
 import { HttpStatusChip } from '@/components/common/statusChips';
+import { useDebouncedValue } from '@/lib/hooks/useDebouncedValue';
 import { useAuditLog, type AuditFilters } from './useAuditLog';
 import { AUDIT_METHODS, formatAuditTime, type AuditEntry } from './schema';
 
@@ -34,15 +35,19 @@ export function AuditPage() {
 function AuditContent() {
   const t = useT();
   const [method, setMethod] = useState('');
+  const [userId, setUserId] = useState('');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [offset, setOffset] = useState(0);
   const [selected, setSelected] = useState<AuditEntry | null>(null);
 
-  const filters: AuditFilters = { method: method || undefined, from: from || undefined, to: to || undefined, limit: LIMIT, offset };
+  // Debounced: userId is typed free-text (copy an id from an entry's detail).
+  const debouncedUserId = useDebouncedValue(userId, 300).trim();
+  const filters: AuditFilters = { method: method || undefined, userId: debouncedUserId || undefined, from: from || undefined, to: to || undefined, limit: LIMIT, offset };
   const query = useAuditLog(filters);
 
   const onMethod = (v: string) => { setMethod(v === 'ALL' ? '' : v); setOffset(0); };
+  const onUserId = (v: string) => { setUserId(v); setOffset(0); };
   const onFrom = (v: string) => { setFrom(v); setOffset(0); };
   const onTo = (v: string) => { setTo(v); setOffset(0); };
 
@@ -60,6 +65,10 @@ function AuditContent() {
               {AUDIT_METHODS.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
             </SelectContent>
           </Select>
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="a-user">{t.audit.userId}</Label>
+          <Input id="a-user" className="w-56" aria-label={t.audit.userId} placeholder={t.audit.userIdHint} value={userId} onChange={(e) => onUserId(e.target.value)} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="a-from">{t.audit.from}</Label>

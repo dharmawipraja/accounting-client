@@ -15,7 +15,8 @@ import { useT } from '@/lib/i18n/useT';
 import { JournalLineRow, type JournalLineState } from './JournalLineRow';
 import { JournalTotals } from './JournalTotals';
 import { isBalanced } from './balance';
-import { useCreateJournalEntry } from './hooks';
+import { RoleGate } from '@/components/common/RoleGate';
+import { useCreateAndPostJournalEntry, useCreateJournalEntry } from './hooks';
 
 const headerSchema = z.object({ date: z.string().min(1, 'required'), description: z.string().min(1, 'required') });
 type HeaderValues = z.infer<typeof headerSchema>;
@@ -26,6 +27,7 @@ const hasValue = (v: string) => { try { return Money.from(v || '0').gt(Money.zer
 export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
   const t = useT();
   const create = useCreateJournalEntry();
+  const createAndPost = useCreateAndPostJournalEntry();
   const form = useForm<HeaderValues>({ resolver: zodResolver(headerSchema), defaultValues: { date: '', description: '' } });
   const leavingRef = useRef(false);
   const handlers = useDocumentSubmit(form, () => { leavingRef.current = true; onSaved(); });
@@ -40,9 +42,8 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
   const dirty = form.formState.isDirty || started || lines.some((l) => l.accountId || l.description);
   const guard = useUnsavedGuard(() => dirty && !leavingRef.current);
 
-  function onSubmit(values: HeaderValues) {
-    if (!balanced) return;
-    const payload = {
+  function buildPayload(values: HeaderValues) {
+    return {
       date: values.date,
       description: values.description,
       lines: lines
@@ -53,8 +54,18 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
           ...(hasValue(l.debit) ? { debit: Money.from(l.debit).toApi() } : { credit: Money.from(l.credit).toApi() }),
         })),
     };
-    create.mutate(payload, handlers);
   }
+
+  function onSubmit(values: HeaderValues) {
+    if (!balanced) return;
+    create.mutate(buildPayload(values), handlers);
+  }
+
+  // One-step create-and-post (?post=true) — APPROVER/ADMIN only (role-gated below).
+  const onSaveAndPost = form.handleSubmit((values) => {
+    if (!balanced) return;
+    createAndPost.mutate(buildPayload(values), handlers);
+  });
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
@@ -100,7 +111,13 @@ export function JournalEntryForm({ onSaved }: { onSaved: () => void }) {
       <div className="flex flex-wrap items-center justify-end gap-3">
         {started && !balanced ? <p className="text-sm text-muted-foreground">{t.journals.unbalancedEntry}</p> : null}
         <Button type="button" variant="outline" onClick={onSaved}>{t.common.cancel}</Button>
-        <Button type="submit" disabled={!balanced || create.isPending}>{t.journals.saveEntry}</Button>
+        <Button type="submit" disabled={!balanced || create.isPending || createAndPost.isPending}>{t.journals.saveEntry}</Button>
+        {/* Posting writes to the general ledger — outline weight, matching the list's Post action. */}
+        <RoleGate allow={['APPROVER', 'ADMIN']}>
+          <Button type="button" variant="outline" onClick={onSaveAndPost} disabled={!balanced || create.isPending || createAndPost.isPending}>
+            {t.journals.saveAndPost}
+          </Button>
+        </RoleGate>
       </div>
       <UnsavedGuardDialog guard={guard} />
     </form>

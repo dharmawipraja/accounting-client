@@ -122,6 +122,31 @@ it('allocates via Lunasi and posts the DISBURSEMENT payload', async () => {
   await waitFor(() => expect(onSaved).toHaveBeenCalled());
 });
 
+it('shows the journal preview once an allocation exists', async () => {
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  commonHandlers();
+  server.use(http.post(`${API}/journal-entries/preview`, () =>
+    HttpResponse.json({
+      lines: [
+        { accountId: 'a1', accountCode: '1-1000', accountName: 'Kas', debit: '1110000.0000', credit: '0.0000' },
+        { accountId: 'ar', accountCode: '1-1200', accountName: 'Piutang Usaha', debit: '0.0000', credit: '1110000.0000' },
+      ],
+    }),
+  ));
+  renderForm(<PaymentForm mode="create" onSaved={vi.fn()} />);
+
+  await user.click(await screen.findByRole('combobox', { name: /pelanggan/i }));
+  await user.click(await screen.findByRole('option', { name: /CUST-1/i }));
+  await user.click(screen.getByRole('combobox', { name: /akun kas/i }));
+  await user.click(await screen.findByRole('option', { name: /1-1000/i }));
+  await user.click(await screen.findByRole('button', { name: /lunasi/i }));
+
+  // debounced 400ms, then the balanced dry-run renders with account names
+  expect(await screen.findByText(/pratinjau jurnal/i, undefined, { timeout: 2_000 })).toBeInTheDocument();
+  expect(await screen.findByText(/piutang usaha/i)).toBeInTheDocument();
+});
+
 it('discards allocations when the partner changes (no cross-partner submit)', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });

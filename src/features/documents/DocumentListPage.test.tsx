@@ -57,7 +57,7 @@ function useTestConfig(): DocumentListConfig<Doc> {
     filters: [{ param: 'status', options: [
       { value: 'ALL', label: 'Semua' }, { value: 'DRAFT', label: 'Draf' }, { value: 'POSTED', label: 'Diposting' },
     ] }],
-    search: { predicate: (d, q) => d.name.toLowerCase().includes(q) },
+    search: {}, // server-side ?q=
     newControl: <a href="/new">Baru</a>,
   };
 }
@@ -143,13 +143,20 @@ it('resets offset to 0 when a status filter is clicked', async () => {
   expect(lastQuery!.get('status')).toBe('DRAFT');
 });
 
-it('applies page-scoped search over the loaded page', async () => {
+it('sends the search to the server as ?q= and renders the filtered page', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
   useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
-  server.use(http.get(`${API}/test-docs`, () => HttpResponse.json({ data: docs, total: 2, limit: 20, offset: 0 })));
+  server.use(http.get(`${API}/test-docs`, ({ request }) => {
+    const q = (new URL(request.url).searchParams.get('q') ?? '').toLowerCase();
+    const rows = q ? docs.filter((d) => d.name.toLowerCase().includes(q)) : docs;
+    return HttpResponse.json({ data: rows, total: rows.length, limit: 20, offset: 0 });
+  }));
   renderPage();
   await screen.findByText('Alpha');
   await user.type(screen.getByPlaceholderText(messages.common.search), 'beta');
-  await waitFor(() => expect(screen.queryByText('Alpha')).not.toBeInTheDocument());
-  expect(screen.getByText('Beta')).toBeInTheDocument();
+  // debounced 300ms before the q request fires
+  await waitFor(() => {
+    expect(screen.queryByText('Alpha')).not.toBeInTheDocument();
+    expect(screen.getByText('Beta')).toBeInTheDocument();
+  }, { timeout: 2_000 });
 });

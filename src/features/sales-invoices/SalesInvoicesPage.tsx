@@ -36,7 +36,7 @@ export function SalesInvoicesPage() {
       { value: 'POSTED', label: documentStatusLabel(t, 'POSTED') },
       { value: 'VOID', label: documentStatusLabel(t, 'VOID') },
     ] }],
-    search: { predicate: (inv, q) => (inv.invoiceRef ?? '').toLowerCase().includes(q) || partnerName(inv.partnerId).toLowerCase().includes(q) },
+    search: {}, // server-side ?q= (invoiceRef, description, customer name + code)
     describeDoc: (inv) => (
       <div className="flex items-center justify-between gap-4">
         <span className="truncate">{[inv.invoiceRef, partnerName(inv.partnerId)].filter(Boolean).join(' · ')}</span>

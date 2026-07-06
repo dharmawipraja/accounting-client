@@ -27,36 +27,59 @@ const bill = (over: Record<string, unknown>) => ({
   paymentStatus: 'UNPAID', lines: [], ...over,
 });
 
-it('RECEIPT → open POSTED invoices for the partner, mapped', async () => {
+// The server filters by status/partner (?status=POSTED&partnerId=…), so open
+// documents are found even when the partner's invoices sit beyond the first 200
+// rows of the unfiltered list. outstanding>0 stays client-side (no server param).
+it('RECEIPT → queries POSTED invoices for the partner server-side, filters outstanding>0', async () => {
   useSession.getState().setTokens({ accessToken: 'a', refreshToken: 'b' });
+  let seen: URLSearchParams | null = null;
   const invoicesData = [
     invoice({ id: 'open', partnerId: 'p1' }),
-    invoice({ id: 'draft', partnerId: 'p1', status: 'DRAFT' }),
     invoice({ id: 'paid', partnerId: 'p1', outstanding: '0.0000' }),
-    invoice({ id: 'other', partnerId: 'p2' }),
   ];
   server.use(
-    http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: invoicesData, total: invoicesData.length, limit: 200, offset: 0 })),
+    http.get(`${API}/sales-invoices`, ({ request }) => {
+      seen = new URL(request.url).searchParams;
+      return HttpResponse.json({ data: invoicesData, total: invoicesData.length, limit: 200, offset: 0 });
+    }),
     http.get(`${API}/purchase-bills`, () => HttpResponse.json({ data: [], total: 0, limit: 200, offset: 0 })),
   );
   const { result } = renderHook(() => useOpenDocuments('RECEIPT', 'p1'), { wrapper });
   await waitFor(() => expect(result.current.map((d) => d.id)).toEqual(['open']));
   expect(result.current[0]).toMatchObject({ ref: 'INV/1', outstanding: '1110000.0000' });
+  expect(seen!.get('status')).toBe('POSTED');
+  expect(seen!.get('partnerId')).toBe('p1');
 });
 
-it('DISBURSEMENT → open POSTED bills for the partner, mapped', async () => {
+it('does not fetch until a partner is selected', async () => {
   useSession.getState().setTokens({ accessToken: 'a', refreshToken: 'b' });
+  let hit = false;
+  server.use(
+    http.get(`${API}/sales-invoices`, () => { hit = true; return HttpResponse.json({ data: [], total: 0, limit: 200, offset: 0 }); }),
+  );
+  const { result } = renderHook(() => useOpenDocuments('RECEIPT', undefined), { wrapper });
+  expect(result.current).toEqual([]);
+  await new Promise((r) => setTimeout(r, 50));
+  expect(hit).toBe(false);
+});
+
+it('DISBURSEMENT → queries POSTED bills for the partner server-side', async () => {
+  useSession.getState().setTokens({ accessToken: 'a', refreshToken: 'b' });
+  let seen: URLSearchParams | null = null;
   const billsData = [
     bill({ id: 'openb', partnerId: 'v1' }),
-    bill({ id: 'draftb', partnerId: 'v1', status: 'DRAFT' }),
     bill({ id: 'paidb', partnerId: 'v1', outstanding: '0.0000' }),
-    bill({ id: 'otherb', partnerId: 'v2' }),
   ];
   server.use(
     http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [], total: 0, limit: 200, offset: 0 })),
-    http.get(`${API}/purchase-bills`, () => HttpResponse.json({ data: billsData, total: billsData.length, limit: 200, offset: 0 })),
+    http.get(`${API}/purchase-bills`, ({ request }) => {
+      seen = new URL(request.url).searchParams;
+      return HttpResponse.json({ data: billsData, total: billsData.length, limit: 200, offset: 0 });
+    }),
   );
   const { result } = renderHook(() => useOpenDocuments('DISBURSEMENT', 'v1'), { wrapper });
   await waitFor(() => expect(result.current.map((d) => d.id)).toEqual(['openb']));
   expect(result.current[0]).toMatchObject({ ref: 'BILL/1', outstanding: '1000000.0000' });
+  expect(seen!.get('status')).toBe('POSTED');
+  expect(seen!.get('partnerId')).toBe('v1');
 });

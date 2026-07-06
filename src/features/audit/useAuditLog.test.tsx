@@ -31,3 +31,16 @@ it('passes filters as query params and returns the array', async () => {
   expect(seenLimit).toBe('50');
   expect(seenOffset).toBe('50');
 });
+
+// /v1/audit accepts a userId filter (spec) — the hook must forward it.
+it('passes the userId filter as a query param', async () => {
+  useSession.getState().setTokens({ accessToken: 'a', refreshToken: 'b' });
+  let seenUserId: string | null = null;
+  server.use(http.get(`${API}/audit`, ({ request }) => {
+    seenUserId = new URL(request.url).searchParams.get('userId');
+    return HttpResponse.json(auditFixtures());
+  }));
+  const { result } = renderHook(() => useAuditLog({ userId: 'u1', limit: 50, offset: 0 }), { wrapper });
+  await waitFor(() => expect(result.current.isSuccess).toBe(true));
+  expect(seenUserId).toBe('u1');
+});

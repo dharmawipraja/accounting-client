@@ -21,6 +21,21 @@ export const accountFixtures = () => [
 export const partnerFixtures = () => [
   { id: 'p1', code: 'CUST-001', name: 'PT Pelanggan Jaya', npwp: '01.234.567.8-901.000', email: 'beli@jaya.id', phone: '021-555', address: 'Jakarta', isCustomer: true, isVendor: false, isActive: true },
 ];
+
+// --- server-side search (?q=) ---
+// Mirrors the live API's ILIKE semantics per docs/api/frontend-guide.md: case-
+// insensitive partial match over the listed fields, ANDed with other filters,
+// ignored when shorter than 2 chars after trimming. (No trigram fuzziness here.)
+export function matchesQ(q: string | null, ...fields: (string | null | undefined)[]): boolean {
+  const needle = (q ?? '').trim().toLowerCase();
+  if (needle.length < 2) return true;
+  return fields.some((f) => (f ?? '').toLowerCase().includes(needle));
+}
+const partnerText = (partnerId: string) => {
+  const p = partnerFixtures().find((x) => x.id === partnerId);
+  return p ? `${p.name} ${p.code}` : '';
+};
+
 // --- tax codes (Plan 2b) ---
 export const taxCodeFixtures = () => [
   { id: 't1', code: 'PPN-OUT', name: 'PPN Keluaran 11%', kind: 'PPN_OUTPUT', rate: '0.11', taxAccountId: 'a1', isActive: true },
@@ -28,7 +43,7 @@ export const taxCodeFixtures = () => [
 
 // --- sales invoices (Plan 3a) ---
 export const salesInvoiceFixtures = () => [
-  { id: 'i1', invoiceNumber: null, partnerId: 'p1', date: '2026-06-13T00:00:00.000Z', dueDate: '2026-07-13T00:00:00.000Z', description: 'Inv 1', status: 'DRAFT', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [{ id: 'l1', lineNo: 1, description: 'Jasa', accountId: 'a2', quantity: '2.0000', unitPrice: '500000.0000', amount: '1000000.0000', taxCodeIds: ['t1'] }] },
+  { id: 'i1', invoiceNumber: null, invoiceRef: null, partnerId: 'p1', date: '2026-06-13T00:00:00.000Z', dueDate: '2026-07-13T00:00:00.000Z', description: 'Inv 1', status: 'DRAFT', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [{ id: 'l1', lineNo: 1, description: 'Jasa', accountId: 'a2', quantity: '2.0000', unitPrice: '500000.0000', amount: '1000000.0000', taxCodeIds: ['t1'] }] },
 ];
 
 // --- reports (Plan 4b dashboard) ---
@@ -158,7 +173,7 @@ export const handlers = [
     const u = new URL(request.url).searchParams;
     const limit = Number(u.get('limit') ?? '200');
     const offset = Number(u.get('offset') ?? '0');
-    const data = partnerFixtures();
+    const data = partnerFixtures().filter((x) => matchesQ(u.get('q'), x.name, x.code, x.npwp, x.email));
     return HttpResponse.json({ data: data.slice(offset, offset + limit), total: data.length, limit, offset });
   }),
   http.post(`${API}/partners`, async ({ request }) => {
@@ -193,6 +208,7 @@ export const handlers = [
     const u = new URL(request.url).searchParams;
     let data = salesInvoiceFixtures().map((x) => ({ ...x, lines: undefined })); // live list omits lines
     const status = u.get('status'); if (status) data = data.filter((x) => x.status === status);
+    data = data.filter((x) => matchesQ(u.get('q'), x.invoiceRef, x.description, partnerText(x.partnerId)));
     const limit = Number(u.get('limit') ?? '200');
     const offset = Number(u.get('offset') ?? '0');
     return HttpResponse.json({ data: data.slice(offset, offset + limit), total: data.length, limit, offset });
@@ -230,6 +246,7 @@ export const handlers = [
     let data = paymentFixtures().map((x) => ({ ...x, allocations: undefined })); // live list omits allocations
     const status = u.get('status'); if (status) data = data.filter((x) => x.status === status);
     const direction = u.get('direction'); if (direction) data = data.filter((x) => x.direction === direction);
+    data = data.filter((x) => matchesQ(u.get('q'), x.ref, x.description, partnerText(x.partnerId)));
     const limit = Number(u.get('limit') ?? '200');
     const offset = Number(u.get('offset') ?? '0');
     return HttpResponse.json({ data: data.slice(offset, offset + limit), total: data.length, limit, offset });
@@ -239,6 +256,20 @@ export const handlers = [
     const body = (await request.json()) as Record<string, unknown>;
     return HttpResponse.json({ ...paymentFixtures()[0], id: 'pay9', status: 'DRAFT', ...body });
   }),
+  // Read-only journal dry run (nature PAYMENT | SALE | PURCHASE). Payment shape:
+  // debit cash / credit AR-control for the allocation total (RECEIPT; mirrored for
+  // DISBURSEMENT), echoing the live JournalPreviewResponseDto lines.
+  http.post(`${API}/journal-entries/preview`, async ({ request }) => {
+    const body = (await request.json()) as { direction?: string; cashAccountId?: string; allocations?: { amount: string }[] };
+    const total = (body.allocations ?? []).reduce((acc, a) => acc + Number(a.amount), 0).toFixed(4);
+    const cash = { accountId: body.cashAccountId ?? 'a1', accountCode: '1-1000', accountName: 'Kas', debit: '0.0000', credit: '0.0000' };
+    const control = body.direction === 'DISBURSEMENT'
+      ? { accountId: 'ap', accountCode: '2-1000', accountName: 'Utang Usaha', debit: total, credit: '0.0000' }
+      : { accountId: 'ar', accountCode: '1-1200', accountName: 'Piutang Usaha', debit: '0.0000', credit: total };
+    if (body.direction === 'DISBURSEMENT') cash.credit = total; else cash.debit = total;
+    return HttpResponse.json({ lines: [cash, control] });
+  }),
+
   // NOTE: deliberately no PATCH /payments/:id — the live API has no payment update
   // endpoint (create/post/void/delete only). Keep the mock surface matching live.
   http.delete(`${API}/payments/:id`, () => HttpResponse.json({})),
@@ -250,6 +281,7 @@ export const handlers = [
     const u = new URL(request.url).searchParams;
     let data = purchaseBillFixtures().map((x) => ({ ...x, lines: undefined })); // live list omits lines
     const status = u.get('status'); if (status) data = data.filter((x) => x.status === status);
+    data = data.filter((x) => matchesQ(u.get('q'), x.billRef, x.vendorInvoiceNo, x.description, partnerText(x.partnerId)));
     const limit = Number(u.get('limit') ?? '200');
     const offset = Number(u.get('offset') ?? '0');
     return HttpResponse.json({ data: data.slice(offset, offset + limit), total: data.length, limit, offset });
@@ -284,6 +316,9 @@ export const handlers = [
     const u = new URL(request.url).searchParams;
     return HttpResponse.json(cashFlowFixture(u.get('from') ?? '', u.get('to') ?? ''));
   }),
+  // ADMIN opening-balances seeding: returns the posted OPENING journal entry.
+  http.post(`${API}/ledger/opening-balances`, () =>
+    HttpResponse.json({ ...journalEntryDetailFixture(), id: 'je-open', status: 'POSTED', sourceType: 'OPENING' })),
   http.get(`${API}/ledger/journal-entries`, ({ request }) => {
     const u = new URL(request.url).searchParams;
     const status = u.get('status');
@@ -293,6 +328,7 @@ export const handlers = [
     let data = journalEntryListFixture();
     if (status) data = data.filter((e) => e.status === status);
     if (sourceType) data = data.filter((e) => e.sourceType === sourceType);
+    data = data.filter((e) => matchesQ(u.get('q'), e.entryRef, e.description));
     return HttpResponse.json({ data: data.slice(offset, offset + limit), total: data.length, limit, offset });
   }),
   http.get(`${API}/ledger/journal-entries/:id`, ({ params }) => HttpResponse.json({ ...journalEntryDetailFixture(), id: params.id })),

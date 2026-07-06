@@ -14,6 +14,7 @@ import { formatDateID } from '@/lib/format/date';
 import { mutationFeedback } from '@/lib/api/mutationFeedback';
 import { useT } from '@/lib/i18n/useT';
 import { usePeriods, useYearEndStatus } from './usePeriods';
+import { OpeningBalancesDialog } from './OpeningBalancesDialog';
 import { useGeneratePeriods, useClosePeriod, useReopenPeriod, useRunYearEnd, useReopenYear } from './mutations';
 import { isPeriodClosed, isYearClosed, monthLabel, type Period } from './schema';
 
@@ -26,6 +27,7 @@ export function PeriodsPage() {
   const t = useT();
   const [fiscalYear, setFiscalYear] = useState(() => new Date().getFullYear());
   const [pending, setPending] = useState<Pending>(null);
+  const [openingBalancesOpen, setOpeningBalancesOpen] = useState(false);
   const periods = usePeriods(fiscalYear);
   const yearEnd = useYearEndStatus(fiscalYear);
 
@@ -130,6 +132,16 @@ export function PeriodsPage() {
           </div>
         )}
       </QueryState>
+
+      {/* Opening balances: ADMIN-only ledger seeding (POST /ledger/opening-balances). */}
+      <RoleGate allow={['ADMIN']}>
+        <div className="mt-6 space-y-2 rounded-lg border p-4">
+          <h2 className="font-semibold">{t.periods.openingBalances}</h2>
+          <p className="text-sm text-muted-foreground">{t.periods.openingBalancesDesc}</p>
+          <Button variant="outline" onClick={() => setOpeningBalancesOpen(true)}>{t.periods.openingBalances}</Button>
+        </div>
+        <OpeningBalancesDialog open={openingBalancesOpen} onOpenChange={setOpeningBalancesOpen} />
+      </RoleGate>
 
       <div className="mt-6 space-y-2 rounded-lg border p-4">
         <h2 className="font-semibold">{t.periods.yearEndStatus}</h2>

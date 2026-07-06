@@ -15,6 +15,19 @@ export function useGeneratePeriods() {
   });
 }
 
+export type OpeningBalanceLine = { accountId: string; debit?: string; credit?: string; description?: string };
+
+/** ADMIN-only ledger seeding (POST /ledger/opening-balances). Requires an
+ *  Idempotency-Key — covered by the apiFetch auto-key. Creates a posted
+ *  OPENING journal, so the journals cache must refresh. */
+export function usePostOpeningBalances() {
+  const qc = useQueryClient();
+  return useMutation<unknown, ApiError, { date: string; balances: OpeningBalanceLine[] }>({
+    mutationFn: (body) => apiFetch('/ledger/opening-balances', { method: 'POST', body }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.journalEntries.all }),
+  });
+}
+
 export function useClosePeriod() {
   return useDocumentAction({ keys: queryKeys.periods, basePath: '/ledger/periods', action: 'close' });
 }

@@ -6,6 +6,7 @@ import { auditListSchema, type AuditEntry } from './schema';
 
 export interface AuditFilters {
   method?: string;
+  userId?: string;
   from?: string;
   to?: string;
   limit: number;
@@ -19,6 +20,7 @@ export function useAuditLog(filters: AuditFilters, enabled = true) {
       apiFetch('/audit', {
         query: {
           method: filters.method || undefined,
+          userId: filters.userId || undefined,
           from: filters.from || undefined,
           to: filters.to || undefined,
           limit: filters.limit,

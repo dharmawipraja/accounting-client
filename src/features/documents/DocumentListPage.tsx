@@ -33,7 +33,6 @@ export function DocumentListPage<T extends { id: string }>({ config }: { config:
               value={c.search}
               onChange={(e) => c.setSearch(e.target.value)}
             />
-            <p className="text-xs text-muted-foreground">{t.common.searchOnThisPage}</p>
           </div>
         ) : null}
         {(config.filters ?? []).map((f) => (
@@ -54,7 +53,7 @@ export function DocumentListPage<T extends { id: string }>({ config }: { config:
 
       <QueryState query={c.page} loading={<SkeletonTable rows={8} cols={config.colCount} />} onRetry>
         {(env) => {
-          const rows = c.applySearch(env.data);
+          const rows = env.data;
           const empty = env.data.length === 0 ? (
             <EmptyState
               title={t.common.emptyTitle}

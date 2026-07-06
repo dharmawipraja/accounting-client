@@ -36,7 +36,7 @@ export function PurchaseBillsPage() {
       { value: 'POSTED', label: documentStatusLabel(t, 'POSTED') },
       { value: 'VOID', label: documentStatusLabel(t, 'VOID') },
     ] }],
-    search: { predicate: (bill, q) => (bill.billRef ?? '').toLowerCase().includes(q) || partnerName(bill.partnerId).toLowerCase().includes(q) },
+    search: {}, // server-side ?q= (billRef, vendorInvoiceNo, description, vendor name + code)
     describeDoc: (bill) => (
       <div className="flex items-center justify-between gap-4">
         <span className="truncate">{[bill.billRef, partnerName(bill.partnerId)].filter(Boolean).join(' · ')}</span>

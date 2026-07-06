@@ -46,7 +46,7 @@ export function JournalsPage({ initialStatus }: { initialStatus?: 'DRAFT' | 'POS
       ] },
     ],
     initialFilters: initialStatus ? { status: initialStatus } : undefined,
-    // no `search` → no search box (matches today's JournalsPage)
+    search: {}, // server-side ?q= (entryRef, description)
     newControl: <Button asChild><Link to="/journals/new"><Plus className="size-4" /> {t.journals.newEntry}</Link></Button>,
   };
 

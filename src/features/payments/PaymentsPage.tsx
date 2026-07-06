@@ -45,7 +45,7 @@ export function PaymentsPage() {
         { value: 'DISBURSEMENT', label: t.payments.directionDisbursement },
       ] },
     ],
-    search: { predicate: (p, q) => (p.ref ?? '').toLowerCase().includes(q) || partnerName(p.partnerId).toLowerCase().includes(q) },
+    search: {}, // server-side ?q= (ref, description, partner name + code)
     describeDoc: (p) => (
       <div className="flex items-center justify-between gap-4">
         <span className="truncate">{[p.ref, partnerName(p.partnerId)].filter(Boolean).join(' · ')}</span>

@@ -82,10 +82,12 @@ function createCrudHooks<TItem, TCreate, TUpdate, TListItem = TItem>(config: Res
   type Envelope = { data: TListItem[]; total: number; limit: number; offset: number };
   function usePagedList(
     query: Record<string, string | number | undefined> = {},
+    opts: { enabled?: boolean } = {},
   ): UseQueryResult<Envelope, ApiError> {
     return useQuery<Envelope, ApiError>({
       queryKey: keys.list(query),
       queryFn: () => apiFetch(basePath, { schema: envelopeSchema, query }),
+      enabled: opts.enabled ?? true,
     });
   }
 

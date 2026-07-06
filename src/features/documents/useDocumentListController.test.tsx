@@ -29,7 +29,7 @@ function makeConfig(over: Partial<DocumentListConfig<Doc>>, captureHandlers: (h:
       post: { mutation: ok as never, success: 'posted', confirm: { title: 'post?', label: 'Post' } },
     },
     filters: [{ param: 'status', options: [{ value: 'ALL', label: 'All' }, { value: 'DRAFT', label: 'Draft' }] }],
-    search: { predicate: (d, q) => d.name.toLowerCase().includes(q) },
+    search: {}, // server-side ?q=
     ...over,
   };
 }
@@ -56,6 +56,31 @@ it('passes {id} to lifecycle mutations and the bare id to delete', () => {
   act(() => handlers.onDelete!({ id: 'x2', name: 'B' }));
   act(() => result.current.dialog.onConfirm());
   expect(delSpy).toHaveBeenCalledWith('x2', expect.anything());
+});
+
+// Search is server-side (?q=): spans the whole filtered dataset, not the page.
+// Debounced so typing doesn't fire a request per keystroke; q under 2 chars is
+// omitted (the API ignores it anyway).
+it('sends the debounced search as the q query param, omitting q under 2 chars', async () => {
+  vi.useFakeTimers();
+  try {
+    const listSpy = vi.fn();
+    const config = makeConfig({}, () => {}, listSpy);
+    const { result, rerender } = renderHook(() => useDocumentListController(config));
+
+    act(() => result.current.setSearch('inv-77'));
+    expect(listSpy).toHaveBeenLastCalledWith(expect.objectContaining({ q: undefined }));
+    act(() => { vi.advanceTimersByTime(400); });
+    rerender();
+    expect(listSpy).toHaveBeenLastCalledWith(expect.objectContaining({ q: 'inv-77' }));
+
+    act(() => result.current.setSearch('i'));
+    act(() => { vi.advanceTimersByTime(400); });
+    rerender();
+    expect(listSpy).toHaveBeenLastCalledWith(expect.objectContaining({ q: undefined }));
+  } finally {
+    vi.useRealTimers();
+  }
 });
 
 it('resets offset to 0 on filter change and on search change', () => {

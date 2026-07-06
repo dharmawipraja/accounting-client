@@ -25,5 +25,6 @@ export const queryKeys = {
   },
   companySettings: ['company-settings'] as const,
   taxCalc: (args: string) => ['taxCalc', args] as const,
+  journalPreview: (args: string) => ['journalPreview', args] as const,
   report: (path: string, params: unknown) => ['report', path, params] as const,
 };
