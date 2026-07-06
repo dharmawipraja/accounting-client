@@ -65,6 +65,11 @@ export const incomeStatementFixture = (from: string, to: string) => ({
   otherExpense: '0.0000', profitBeforeTax: '2000000.0000', taxExpense: '0.0000',
   netIncome: '1750000.0000',
 });
+export const agingFixture = (asOf: string, kind: string) => ({
+  kind, asOf, partners: [],
+  totalsByBucket: { Current: '0.0000', '1-30': '0.0000', '31-60': '0.0000', '61-90': '0.0000', '>90': '0.0000' },
+  totalOutstanding: '0.0000', truncated: false,
+});
 export const cashFlowFixture = (from: string, to: string) => ({
   from, to, netIncome: '1750000.0000',
   operating: { adjustments: [], total: '0.0000' }, investing: { lines: [], total: '0.0000' },
@@ -329,6 +334,9 @@ export const handlers = [
     const u = new URL(request.url).searchParams;
     return HttpResponse.json(cashFlowFixture(u.get('from') ?? '', u.get('to') ?? ''));
   }),
+  // Default empty aging (dashboard overdue tile fetches ar-aging on every load).
+  http.get(`${API}/reports/ar-aging`, ({ request }) => HttpResponse.json(agingFixture(new URL(request.url).searchParams.get('asOf') ?? '', 'AR'))),
+  http.get(`${API}/reports/ap-aging`, ({ request }) => HttpResponse.json(agingFixture(new URL(request.url).searchParams.get('asOf') ?? '', 'AP'))),
   // ADMIN opening-balances seeding: returns the posted OPENING journal entry.
   http.post(`${API}/ledger/opening-balances`, () =>
     HttpResponse.json({ ...journalEntryDetailFixture(), id: 'je-open', status: 'POSTED', sourceType: 'OPENING' })),

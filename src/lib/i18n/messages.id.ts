@@ -106,6 +106,9 @@ export const id = {
     retry: 'Coba lagi',
     asOfLabel: 'per',
     financialPosition: 'Posisi Keuangan',
+    overdueReceivables: 'Piutang Jatuh Tempo',
+    overdueHint: 'Total piutang yang telah melewati jatuh tempo.',
+    viewAging: 'Lihat analisis umur',
   },
   roles: {
     forbidden: 'Anda tidak memiliki izin untuk tindakan ini',

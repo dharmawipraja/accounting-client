@@ -7,9 +7,11 @@ import {
   balanceSheetReportSchema,
   cashFlowReportSchema,
   incomeStatementReportSchema,
+  agingReportSchema,
   type BalanceSheetReport,
   type CashFlowReport,
   type IncomeStatementReport,
+  type AgingReport,
 } from '@/features/reports/schema';
 import { draftCountSchema, type DraftCount } from './schema';
 
@@ -34,4 +36,9 @@ export function useDraftCount(): UseQueryResult<DraftCount, ApiError> {
     queryKey: queryKeys.draftCount(),
     queryFn: () => apiFetch('/ledger/journal-entries', { query: { status: 'DRAFT', limit: 1 }, schema: draftCountSchema }),
   });
+}
+
+/** AR aging as of a date — drives the dashboard's overdue-receivables tile. */
+export function useArAging(asOf: string): UseQueryResult<AgingReport, ApiError> {
+  return useReport('/reports/ar-aging', { asOf }, agingReportSchema, !!asOf);
 }

@@ -9,6 +9,7 @@ import { usePreferences } from '@/stores/preferences';
 import { Reveal } from '@/components/common/Reveal';
 import { DashboardFilters } from './DashboardFilters';
 import { DashboardHero } from './DashboardHero';
+import { OverdueReceivablesCard } from './OverdueReceivablesCard';
 import { SummaryCard } from './SummaryCard';
 import { useBalanceSheet, useCashFlow, useDraftCount, useIncomeStatement } from './hooks';
 import { computePeriod, periodValid, resolveStoredPeriod, type PeriodPreset } from './period';
@@ -56,6 +57,7 @@ export function DashboardPage() {
               asOf={asOfHint}
             />
           </Reveal>
+          <OverdueReceivablesCard asOf={asOf} />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Reveal index={1}>
               <SummaryCard title={t.dashboard.revenue} value={money(is.data?.revenue)} loading={is.isLoading} error={is.isError} onRetry={() => void is.refetch()} hint={rangeHint} />
