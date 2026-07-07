@@ -15,6 +15,7 @@ import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { RowActions } from '@/components/common/RowActions';
 import { SkeletonTable } from '@/components/common/skeletons/SkeletonTable';
 import { textColumn } from '@/components/common/columnKit';
+import { toastApiError } from '@/lib/api/toastApiError';
 import { useT } from '@/lib/i18n/useT';
 import { useSession } from '@/stores/session';
 import { useUsers, useUpdateUser, useResetPassword } from './hooks';
@@ -48,19 +49,33 @@ export function UsersPage() {
   }
   async function confirmReset() {
     if (!resetting) return;
-    const resp = await reset.mutateAsync(resetting.id);
-    setResetting(null);
-    setReveal({ email: resp.user.email, tempPassword: resp.tempPassword });
+    try {
+      const resp = await reset.mutateAsync(resetting.id);
+      setReveal({ email: resp.user.email, tempPassword: resp.tempPassword });
+    } catch (err) {
+      toastApiError(err, t);
+    } finally {
+      setResetting(null);
+    }
   }
   async function confirmDeactivate() {
     if (!deactivating) return;
-    await update.mutateAsync({ id: deactivating.id, data: { isActive: false } });
-    setDeactivating(null);
-    toast.success(t.crud.deactivated);
+    try {
+      await update.mutateAsync({ id: deactivating.id, data: { isActive: false } });
+      toast.success(t.crud.deactivated);
+    } catch (err) {
+      toastApiError(err, t);
+    } finally {
+      setDeactivating(null);
+    }
   }
   async function activate(u: User) {
-    await update.mutateAsync({ id: u.id, data: { isActive: true } });
-    toast.success(t.crud.activated);
+    try {
+      await update.mutateAsync({ id: u.id, data: { isActive: true } });
+      toast.success(t.crud.activated);
+    } catch (err) {
+      toastApiError(err, t);
+    }
   }
 
   const columns: ColumnDef<User>[] = [

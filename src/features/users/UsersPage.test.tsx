@@ -1,14 +1,20 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, expect, it } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
 import { http, HttpResponse } from 'msw';
+import { toast } from 'sonner';
 import { server } from '@/test/server';
 import { API } from '@/test/handlers';
 import { useSession } from '@/stores/session';
 import { UsersPage } from './UsersPage';
 
-afterEach(() => useSession.getState().clear());
+vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
+
+afterEach(() => {
+  useSession.getState().clear();
+  vi.clearAllMocks();
+});
 
 function renderPage() {
   useSession.getState().setUser({ id: 'u1', email: 'admin@buku.id', role: 'ADMIN', mustChangePassword: false });
@@ -47,4 +53,24 @@ it('shows the forbidden message, hides the list, and never fetches /users for a 
   expect(screen.queryByText('akuntan@buku.id')).not.toBeInTheDocument();
   // Let any pending query microtasks settle, then assert the fetch never fired (defense-in-depth: the guard hides the UI AND gates the query).
   await waitFor(() => expect(usersFetched).toBe(false));
+});
+
+it('surfaces an error toast and closes the confirm dialog when deactivating a user fails (instead of failing silently)', async () => {
+  server.use(
+    http.patch(`${API}/users/:id`, () => HttpResponse.json({ code: 'SERVER', message: 'x' }, { status: 500 })),
+  );
+  const user = userEvent.setup({ pointerEventsCheck: 0 });
+  renderPage();
+  await screen.findByText('akuntan@buku.id');
+
+  const rows = screen.getAllByRole('row');
+  const targetRow = rows.find((r) => within(r).queryByText('akuntan@buku.id'));
+  await user.click(within(targetRow!).getByRole('button', { name: /aksi/i }));
+  await user.click(await screen.findByRole('menuitem', { name: 'Nonaktifkan' }));
+
+  const dialog = await screen.findByRole('alertdialog');
+  await user.click(within(dialog).getByRole('button', { name: 'Nonaktifkan' }));
+
+  await waitFor(() => expect(toast.error).toHaveBeenCalled());
+  await waitFor(() => expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument());
 });

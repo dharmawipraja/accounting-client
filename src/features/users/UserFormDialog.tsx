@@ -101,6 +101,7 @@ function EditForm({ open, onOpenChange, user, currentUserId }: Props & { user: U
     }
   }
 
+  const e = form.formState.errors;
   return (
     <FormDialog open={open} onOpenChange={onOpenChange} title={t.users.editUser} description={user.email}
       onSubmit={form.handleSubmit(onSubmit)} pending={form.formState.isSubmitting}>
@@ -114,6 +115,7 @@ function EditForm({ open, onOpenChange, user, currentUserId }: Props & { user: U
         <Switch checked={isActive} onCheckedChange={(v) => form.setValue('isActive', v)} disabled={isSelf} aria-label={t.crud.status} />
         {t.crud.active}
       </label>
+      <FieldError message={(e as Record<string, { message?: string } | undefined>).root?.message} />
     </FormDialog>
   );
 }
