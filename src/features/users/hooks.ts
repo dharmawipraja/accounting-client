@@ -20,10 +20,14 @@ const envelopeSchema = z.object({
 });
 export type UsersEnvelope = z.infer<typeof envelopeSchema>;
 
-export function useUsers(query: { limit: number; offset: number }): UseQueryResult<UsersEnvelope, ApiError> {
+export function useUsers(
+  query: { limit: number; offset: number },
+  opts: { enabled?: boolean } = {},
+): UseQueryResult<UsersEnvelope, ApiError> {
   return useQuery<UsersEnvelope, ApiError>({
     queryKey: queryKeys.users.list(query),
     queryFn: () => apiFetch('/users', { schema: envelopeSchema, query }),
+    enabled: opts.enabled ?? true,
   });
 }
 

@@ -36,12 +36,12 @@ export function UsersPage() {
   const [resetting, setResetting] = useState<User | null>(null);
   const [deactivating, setDeactivating] = useState<User | null>(null);
 
-  const query = useUsers({ limit: LIMIT, offset });
-  const update = useUpdateUser();
-  const reset = useResetPassword();
-
   const roleReady = useRoleReady();
   const role = useRole();
+
+  const query = useUsers({ limit: LIMIT, offset }, { enabled: roleReady && role === 'ADMIN' });
+  const update = useUpdateUser();
+  const reset = useResetPassword();
 
   function onCreated(resp: CreateUserResponse) {
     setReveal({ email: resp.user.email, tempPassword: resp.tempPassword });
