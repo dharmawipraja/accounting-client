@@ -4,13 +4,17 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppHeader } from "@/components/app-header";
 import { AppSidebar } from "@/components/app-sidebar";
 import { CommandPalette } from "@/components/common/CommandPalette";
+import { ChangePasswordScreen } from "@/features/auth/ChangePasswordScreen";
 import { useHydrateSession } from "@/features/auth/useHydrateSession";
 import { useT } from "@/lib/i18n/useT";
+import { useSession } from "@/stores/session";
 
 export function AppShell({ children }: { children: ReactNode }) {
 	// Hydrate user from /auth/me on mount/reload if a token exists but no user yet.
 	useHydrateSession();
 	const t = useT();
+	const mustChangePassword = useSession((s) => s.user?.mustChangePassword ?? false);
+	if (mustChangePassword) return <ChangePasswordScreen />;
 
 	return (
 		<TooltipProvider delayDuration={0}>

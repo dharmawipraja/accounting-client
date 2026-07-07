@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   Outlet,
   RouterProvider,
@@ -38,7 +39,12 @@ function renderInRouter(ui: React.ReactNode) {
     routeTree: root.addChildren(children),
     history: createMemoryHistory({ initialEntries: ['/dashboard'] }),
   });
-  return render(<RouterProvider router={router} />);
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>,
+  );
 }
 
 /** Router topology matching the real app: root → layout(AppShell) → nav routes; root → /login */
@@ -106,6 +112,13 @@ it('signs out the current device and navigates to /login', async () => {
   expect(useSession.getState().accessToken).toBeNull();
   await screen.findByTestId('login');
   expect(loggedOut).toBe(true);
+});
+
+it('blocks the shell with the change-password screen when mustChangePassword', async () => {
+  useSession.getState().setUser({ id: '1', email: 'admin@buku.id', role: 'ADMIN', mustChangePassword: true });
+  renderInRouter(<AppShell><div>secret content</div></AppShell>);
+  expect(await screen.findByRole('heading', { name: 'Ganti kata sandi Anda' })).toBeInTheDocument();
+  expect(screen.queryByText('secret content')).not.toBeInTheDocument();
 });
 
 it('signs out of all devices and navigates to /login', async () => {
