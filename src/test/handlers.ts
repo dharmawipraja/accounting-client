@@ -106,6 +106,12 @@ export const paymentFixtures = () => [
 // a POSTED open invoice to allocate against (used by the payment editor test)
 export const openInvoiceFixture = () => ({ id: 'i1', invoiceNumber: 1, invoiceRef: 'INV/2026/000001', partnerId: 'p1', date: '2026-06-15T00:00:00.000Z', dueDate: '2026-07-15T00:00:00.000Z', description: null, status: 'POSTED', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [] });
 
+// --- users (user management) ---
+export const userFixtures = () => [
+  { id: 'u1', email: 'admin@buku.id', name: 'Admin', role: 'ADMIN', isActive: true, mustChangePassword: false, createdAt: '2026-07-01T00:00:00.000Z' },
+  { id: 'u2', email: 'akuntan@buku.id', name: 'Akuntan', role: 'ACCOUNTANT', isActive: true, mustChangePassword: false, createdAt: '2026-07-02T00:00:00.000Z' },
+];
+
 // --- company settings (Plan 10) ---
 export const companySettingsFixture = () => ({
   id: 'company-1', singleton: true, legalName: 'My Company', npwp: null, address: null,
@@ -407,4 +413,26 @@ export const handlers = [
     const body = (await request.json()) as Record<string, unknown>;
     return HttpResponse.json({ ...companySettingsFixture(), ...body });
   }),
+
+  // --- users (user management) ---
+  http.get(`${API}/users`, ({ request }) => {
+    const u = new URL(request.url).searchParams;
+    const limit = Number(u.get('limit') ?? 20);
+    const offset = Number(u.get('offset') ?? 0);
+    return HttpResponse.json(paged(userFixtures(), limit, offset));
+  }),
+  http.post(`${API}/users`, async ({ request }) => {
+    const body = (await request.json()) as { email: string; name: string; role: string };
+    return HttpResponse.json(
+      { user: { id: 'u-new', email: body.email, name: body.name, role: body.role, isActive: true, mustChangePassword: true, createdAt: '2026-07-07T00:00:00.000Z' }, tempPassword: 'Temp-abc123' },
+      { status: 201 },
+    );
+  }),
+  http.patch(`${API}/users/:id`, async ({ request, params }) => {
+    const body = (await request.json()) as Record<string, unknown>;
+    return HttpResponse.json({ ...userFixtures()[0], id: params.id, ...body });
+  }),
+  http.post(`${API}/users/:id/reset-password`, ({ params }) =>
+    HttpResponse.json({ user: { ...userFixtures()[0], id: params.id, mustChangePassword: true }, tempPassword: 'Temp-reset9' }),
+  ),
 ];
