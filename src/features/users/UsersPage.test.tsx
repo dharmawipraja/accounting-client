@@ -28,3 +28,11 @@ it('create flow reveals the temp password', async () => {
   await user.click(screen.getByRole('button', { name: 'Simpan' }));
   expect(await screen.findByText('Temp-abc123')).toBeInTheDocument();
 });
+
+it('shows the forbidden message and hides the list for a non-admin role', async () => {
+  useSession.getState().setUser({ id: 'u2', email: 'viewer@buku.id', role: 'VIEWER', mustChangePassword: false });
+  const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+  render(<QueryClientProvider client={qc}><UsersPage /></QueryClientProvider>);
+  expect(await screen.findByText('Anda tidak memiliki izin untuk tindakan ini')).toBeInTheDocument();
+  expect(screen.queryByText('akuntan@buku.id')).not.toBeInTheDocument();
+});

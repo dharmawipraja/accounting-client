@@ -11,6 +11,7 @@ import {
 	ReceiptText,
 	ScrollText,
 	Settings,
+	UserCog,
 	Users,
 	Wallet,
 } from "lucide-react";
@@ -30,6 +31,7 @@ type NavTo =
 	| "/partners"
 	| "/tax-codes"
 	| "/settings"
+	| "/users"
 	| "/audit";
 
 export interface NavItem {
@@ -58,7 +60,10 @@ export function useNavItems(): NavGroup[] {
 		{ to: "/tax-codes", label: t.nav.taxCodes, icon: Percent },
 		{ to: "/settings", label: t.nav.settings, icon: Settings },
 	];
-	if (role === "ADMIN") setup.push({ to: "/audit", label: t.nav.audit, icon: ScrollText });
+	if (role === "ADMIN") {
+		setup.push({ to: "/users", label: t.nav.users, icon: UserCog });
+		setup.push({ to: "/audit", label: t.nav.audit, icon: ScrollText });
+	}
 
 	return [
 		{ items: [{ to: "/dashboard", label: t.nav.dashboard, icon: LayoutDashboard }] },

@@ -27,6 +27,7 @@ const NAV_PATHS = [
   '/tax-codes',
   '/sales-invoices',
   '/payments',
+  '/users',
   '/audit',
 ];
 
@@ -86,12 +87,14 @@ it('shows the Audit nav item only for admins', async () => {
   useSession.getState().setUser({ id: '1', email: 'admin@buku.id', role: 'ADMIN', mustChangePassword: false });
   const { unmount } = renderInRouter(<AppShell><div>content</div></AppShell>);
   expect(await screen.findByRole('link', { name: 'Audit' })).toBeInTheDocument();
+  expect(await screen.findByRole('link', { name: 'Pengguna' })).toBeInTheDocument();
   unmount();
 
   useSession.getState().setUser({ id: '2', email: 'viewer@buku.id', role: 'VIEWER', mustChangePassword: false });
   renderInRouter(<AppShell><div>content</div></AppShell>);
   expect(await screen.findByRole('link', { name: 'Dasbor' })).toBeInTheDocument();
   expect(screen.queryByRole('link', { name: 'Audit' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: 'Pengguna' })).not.toBeInTheDocument();
 });
 
 it('signs out the current device and navigates to /login', async () => {

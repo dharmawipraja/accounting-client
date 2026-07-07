@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './app/routes/__root'
 import { Route as LoginRouteImport } from './app/routes/login'
 import { Route as AppRouteImport } from './app/routes/_app'
 import { Route as IndexRouteImport } from './app/routes/index'
+import { Route as AppUsersRouteImport } from './app/routes/_app/users'
 import { Route as AppTaxCodesRouteImport } from './app/routes/_app/tax-codes'
 import { Route as AppSettingsRouteImport } from './app/routes/_app/settings'
 import { Route as AppSalesInvoicesRouteImport } from './app/routes/_app/sales-invoices'
@@ -63,6 +64,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppUsersRoute = AppUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppTaxCodesRoute = AppTaxCodesRouteImport.update({
   id: '/tax-codes',
@@ -267,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/sales-invoices': typeof AppSalesInvoicesRouteWithChildren
   '/settings': typeof AppSettingsRoute
   '/tax-codes': typeof AppTaxCodesRoute
+  '/users': typeof AppUsersRoute
   '/accounts/$id': typeof AppAccountsIdRoute
   '/journals/$id': typeof AppJournalsIdRoute
   '/journals/new': typeof AppJournalsNewRoute
@@ -301,6 +308,7 @@ export interface FileRoutesByTo {
   '/periods': typeof AppPeriodsRoute
   '/settings': typeof AppSettingsRoute
   '/tax-codes': typeof AppTaxCodesRoute
+  '/users': typeof AppUsersRoute
   '/accounts/$id': typeof AppAccountsIdRoute
   '/journals/$id': typeof AppJournalsIdRoute
   '/journals/new': typeof AppJournalsNewRoute
@@ -344,6 +352,7 @@ export interface FileRoutesById {
   '/_app/sales-invoices': typeof AppSalesInvoicesRouteWithChildren
   '/_app/settings': typeof AppSettingsRoute
   '/_app/tax-codes': typeof AppTaxCodesRoute
+  '/_app/users': typeof AppUsersRoute
   '/_app/accounts/$id': typeof AppAccountsIdRoute
   '/_app/journals/$id': typeof AppJournalsIdRoute
   '/_app/journals/new': typeof AppJournalsNewRoute
@@ -387,6 +396,7 @@ export interface FileRouteTypes {
     | '/sales-invoices'
     | '/settings'
     | '/tax-codes'
+    | '/users'
     | '/accounts/$id'
     | '/journals/$id'
     | '/journals/new'
@@ -421,6 +431,7 @@ export interface FileRouteTypes {
     | '/periods'
     | '/settings'
     | '/tax-codes'
+    | '/users'
     | '/accounts/$id'
     | '/journals/$id'
     | '/journals/new'
@@ -463,6 +474,7 @@ export interface FileRouteTypes {
     | '/_app/sales-invoices'
     | '/_app/settings'
     | '/_app/tax-codes'
+    | '/_app/users'
     | '/_app/accounts/$id'
     | '/_app/journals/$id'
     | '/_app/journals/new'
@@ -517,6 +529,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/users': {
+      id: '/_app/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AppUsersRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/tax-codes': {
       id: '/_app/tax-codes'
@@ -910,6 +929,7 @@ interface AppRouteChildren {
   AppSalesInvoicesRoute: typeof AppSalesInvoicesRouteWithChildren
   AppSettingsRoute: typeof AppSettingsRoute
   AppTaxCodesRoute: typeof AppTaxCodesRoute
+  AppUsersRoute: typeof AppUsersRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -926,6 +946,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppSalesInvoicesRoute: AppSalesInvoicesRouteWithChildren,
   AppSettingsRoute: AppSettingsRoute,
   AppTaxCodesRoute: AppTaxCodesRoute,
+  AppUsersRoute: AppUsersRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

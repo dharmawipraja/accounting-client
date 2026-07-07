@@ -9,7 +9,7 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Pagination } from '@/components/common/Pagination';
 import { QueryState } from '@/components/common/QueryState';
-import { RoleGate } from '@/components/common/RoleGate';
+import { RoleGate, useRole, useRoleReady } from '@/components/common/RoleGate';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { RowActions } from '@/components/common/RowActions';
@@ -39,6 +39,9 @@ export function UsersPage() {
   const query = useUsers({ limit: LIMIT, offset });
   const update = useUpdateUser();
   const reset = useResetPassword();
+
+  const roleReady = useRoleReady();
+  const role = useRole();
 
   function onCreated(resp: CreateUserResponse) {
     setReveal({ email: resp.user.email, tempPassword: resp.tempPassword });
@@ -82,6 +85,23 @@ export function UsersPage() {
       },
     },
   ];
+
+  if (!roleReady) {
+    return (
+      <div>
+        <PageHeader title={t.users.title} />
+        <SkeletonTable rows={6} cols={5} />
+      </div>
+    );
+  }
+  if (role !== 'ADMIN') {
+    return (
+      <div>
+        <PageHeader title={t.users.title} />
+        <p className="text-sm text-muted-foreground">{t.roles.forbidden}</p>
+      </div>
+    );
+  }
 
   return (
     <div>
