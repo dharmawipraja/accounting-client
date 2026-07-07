@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { FormDialog } from '@/components/common/FormDialog';
 import { FieldError } from '@/components/common/FieldError';
 import { applyApiErrorToForm } from '@/lib/api/form-errors';
+import { ApiError } from '@/lib/api/errors';
 import { useT } from '@/lib/i18n/useT';
 import type { Role } from '@/stores/session';
 import { useCreateUser, useUpdateUser } from './hooks';
@@ -49,18 +50,25 @@ function CreateForm({ open, onOpenChange, onCreated }: Props) {
       form.reset();
       onCreated(resp);
     } catch (err) {
-      applyApiErrorToForm(err, form, t);
+      if (err instanceof ApiError && err.status === 409) {
+        form.setError('email', { type: 'server', message: t.users.emailExists });
+      } else {
+        applyApiErrorToForm(err, form, t);
+      }
     }
   }
 
   const e = form.formState.errors;
+  const emailError = e.email
+    ? (e.email.type === 'server' ? t.users.emailExists : t.users.emailInvalid)
+    : undefined;
   return (
     <FormDialog open={open} onOpenChange={onOpenChange} title={t.users.newUser}
       onSubmit={form.handleSubmit(onSubmit)} pending={form.formState.isSubmitting}>
       <div className="space-y-1.5">
         <Label htmlFor="email">{t.users.email}</Label>
         <Input id="email" type="email" {...form.register('email')} />
-        <FieldError message={e.email ? t.users.emailExists : undefined} />
+        <FieldError message={emailError} />
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="name">{t.users.name}</Label>

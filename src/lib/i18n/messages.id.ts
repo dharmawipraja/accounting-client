@@ -627,6 +627,7 @@ export const id = {
     newUser: 'Pengguna Baru',
     editUser: 'Ubah Pengguna',
     emailExists: 'Email sudah terdaftar',
+    emailInvalid: 'Email tidak valid',
     resetPassword: 'Setel ulang kata sandi',
     confirmResetTitle: 'Setel ulang kata sandi?',
     confirmResetDesc: 'Pengguna akan keluar dari semua perangkat dan menerima kata sandi sementara baru.',
