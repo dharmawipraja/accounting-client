@@ -153,4 +153,16 @@ describe('apiFetch', () => {
     await apiFetch('/x/post', { method: 'POST', idempotencyKey: 'idem-1', auth: false });
     expect(key).toBe('idem-1');
   });
+
+  it('flips mustChangePassword when a call returns 403 PASSWORD_CHANGE_REQUIRED', async () => {
+    useSession.getState().setTokens({ accessToken: 'tok', refreshToken: 'r' });
+    useSession.getState().setUser({ id: 'u1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
+    server.use(
+      http.get(`${API}/partners`, () =>
+        HttpResponse.json({ code: 'PASSWORD_CHANGE_REQUIRED', message: 'x' }, { status: 403 }),
+      ),
+    );
+    await expect(apiFetch('/partners')).rejects.toThrow();
+    expect(useSession.getState().user?.mustChangePassword).toBe(true);
+  });
 });
