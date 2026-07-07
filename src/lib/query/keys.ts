@@ -8,6 +8,7 @@ export const queryKeys = {
   payments: createResourceKeys('payments'),
   purchaseBills: createResourceKeys('purchaseBills'),
   journalEntries: createResourceKeys('journalEntries'),
+  users: createResourceKeys('users'),
   /** Dashboard's draft-journal count. The three financial statements the dashboard
    *  shows are cached under `report(path, params)` via the reports feature's useReport. */
   draftCount: () => ['dashboard', 'draft-count'] as const,
