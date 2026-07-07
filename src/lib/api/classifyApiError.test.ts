@@ -19,6 +19,11 @@ describe('classifyApiError', () => {
     expect(classifyApiError(err(418)).kind).toBe('unknown');
   });
 
+  it('classifies 403 PASSWORD_CHANGE_REQUIRED distinctly', () => {
+    const error = err(403, 'PASSWORD_CHANGE_REQUIRED');
+    expect(classifyApiError(error).kind).toBe('passwordChangeRequired');
+  });
+
   it('carries the ApiError for an ApiError, omits it otherwise', () => {
     const e = err(409, 'CONFLICT');
     expect(classifyApiError(e).error).toBe(e);

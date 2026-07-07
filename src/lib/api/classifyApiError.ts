@@ -4,6 +4,7 @@ export type ApiErrorKind =
   | 'offline'
   | 'unauthorized'
   | 'segregationOfDuties'
+  | 'passwordChangeRequired'
   | 'forbidden'
   | 'notFound'
   | 'closedPeriod'
@@ -31,7 +32,13 @@ export function classifyApiError(error: unknown): ApiErrorClass {
   let kind: ApiErrorKind;
   if (status === 0) kind = 'offline';
   else if (status === 401) kind = 'unauthorized';
-  else if (status === 403) kind = code === 'SEGREGATION_OF_DUTIES' ? 'segregationOfDuties' : 'forbidden';
+  else if (status === 403)
+    kind =
+      code === 'PASSWORD_CHANGE_REQUIRED'
+        ? 'passwordChangeRequired'
+        : code === 'SEGREGATION_OF_DUTIES'
+          ? 'segregationOfDuties'
+          : 'forbidden';
   else if (status === 404) kind = 'notFound';
   else if (status === 409) kind = code === 'CLOSED_PERIOD' ? 'closedPeriod' : code === 'CLOSED_YEAR' ? 'closedYear' : 'conflict';
   else if (status === 422) kind = 'validation';
