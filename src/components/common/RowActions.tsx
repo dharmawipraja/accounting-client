@@ -16,9 +16,12 @@ interface RowActionsProps {
   active?: boolean;
   onToggleActive?: () => void;
   onDelete?: () => void;
+  /** Label for the destructive `onDelete` item. Defaults to `t.common.delete`;
+   *  callers can repurpose the slot (e.g. users' "Setel ulang kata sandi"). */
+  deleteLabel?: string;
 }
 
-export function RowActions({ onEdit, active, onToggleActive, onDelete }: RowActionsProps) {
+export function RowActions({ onEdit, active, onToggleActive, onDelete, deleteLabel }: RowActionsProps) {
   const t = useT();
   const role = useRole();
   const canEdit = hasRole(role, ['ACCOUNTANT', 'APPROVER', 'ADMIN']);
@@ -45,7 +48,7 @@ export function RowActions({ onEdit, active, onToggleActive, onDelete }: RowActi
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive" onSelect={onDelete}>
-              {t.common.delete}
+              {deleteLabel ?? t.common.delete}
             </DropdownMenuItem>
           </>
         ) : null}

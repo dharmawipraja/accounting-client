@@ -107,9 +107,11 @@ export const paymentFixtures = () => [
 export const openInvoiceFixture = () => ({ id: 'i1', invoiceNumber: 1, invoiceRef: 'INV/2026/000001', partnerId: 'p1', date: '2026-06-15T00:00:00.000Z', dueDate: '2026-07-15T00:00:00.000Z', description: null, status: 'POSTED', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [] });
 
 // --- users (user management) ---
+// Names deliberately avoid the role labels (Admin/Akuntan/...) so a users-list row
+// never renders the same text twice (Nama column vs. Peran column) in tests or in the UI.
 export const userFixtures = () => [
-  { id: 'u1', email: 'admin@buku.id', name: 'Admin', role: 'ADMIN', isActive: true, mustChangePassword: false, createdAt: '2026-07-01T00:00:00.000Z' },
-  { id: 'u2', email: 'akuntan@buku.id', name: 'Akuntan', role: 'ACCOUNTANT', isActive: true, mustChangePassword: false, createdAt: '2026-07-02T00:00:00.000Z' },
+  { id: 'u1', email: 'admin@buku.id', name: 'Admin Utama', role: 'ADMIN', isActive: true, mustChangePassword: false, createdAt: '2026-07-01T00:00:00.000Z' },
+  { id: 'u2', email: 'akuntan@buku.id', name: 'Budi Santoso', role: 'ACCOUNTANT', isActive: true, mustChangePassword: false, createdAt: '2026-07-02T00:00:00.000Z' },
 ];
 
 // --- company settings (Plan 10) ---
