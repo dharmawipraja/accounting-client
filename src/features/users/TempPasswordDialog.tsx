@@ -41,7 +41,7 @@ export function TempPasswordDialog({
             {copied ? t.users.copied : t.users.copy}
           </Button>
         </div>
-        <p className="text-xs text-warning-foreground">{t.users.tempPasswordWarning}</p>
+        <p className="text-xs text-warning-strong">{t.users.tempPasswordWarning}</p>
       </DialogContent>
     </Dialog>
   );
