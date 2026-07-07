@@ -25,7 +25,7 @@ function renderPage(kind: 'AR' | 'AP') {
 }
 
 it('AR: renders Umur Piutang + a partner row; asOf drives the fetch; clicking a partner reveals its documents', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   let seenAsOf: string | null = null;
   server.use(http.get(`${API}/reports/ar-aging`, ({ request }) => {
     seenAsOf = new URL(request.url).searchParams.get('asOf');
@@ -42,7 +42,7 @@ it('AR: renders Umur Piutang + a partner row; asOf drives the fetch; clicking a 
 });
 
 it('AP: requests /reports/ap-aging and shows Umur Utang + the Vendor label', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   let called = false;
   server.use(http.get(`${API}/reports/ap-aging`, () => { called = true; return HttpResponse.json(fixture('2026-06-30', 'AP')); }));
   renderPage('AP');
@@ -52,7 +52,7 @@ it('AP: requests /reports/ap-aging and shows Umur Utang + the Vendor label', asy
 });
 
 it('shows the truncated warning (partial totals) when the server capped the documents', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   server.use(http.get(`${API}/reports/ar-aging`, () =>
     HttpResponse.json({ ...fixture('2026-06-30', 'AR'), truncated: true }),
   ));

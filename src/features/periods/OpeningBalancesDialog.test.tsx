@@ -29,7 +29,7 @@ function renderDialog(onOpenChange = vi.fn()) {
 // to the Saldo Awal equity account, so balance is not required client-side.
 it('posts {date, balances} and closes on success', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
   let body: Record<string, unknown> | null = null;
   server.use(http.post(`${API}/ledger/opening-balances`, async ({ request }) => {
@@ -55,7 +55,7 @@ it('posts {date, balances} and closes on success', async () => {
 
 it('blocks submit without a date or any complete line', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
   let hit = false;
   server.use(http.post(`${API}/ledger/opening-balances`, () => { hit = true; return HttpResponse.json({}); }));

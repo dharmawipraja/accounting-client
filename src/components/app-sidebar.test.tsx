@@ -70,13 +70,13 @@ function activeLabels() {
 }
 
 it('marks the item for the current route active on first render', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@buku.id', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@buku.id', role: 'ADMIN', mustChangePassword: false });
   renderSidebar('/journals');
   await waitFor(() => expect(activeLabels()).toEqual(['Jurnal']));
 });
 
 it('moves the active highlight to the destination after in-app navigation', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@buku.id', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@buku.id', role: 'ADMIN', mustChangePassword: false });
   renderSidebar('/dashboard');
   await waitFor(() => expect(activeLabels()).toEqual(['Dasbor']));
 
@@ -89,7 +89,7 @@ it('moves the active highlight to the destination after in-app navigation', asyn
 });
 
 it('keeps the parent item active on a fuzzy-matched detail route', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@buku.id', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@buku.id', role: 'ADMIN', mustChangePassword: false });
   renderSidebar('/accounts/some-account-id');
   await waitFor(() => expect(activeLabels()).toEqual(['Bagan Akun']));
 });

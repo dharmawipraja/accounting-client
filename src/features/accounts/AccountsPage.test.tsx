@@ -17,7 +17,7 @@ function renderPage() {
 }
 
 it('lists accounts grouped by type', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   renderPage();
   expect(await screen.findByText('Kas')).toBeInTheDocument();
   expect(screen.getByText('Pendapatan Penjualan')).toBeInTheDocument();
@@ -27,21 +27,21 @@ it('lists accounts grouped by type', async () => {
 });
 
 it('shows the New button for ACCOUNTANT', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   renderPage();
   await screen.findByText('Kas');
   expect(screen.getByRole('button', { name: /baru/i })).toBeInTheDocument();
 });
 
 it('hides the New button for VIEWER', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   renderPage();
   await screen.findByText('Kas');
   expect(screen.queryByRole('button', { name: /baru/i })).not.toBeInTheDocument();
 });
 
 it('paginates accounts server-side', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   const many = Array.from({ length: 25 }, (_, i) => ({
     id: `a${i}`, code: `1-${1000 + i}`, name: `Akun ${i}`, type: 'ASSET',
     subtype: 'CURRENT_ASSET', normalBalance: 'DEBIT', cashFlowCategory: 'OPERATING',

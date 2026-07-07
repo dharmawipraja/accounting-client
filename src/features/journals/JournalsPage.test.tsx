@@ -24,7 +24,7 @@ function renderPage(initialStatus?: 'DRAFT' | 'POSTED') {
 }
 
 it('lists the paginated register; ACCOUNTANT no Posting; range shown', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   renderPage();
   expect(await screen.findByText('Penjualan diposting')).toBeInTheDocument();
   expect(screen.getByText(/Menampilkan 1–5 dari 5/)).toBeInTheDocument();
@@ -32,7 +32,7 @@ it('lists the paginated register; ACCOUNTANT no Posting; range shown', async () 
 });
 
 it('seeds the status filter from initialStatus (deep-link to DRAFT)', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'APPROVER', mustChangePassword: false });
   let seenStatus: string | null = null;
   server.use(http.get(`${API}/ledger/journal-entries`, ({ request }) => {
     seenStatus = new URL(request.url).searchParams.get('status');
@@ -46,7 +46,7 @@ it('seeds the status filter from initialStatus (deep-link to DRAFT)', async () =
 // making the box a silent no-op.
 it('typing in the search box sends ?q= to the server', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   let seenQ: string | null = null;
   server.use(http.get(`${API}/ledger/journal-entries`, ({ request }) => {
     seenQ = new URL(request.url).searchParams.get('q');
@@ -60,7 +60,7 @@ it('typing in the search box sends ?q= to the server', async () => {
 
 it('APPROVER posts a draft with an idempotency key', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER', mustChangePassword: false });
   let seenKey: string | null = null;
   server.use(
     http.get(`${API}/ledger/journal-entries`, () => HttpResponse.json({ data: journalEntryListFixture().filter((e) => e.status === 'DRAFT'), total: 3, limit: 20, offset: 0 })),
@@ -76,7 +76,7 @@ it('APPROVER posts a draft with an idempotency key', async () => {
 
 it('Pagination Next requests the next offset', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   let lastOffset: string | null = null;
   server.use(http.get(`${API}/ledger/journal-entries`, ({ request }) => {
     lastOffset = new URL(request.url).searchParams.get('offset');
@@ -90,7 +90,7 @@ it('Pagination Next requests the next offset', async () => {
 
 it('APPROVER reverses a MANUAL posted entry', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER', mustChangePassword: false });
   let reversed = false;
   server.use(
     http.get(`${API}/ledger/journal-entries`, () => HttpResponse.json({ data: journalEntryListFixture().filter((e) => e.id === 'jep2'), total: 1, limit: 20, offset: 0 })),
@@ -106,7 +106,7 @@ it('APPROVER reverses a MANUAL posted entry', async () => {
 
 it('surfaces an error toast when post returns 422', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER', mustChangePassword: false });
   server.use(
     http.get(`${API}/ledger/journal-entries`, () => HttpResponse.json({ data: journalEntryListFixture().filter((e) => e.id === 'jed1'), total: 1, limit: 20, offset: 0 })),
     http.post(`${API}/ledger/journal-entries/jed1/post`, () => HttpResponse.json({ code: 'UNBALANCED_ENTRY', message: 'debits != credits' }, { status: 422 })),

@@ -30,7 +30,7 @@ function renderForm(ui: React.ReactElement) {
 
 it('creates a draft: picks partner + line and posts the lines payload', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: partners.length, limit: 200, offset: 0 })),
@@ -73,7 +73,7 @@ it('creates a draft: picks partner + line and posts the lines payload', async ()
 
 it('edit mode: PATCH body omits partnerId and the partner select is locked', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: partners.length, limit: 200, offset: 0 })),
@@ -108,7 +108,7 @@ it('edit mode: PATCH body omits partnerId and the partner select is locked', asy
 
 it('blocks save with no lines / no partner', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: partners.length, limit: 200, offset: 0 })),

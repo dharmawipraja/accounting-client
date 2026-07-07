@@ -12,7 +12,7 @@ describe('session store', () => {
   });
 
   it('sets the user and marks the session authenticated', () => {
-    useSession.getState().setUser({ id: '1', email: 'x@y.z', role: 'ADMIN' });
+    useSession.getState().setUser({ id: '1', email: 'x@y.z', role: 'ADMIN', mustChangePassword: false });
     expect(useSession.getState().status).toBe('authenticated');
   });
 
@@ -32,7 +32,7 @@ describe('session store', () => {
     const replaceSpy = vi.spyOn(crossTabLogout, 'leaveToLogin').mockImplementation(() => {});
     try {
       useSession.getState().setTokens({ accessToken: 'a', refreshToken: 'b' });
-      useSession.getState().setUser({ id: '1', email: 'x@y.z', role: 'ADMIN' });
+      useSession.getState().setUser({ id: '1', email: 'x@y.z', role: 'ADMIN', mustChangePassword: false });
       window.dispatchEvent(new StorageEvent('storage', { key: 'buku.session', newValue: null }));
       expect(useSession.getState().accessToken).toBeNull();
       expect(useSession.getState().user).toBeNull();
@@ -47,7 +47,7 @@ describe('session store', () => {
 
   it('adopts rotated tokens from another tab, keeping the user', () => {
     useSession.getState().setTokens({ accessToken: 'a', refreshToken: 'b' });
-    useSession.getState().setUser({ id: '1', email: 'x@y.z', role: 'ADMIN' });
+    useSession.getState().setUser({ id: '1', email: 'x@y.z', role: 'ADMIN', mustChangePassword: false });
     const payload = JSON.stringify({ state: { accessToken: 'a2', refreshToken: 'b2' }, version: 0 });
     window.dispatchEvent(new StorageEvent('storage', { key: 'buku.session', newValue: payload }));
     expect(useSession.getState().accessToken).toBe('a2');

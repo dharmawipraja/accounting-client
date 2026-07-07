@@ -19,7 +19,7 @@ function renderPage() {
 
 // One DRAFT invoice + DRAFT journals should surface together in the queue.
 it('aggregates draft documents across resources for an approver', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'APPROVER', mustChangePassword: false });
   renderPage();
   // a draft journal (by description) and a draft invoice/bill (by type badge) — different resources
   expect(await screen.findByText('Draf 1')).toBeInTheDocument();
@@ -29,7 +29,7 @@ it('aggregates draft documents across resources for an approver', async () => {
 });
 
 it('an ACCOUNTANT sees the queue but no Post actions', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   renderPage();
   expect(await screen.findByText('Draf 1')).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: /posting/i })).not.toBeInTheDocument();
@@ -37,7 +37,7 @@ it('an ACCOUNTANT sees the queue but no Post actions', async () => {
 
 it('posting a queued journal confirms then hits the post endpoint', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'APPROVER', mustChangePassword: false });
   // trim the queue to a single journal draft so the Post target is unambiguous
   server.use(
     http.get(`${API}/ledger/journal-entries`, () => HttpResponse.json({ data: [journalEntryListFixture()[0]], total: 1, limit: 200, offset: 0 })),

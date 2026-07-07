@@ -77,7 +77,7 @@ const docs = [
 ];
 
 it('renders the title, role-gated New control, rows, and pagination label', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(http.get(`${API}/test-docs`, () => HttpResponse.json({ data: docs, total: 2, limit: 20, offset: 0 })));
   renderPage();
   expect(await screen.findByText('Alpha')).toBeInTheDocument();
@@ -87,7 +87,7 @@ it('renders the title, role-gated New control, rows, and pagination label', asyn
 });
 
 it('hides the New control for VIEWER', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   server.use(http.get(`${API}/test-docs`, () => HttpResponse.json({ data: docs, total: 2, limit: 20, offset: 0 })));
   renderPage();
   await screen.findByText('Alpha');
@@ -96,7 +96,7 @@ it('hides the New control for VIEWER', async () => {
 
 it('posts after confirm and sends an idempotency key', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   let seenKey: string | null = null;
   server.use(
     http.get(`${API}/test-docs`, () => HttpResponse.json({ data: [docs[0]], total: 1, limit: 20, offset: 0 })),
@@ -113,7 +113,7 @@ it('posts after confirm and sends an idempotency key', async () => {
 
 it('routes a 403 SoD post error through toastApiError', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(
     http.get(`${API}/test-docs`, () => HttpResponse.json({ data: [docs[0]], total: 1, limit: 20, offset: 0 })),
     http.post(`${API}/test-docs/d1/post`, () => HttpResponse.json({ code: 'SEGREGATION_OF_DUTIES', message: 'x' }, { status: 403 })),
@@ -128,7 +128,7 @@ it('routes a 403 SoD post error through toastApiError', async () => {
 
 it('resets offset to 0 when a status filter is clicked', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   let lastQuery: URLSearchParams | null = null;
   server.use(http.get(`${API}/test-docs`, ({ request }) => {
     lastQuery = new URL(request.url).searchParams;
@@ -145,7 +145,7 @@ it('resets offset to 0 when a status filter is clicked', async () => {
 
 it('sends the search to the server as ?q= and renders the filtered page', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(http.get(`${API}/test-docs`, ({ request }) => {
     const q = (new URL(request.url).searchParams.get('q') ?? '').toLowerCase();
     const rows = q ? docs.filter((d) => d.name.toLowerCase().includes(q)) : docs;

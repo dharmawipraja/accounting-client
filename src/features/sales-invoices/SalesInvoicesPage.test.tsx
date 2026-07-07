@@ -30,7 +30,7 @@ function renderPage() {
 }
 
 it('lists invoices with partner name (joined) and a Draft status, gated New for ACCOUNTANT', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(
     http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [
       { id: 'i1', invoiceNumber: null, partnerId: 'p1', date: '2026-06-13T00:00:00.000Z', dueDate: null, description: 'x', status: 'DRAFT', subtotal: '1000000.0000', taxTotal: '110000.0000', withholdingTotal: '0.0000', total: '1110000.0000', amountPaid: '0.0000', outstanding: '1110000.0000', paymentStatus: 'UNPAID', lines: [] },
@@ -45,7 +45,7 @@ it('lists invoices with partner name (joined) and a Draft status, gated New for 
 
 it('deletes a draft after confirm (ACCOUNTANT)', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   let deleted = false;
   server.use(
     http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [
@@ -64,7 +64,7 @@ it('deletes a draft after confirm (ACCOUNTANT)', async () => {
 
 it('APPROVER can post a draft (idempotency key sent); ACCOUNTANT cannot post', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(
     http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [draftInvoice], total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: onePartner, total: 1, limit: 200, offset: 0 })),
@@ -74,7 +74,7 @@ it('APPROVER can post a draft (idempotency key sent); ACCOUNTANT cannot post', a
   expect(screen.queryByRole('button', { name: 'Posting' })).not.toBeInTheDocument();
   unmount();
 
-  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER', mustChangePassword: false });
   let seenKey: string | null = null;
   server.use(
     http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [draftInvoice], total: 1, limit: 200, offset: 0 })),
@@ -91,7 +91,7 @@ it('APPROVER can post a draft (idempotency key sent); ACCOUNTANT cannot post', a
 
 it('shows the SoD message when post returns 403 SEGREGATION_OF_DUTIES', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER', mustChangePassword: false });
   server.use(
     http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [draftInvoice], total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: onePartner, total: 1, limit: 200, offset: 0 })),
@@ -107,7 +107,7 @@ it('shows the SoD message when post returns 403 SEGREGATION_OF_DUTIES', async ()
 
 it('APPROVER can void a posted invoice', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER', mustChangePassword: false });
   let voided = false;
   server.use(
     http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [postedInvoice], total: 1, limit: 200, offset: 0 })),
@@ -123,7 +123,7 @@ it('APPROVER can void a posted invoice', async () => {
 });
 
 it('hides New for VIEWER', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   server.use(
     http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [], total: 0, limit: 200, offset: 0 })),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: [], total: 0, limit: 200, offset: 0 })),
@@ -134,7 +134,7 @@ it('hides New for VIEWER', async () => {
 });
 
 it('shows Pagination "Menampilkan" label with correct count', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   server.use(
     http.get(`${API}/sales-invoices`, () => HttpResponse.json({ data: [draftInvoice, postedInvoice], total: 2, limit: 20, offset: 0 })),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: onePartner, total: 1, limit: 200, offset: 0 })),

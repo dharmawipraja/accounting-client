@@ -29,7 +29,7 @@ function renderPage() {
 }
 
 it('lists bills with the joined vendor name; ACCOUNTANT sees New but not Posting', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(
     http.get(`${API}/purchase-bills`, () => HttpResponse.json({ data: [draftBill], total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: onePartner, total: 1, limit: 200, offset: 0 })),
@@ -43,7 +43,7 @@ it('lists bills with the joined vendor name; ACCOUNTANT sees New but not Posting
 
 it('APPROVER posts a draft with an idempotency key', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER', mustChangePassword: false });
   let seenKey: string | null = null;
   server.use(
     http.get(`${API}/purchase-bills`, () => HttpResponse.json({ data: [draftBill], total: 1, limit: 200, offset: 0 })),
@@ -60,7 +60,7 @@ it('APPROVER posts a draft with an idempotency key', async () => {
 
 it('shows the SoD message when post returns 403 SEGREGATION_OF_DUTIES', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER', mustChangePassword: false });
   server.use(
     http.get(`${API}/purchase-bills`, () => HttpResponse.json({ data: [draftBill], total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: onePartner, total: 1, limit: 200, offset: 0 })),
@@ -76,7 +76,7 @@ it('shows the SoD message when post returns 403 SEGREGATION_OF_DUTIES', async ()
 
 it('APPROVER voids a posted bill', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER', mustChangePassword: false });
   let voided = false;
   server.use(
     http.get(`${API}/purchase-bills`, () => HttpResponse.json({ data: [postedBill], total: 1, limit: 200, offset: 0 })),

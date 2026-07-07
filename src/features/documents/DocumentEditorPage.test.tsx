@@ -10,7 +10,7 @@ import { DocumentEditorPage, type DocumentEditorPageConfig } from './DocumentEdi
 
 // Document mutations are ACCOUNTANT/APPROVER/ADMIN per the role matrix; the page
 // itself re-checks the role (defense-in-depth beyond hiding the nav links).
-beforeEach(() => useSession.getState().setUser({ id: 'u1', email: 'a@b.c', role: 'ACCOUNTANT' }));
+beforeEach(() => useSession.getState().setUser({ id: 'u1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false }));
 // Unmount BEFORE clearing the session: clearing drops the token, which flips
 // useRoleReady() true with a null role, re-rendering a still-mounted plain-render
 // (routerless) test into the forbidden branch — whose breadcrumb <Link> then
@@ -97,14 +97,14 @@ it('create mode shows a skeleton (not forbidden) while the role is unhydrated', 
 });
 
 it('create mode shows forbidden (no form) to a VIEWER', async () => {
-  useSession.getState().setUser({ id: 'u2', email: 'v@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: 'u2', email: 'v@b.c', role: 'VIEWER', mustChangePassword: false });
   renderWithRouter(<DocumentEditorPage config={makeConfig(fakeQuery({}))} />);
   expect(await screen.findByText(messages.roles.forbidden)).toBeInTheDocument();
   expect(screen.queryByText(/^form:/)).not.toBeInTheDocument();
 });
 
 it('edit mode on a DRAFT doc is read-only for a VIEWER', async () => {
-  useSession.getState().setUser({ id: 'u2', email: 'v@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: 'u2', email: 'v@b.c', role: 'VIEWER', mustChangePassword: false });
   renderWithRouter(<DocumentEditorPage config={makeConfig(fakeQuery({ data: { id: 'd1', status: 'DRAFT' } }))} id="d1" />);
   expect(await screen.findByRole('heading', { name: 'Lihat Dokumen' })).toBeInTheDocument();
   expect(screen.getByText('form:edit:true:d1')).toBeInTheDocument();

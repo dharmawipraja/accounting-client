@@ -30,7 +30,7 @@ function commonHandlers() {
 
 it('allocates via Lunasi and posts the RECEIPT payload', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   commonHandlers();
   let posted: Record<string, unknown> | null = null;
   server.use(http.post(`${API}/payments`, async ({ request }) => {
@@ -55,7 +55,7 @@ it('allocates via Lunasi and posts the RECEIPT payload', async () => {
 
 it('blocks save when nothing is allocated', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   commonHandlers();
   renderForm(<PaymentForm mode="create" onSaved={vi.fn()} />);
   await user.click(await screen.findByRole('combobox', { name: /pelanggan/i }));
@@ -69,7 +69,7 @@ it('blocks save when nothing is allocated', async () => {
 
 it('blocks save when an allocation exceeds the invoice outstanding', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   commonHandlers();
   const onSaved = vi.fn();
   renderForm(<PaymentForm mode="create" onSaved={onSaved} />);
@@ -92,7 +92,7 @@ it('blocks save when an allocation exceeds the invoice outstanding', async () =>
 
 it('allocates via Lunasi and posts the DISBURSEMENT payload', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   const vendor = [{ id: 'v1', code: 'VEND-1', name: 'PT Pemasok', isCustomer: false, isVendor: true, isActive: true }];
   const openBill = { id: 'b1', billNumber: 1, billRef: 'BILL/2026/000001', fiscalYear: 2026, vendorInvoiceNo: null, partnerId: 'v1', date: '2026-06-15T00:00:00.000Z', dueDate: '2026-07-15T00:00:00.000Z', description: null, status: 'POSTED', subtotal: '1000000.0000', taxTotal: '0.0000', withholdingTotal: '0.0000', total: '1000000.0000', amountPaid: '0.0000', outstanding: '1000000.0000', paymentStatus: 'UNPAID', lines: [] };
   server.use(
@@ -124,7 +124,7 @@ it('allocates via Lunasi and posts the DISBURSEMENT payload', async () => {
 
 it('shows the journal preview once an allocation exists', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   commonHandlers();
   server.use(http.post(`${API}/journal-entries/preview`, () =>
     HttpResponse.json({
@@ -149,7 +149,7 @@ it('shows the journal preview once an allocation exists', async () => {
 
 it('discards allocations when the partner changes (no cross-partner submit)', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   const twoPartners = [
     ...partners,
     { id: 'p2', code: 'CUST-2', name: 'Toko B', isCustomer: true, isVendor: false, isActive: true },
@@ -184,7 +184,7 @@ it('discards allocations when the partner changes (no cross-partner submit)', as
 });
 
 it('renders a posted payment read-only', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   commonHandlers();
   const posted: Payment = {
     id: 'pay1', number: 1, ref: 'PAY-RCV/2026/000001', fiscalYear: 2026, direction: 'RECEIPT',

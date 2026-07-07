@@ -23,7 +23,7 @@ function renderForm(ui: React.ReactElement) {
 
 it('creates a balanced entry: debit + credit across two accounts → posts the payload', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
   let posted: Record<string, unknown> | null = null;
   server.use(http.post(`${API}/ledger/journal-entries`, async ({ request }) => {
@@ -56,7 +56,7 @@ it('creates a balanced entry: debit + credit across two accounts → posts the p
 // (the API rejects it with 403), so the button is role-gated away entirely.
 it('ADMIN can save-and-post in one call via ?post=true', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
   let postParam: string | null = null;
   server.use(http.post(`${API}/ledger/journal-entries`, async ({ request }) => {
@@ -84,7 +84,7 @@ it('ADMIN can save-and-post in one call via ?post=true', async () => {
 });
 
 it('ACCOUNTANT does not see the save-and-post button', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
   renderForm(<JournalEntryForm onSaved={vi.fn()} />);
   expect(await screen.findByRole('button', { name: /^simpan$/i })).toBeInTheDocument();
@@ -93,7 +93,7 @@ it('ACCOUNTANT does not see the save-and-post button', async () => {
 
 it('keeps Save disabled while unbalanced', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
   renderForm(<JournalEntryForm onSaved={vi.fn()} />);
   expect(await screen.findByRole('button', { name: /simpan/i })).toBeDisabled();

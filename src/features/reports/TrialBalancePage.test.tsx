@@ -25,7 +25,7 @@ function renderPage() {
 }
 
 it('renders rows + balanced badge; asOf drives the fetch; a row click opens that account', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   let seenAsOf: string | null = null;
   server.use(http.get(`${API}/ledger/trial-balance`, ({ request }) => {
     seenAsOf = new URL(request.url).searchParams.get('asOf');
@@ -43,7 +43,7 @@ it('renders rows + balanced badge; asOf drives the fetch; a row click opens that
 });
 
 it('shows a back link to the reports menu', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   server.use(http.get(`${API}/ledger/trial-balance`, ({ request }) =>
     HttpResponse.json(fixture(new URL(request.url).searchParams.get('asOf') ?? '')),
   ));

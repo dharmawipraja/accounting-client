@@ -22,7 +22,7 @@ function renderPage() {
 }
 
 it('renders the balance sheet with a line, Total Aset, and the balanced badge; asOf drives the fetch', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   let seenAsOf: string | null = null;
   server.use(http.get(`${API}/reports/balance-sheet`, ({ request }) => {
     seenAsOf = new URL(request.url).searchParams.get('asOf');

@@ -154,7 +154,7 @@ export const handlers = [
     if (!auth?.startsWith('Bearer ')) {
       return HttpResponse.json({ code: 'UNAUTHORIZED', message: 'No token' }, { status: 401 });
     }
-    return HttpResponse.json({ id: 'u1', email: 'admin@buku.id', role: 'ADMIN' });
+    return HttpResponse.json({ id: 'u1', email: 'admin@buku.id', role: 'ADMIN', mustChangePassword: false });
   }),
   http.get(`${API}/ledger/accounts`, ({ request }) => {
     const u = new URL(request.url).searchParams;

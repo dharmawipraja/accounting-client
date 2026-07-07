@@ -17,7 +17,7 @@ function renderPage(ui: React.ReactElement) {
 // so an existing payment must always open read-only — even while DRAFT.
 it('renders an existing draft payment read-only with the recreate hint', async () => {
   server.resetHandlers();
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   renderPage(<PaymentEditorPage id="pay1" />);
 
   expect(await screen.findByText(/tidak dapat diubah/i)).toBeInTheDocument();

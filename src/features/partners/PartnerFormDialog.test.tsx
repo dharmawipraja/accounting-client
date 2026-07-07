@@ -17,7 +17,7 @@ function renderDialog(ui: React.ReactNode) {
 
 it('requires at least one of customer/vendor', async () => {
   const user = userEvent.setup();
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   renderDialog(<PartnerFormDialog open onOpenChange={vi.fn()} mode="create" />);
   await user.type(screen.getByLabelText(/kode/i), 'CUST-9');
   await user.type(screen.getByLabelText(/nama/i), 'Toko A');
@@ -27,7 +27,7 @@ it('requires at least one of customer/vendor', async () => {
 
 it('creates a partner and calls onOpenChange(false)', async () => {
   const user = userEvent.setup();
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   let posted: Record<string, unknown> | null = null;
   server.use(
     http.post(`${API}/partners`, async ({ request }) => {

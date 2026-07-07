@@ -7,7 +7,7 @@ import { RowActions } from './RowActions';
 afterEach(() => useSession.getState().clear());
 
 it('shows Edit for ACCOUNTANT but not Deactivate/Delete', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   render(<RowActions onEdit={vi.fn()} active onToggleActive={vi.fn()} onDelete={vi.fn()} />);
   await userEvent.click(screen.getByRole('button', { name: /aksi/i }));
   expect(await screen.findByRole('menuitem', { name: /ubah/i })).toBeInTheDocument();
@@ -16,7 +16,7 @@ it('shows Edit for ACCOUNTANT but not Deactivate/Delete', async () => {
 });
 
 it('shows Deactivate (active row) and Delete for ADMIN', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   render(<RowActions onEdit={vi.fn()} active onToggleActive={vi.fn()} onDelete={vi.fn()} />);
   await userEvent.click(screen.getByRole('button', { name: /aksi/i }));
   expect(await screen.findByRole('menuitem', { name: 'Nonaktifkan' })).toBeInTheDocument();
@@ -24,7 +24,7 @@ it('shows Deactivate (active row) and Delete for ADMIN', async () => {
 });
 
 it('shows Activate (not Deactivate) for an inactive row', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   render(<RowActions onEdit={vi.fn()} active={false} onToggleActive={vi.fn()} onDelete={vi.fn()} />);
   await userEvent.click(screen.getByRole('button', { name: /aksi/i }));
   expect(await screen.findByRole('menuitem', { name: 'Aktifkan' })).toBeInTheDocument();
@@ -32,7 +32,7 @@ it('shows Activate (not Deactivate) for an inactive row', async () => {
 });
 
 it('renders nothing for VIEWER', () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   const { container } = render(<RowActions onEdit={vi.fn()} />);
   expect(container).toBeEmptyDOMElement();
 });

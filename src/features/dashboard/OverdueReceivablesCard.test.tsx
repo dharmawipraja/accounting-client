@@ -18,7 +18,7 @@ function renderCard(asOf: string) {
 const buckets = (over: Record<string, string>) => ({ Current: '0.0000', '1-30': '0.0000', '31-60': '0.0000', '61-90': '0.0000', '>90': '0.0000', ...over });
 
 it('shows the overdue total (all non-Current buckets) and links to AR aging', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   server.use(http.get(`${API}/reports/ar-aging`, () =>
     HttpResponse.json({
       kind: 'AR', asOf: '2026-07-06', partners: [],
@@ -32,7 +32,7 @@ it('shows the overdue total (all non-Current buckets) and links to AR aging', as
 });
 
 it('renders nothing when there is no overdue receivable', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   server.use(http.get(`${API}/reports/ar-aging`, () =>
     HttpResponse.json({ kind: 'AR', asOf: '2026-07-06', partners: [], totalsByBucket: buckets({ Current: '1000000.0000' }), totalOutstanding: '1000000.0000', truncated: false })));
   const { container } = renderCard('2026-07-06');

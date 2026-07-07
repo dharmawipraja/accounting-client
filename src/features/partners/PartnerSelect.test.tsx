@@ -23,7 +23,7 @@ const partners = [
 
 it('lists only active customers when filter=customer and selects by id', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   server.use(http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: partners.length, limit: 200, offset: 0 })));
   const onChange = vi.fn();
   renderSelect(<PartnerSelect filter="customer" onChange={onChange} placeholder="Pilih pelanggan" aria-label="Pelanggan" />);

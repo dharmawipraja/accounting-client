@@ -22,7 +22,7 @@ const posted = (over: Record<string, unknown>) => ({
 });
 
 it('shows the partner header, AR outstanding, and their invoices; queries by partnerId', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   let invPartner: string | null = null;
   server.use(
     http.get(`${API}/partners/p1`, () =>

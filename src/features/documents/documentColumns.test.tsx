@@ -38,7 +38,7 @@ it('paymentStatusColumn shows the paid chip and an em-dash when null', () => {
 });
 
 it('documentActionsColumn shows edit/delete/post on a DRAFT row for an authorized role', () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   const col = documentActionsColumn<Doc>({
     renderOpenLink: (d, label) => <a href={`/x/${d.id}`}>{label}</a>,
     onPost: noop,
@@ -54,7 +54,7 @@ it('documentActionsColumn shows edit/delete/post on a DRAFT row for an authorize
 });
 
 it('documentActionsColumn shows a Duplicate link (when provided) on any status, role-gated', () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   const col = documentActionsColumn<Doc>({
     renderOpenLink: (d, label) => <a href={`/x/${d.id}`}>{label}</a>,
     renderDuplicateLink: (d, label) => <a href={`/new?from=${d.id}`}>{label}</a>,
@@ -67,7 +67,7 @@ it('documentActionsColumn shows a Duplicate link (when provided) on any status, 
 });
 
 it('documentActionsColumn hides the Duplicate link from a VIEWER', () => {
-  useSession.getState().setUser({ id: '1', email: 'v@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'v@b.c', role: 'VIEWER', mustChangePassword: false });
   const col = documentActionsColumn<Doc>({
     renderOpenLink: (d, label) => <a href={`/x/${d.id}`}>{label}</a>,
     renderDuplicateLink: (d, label) => <a href={`/new?from=${d.id}`}>{label}</a>,
@@ -79,7 +79,7 @@ it('documentActionsColumn hides the Duplicate link from a VIEWER', () => {
 });
 
 it('documentActionsColumn shows view + void on a POSTED row', () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   const col = documentActionsColumn<Doc>({
     renderOpenLink: (d, label) => <a href={`/x/${d.id}`}>{label}</a>,
     onPost: noop,

@@ -16,14 +16,14 @@ function renderPage() {
 }
 
 it('lists partners with type badges', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   renderPage();
   expect(await screen.findByText('PT Pelanggan Jaya')).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /baru/i })).toBeInTheDocument();
 });
 
 it('shows an empty state and no New button for VIEWER', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   server.use(http.get(`${API}/partners`, () => HttpResponse.json({ data: [], total: 0, limit: 200, offset: 0 })));
   renderPage();
   expect(await screen.findByText(/belum ada data/i)).toBeInTheDocument();
@@ -31,7 +31,7 @@ it('shows an empty state and no New button for VIEWER', async () => {
 });
 
 it('paginates: shows the count and advances offset on Berikutnya', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   const base = partnerFixtures()[0]; // guarantees a partnerSchema-valid shape
   const many = Array.from({ length: 25 }, (_, i) => ({ ...base, id: `p${i}`, code: `C${i}`, name: `Partner ${i}` }));
   let seenOffset: string | null = null;

@@ -23,7 +23,7 @@ const baseConfig = (over: Partial<StatementReportConfig<Data>> = {}): StatementR
 });
 
 it('asOf mode: renders the title + statement row and fetches with an asOf param only', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   let seen: URLSearchParams | null = null;
   server.use(http.get(`${API}/reports/_stmt_test`, ({ request }) => {
     seen = new URL(request.url).searchParams;
@@ -37,7 +37,7 @@ it('asOf mode: renders the title + statement row and fetches with an asOf param 
 });
 
 it('range mode: fetches with from + to params', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   let seen: URLSearchParams | null = null;
   server.use(http.get(`${API}/reports/_stmt_test`, ({ request }) => {
     seen = new URL(request.url).searchParams;
@@ -50,7 +50,7 @@ it('range mode: fetches with from + to params', async () => {
 });
 
 it('renders the optional footer below the statement', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   server.use(http.get(`${API}/reports/_stmt_test`, () => HttpResponse.json({ value: '1.0000' })));
   renderWithRouter(<StatementReportPage config={baseConfig({ footer: (d) => <span>{`footer:${d.value}`}</span> })} />);
   expect(await screen.findByText('footer:1.0000')).toBeInTheDocument();

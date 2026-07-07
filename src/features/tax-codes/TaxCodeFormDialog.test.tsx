@@ -21,7 +21,7 @@ function renderDialog(ui: React.ReactNode) {
 
 it('submits rate as a fraction and the selected account id', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
   let posted: Record<string, unknown> | null = null;
   server.use(

@@ -15,7 +15,7 @@ beforeEach(() => vi.clearAllMocks());
 afterEach(() => useSession.getState().clear());
 
 function renderPage(role: 'ADMIN' | 'APPROVER' | 'VIEWER' = 'ADMIN') {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role, mustChangePassword: false });
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   render(<QueryClientProvider client={qc}><PeriodsPage /></QueryClientProvider>);
 }

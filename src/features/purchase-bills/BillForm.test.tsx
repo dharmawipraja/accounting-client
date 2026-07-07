@@ -30,7 +30,7 @@ function renderForm(ui: React.ReactElement) {
 
 it('creates a draft: vendor + line → posts the purchase payload with vendorInvoiceNo', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
@@ -64,7 +64,7 @@ it('creates a draft: vendor + line → posts the purchase payload with vendorInv
 
 it('blocks save with no lines / no partner', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),

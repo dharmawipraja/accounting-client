@@ -11,7 +11,7 @@ import { AuditPage } from './AuditPage';
 afterEach(() => useSession.getState().clear());
 
 function renderPage(role: 'ADMIN' | 'VIEWER' = 'ADMIN') {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role, mustChangePassword: false });
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   render(<QueryClientProvider client={qc}><AuditPage /></QueryClientProvider>);
 }

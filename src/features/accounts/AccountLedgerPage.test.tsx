@@ -16,7 +16,7 @@ function renderPage(id: string) {
 }
 
 it('shows the account header, its point-in-time balance, and its ledger movement', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   server.use(
     http.get(`${API}/ledger/accounts/acc-kas`, () =>
       HttpResponse.json({ id: 'acc-kas', code: '1-1000', name: 'Kas', type: 'ASSET', subtype: 'CURRENT_ASSET', normalBalance: 'DEBIT', isPostable: true, isActive: true, parentId: null })),

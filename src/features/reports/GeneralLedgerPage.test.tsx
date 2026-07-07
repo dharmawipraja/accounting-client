@@ -14,7 +14,7 @@ function renderPage(initialAccountId?: string) {
 }
 
 it('shows the select-account hint and does not fetch when no account is chosen', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   let called = false;
   server.use(http.get(`${API}/reports/general-ledger`, () => { called = true; return HttpResponse.json({}); }));
   renderPage(undefined);
@@ -24,7 +24,7 @@ it('shows the select-account hint and does not fetch when no account is chosen',
 });
 
 it('with a preselected account: sends accountId + from and renders opening, a line, and closing', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   let seenAccountId: string | null = null;
   let seenFrom: string | null = null;
   server.use(http.get(`${API}/reports/general-ledger`, ({ request }) => {
@@ -48,7 +48,7 @@ it('with a preselected account: sends accountId + from and renders opening, a li
 });
 
 it('shows the truncated warning when the server capped the lines', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   server.use(http.get(`${API}/reports/general-ledger`, () =>
     HttpResponse.json({
       account: { id: 'acc-kas', code: '1-1000', name: 'Kas', normalBalance: 'DEBIT' },
@@ -63,7 +63,7 @@ it('shows the truncated warning when the server capped the lines', async () => {
 // The API rejects GL spans over 366 days with a 422 — prevent the request and
 // tell the user specifically, instead of a generic validation error.
 it('blocks spans over 366 days with a specific hint and no request', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   let called = 0;
   server.use(http.get(`${API}/reports/general-ledger`, () => {
     called += 1;

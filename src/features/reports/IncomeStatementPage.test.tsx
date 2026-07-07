@@ -14,7 +14,7 @@ function renderPage() {
 }
 
 it('renders the income statement down to Laba Bersih; range drives from', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   let seenFrom: string | null = null;
   server.use(http.get(`${API}/reports/income-statement`, ({ request }) => {
     seenFrom = new URL(request.url).searchParams.get('from');

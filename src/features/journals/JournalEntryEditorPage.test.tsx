@@ -16,7 +16,7 @@ function renderPage(ui: React.ReactElement) {
 // Journal creation is ACCOUNTANT/APPROVER/ADMIN per the role matrix; a VIEWER
 // navigating to /journals/new by URL must not get a live form.
 it('create mode shows forbidden (no form) to a VIEWER', async () => {
-  useSession.getState().setUser({ id: 'u2', email: 'v@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: 'u2', email: 'v@b.c', role: 'VIEWER', mustChangePassword: false });
   renderPage(<JournalEntryEditorPage />);
   expect(await screen.findByText(messages.roles.forbidden)).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: /simpan/i })).not.toBeInTheDocument();

@@ -48,7 +48,7 @@ it('activeStatusColumn shows the active chip', () => {
 });
 
 it('masterActionsColumn renders the actions menu for an authorized role', () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   const noop = () => {};
   render(
     <DataTable columns={[masterActionsColumn<Row>({ onEdit: noop, onToggleActive: noop, onDelete: noop })]} data={rows} />,

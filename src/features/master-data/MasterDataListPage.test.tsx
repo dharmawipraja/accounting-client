@@ -87,7 +87,7 @@ function pagedHandler(data: MdItem[]) {
 // 1. Typing in search resets offset to 0
 it('typing in search resets offset to 0', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
 
   // 25 items so page 2 is reachable
   const manyItems: MdItem[] = Array.from({ length: 25 }, (_, i) => ({
@@ -120,7 +120,7 @@ it('typing in search resets offset to 0', async () => {
 // 1b. Search spans the whole dataset, not just the current page
 it('search finds a record that is not on the current page', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
 
   const manyItems: MdItem[] = Array.from({ length: 25 }, (_, i) => ({
     id: `m${i}`, code: `CODE-${i}`, name: `Item ${i}`, isActive: true,
@@ -142,7 +142,7 @@ it('search finds a record that is not on the current page', async () => {
 // 2. Toggling active row opens deactivate confirm → confirming calls deactivate + success toast
 it('toggling active row opens deactivate confirm and calls deactivate on confirm', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
 
   let deactivateCalled = false;
   server.use(
@@ -175,7 +175,7 @@ it('toggling active row opens deactivate confirm and calls deactivate on confirm
 // 3. Toggling inactive row activates immediately with no dialog
 it('toggling inactive row activates immediately without a confirm dialog', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
 
   let activateCalled = false;
   server.use(
@@ -204,7 +204,7 @@ it('toggling inactive row activates immediately without a confirm dialog', async
 // 4. Delete opens destructive confirm with the delete title
 it('delete opens destructive confirm dialog with the delete title', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
 
   server.use(pagedHandler(fixtures));
 

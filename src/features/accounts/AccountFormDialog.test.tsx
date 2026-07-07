@@ -25,7 +25,7 @@ async function pickSubtype(user: ReturnType<typeof userEvent.setup>) {
 
 it('auto-derives type + normal balance from the chosen subtype', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   let posted: Record<string, unknown> | null = null;
   server.use(
     http.post(`${API}/ledger/accounts`, async ({ request }) => {
@@ -44,7 +44,7 @@ it('auto-derives type + normal balance from the chosen subtype', async () => {
 
 it('shows a duplicate-code field error on 409', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(
     http.post(`${API}/ledger/accounts`, () =>
       HttpResponse.json({ code: 'CONFLICT', message: 'dup' }, { status: 409 }),
@@ -60,7 +60,7 @@ it('shows a duplicate-code field error on 409', async () => {
 
 it('shows a required field error for an empty name on submit', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   renderDialog(<AccountFormDialog open onOpenChange={vi.fn()} mode="create" />);
   await user.type(screen.getByLabelText(/kode/i), '1-2000');
   await pickSubtype(user); // leave name empty
@@ -70,7 +70,7 @@ it('shows a required field error for an empty name on submit', async () => {
 
 it('edit form shows cash flow category and submits the updated value', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   let patched: Record<string, unknown> | null = null;
   server.use(
     http.patch(`${API}/ledger/accounts/:id`, async ({ request }) => {

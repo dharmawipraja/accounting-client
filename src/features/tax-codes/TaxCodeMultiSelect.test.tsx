@@ -23,7 +23,7 @@ const codes = [
 
 it('offers only allowed kinds and toggles selection by id', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   server.use(http.get(`${API}/tax/codes`, () => HttpResponse.json(paged(codes))));
   const onChange = vi.fn();
   renderMS(<TaxCodeMultiSelect value={[]} onChange={onChange} allowedKinds={['PPN_OUTPUT', 'PPH_PREPAID']} aria-label="Pajak" />);

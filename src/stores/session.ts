@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { queryClient } from '@/lib/query/client';
 
 export type Role = 'VIEWER' | 'ACCOUNTANT' | 'APPROVER' | 'ADMIN';
-export type AuthUser = { id: string; email: string; role: Role };
+export type AuthUser = { id: string; email: string; role: Role; mustChangePassword: boolean };
 
 export interface SessionState {
   accessToken: string | null;
@@ -13,6 +13,7 @@ export interface SessionState {
   setTokens(pair: { accessToken: string; refreshToken: string }): void;
   setUser(user: AuthUser | null): void;
   setStatus(s: SessionState['status']): void;
+  setMustChangePassword(flag: boolean): void;
   clear(): void;
 }
 
@@ -27,6 +28,8 @@ export const useSession = create<SessionState>()(
         set({ accessToken: pair.accessToken, refreshToken: pair.refreshToken }),
       setUser: (user) => set({ user, status: user ? 'authenticated' : 'anonymous' }),
       setStatus: (status) => set({ status }),
+      setMustChangePassword: (flag) =>
+        set((s) => (s.user ? { user: { ...s.user, mustChangePassword: flag } } : {})),
       clear: () => {
         set({ accessToken: null, refreshToken: null, user: null, status: 'anonymous' });
         localStorage.removeItem('buku.session');

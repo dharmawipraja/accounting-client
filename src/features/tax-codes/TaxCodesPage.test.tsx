@@ -16,7 +16,7 @@ function renderPage() {
 }
 
 it('paginates tax codes server-side', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   const many = Array.from({ length: 25 }, (_, i) => ({
     id: `t${i}`, code: `PPN-${i}`, name: `Pajak ${i}`, kind: 'PPN_OUTPUT',
     rate: '0.11', taxAccountId: 'a1', isActive: true,
@@ -38,7 +38,7 @@ it('paginates tax codes server-side', async () => {
 });
 
 it('renders rate as a percent and the joined account name', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   server.use(
     http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged([
       { id: 'a1', code: '2-1100', name: 'PPN Keluaran', type: 'LIABILITY', subtype: 'TAX_PAYABLE', normalBalance: 'CREDIT', isPostable: true, isActive: true, parentId: null },

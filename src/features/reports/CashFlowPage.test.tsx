@@ -14,7 +14,7 @@ function renderPage() {
 }
 
 it('renders the cash flow statement with Kas Akhir', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   server.use(http.get(`${API}/reports/cash-flow`, () => HttpResponse.json({ from: '2026-01-01', to: '2026-06-30', netIncome: '111000.0000', operating: { adjustments: [], total: '222000.0000' }, investing: { lines: [], total: '0.0000' }, financing: { lines: [], total: '0.0000' }, netChange: '333000.0000', kasAwal: '444000.0000', kasAkhir: '777000.0000', reconciles: true })));
   renderPage();
   expect(await screen.findByText('Kas Akhir')).toBeInTheDocument();

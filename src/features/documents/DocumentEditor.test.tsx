@@ -72,7 +72,7 @@ function baseHandlers() {
 
 it('creates a draft and posts the payload', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   baseHandlers();
   let posted: Record<string, unknown> | null = null;
   server.use(http.post(`${API}/test-docs`, async ({ request }) => {
@@ -100,7 +100,7 @@ it('creates a draft and posts the payload', async () => {
 
 it('blocks save when empty (validation errors)', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   baseHandlers();
   renderEditor(<Harness mode="create" onSaved={vi.fn()} startEmpty />);
   await user.click(await screen.findByRole('button', { name: /simpan draf/i }));
@@ -108,7 +108,7 @@ it('blocks save when empty (validation errors)', async () => {
 });
 
 it('renders read-only: banner, disabled date, no Save / Add', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   baseHandlers();
   renderEditor(<Harness mode="edit" doc={{ id: 'x1', status: 'POSTED', partnerId: 'c1' }} readOnly onSaved={vi.fn()} />);
   expect(await screen.findByText(/hanya-baca/i)).toBeInTheDocument();
@@ -118,7 +118,7 @@ it('renders read-only: banner, disabled date, no Save / Add', async () => {
 });
 
 it('renders the extraHeaderField only when configured', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   baseHandlers();
   const { unmount } = renderEditor(<Harness mode="create" onSaved={vi.fn()} />);
   await screen.findByLabelText(/tanggal/i);

@@ -69,7 +69,7 @@ function renderWithLoginRoute() {
 }
 
 it('renders the app name and the current user email', async () => {
-  useSession.getState().setUser({ id: '1', email: 'admin@buku.id', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'admin@buku.id', role: 'ADMIN', mustChangePassword: false });
   renderInRouter(<AppShell><div>content</div></AppShell>);
   expect(await screen.findByText('Buku')).toBeInTheDocument();
   expect(screen.getByText('admin@buku.id')).toBeInTheDocument();
@@ -77,12 +77,12 @@ it('renders the app name and the current user email', async () => {
 });
 
 it('shows the Audit nav item only for admins', async () => {
-  useSession.getState().setUser({ id: '1', email: 'admin@buku.id', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'admin@buku.id', role: 'ADMIN', mustChangePassword: false });
   const { unmount } = renderInRouter(<AppShell><div>content</div></AppShell>);
   expect(await screen.findByRole('link', { name: 'Audit' })).toBeInTheDocument();
   unmount();
 
-  useSession.getState().setUser({ id: '2', email: 'viewer@buku.id', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '2', email: 'viewer@buku.id', role: 'VIEWER', mustChangePassword: false });
   renderInRouter(<AppShell><div>content</div></AppShell>);
   expect(await screen.findByRole('link', { name: 'Dasbor' })).toBeInTheDocument();
   expect(screen.queryByRole('link', { name: 'Audit' })).not.toBeInTheDocument();
@@ -90,7 +90,7 @@ it('shows the Audit nav item only for admins', async () => {
 
 it('signs out the current device and navigates to /login', async () => {
   useSession.getState().setTokens({ accessToken: 'tok-abc', refreshToken: 'ref-abc' });
-  useSession.getState().setUser({ id: '2', email: 'user@buku.id', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '2', email: 'user@buku.id', role: 'VIEWER', mustChangePassword: false });
   let loggedOut = false;
   server.use(
     http.post(`${API}/auth/logout`, () => {
@@ -110,7 +110,7 @@ it('signs out the current device and navigates to /login', async () => {
 
 it('signs out of all devices and navigates to /login', async () => {
   useSession.getState().setTokens({ accessToken: 'tok-abc', refreshToken: 'ref-abc' });
-  useSession.getState().setUser({ id: '2', email: 'user@buku.id', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '2', email: 'user@buku.id', role: 'VIEWER', mustChangePassword: false });
   let loggedOutAll = false;
   server.use(
     http.post(`${API}/auth/logout-all`, () => {

@@ -23,7 +23,7 @@ const accounts = [
 
 it('lists only postable + active accounts and selects by id', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ADMIN', mustChangePassword: false });
   server.use(http.get(`${API}/ledger/accounts`, () => HttpResponse.json(paged(accounts))));
   const onChange = vi.fn();
   renderSelect(<AccountSelect onChange={onChange} placeholder="Pilih akun" />);

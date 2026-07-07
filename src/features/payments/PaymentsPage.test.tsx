@@ -30,7 +30,7 @@ function renderPage() {
 }
 
 it('lists payments with partner + cash-account joins; ACCOUNTANT no Posting', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   server.use(
     http.get(`${API}/payments`, () => HttpResponse.json({ data: [draftPayment], total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
@@ -44,7 +44,7 @@ it('lists payments with partner + cash-account joins; ACCOUNTANT no Posting', as
 
 it('APPROVER posts a draft payment with an idempotency key', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER', mustChangePassword: false });
   let seenKey: string | null = null;
   server.use(
     http.get(`${API}/payments`, () => HttpResponse.json({ data: [draftPayment], total: 1, limit: 200, offset: 0 })),
@@ -62,7 +62,7 @@ it('APPROVER posts a draft payment with an idempotency key', async () => {
 
 it('APPROVER voids a posted payment with an idempotency key', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER', mustChangePassword: false });
   let seenKey: string | null = null;
   server.use(
     http.get(`${API}/payments`, () => HttpResponse.json({ data: [postedPayment], total: 1, limit: 200, offset: 0 })),
@@ -81,7 +81,7 @@ it('APPROVER voids a posted payment with an idempotency key', async () => {
 
 it('shows the SoD message when post returns 403 SEGREGATION_OF_DUTIES', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER' });
+  useSession.getState().setUser({ id: '2', email: 'b@b.c', role: 'APPROVER', mustChangePassword: false });
   server.use(
     http.get(`${API}/payments`, () => HttpResponse.json({ data: [draftPayment], total: 1, limit: 200, offset: 0 })),
     http.get(`${API}/partners`, () => HttpResponse.json({ data: partners, total: 1, limit: 200, offset: 0 })),
@@ -98,7 +98,7 @@ it('shows the SoD message when post returns 403 SEGREGATION_OF_DUTIES', async ()
 
 it('filters by direction and shows both create buttons', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'ACCOUNTANT', mustChangePassword: false });
   const disb = { ...draftPayment, id: 'pay2', direction: 'DISBURSEMENT', partnerId: 'v1', ref: 'PAY-DSB/2026/000001', allocations: [{ purchaseBillId: 'b1', amount: '1000000.0000' }] };
   const allPartners = [...partners, { id: 'v1', code: 'VEND-1', name: 'PT Pemasok', isCustomer: false, isVendor: true, isActive: true }];
   const allPayments = [draftPayment, disb];

@@ -35,7 +35,7 @@ function renderPage() {
 }
 
 it('renders the financial-position hero and the secondary metric cards', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   renderPage();
   expect(await screen.findByText('Posisi Keuangan')).toBeInTheDocument(); // hero label
   expect(screen.getByText('Rp 1.500.000')).toBeInTheDocument(); // totalAssets (hero)
@@ -46,7 +46,7 @@ it('renders the financial-position hero and the secondary metric cards', async (
 
 it('refetches the period cards with the new range when a preset is clicked', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   let lastFrom: string | null = null;
   server.use(
     http.get(`${API}/reports/income-statement`, ({ request }) => {
@@ -65,7 +65,7 @@ it('refetches the period cards with the new range when a preset is clicked', asy
 
 it('shows an error + retry when cash-flow fails, leaving other cards intact', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   let calls = 0;
   server.use(
     http.get(`${API}/reports/cash-flow`, () => {
@@ -84,7 +84,7 @@ it('shows an error + retry when cash-flow fails, leaving other cards intact', as
 
 it('disables the period queries and shows a hint when the custom range is invalid', async () => {
   const user = userEvent.setup({ pointerEventsCheck: 0 });
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   const seenFrom: string[] = [];
   server.use(
     http.get(`${API}/reports/income-statement`, ({ request }) => {
@@ -104,7 +104,7 @@ it('disables the period queries and shows a hint when the custom range is invali
 });
 
 it('the Jurnal Draft card links to /journals filtered to DRAFT', async () => {
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   renderPage();
   const draftValue = await screen.findByText('3'); // draft count
   const link = draftValue.closest('a');
@@ -115,7 +115,7 @@ it('the Jurnal Draft card links to /journals filtered to DRAFT', async () => {
 
 it('persists the selected period preset to buku.prefs', async () => {
   const user = userEvent.setup();
-  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER' });
+  useSession.getState().setUser({ id: '1', email: 'a@b.c', role: 'VIEWER', mustChangePassword: false });
   renderPage();
   await screen.findByText('Rp 1.500.000'); // initial (year) load settled
   await user.click(screen.getByRole('button', { name: 'Bulan Ini' })); // "This month"
