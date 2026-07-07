@@ -43,7 +43,7 @@ export function ChangePasswordForm({
       await onSuccess();
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
-        form.setError('currentPassword', { message: t.auth.currentPasswordWrong });
+        form.setError('currentPassword', { type: 'server', message: t.auth.currentPasswordWrong });
       } else {
         form.setError('root', { message: t.common.error });
       }
@@ -51,6 +51,11 @@ export function ChangePasswordForm({
   }
 
   const e = form.formState.errors;
+  const currentPasswordError = e.currentPassword
+    ? e.currentPassword.type === 'server'
+      ? e.currentPassword.message
+      : t.auth.passwordRequired
+    : undefined;
   const newPasswordError = e.newPassword
     ? e.newPassword.type === 'too_big'
       ? t.auth.passwordTooLong
@@ -62,7 +67,7 @@ export function ChangePasswordForm({
       <div className="space-y-1.5">
         <Label htmlFor="currentPassword">{currentPasswordLabel}</Label>
         <Input id="currentPassword" type="password" autoComplete="current-password" {...form.register('currentPassword')} />
-        <FieldError message={e.currentPassword?.message} />
+        <FieldError message={currentPasswordError} />
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="newPassword">{t.auth.newPassword}</Label>

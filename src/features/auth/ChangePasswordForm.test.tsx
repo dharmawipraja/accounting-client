@@ -39,6 +39,16 @@ it('calls onSuccess after a successful change', async () => {
   await waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1));
 });
 
+it('shows the translated required error on a blank current password without calling the API', async () => {
+  const user = userEvent.setup();
+  const onSuccess = renderForm();
+  await user.type(screen.getByLabelText('Kata sandi baru'), 'new-password-1');
+  await user.type(screen.getByLabelText('Konfirmasi kata sandi baru'), 'new-password-1');
+  await user.click(screen.getByRole('button', { name: 'Simpan' }));
+  expect(await screen.findByText('Kata sandi wajib diisi')).toBeInTheDocument();
+  expect(onSuccess).not.toHaveBeenCalled();
+});
+
 it('shows a field error when the current password is wrong (401)', async () => {
   server.use(
     http.post(`${API}/auth/change-password`, () =>
